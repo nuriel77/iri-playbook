@@ -1,7 +1,28 @@
+- name: ensure firewalld started and enabled
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
 - name: allow iota-pm tcp port in firewall
   firewalld:
     port: "{{ iotapm_port }}/tcp"
     permanent: true
     state: enabled
     immediate: yes
-  when: iotapm_allow_firewall is defined and iotapm_allow_firewall
+  when: >
+        iotapm_allow_firewall is defined and
+        iotapm_allow_firewall and
+        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+
+- name: allow iota-pm tcp port in firewall
+  ufw:
+    rule: allow
+    direction: in
+    proto: tcp
+    port: "{{ iotapm_port }}"
+  when: >
+        iotapm_allow_firewall is defined and
+        iotapm_allow_firewall and
+        (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')

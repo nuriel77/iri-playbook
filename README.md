@@ -12,6 +12,8 @@ A redhat/centos or debian/ubuntu node where you want to have the node running on
 
 Latest Ansible installation for your distribution (http://docs.ansible.com/ansible/latest/intro_installation.html)
 
+Playbook was tested with Ansible>=2.4
+
 
 
 

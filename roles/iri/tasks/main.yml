@@ -2,9 +2,15 @@
   tags:
     - deps
 
-- import_tasks: firewall.yml
+- import_tasks: firewalld.yml
   tags:
-    - firewall
+    - firewalld
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- import_tasks: ufw.yml
+  tags:
+    - ufw
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - import_tasks: iri.yml
   tags:

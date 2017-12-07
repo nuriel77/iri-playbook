@@ -1,3 +1,15 @@
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /etc/systemd/system
+    config_dir: /etc/default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 - name: add user to run iri as
   user:
     name: "{{ iri_username }}"
@@ -59,7 +71,7 @@
 - name: copy iri systemd file
   template:
     src: templates/iri.service.j2
-    dest: /usr/lib/systemd/system/iri.service
+    dest: "{{ systemd_dir }}/iri.service"
   notify:
     - reload systemd
 
@@ -69,7 +81,7 @@
 - name: copy iri environment file
   template:
     src: templates/iri.sysconfig.j2
-    dest: /etc/sysconfig/iri
+    dest: "{{ config_dir }}/iri"
   notify:
     - restart iri
 

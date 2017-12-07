@@ -1,3 +1,19 @@
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+    nodejs_bin: /usr/bin/node
+    iotapm_bin: /bin/iota-pm
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /etc/systemd/system
+    config_dir: /etc/default
+    nodejs_bin: /usr/bin/nodejs
+    iotapm_bin: /usr/local/bin/iota-pm
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 - name: add user to run iota-pm as
   user:
     name: "{{ iotapm_username }}"
@@ -17,7 +33,7 @@
 - name: copy systemd service file
   template:
     src: templates/iota-pm.service.j2
-    dest: /usr/lib/systemd/system/iota-pm.service
+    dest: "{{ systemd_dir }}/iota-pm.service"
   notify:
     - reload systemd
 
@@ -27,7 +43,7 @@
 - name: copy iota-pm environment file
   template:
     src: templates/iota-pm.sysconfig.j2
-    dest: /etc/sysconfig/iota-pm
+    dest: "{{ config_dir }}/iota-pm"
   notify:
     - restart iota-pm
 

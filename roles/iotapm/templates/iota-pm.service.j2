@@ -2,8 +2,8 @@
 Description=IOTA Peer Manager
 
 [Service]
-EnvironmentFile=-/etc/sysconfig/iota-pm
-ExecStart=/usr/bin/node /bin/iota-pm -r ${REFRESH} -p ${BIND} -i ${IRI}
+EnvironmentFile=-{{ config_dir }}/iota-pm
+ExecStart={{ nodejs_bin }} {{ iotapm_bin }} -r ${REFRESH} -p ${BIND} -i ${IRI}
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure

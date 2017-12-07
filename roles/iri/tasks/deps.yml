@@ -1,5 +1,7 @@
+# Required
 - name: Install epel-release
   yum: state=latest name=epel-release
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install some packages
   yum: state=latest name={{ item }}
@@ -11,3 +13,20 @@
     - curl
     - lsof
     - jq
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+# Required, else jq and some other packages fail
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install some packages
+  apt: state=latest name={{ item }} update_cache=yes
+  with_items:
+    - maven
+    - jq
+    - "openjdk-{{ openjdk_version }}-jdk"
+    - lsof
+    - curl
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

@@ -1,5 +1,8 @@
-# Java version to install
+# Java version to install CentOS/Redhat
 java_version: 1.8.0
+
+# For ubuntu/debian
+openjdk_version: 8
 
 # Unprivileged user to run iri with
 iri_username: iri

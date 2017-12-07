@@ -1,5 +1,6 @@
 - name: Install epel-release
   yum: state=latest name=epel-release
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install some packages
   yum: state=latest name={{ item }}
@@ -8,6 +9,16 @@
     - firewalld
     - curl
     - lsof
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Install some packages
+  apt: state=latest name={{ item }} update_cache=yes
+  with_items:
+    - lsof
+    - curl
+    - nodejs
+    - npm
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install iota-pm package
   npm:
