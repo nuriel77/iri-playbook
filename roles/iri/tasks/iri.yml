@@ -55,6 +55,13 @@
   notify:
     - reload systemd
 
+- name: copy iri environment file
+  template:
+    src: templates/iri.sysconfig.j2
+    dest: /etc/sysconfig/iri
+  notify:
+    - restart iri
+
 - name: ensure iri started and enabled
   systemd:
     name: iri.service
