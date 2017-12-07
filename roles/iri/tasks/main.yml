@@ -1,7 +1,11 @@
-- include: deps.yml
+- import_tasks: deps.yml
   tags:
     - deps
 
-- include: firewall.yml
+- import_tasks: firewall.yml
   tags:
     - firewall
+
+- import_tasks: iri.yml
+  tags:
+    - iri_config

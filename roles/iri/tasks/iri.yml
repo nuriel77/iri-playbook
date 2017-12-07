@@ -13,6 +13,9 @@
     state: absent
   when: remove_iri_basedir is defined and remove_iri_basedir
 
+# This will tell us whether to re-download iri package
+# The directory will not exists if it was removed
+# or never created before.
 - name: stat iri basedir
   stat:
     path: "{{ iri_basedir }}"
@@ -21,10 +24,22 @@
 - name: download and unarchive iri release
   unarchive:
     src: "https://github.com/iotaledger/iri/archive/v{{ iri_version }}.tar.gz"
-    dest: "{{ iri_basedir }}"
+    dest: /tmp
     remote_src: True
   when: not iri_basedir_stat.stat.exists
   register: iri_downloaded
+
+- name: move temporary extracted iri directory to its basedir
+  shell: "mv /tmp/iri-{{ iri_version }} {{ iri_basedir }}"
+  when: iri_downloaded and iri_downloaded.changed
+
+- name: ensure iri basedir ownership and permissions
+  file:
+    path: "{{ iri_basedir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ iri_username }}"
+    group: "{{ iri_username }}"
 
 - name: run mvn compile
   shell: "cd {{ iri_basedir }} && mvn clean compile"
@@ -33,13 +48,6 @@
 - name: run mvn packages
   shell: "cd {{ iri_basedir }} && mvn package"
   when: iri_downloaded is defined and iri_downloaded.changed
-
-- name: set iri directory permissions and ownership
-  file:
-    path: "{{ iri_basedir }}"
-    owner: "{{ iri_username }}"
-    group: "{{ iri_username }}"
-    mode: 0700
 
 - name: set iri directory's files ownership
   file:
@@ -54,6 +62,9 @@
     dest: /usr/lib/systemd/system/iri.service
   notify:
     - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
 
 - name: copy iri environment file
   template:
