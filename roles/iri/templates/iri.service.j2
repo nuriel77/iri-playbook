@@ -1,0 +1,24 @@
+[Unit]
+Description=IOTA FullNode
+After=network-online.target
+ 
+[Service]
+LimitMEMLOCK=infinity
+LimitNOFILE=65535
+WorkingDirectory={{ iri_basedir }}/target
+EnvironmentFile=-/etc/sysconfig/iri
+ExecStart=/usr/bin/java -Xmx${JAVA_MEM} -jar iri-${IRI_VERSION}.jar -p ${IRI_API_PORT} -u ${IRI_UDP_PORT} -t ${IRI_TCP_PORT} -n "${IRI_NEIGHBORS}" --remote-limit-api "${REMOTE_LIMIT_API}" ${OPTIONS}
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=10
+Type=simple
+User={{ iri_username }}
+Group={{ iri_username }}
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target

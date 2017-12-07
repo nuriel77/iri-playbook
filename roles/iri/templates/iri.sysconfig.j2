@@ -1,0 +1,27 @@
+IRI_VERSION={{ iri_version }}
+
+# Port used for API calls (and/or lightwallet connection)
+IRI_API_PORT={{ iri_api_port }}
+
+# UDP neighbor peering port
+IRI_UDP_PORT={{ iri_udp_port }}
+
+# TCP neighbor peering port
+IRI_TCP_PORT={{ iri_tcp_port }}
+
+# Java max mem usage for iri
+JAVA_MEM={{ iri_java_mem }}
+
+# Java initial mem usage
+JAVA_INIT_MEM={{ iri_init_java_mem }}
+
+# Limit commands to API
+REMOTE_LIMIT_API="{{ iri_remote_limit_api }}"
+
+# Optional OPTIONS can contain multiple values e.g.
+#OPTIONS="--rescan --debug --remote"
+OPTIONS="{% if api_port_remote is defined and api_port_remote %}--remote{% endif %}"
+
+# Fill in neighbor addresses separated by space, e.g.
+# IRI_NEIGHBORS="udp://cfb.is.ai:14600 tcp://iota.rules.io:15600"
+IRI_NEIGHBORS=""

@@ -1,0 +1,62 @@
+- name: add user to run iri as
+  user:
+    name: "{{ iri_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ iri_basedir }}"
+  tags:
+    - iri_user
+
+- name: remove existing iri basedir
+  file:
+    path: "{{ iri_basedir }}"
+    state: absent
+  when: remove_iri_basedir is defined and remove_iri_basedir
+
+- name: stat iri basedir
+  stat:
+    path: "{{ iri_basedir }}"
+  register: iri_basedir_stat
+
+- name: download and unarchive iri release
+  unarchive:
+    src: "https://github.com/iotaledger/iri/archive/v{{ iri_version }}.tar.gz"
+    dest: "{{ iri_basedir }}"
+    remote_src: True
+  when: not iri_basedir_stat.stat.exists
+  register: iri_downloaded
+
+- name: run mvn compile
+  shell: "cd {{ iri_basedir }} && mvn clean compile"
+  when: iri_downloaded is defined and iri_downloaded.changed
+
+- name: run mvn packages
+  shell: "cd {{ iri_basedir }} && mvn package"
+  when: iri_downloaded is defined and iri_downloaded.changed
+
+- name: set iri directory permissions and ownership
+  file:
+    path: "{{ iri_basedir }}"
+    owner: "{{ iri_username }}"
+    group: "{{ iri_username }}"
+    mode: 0700
+
+- name: set iri directory's files ownership
+  file:
+    path: "{{ iri_basedir }}"
+    owner: "{{ iri_username }}"
+    group: "{{ iri_username }}"
+    recurse: yes
+
+- name: copy iri systemd file
+  template:
+    src: templates/iri.service.j2
+    dest: /usr/lib/systemd/system/iri.service
+  notify:
+    - reload systemd
+
+- name: ensure iri started and enabled
+  systemd:
+    name: iri.service
+    state: started
+    enabled: true

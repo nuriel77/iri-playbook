@@ -1,0 +1,7 @@
+---
+- hosts: fullnode
+  gather_facts: false
+  become: true
+  become_method: sudo
+  roles:
+    - iri
