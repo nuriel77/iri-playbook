@@ -1,0 +1,7 @@
+- name: allow iota-pm tcp port in firewall
+  firewalld:
+    port: "{{ iotapm_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: yes
+  when: iotapm_allow_firewall is defined and iotapm_allow_firewall

@@ -13,6 +13,9 @@ RestartSec=10
 Type=simple
 User={{ iri_username }}
 Group={{ iri_username }}
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=iri
 
 # Restrict process
 PrivateDevices=yes

@@ -1,0 +1,9 @@
+- name: restart iota-pm
+  systemd:
+    name: iota-pm.service
+    state: restarted
+    enabled: yes
+
+- name: reload systemd
+  sudo: yes
+  command: systemctl daemon-reload

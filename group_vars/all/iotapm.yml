@@ -1,0 +1,17 @@
+# iota-pm version to install
+iotapm_version: 1.2.0
+
+# The tcp port on which iota-pm will be served
+iotapm_port: 8011
+
+# The address on which iota-pm will served
+# Use 0.0.0.0 for all interfaces
+iotapm_bind_address: 127.0.0.1
+
+# If setting `iotapm_bind_address` to anything other than
+# localhost (127.0.0.1) should the port be opened in firewall
+iotapm_allow_firewall: true
+
+# Unprivileged username with which to run iota-pm.
+# Will be created if doesn't exist
+iotapm_username: iotapm

@@ -1,0 +1,38 @@
+- name: add user to run iota-pm as
+  user:
+    name: "{{ iotapm_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: /var/spool/iotapm
+  tags:
+    - iotapm_user
+
+- name: create iotapm spool directory
+  file:
+    path: /var/spool/iotapm
+    state: directory
+    owner: "{{ iotapm_username }}"
+    group: "{{ iotapm_username }}"
+
+- name: copy systemd service file
+  template:
+    src: templates/iota-pm.service.j2
+    dest: /usr/lib/systemd/system/iota-pm.service
+  notify:
+    - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: copy iota-pm environment file
+  template:
+    src: templates/iota-pm.sysconfig.j2
+    dest: /etc/sysconfig/iota-pm
+  notify:
+    - restart iota-pm
+
+- name: ensure iota-pm started and enabled
+  systemd:
+    name: iota-pm.service
+    state: started
+    enabled: true

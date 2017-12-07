@@ -1,0 +1,25 @@
+[Unit]
+Description=IOTA Peer Manager
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/iota-pm
+ExecStart=/usr/bin/node /bin/iota-pm -r ${REFRESH} -p ${BIND} -i ${IRI}
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=10
+Type=simple
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=iotapm
+User={{ iotapm_username }}
+Group={{ iotapm_username }}
+# Restrict process
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
