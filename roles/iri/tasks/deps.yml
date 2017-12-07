@@ -10,3 +10,4 @@
     - firewalld
     - curl
     - lsof
+    - jq
