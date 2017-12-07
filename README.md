@@ -12,9 +12,14 @@ A redhat/centos or debian/ubuntu node where you want to have the node running on
 
 Latest Ansible installation for your distribution (http://docs.ansible.com/ansible/latest/intro_installation.html)
 
-Playbook was tested with Ansible>=2.4
+Playbook was tested with:
+  - Ansible>=2.4
+  - Ubuntu 16.04
+  - CentOS 7.4
 
 
+
+Please feel free to contribute.
 
 
 ### Configure host
