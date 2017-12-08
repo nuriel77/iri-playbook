@@ -54,12 +54,14 @@
     src: files/validate_nginx_config.sh
     dest: /usr/local/bin/validate_nginx_config.sh
     mode: 0755
+  when: install_nginx is defined and install_nginx
 
 - name: copy iotapm nginx config
   template:
     src: templates/iotapm.conf.j2
     dest: /etc/nginx/conf.d/iotapm.conf
     validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/iotapm.conf -r"
+  when: install_nginx is defined and install_nginx
   notify:
     - reload nginx
 
@@ -71,6 +73,7 @@
     owner: root
     group: "{{ nginx_group }}"
     mode: 0640
+  when: install_nginx is defined and install_nginx
 
 - name: ensure iota-pm started and enabled
   systemd:
@@ -83,3 +86,4 @@
     name: nginx
     state: started
     enabled: true
+  when: install_nginx is defined and install_nginx

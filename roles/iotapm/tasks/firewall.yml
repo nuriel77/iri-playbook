@@ -33,7 +33,9 @@
     permanent: true
     state: enabled
     immediate: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: >
+        install_nginx is defined and install_nginx and
+        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
 - name: allow iotapm nginx port via selinux seport
   seport:
@@ -41,14 +43,18 @@
     proto: tcp
     setype: http_port_t
     state: present
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: >
+        install_nginx is defined and install_nginx and
+        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
 - name: allow nginx to revese proxy
   seboolean:
     name: httpd_can_network_connect
     state: yes
     persistent: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: >
+        install_nginx is defined and install_nginx and
+        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
 - name: allow iotapm nginx port in firewall
   ufw:
@@ -56,4 +62,6 @@
     direction: in
     proto: tcp
     port: "{{ iotapm_nginx_port }}"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: >
+        install_nginx is defined and install_nginx and
+        (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')

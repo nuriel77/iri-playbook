@@ -22,8 +22,13 @@ iotapm_nginx_password: 'AllTangle81'
 
 # If setting `iotapm_bind_address` to anything other than
 # localhost (127.0.0.1) should the port be opened in firewall
-iotapm_allow_firewall: true
+# Can be `true` or `false`
+iotapm_allow_firewall: false
 
 # Unprivileged username with which to run iota-pm.
 # Will be created if doesn't exist
 iotapm_username: iotapm
+
+# Install and configure nginx for iota PM
+# can be `true` or `false`
+install_nginx: true

@@ -14,6 +14,16 @@
     - nginx
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
+- name: Install nginx packages
+  yum: state=latest name={{ item }}
+  with_items:
+    - python-passlib
+    - httpd-tools
+    - nginx
+  when: >
+        install_nginx is defined and install_nginx and
+        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+
 - name: Install some packages
   apt: state=latest name={{ item }} update_cache=yes
   with_items:
@@ -21,10 +31,17 @@
     - curl
     - nodejs
     - npm
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install nginx packages
+  apt: state=latest name={{ item }} update_cache=yes
+  with_items:
     - nginx
     - python-passlib
     - apache2-utils
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: >
+        install_nginx is defined and install_nginx and
+        (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
 - name: Install iota-pm package
   npm:
