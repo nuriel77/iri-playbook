@@ -4,6 +4,12 @@
     state: restarted
     enabled: yes
 
+- name: reload nginx
+  systemd:
+    name: nginx
+    state: reloaded
+    enabled: yes
+
 - name: reload systemd
   sudo: yes
   command: systemctl daemon-reload

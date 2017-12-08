@@ -9,6 +9,9 @@
     - firewalld
     - curl
     - lsof
+    - python-passlib
+    - httpd-tools
+    - nginx
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install some packages
@@ -18,6 +21,9 @@
     - curl
     - nodejs
     - npm
+    - nginx
+    - python-passlib
+    - apache2-utils
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install iota-pm package

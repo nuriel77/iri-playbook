@@ -4,6 +4,7 @@
     config_dir: /etc/sysconfig
     nodejs_bin: /usr/bin/node
     iotapm_bin: /bin/iota-pm
+    nginx_group: nginx
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: set variables debian/ubuntu
@@ -12,6 +13,7 @@
     config_dir: /etc/default
     nodejs_bin: /usr/bin/nodejs
     iotapm_bin: /usr/local/bin/iota-pm
+    nginx_group: www-data
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: add user to run iota-pm as
@@ -47,8 +49,37 @@
   notify:
     - restart iota-pm
 
+- name: copy validation script
+  copy:
+    src: files/validate_nginx_config.sh
+    dest: /usr/local/bin/validate_nginx_config.sh
+    mode: 0755
+
+- name: copy iotapm nginx config
+  template:
+    src: templates/iotapm.conf.j2
+    dest: /etc/nginx/conf.d/iotapm.conf
+    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/iotapm.conf -r"
+  notify:
+    - reload nginx
+
+- name: configure iotapm nginx password
+  htpasswd:
+    path: /etc/nginx/.htpasswd
+    name: '{{ iotapm_nginx_user }}' 
+    password: '{{ iotapm_nginx_password }}'
+    owner: root
+    group: "{{ nginx_group }}"
+    mode: 0640
+
 - name: ensure iota-pm started and enabled
   systemd:
     name: iota-pm.service
+    state: started
+    enabled: true
+
+- name: ensure nginx started and enabled
+  systemd:
+    name: nginx
     state: started
     enabled: true

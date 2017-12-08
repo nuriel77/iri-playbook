@@ -33,8 +33,9 @@ If you want to install to a remote host, edit the `inventory` and set the name a
 ### Configure options
 In `groups_vars/all/*.yml` you will find files with some configuration options and comments.
 
-Edit the files as required (most importantly check the latest IRI version and edit accordingly).
+Important value to edit is the `iotapm_nginx_password` in the `group_vars/all/iotapm.yml`. Set a strong password.
 
+Edit other options if you want to tweak anything (most importantly check the latest IRI version and edit accordingly).
 
 
 
