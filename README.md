@@ -35,6 +35,9 @@ In `groups_vars/all/*.yml` you will find files with some configuration options a
 
 Important value to edit is the `iotapm_nginx_password` in the `group_vars/all/iotapm.yml`. Set a strong password.
 
+To edit the password and/or add more users refer to the wiki link up in this README doc.
+
+
 Edit other options if you want to tweak anything (most importantly check the latest IRI version and edit accordingly).
 
 
