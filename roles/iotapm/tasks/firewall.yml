@@ -35,6 +35,14 @@
     immediate: yes
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
+- name: allow iotapm nginx port via selinux seport
+  seport:
+    ports: "{{ iotapm_nginx_port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
 - name: allow iotapm nginx port in firewall
   ufw:
     rule: allow
