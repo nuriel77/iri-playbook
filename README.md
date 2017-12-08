@@ -4,8 +4,8 @@ This playbook will install and configure and IOTA full node.
 
 In addition, it will install and configure iota-pm, a GUI to view/manage the full node.
 
-For the full tutorial goto https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux
-
+For the full tutorial use the [Wiki](https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux
+)
 
 ## Requirements
 A redhat/centos or debian/ubuntu node where you want to have the node running on.
