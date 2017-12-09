@@ -56,6 +56,18 @@ ansible-playbook -i inventory -v site.yml
 ```
 
 
+## Skip IRI or IOTA Peer Manager Installations
+
+You can skip IRI's installation:
+```sh
+ansible-playbook -i inventory -v site.yml --skip-tags=iri_config,iri_firewalld,iri_ufw,iri_config
+```
+
+or skip IOTA PM installation:
+```sh
+ansible-playbook -i inventory -v site.yml --skip-tags=iotapm_deps,iotapm_firewall,iotapm_config
+```
+
 
 To re-install iri (this will remove any existing database) or for example to install a different version after having edited the version in the `groups_vars/all/*.yml` file:
 
