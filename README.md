@@ -9,7 +9,7 @@ It will:
 - Run iota-pm and IRI as systemd controlled processes (unprivileged users)
 - Configure firewalls
 
-For a "one-line" quick installation see: [Getting Started Quickly](https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux#getting-started-quickly)
+For a "click-'n-go" installation see: [Getting Started Quickly](https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux#getting-started-quickly)
 
 For the full tutorial use the [Wiki](https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux
 )
