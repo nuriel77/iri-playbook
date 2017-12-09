@@ -176,7 +176,7 @@ cd iri-playbook
 set_password
 echo -e "\nRunning playbook..."
 
-ansible-playbook -i inventory -v site.yml
+ansible-playbook -i inventory -v site.yml -e "memory_autoset=true"
 
 PRIMARY_IP=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 
