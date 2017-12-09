@@ -26,6 +26,7 @@
   with_items:
     - maven
     - jq
+    - ufw
     - "openjdk-{{ openjdk_version }}-jdk"
     - lsof
     - curl
