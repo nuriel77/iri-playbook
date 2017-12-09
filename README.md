@@ -3,7 +3,8 @@
 This playbook will install and configure and IOTA full node.
 
 It will:
-- Install and configure iota-pm: a GUI to view/manage the full node
+- Install and configure IOTA IRI full node
+- Install and configure iota-pm: a GUI to view/manage peers
 - Password protect iota-pm
 - Run iota-pm and IRI as systemd controlled processes (unprivileged users)
 - Configure firewalls
