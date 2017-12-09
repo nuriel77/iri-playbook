@@ -10,6 +10,13 @@
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+- name: set memory limit for java-iri
+  set_fact:
+    iri_java_mem: "{{ (ansible_memtotal_mb * 0.8)|int|abs }}m"
+  when: memory_autoset is defined and memory_autoset
+  tags:
+    - mem_override
+
 - name: add user to run iri as
   user:
     name: "{{ iri_username }}"
