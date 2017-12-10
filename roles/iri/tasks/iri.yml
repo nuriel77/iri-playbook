@@ -82,6 +82,7 @@
     mode: 0755
   with_items:
     - nbctl
+    - reattach
   tags:
     - scripts
 
