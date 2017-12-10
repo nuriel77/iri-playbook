@@ -13,7 +13,9 @@ import sys
 def parse_args():
 
     parser = argparse.ArgumentParser(
-        description='Add or remove neighbors')
+        description='Add or remove full node neighbors.',
+        epilog='Example: nbctl -a -n'
+               ' udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321')
 
     parser.add_argument('--neighbors', '-n',
                         action='append',
