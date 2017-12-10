@@ -4,6 +4,9 @@ import sys
 import argparse
 from iota import *
 
+"""Script to reattach a transaction to tangle
+   source: https://github.com/nuriel77/iri-playbook
+"""
 
 def parse_args():
 
