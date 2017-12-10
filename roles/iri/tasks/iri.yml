@@ -75,10 +75,20 @@
     group: "{{ iri_username }}"
     recurse: yes
 
+- name: copy utility scripts
+  copy:
+    src: "files/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+  with_items:
+    - nbctl
+  tags:
+    - scripts
+
 - name: copy iri systemd file
   template:
     src: templates/iri.service.j2
     dest: "{{ systemd_dir }}/iri.service"
+    mode: 0755
   notify:
     - reload systemd
 
