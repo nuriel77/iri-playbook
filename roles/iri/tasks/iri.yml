@@ -82,6 +82,11 @@
   notify:
     - reload systemd
 
+- name: copy iri config file
+  copy:
+    src: files/iri.ini
+    dest: "{{ iri_basedir }}/iri.ini"
+
 - name: flush handlers
   meta: flush_handlers
 

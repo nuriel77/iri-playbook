@@ -22,6 +22,11 @@ REMOTE_LIMIT_API="{{ iri_remote_limit_api }}"
 #OPTIONS="--rescan --debug --remote"
 OPTIONS="{% if api_port_remote is defined and api_port_remote %}--remote{% endif %}"
 
+# IRI Configuration file. Basically, most options can either
+# be provided as commandline arguments to iri or via this file.
+# We make use of this file for additional options, e.g. REMOTE_AUTH etc.
+IRI_CONFIG_FILE={{ iri_basedir }}/iri.ini
+
 # Fill in neighbor addresses separated by space, e.g.
 # IRI_NEIGHBORS="udp://cfb.is.ai:14600 tcp://iota.rules.io:15600"
 IRI_NEIGHBORS=""
