@@ -5,22 +5,28 @@
     enabled: yes
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: allow prometheus nginx port in firewall
+- name: allow nginx ports in firewall
   firewalld:
-    port: "{{ prom_nginx_port }}/tcp"
+    port: "{{ item }}/tcp"
     permanent: true
     state: enabled
     immediate: yes
+  with_items:
+    - "{{ prom_nginx_port }}"
+    - "{{ grafana_nginx_port }}"
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
 - name: allow prometheus nginx port via selinux seport
   seport:
-    ports: "{{ prom_nginx_port }}"
+    ports: "{{ item }}"
     proto: tcp
     setype: http_port_t
     state: present
+  with_items:
+    - "{{ prom_nginx_port }}"
+    - "{{ grafana_nginx_port }}"
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
@@ -39,7 +45,10 @@
     rule: allow
     direction: in
     proto: tcp
-    port: "{{ prom_nginx_port }}"
+    port: "{{ item }}"
+  with_items:
+    - "{{ prom_nginx_port }}"
+    - "{{ grafana_nginx_port }}"
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')

@@ -1,3 +1,9 @@
+- name: restart grafana
+  systemd:
+    name: grafana-server.service
+    state: restarted
+    enabled: yes
+
 - name: restart prometheus
   systemd:
     name: prometheus.service

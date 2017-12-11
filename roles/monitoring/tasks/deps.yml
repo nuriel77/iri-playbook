@@ -67,7 +67,7 @@
 
 - name: add grafana apt repository
   apt_repository:
-    repo: https://packagecloud.io/grafana/stable/debian/ jessie main
+    repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
     state: present 
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
