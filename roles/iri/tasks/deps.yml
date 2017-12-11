@@ -21,13 +21,42 @@
     upgrade: dist
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+- name: Install software-properties-common
+  apt: state=latest name=software-properties-common update_cache=yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: apt add repository
+  apt_repository:
+    repo: 'ppa:webupd8team/java'
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: debian | ensure the webupd8 launchpad apt repository key is present
+  apt_key:
+    id=0xC2518248EEA14886
+    keyserver=keyserver.ubuntu.com
+    state=present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: set license as accepted
+  debconf:
+    name: 'oracle-java8-installer'
+    question: 'shared/accepted-oracle-license-v1-1'
+    value: 'true'
+    vtype: 'select'
+
 - name: Install some packages
   apt: state=latest name={{ item }} update_cache=yes
   with_items:
     - maven
     - jq
     - ufw
-    - "openjdk-{{ openjdk_version }}-jdk"
+    - oracle-java8-installer
+    - wget
     - lsof
     - curl
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install oracle-java8-set-default
+  apt: state=latest name=oracle-java8-set-default update_cache=yes
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
