@@ -1,0 +1,6 @@
+- name: start and enable grafana service
+  systemd:
+    name: grafana
+    state: started
+    enabled: yes
+

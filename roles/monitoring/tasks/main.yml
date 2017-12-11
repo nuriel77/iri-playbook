@@ -13,3 +13,8 @@
 - import_tasks: node_exporter.yml
   tags:
     - node_exporter_config
+
+- import_tasks: grafana.yml
+  tags:
+    - grafana_config
+

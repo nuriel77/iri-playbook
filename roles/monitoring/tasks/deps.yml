@@ -65,3 +65,24 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
+- name: add grafana apt repository
+  apt_repository:
+    repo: https://packagecloud.io/grafana/stable/debian/ jessie main
+    state: present 
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Add an Apt signing key for grafana repo
+  apt_key:
+    url: https://packagecloud.io/gpg.key
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install grafana
+  apt: state=latest name=grafana update_cache=yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  notify:
+    - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
+
