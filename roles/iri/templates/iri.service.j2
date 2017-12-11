@@ -5,7 +5,7 @@ After=network-online.target
 [Service]
 WorkingDirectory={{ iri_basedir }}/target
 EnvironmentFile=-{{ config_dir }}/iri
-ExecStart=/usr/bin/java -Xmx${JAVA_MEM} -jar iri-${IRI_VERSION}.jar -c ${IRI_CONFIG_FILE} -p ${IRI_API_PORT} -u ${IRI_UDP_PORT} -t ${IRI_TCP_PORT} -n "${IRI_NEIGHBORS}" --remote-limit-api "${REMOTE_LIMIT_API}" ${OPTIONS}
+ExecStart=/usr/bin/java -Xmx${JAVA_MEM} -jar iri-${IRI_VERSION}.jar -c ${IRI_CONFIG_FILE} -p ${IRI_API_PORT} -u ${IRI_UDP_PORT} -t ${IRI_TCP_PORT} -n "${IRI_NEIGHBORS}" --remote-limit-api "${REMOTE_LIMIT_API}" $OPTIONS
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure
