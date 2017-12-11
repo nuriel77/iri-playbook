@@ -5,7 +5,7 @@ After=network-online.target
 [Service]
 WorkingDirectory={{ iri_basedir }}/target
 EnvironmentFile=-{{ config_dir }}/iri
-ExecStart=/usr/bin/java -Xmx${JAVA_MEM} -jar iri-${IRI_VERSION}.jar -c ${IRI_CONFIG_FILE} -p ${IRI_API_PORT} -u ${IRI_UDP_PORT} -t ${IRI_TCP_PORT} -n "${IRI_NEIGHBORS}" --remote-limit-api "${REMOTE_LIMIT_API}" $OPTIONS
+ExecStart={% if ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' %}{{ oracle_java_bin_ubuntu }}{% elif ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' %}{{ oracle_java_bin_centos }}{% else %}/usr/bin/java{% endif %} -Xmx${JAVA_MEM} -jar iri-${IRI_VERSION}.jar -c ${IRI_CONFIG_FILE} -p ${IRI_API_PORT} -u ${IRI_UDP_PORT} -t ${IRI_TCP_PORT} -n "${IRI_NEIGHBORS}" --remote-limit-api "${REMOTE_LIMIT_API}" $OPTIONS
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure
