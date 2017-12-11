@@ -60,3 +60,10 @@
 - name: Install oracle-java8-set-default
   apt: state=latest name=oracle-java8-set-default update_cache=yes
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: set java home environment
+  lineinfile:
+    path: /etc/environment
+    regexp: '^JAVA_HOME'
+    line: 'JAVA_HOME="/usr/lib/jvm/java-8-oracle"'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
