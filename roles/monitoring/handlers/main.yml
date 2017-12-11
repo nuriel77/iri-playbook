@@ -9,3 +9,9 @@
     name: prometheus.service
     state: restarted
     enabled: yes
+
+- name: restart iota-prom-exporter
+  systemd:
+    name: iota-prom-exporter.service
+    state: restarted
+    enabled: yes

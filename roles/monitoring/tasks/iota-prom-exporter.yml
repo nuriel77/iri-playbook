@@ -1,0 +1,76 @@
+- name: set iota-prom-exporter dirs
+  set_fact:
+    iota_prom_fulldir: "{{ prom_basedir }}/{{ iota_prom_exporter_basedir }}"
+    iota_prom_tempdir: "/tmp/iota-prom-exporter_{{ ansible_date_time.epoch }}"
+
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+    nodejs_bin: /usr/bin/node
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /etc/systemd/system
+    config_dir: /etc/default
+    nodejs_bin: /usr/bin/nodejs
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: remove existing iota-prom-exporter dir
+  file:
+    path: "{{ iota_prom_fulldir }}"
+    state: absent
+  when: >
+        remove_iota_prom_exporter_basedir is defined and
+        remove_iota_prom_exporter_basedir
+
+# Check if needs (re)downloading
+- name: stat iota-prom-exporter basedir
+  stat:
+    path: "{{ iota_prom_fulldir }}"
+  register: iota_prom_fulldir_stat
+
+- git:
+    repo: 'https://github.com/crholliday/iota-prom-exporter.git'
+    dest: "{{ iota_prom_tempdir }}"
+    force: yes
+  when: not iota_prom_fulldir_stat.stat.exists
+  register: iota_prom_git
+
+- name: move iota-prom-exporter temp dir to its final location
+  shell: "mv {{ iota_prom_tempdir }} {{ iota_prom_fulldir }}"
+  when: iota_prom_git and iota_prom_git.changed
+
+- name: install iota-prom-exporter
+  shell: "cd {{ iota_prom_fulldir }} && npm install"
+  when: iota_prom_git and iota_prom_git.changed
+
+- name: intsall iota-prom-exporter config
+  template:
+    src: templates/iota-prom-exporter.config.js.j2
+    dest: "{{ iota_prom_fulldir }}/config.js"
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+  notify:
+    - restart iota-prom-exporter
+
+- name: set ownership on iota-prom-exporter path
+  file:
+    path: "{{ iota_prom_fulldir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ prom_username }}"
+
+- name: copy iota-prom-exporter systemd service file
+  template:
+    src: iota-prom-exporter.service.j2
+    dest: "{{ systemd_dir }}/iota-prom-exporter.service"
+  notify:
+    - reload systemd
+
+- name: start and enable iota-prom-exporter
+  systemd:
+    name: iota-prom-exporter.service
+    state: started
+    enabled: yes

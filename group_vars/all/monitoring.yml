@@ -12,3 +12,8 @@ exporter_version: 0.15.2
 exporter_basedir: /opt/prometheus/node_exporter
 exporter_port: 9100
 exporter_bind_address: 127.0.0.1
+
+nodesource_version: 8
+iota_prom_exporter_basedir: iota-prom-exporter
+iota_prom_exporter_port: 9311
+iota_prom_exporter_bind: 127.0.0.1

@@ -59,3 +59,18 @@
   changed_when: dashboard.status == 200
   tags:
     - grafana_api
+
+- name: create iota exporter dashboard in grafana
+  uri:
+    url: "http://localhost:{{ grafana_port }}/api/dashboards/db"
+    method: POST
+    user: "{{ iotapm_nginx_user }}"
+    password: "{{ iotapm_nginx_password }}"
+    body: "{{ lookup('file','files/iota_exporter_dashboard.json') }}"
+    force_basic_auth: yes
+    status_code: 200,412
+    body_format: json
+  register: dashboard
+  changed_when: dashboard.status == 200
+  tags:
+    - grafana_api

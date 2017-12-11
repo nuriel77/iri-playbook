@@ -18,3 +18,6 @@
   tags:
     - grafana_config
 
+- import_tasks: iota-prom-exporter.yml
+  tags:
+    - iota_prom_exporter

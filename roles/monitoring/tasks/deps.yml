@@ -65,6 +65,16 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
+- name: check nodejs minumum required version
+  shell: "nodejs --version | grep -oh '^v{{ nodesource_version }}'"
+  failed_when: false
+  changed_when: false
+  register: nodejs_version
+
+- name: get nodesource repo
+  shell: "curl -sL https://deb.nodesource.com/setup_{{ nodesource_version }}.x | sudo -E bash -"
+  when: "nodejs_version.rc == 1 and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')"
+
 - name: add grafana apt repository
   apt_repository:
     repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
@@ -77,8 +87,14 @@
     state: present
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Install grafana
-  apt: state=latest name=grafana update_cache=yes
+- name: Install grafana and nodejs upgrade
+  apt:
+    state: latest
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - nodejs
+    - grafana
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   notify:
     - reload systemd

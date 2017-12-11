@@ -30,7 +30,6 @@
     - lsof
     - curl
     - nodejs
-    - npm
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install nginx packages
