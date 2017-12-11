@@ -5,7 +5,7 @@ java_version: 1.8.0
 openjdk_version: 8
 
 # Oracle java binary location
-oracle_java_bin_ubuntu: /usr/lib/jvm/java-8-oracle/bin/java
+oracle_java_bin_ubuntu: /usr/bin/java
 
 # Oracle java binary location CentOS/RH
 oracle_java_bin_centos: /usr/java/jdk1.8.0_152/bin/java
