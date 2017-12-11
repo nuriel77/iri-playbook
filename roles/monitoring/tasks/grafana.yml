@@ -26,3 +26,36 @@
   when: install_nginx is defined and install_nginx
   notify:
     - reload nginx
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: create prometheus datasource in grafana
+  uri:
+    url: "http://localhost:{{ grafana_port }}/api/datasources"
+    method: POST
+    user: "{{ iotapm_nginx_user }}"
+    password: "{{ iotapm_nginx_password }}"
+    body: '{"name":"Prometheus","type":"prometheus","url":"http://localhost:{{ prom_port }}","access":"proxy","isDefault":true}'
+    force_basic_auth: yes
+    status_code: 200,409
+    body_format: json
+  register: datasource
+  changed_when: datasource.status == 200
+  tags:
+    - grafana_api
+
+- name: create node exporter dashboard in grafana
+  uri:
+    url: "http://localhost:{{ grafana_port }}/api/dashboards/db"
+    method: POST
+    user: "{{ iotapm_nginx_user }}"
+    password: "{{ iotapm_nginx_password }}"
+    body: "{{ lookup('file','files/node_exporter_dashboard.json') }}"
+    force_basic_auth: yes
+    status_code: 200,412
+    body_format: json
+  register: dashboard
+  changed_when: dashboard.status == 200
+  tags:
+    - grafana_api
