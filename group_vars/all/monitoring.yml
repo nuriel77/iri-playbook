@@ -1,0 +1,14 @@
+prom_version: 2.0.0
+prom_username: prometheus
+prom_basedir: /opt/prometheus
+prom_datadir: /var/lib/prometheus
+prom_configdir: /etc/prometheus
+prom_config: prometheus.yaml
+prom_port: 9090
+prom_bind_address: 127.0.0.1
+prom_nginx_port: 8999
+
+exporter_version: 0.15.2
+exporter_basedir: /opt/prometheus/node_exporter
+exporter_port: 9100
+exporter_bind_address: 127.0.0.1

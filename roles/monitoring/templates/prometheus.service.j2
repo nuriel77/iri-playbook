@@ -1,0 +1,31 @@
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User={{ prom_username }}
+Group={{ prom_username }}
+WorkingDirectory={{ prom_basedir }}
+Type=simple
+ExecStart={{ prom_basedir }}/prometheus --config.file={{ prom_configdir }}/{{ prom_config }} \
+    --storage.tsdb.path={{ prom_datadir }}/ --web.listen-address="{{ prom_bind_address }}:{{ prom_port }}"
+
+Restart=on-failure
+RestartSec=10
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=iri
+
+# Restrict process
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+
+[Install]
+WantedBy=multi-user.target

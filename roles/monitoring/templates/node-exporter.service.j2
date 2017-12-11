@@ -1,0 +1,29 @@
+[Unit]
+Description=Node Exporter for Prometheus
+Wants=network-online.target
+After=network.target
+
+[Service]
+WorkingDirectory={{ exporter_basedir }}
+Restart=on-failure
+ExecStart={{ exporter_basedir }}/node_exporter --web.listen-address="{{ exporter_bind_address }}:{{ exporter_port }}"
+Type=simple
+
+# No need that exporter messes with /dev
+PrivateDevices=yes
+
+# Dedicated /tmp
+PrivateTmp=yes
+
+# Make /usr, /boot, /etc read only
+ProtectSystem=full
+
+# /home is not accessible at all
+ProtectHome=yes
+
+# Unprivileged user
+User={{ prom_username }}
+Group={{ prom_username }}
+
+[Install]
+WantedBy=multi-user.target

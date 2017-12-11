@@ -51,7 +51,7 @@
 
 - name: copy validation script
   copy:
-    src: files/validate_nginx_config.sh
+    src: ../shared-files/validate_nginx_config.sh
     dest: /usr/local/bin/validate_nginx_config.sh
     mode: 0755
   when: install_nginx is defined and install_nginx
