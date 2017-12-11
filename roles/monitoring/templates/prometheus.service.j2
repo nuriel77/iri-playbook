@@ -9,7 +9,7 @@ Group={{ prom_username }}
 WorkingDirectory={{ prom_basedir }}
 Type=simple
 ExecStart={{ prom_basedir }}/prometheus --config.file={{ prom_configdir }}/{{ prom_config }} \
-    --storage.tsdb.path={{ prom_datadir }}/ --web.listen-address="{{ prom_bind_address }}:{{ prom_port }}"
+    --storage.tsdb.path={{ prom_datadir }}/ --web.listen-address={{ prom_bind_address }}:{{ prom_port }}
 
 Restart=on-failure
 RestartSec=10
