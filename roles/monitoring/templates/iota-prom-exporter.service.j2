@@ -1,0 +1,30 @@
+[Unit]
+Description=IOTA Prometheus Exporter
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory={{ iota_prom_fulldir }}
+User={{ prom_username }}
+Group={{ prom_username }}
+ExecStart={{ nodejs_bin }} app.js
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=iota_exporter
+
+# No need that bff messes with /dev
+PrivateDevices=yes
+
+# Dedicated /tmp
+PrivateTmp=yes
+
+# Make /usr, /boot, /etc read only
+ProtectSystem=full
+
+# /home is not accessible at all
+ProtectHome=yes
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

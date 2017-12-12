@@ -1,0 +1,23 @@
+- name: ensure ownership in exporter basedir
+  file:
+    path: "{{ exporter_basedir }}"
+    state: directory
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+    recurse: yes
+
+- name: copy exporter  systemd service file
+  template:
+    src: templates/node-exporter.service.j2
+    dest: /etc/systemd/system/node-exporter.service
+  notify:
+    - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure node exporter enabled and started
+  systemd:
+    name: node-exporter.service
+    state: started
+    enabled: yes

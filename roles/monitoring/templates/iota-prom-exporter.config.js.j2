@@ -1,0 +1,9 @@
+const path = require('path')
+global.rootPath = path.normalize(path.join(__dirname, '..', '..'))
+
+module.exports = {
+    iota_node_url :'http://localhost:{{ iri_api_port }}',
+    stresstest_table_url: 'http://analytics.iotaledger.net/stresstest.table',
+    bind_address: '{{ iota_prom_exporter_bind }}',
+    bind_port: '{{ iota_prom_exporter_port }}'
+}

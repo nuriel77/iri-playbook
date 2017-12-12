@@ -1,0 +1,60 @@
+- name: ensure ownership in prometheus basedir
+  file:
+    path: "{{ prom_basedir }}"
+    state: directory
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+    recurse: yes
+
+- name: ensure prometheus configuration and data dir, ownership and permissions
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+  with_items:
+    - "{{ prom_datadir}}"
+    - "{{ prom_configdir }}"
+
+- name: copy prometheus systemd service file
+  template:
+    src: templates/prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+  notify:
+    - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: copy prometheus config
+  template:
+    src: "templates/{{ prom_config }}.j2"
+    dest: "{{ prom_configdir }}/{{ prom_config }}"
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+    mode: 0600
+  notify:
+    - restart prometheus
+
+- name: ensure prometheus enabled and started
+  systemd:
+    name: prometheus.service
+    state: started
+    enabled: yes
+
+- name: copy validation script
+  copy:
+    src: ../shared-files/validate_nginx_config.sh
+    dest: /usr/local/bin/validate_nginx_config.sh
+    mode: 0755
+  when: install_nginx is defined and install_nginx
+
+- name: copy prometheus nginx config
+  template:
+    src: templates/prometheus.conf.j2
+    dest: /etc/nginx/conf.d/prometheus.conf
+    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/prometheus.conf -r"
+  when: install_nginx is defined and install_nginx
+  notify:
+    - reload nginx
