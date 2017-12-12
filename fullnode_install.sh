@@ -67,7 +67,10 @@ function init_centos(){
 
 function init_ubuntu(){
     echo "Updating system packages..."
-    apt-get update -y
+    apt update -qqy --fix-missing
+    apt-get upgrade -y
+    apt-get clean
+    apt-get autoremove -y --purge
 
     echo "Check reboot required..."
     if [ -f /var/run/reboot-required ]; then
