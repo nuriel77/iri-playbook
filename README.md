@@ -91,3 +91,11 @@ Then:
 ```sh
 ansible-playbook -i inventory -v site.yml -e "remove_iri_basedir=1"
 ```
+
+
+### TODO
+* Add some handy utility scripts
+* Integrate alerting/notifications when node is not healthy
+* Instead of compiling IRI, download the jar to expedite the installation a bit
+* Security hardening steps
+* Make it possible to install graphs for those who already did this installation
