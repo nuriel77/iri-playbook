@@ -1,0 +1,23 @@
+- import_tasks: deps.yml
+  tags:
+    - monitoring_deps
+
+- import_tasks: firewall.yml
+  tags:
+    - monitoring_firewall
+
+- import_tasks: prometheus.yml
+  tags:
+    - prometheus_config
+
+- import_tasks: node_exporter.yml
+  tags:
+    - node_exporter_config
+
+- import_tasks: grafana.yml
+  tags:
+    - grafana_config
+
+- import_tasks: iota-prom-exporter.yml
+  tags:
+    - iota_prom_exporter
