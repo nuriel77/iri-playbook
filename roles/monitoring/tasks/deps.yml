@@ -1,3 +1,13 @@
+- name: set variables centos/redhat
+  set_fact:
+    nodejs_bin: /usr/bin/node
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    nodejs_bin: /usr/bin/nodejs
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 - name: add user to run prometheus as
   user:
     name: "{{ prom_username }}"
@@ -45,7 +55,7 @@
     path: "{{ exporter_basedir }}"
   register: exporter_basedir_stat
 
-- name: download and unarchive node_rxporter release
+- name: download and unarchive node_exporter release
   unarchive:
     src: "https://github.com/prometheus/node_exporter/releases/download/v{{ exporter_version }}/node_exporter-{{ exporter_version }}.linux-amd64.tar.gz"
     dest: /tmp
@@ -65,14 +75,15 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
-- name: check nodejs minumum required version
-  shell: "nodejs --version | grep -oh '^v{{ nodesource_version }}'"
+- name: check nodejs minimum required version
+  shell: "{{ nodejs_bin }} --version | grep -oh '^v{{ nodesource_version }}'"
   failed_when: false
   changed_when: false
   register: nodejs_version
 
+# Ubuntu
 - name: get nodesource repo
-  shell: "curl -sL https://deb.nodesource.com/setup_{{ nodesource_version }}.x | sudo -E bash -"
+  shell: "curl -sL https://deb.nodesource.com/setup_{{ nodesource_version }}.x | bash -"
   when: "nodejs_version.rc == 1 and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')"
 
 - name: add grafana apt repository
@@ -98,6 +109,38 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   notify:
     - reload systemd
+
+# Centos
+- name: get nodesource repo
+  shell: "curl -sL https://rpm.nodesource.com/setup_{{ nodesource_version }}.x | bash -"
+  when: "nodejs_version.rc == 1 and (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')"
+
+- name: add grafana repository
+  yum_repository:
+    name: grafana
+    description: grafana
+    baseurl: https://packagecloud.io/grafana/stable/el/6/$basearch
+    gpgcheck: yes
+    enabled: yes
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    repo_gpgcheck: yes
+    gpgkey: 'https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: ensure npm removed
+  yum:
+    name: npm
+    state: absent
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Install grafana and nodejs upgrade
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - nodejs
+    - grafana
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: flush handlers
   meta: flush_handlers

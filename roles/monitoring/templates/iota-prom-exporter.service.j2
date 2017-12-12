@@ -9,6 +9,10 @@ User={{ prom_username }}
 Group={{ prom_username }}
 ExecStart={{ nodejs_bin }} app.js
 
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=iota_exporter
+
 # No need that bff messes with /dev
 PrivateDevices=yes
 

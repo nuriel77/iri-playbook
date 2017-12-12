@@ -30,6 +30,11 @@
 - name: flush handlers
   meta: flush_handlers
 
+- name: Wait 10 seconds for grafana nginx port to become available
+  wait_for:
+    timeout: 10
+    port: "{{ grafana_port }}"
+
 - name: create prometheus datasource in grafana
   uri:
     url: "http://localhost:{{ grafana_port }}/api/datasources"
