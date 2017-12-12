@@ -30,9 +30,9 @@
 - name: flush handlers
   meta: flush_handlers
 
-- name: Wait 10 seconds for grafana nginx port to become available
+- name: Wait max 30 seconds for grafana nginx port to become available
   wait_for:
-    timeout: 10
+    timeout: 30
     port: "{{ grafana_port }}"
 
 - name: create prometheus datasource in grafana

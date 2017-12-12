@@ -75,6 +75,11 @@
     mode: 0640
   when: install_nginx is defined and install_nginx
 
+- name: Wait max 30 seconds for IRI API port to become available
+  wait_for:
+    timeout: 30
+    port: "{{ iri_api_port }}"
+
 - name: ensure iota-pm started and enabled
   systemd:
     name: iota-pm.service
