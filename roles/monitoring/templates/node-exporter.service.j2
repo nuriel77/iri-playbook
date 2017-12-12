@@ -6,7 +6,7 @@ After=network.target
 [Service]
 WorkingDirectory={{ exporter_basedir }}
 Restart=on-failure
-ExecStart={{ exporter_basedir }}/node_exporter --web.listen-address="{{ exporter_bind_address }}:{{ exporter_port }}"
+ExecStart={{ exporter_basedir }}/node_exporter --web.listen-address={{ exporter_bind_address }}:{{ exporter_port }}
 Type=simple
 
 # No need that exporter messes with /dev
