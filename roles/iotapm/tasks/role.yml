@@ -1,0 +1,11 @@
+- import_tasks: deps.yml
+  tags:
+    - iotapm_deps
+
+- import_tasks: firewall.yml
+  tags:
+    - iotapm_firewall
+
+- import_tasks: iotapm.yml
+  tags:
+    - iotapm_config
