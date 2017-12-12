@@ -8,11 +8,21 @@ It will:
 - Password protect iota-pm
 - Run iota-pm and IRI as systemd controlled processes (unprivileged users)
 - Configure firewalls
+- NEW: Monitoring for IRI + Graphs amazing work of Chirs Holliday https://github.com/crholliday/iota-prom-exporter
+
 
 For a "click-'n-go" installation see: [Getting Started Quickly](https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux#getting-started-quickly)
 
 For the full tutorial use the [Wiki](https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux
 )
+
+## Screenshots Monitoring
+![graph_a](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/top.png)
+
+![graph_b](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/market_all_neighbors.png)
+
+![graph_c](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/neighbors.png)
+
 
 ## Requirements
 A redhat/centos or debian/ubuntu node where you want to have the node running on.
