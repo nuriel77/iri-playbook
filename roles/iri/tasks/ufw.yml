@@ -19,3 +19,15 @@
     proto: tcp
     port: "{{ iri_api_port }}"
   when: api_port_remote is defined and api_port_remote
+
+- name: allow ssh port firewall
+  ufw:
+    rule: allow
+    direction: in
+    proto: tcp
+    port: "{{ ssh_port }}"
+
+- name: ensure ufw started
+  ufw:
+    state: enabled
+    policy: deny
