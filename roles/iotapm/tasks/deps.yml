@@ -1,6 +1,34 @@
-- name: Install epel-release
-  yum: state=latest name=epel-release
+- name: set variables centos/redhat
+  set_fact:
+    nodejs_bin: /usr/bin/node
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    nodejs_bin: /usr/bin/nodejs
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: check nodejs minimum required version
+  shell: "{{ nodejs_bin }} --version | grep -oh '^v{{ nodesource_version }}'"
+  failed_when: false
+  changed_when: false
+  register: nodejs_version
+
+- name: ensure npm removed
+  yum:
+    name: npm
+    state: absent
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+# Ubuntu
+- name: get nodesource repo
+  shell: "curl -sL https://deb.nodesource.com/setup_{{ nodesource_version }}.x | bash -"
+  when: "nodejs_version.rc == 1 and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')"
+
+# Centos
+- name: get nodesource repo
+  shell: "curl -sL https://rpm.nodesource.com/setup_{{ nodesource_version }}.x | bash -"
+  when: "nodejs_version.rc == 1 and (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')"
 
 - name: Install some packages
   yum: state=latest name={{ item }}

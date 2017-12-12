@@ -75,17 +75,6 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
-- name: check nodejs minimum required version
-  shell: "{{ nodejs_bin }} --version | grep -oh '^v{{ nodesource_version }}'"
-  failed_when: false
-  changed_when: false
-  register: nodejs_version
-
-# Ubuntu
-- name: get nodesource repo
-  shell: "curl -sL https://deb.nodesource.com/setup_{{ nodesource_version }}.x | bash -"
-  when: "nodejs_version.rc == 1 and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')"
-
 - name: add grafana apt repository
   apt_repository:
     repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
@@ -98,22 +87,14 @@
     state: present
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Install grafana and nodejs upgrade
+- name: Install grafana
   apt:
     state: latest
-    name: "{{ item }}"
+    name: grafana
     update_cache: yes
-  with_items:
-    - nodejs
-    - grafana
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   notify:
     - reload systemd
-
-# Centos
-- name: get nodesource repo
-  shell: "curl -sL https://rpm.nodesource.com/setup_{{ nodesource_version }}.x | bash -"
-  when: "nodejs_version.rc == 1 and (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')"
 
 - name: add grafana repository
   yum_repository:
@@ -127,19 +108,10 @@
     gpgkey: 'https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana'
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: ensure npm removed
+- name: Install grafana
   yum:
-    name: npm
-    state: absent
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: Install grafana and nodejs upgrade
-  yum:
-    name: "{{ item }}"
+    name: grafana
     state: latest
-  with_items:
-    - nodejs
-    - grafana
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: flush handlers
