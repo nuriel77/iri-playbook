@@ -191,6 +191,12 @@ You should be able to connect to IOTA Peer Manager pointing your browser to:
 
 http://${PRIMARY_IP}:8811
 
+
+You can reach the monitoring (grafana) graphs at:
+
+http://${PRIMARY_IP}:5555
+
+
 Note that your IP might be different as this one has been auto-detected in best-effort.
 You can use the username 'iotapm' and the password you entered during the installation.
 
