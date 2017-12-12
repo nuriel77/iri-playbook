@@ -12,7 +12,7 @@
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
     nodejs_bin: /usr/bin/nodejs
-    iotapm_bin: /usr/local/bin/iota-pm
+    iotapm_bin: /usr/bin/iota-pm
     nginx_group: www-data
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
