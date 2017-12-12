@@ -31,7 +31,8 @@
     path: "{{ iota_prom_fulldir }}"
   register: iota_prom_fulldir_stat
 
-- git:
+- name: clone iota-prom-exporter repository
+  git:
     repo: 'https://github.com/crholliday/iota-prom-exporter.git'
     dest: "{{ iota_prom_tempdir }}"
     force: yes
