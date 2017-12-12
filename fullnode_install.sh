@@ -56,7 +56,7 @@ function init_centos(){
     yum install -y yum-utils
 
     if $(needs-restarting -r 2>&1 | grep -q "Reboot is required"); then
-        echo "Please reboot this machine and re-run this script: 'shutdown -r now')"
+        inform_reboot
         exit 0
     fi
 
@@ -74,7 +74,7 @@ function init_ubuntu(){
 
     echo "Check reboot required..."
     if [ -f /var/run/reboot-required ]; then
-        echo "Please reboot this machine and re-run this script: 'shutdown -r now')"
+        inform_reboot
         exit 0
     fi
 
@@ -83,6 +83,17 @@ function init_ubuntu(){
     apt-add-repository ppa:ansible/ansible -y
     apt-get update -y
     apt-get install ansible git  net-tools -y
+}
+
+function inform_reboot() {
+cat <<EOF
+It is required to reboot the machine because of upgraded system packages.
+
+*** Please reboot this machine and re-run the script ***
+
+To reboot run: 'shutdown -r now'
+-> Remember to re-run the script inside a "screen" session: 'screen -S iota'.
+EOF
 }
 
 function get_password() {
