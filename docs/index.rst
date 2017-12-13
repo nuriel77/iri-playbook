@@ -35,7 +35,7 @@ Work in progress:
 .. toctree::
    :maxdepth: 2
 
-    getting-started-quickly
+   getting-started-quickly
 
 
 Introduction
