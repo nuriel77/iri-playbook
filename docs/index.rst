@@ -104,8 +104,10 @@ Good luck!
 
 
 
+.. _getting-started-quickly:
+Getting Started Quickly
+-----------------------
 
-# Getting Started Quickly
 You can skip most of the information in this tutorial should you wish to do so and go straight ahead to install the full node.
 
 There are just two little things you need to do first:
