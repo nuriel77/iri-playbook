@@ -1,7 +1,5 @@
 # IOTA IRI Fullnode Ansible Playbook
 
-[![Documentation Status](https://readthedocs.org/projects/iri-playbook/badge/?version=latest)](http://iri-playbook.readthedocs.io/en/latest/?badge=latest)
-
 This playbook will install and configure and IOTA full node.
 
 It will:
