@@ -120,7 +120,8 @@ If that is not the case run ``sudo su -`` to become root and enter the password 
 
 For **CentOS** you might need to install ``curl`` and ``screen`` before you can proceed:
 
-  yum install curl screen -y
+.. code-block:: bash
+   yum install curl screen -y
 
 
 If you are missing these utilities on **Ubuntu** you can install them:
@@ -134,12 +135,14 @@ Run the Installer!
 
 First, let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to the server breaks:
 
-  screen -S iota
+.. code-block:: bash
+   screen -S iota
 
 
 Now we can run the installer:
 
-  bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+.. code-block:: bash
+   bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
 If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
 
@@ -149,7 +152,8 @@ If you lost connection to your server during the installation, don't worry. It i
 
 You can always "reattach" back that session when you re-connect to your server:
 
-  screen -r -d iota
+.. code-block:: bash
+   screen -r -d iota
 
 
 
@@ -164,7 +168,7 @@ Accessing Monitoring Graphs
 ***************************
 You can access the Grafana IOTA graphs using 'iotapm' and the password you've configured during the installaton 
 
-Big thanks to Chris Holliday's amazing tool for node monitoring: https://github.com/crholliday/iota-prom-exporter
+Big thanks to Chris Holliday's amazing tool for ,, _node monitoring: https://github.com/crholliday/iota-prom-exporter
 
   http://your-ip:5555
 
@@ -204,7 +208,7 @@ Once you have your VPS deployed, most hosting provide a terminal (either GUI app
 You probably received a password with which you can login to the server. This can be a 'root' password, or a 'privileged' user (with which you can access 'root' privileges).
 
 The best way to access the server is via a Secure Shell (SSH).
-If your desktop is Mac or Linux, this is native on the command line. If you use Windows, I recommend installing [Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
+If your desktop is Mac or Linux, this is native on the command line. If you use Windows, I recommend installing .. _Putty: https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 
 There are plenty of tutorials on the web explaining how to use SSH (or SSH via Putty). Basically, you can use a password login or SSH keys (better).
 
@@ -212,11 +216,12 @@ There are plenty of tutorials on the web explaining how to use SSH (or SSH via P
 Given you are the owner of the server, you should either have direct access to the 'root' account or to a user which is privileged.
 It is often recommended to run all commands as the privileges user, prefixing the commands with 'sudo'. In this tutorial I will leave it to the user to decide. 
 
-If you accessed the server as a privileged user, and want to become 'root', you can issue a `sudo su -`.
-Otherwise, you will have to prefix most commands with `sudo`, e.g. 
-```sh
-sudo apt-get install somepackage
-```
+If you accessed the server as a privileged user, and want to become 'root', you can issue a ``sudo su -``.
+Otherwise, you will have to prefix most commands with ``sudo``, e.g. 
+
+.. code-block:: bash
+   sudo apt-get install somepackage
+
 
 
 # Installation
@@ -234,47 +239,53 @@ First, it is always a good practice to check for updates on the server.
 ## Update System Packages
 
 For **Ubuntu** we can type:
-```sh
-apt-get update
-```
+
+.. code-block:: bash
+  apt-get update
+
 and for **CentOS**:
-```
-yum update
-```
+
+.. code-block:: bash
+   yum update
+
 
 This will search for any packages to update on the system and require you to confirm the update.
 
 ### Reboot Required?
 Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
 
-For **Ubuntu** we can check if a reboot is required. Issue the command `ls -l /var/run/reboot-required`
-```sh
-# ls -l /var/run/reboot-required
--rw-r--r-- 1 root root 32 Dec  8 10:09 /var/run/reboot-required
-```
-If the file is found as seen here, you can issue a reboot (`shutdown -r now` or simply `reboot`).
+For **Ubuntu** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``
+
+  # ls -l /var/run/reboot-required
+  -rw-r--r-- 1 root root 32 Dec  8 10:09 /var/run/reboot-required
+
+
+If the file is found as seen here, you can issue a reboot (``shutdown -r now`` or simply ``reboot``).
 
 For **Centos** we have a few options how to check if a reboot is required. A simple one I've learned of recently is to install yum-utils:
-```sh
-yum install yum-utils -y
-```
-There's a utility that comes with it, we can run `needs-restarting  -r`:
-```sh
-# needs-restarting  -r
-Core libraries or services have been updated:
-  systemd -> 219-42.el7_4.4
-  glibc -> 2.17-196.el7_4.2
-  linux-firmware -> 20170606-56.gitc990aae.el7
-  gnutls -> 3.3.26-9.el7
-  glibc -> 2.17-196.el7_4.2
-  kernel -> 3.10.0-693.11.1.el7
 
-Reboot is required to ensure that your system benefits from these updates.
+.. code-block:: bash
+   yum install yum-utils -y
 
-More information:
-https://access.redhat.com/solutions/27943
-```
-As you can see, a reboot is required (do so by issuing a `reboot` or `shutdown -r now`)
+There's a utility that comes with it, we can run ``needs-restarting  -r``:
+
+
+  # needs-restarting  -r
+  Core libraries or services have been updated:
+    systemd -> 219-42.el7_4.4
+    glibc -> 2.17-196.el7_4.2
+    linux-firmware -> 20170606-56.gitc990aae.el7
+    gnutls -> 3.3.26-9.el7
+    glibc -> 2.17-196.el7_4.2
+    kernel -> 3.10.0-693.11.1.el7
+
+  Reboot is required to ensure that your system benefits from these updates.
+
+  More information:
+  https://access.redhat.com/solutions/27943
+
+
+As you can see, a reboot is required (do so by issuing a ``reboot`` or ``shutdown -r now``)
 
 
 ## Installing Ansible
