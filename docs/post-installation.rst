@@ -102,6 +102,7 @@ Here is the output you should expect::
 
 
 What does this tell us?
+
 1. ``*:<port number>`` means this port is listening on all interfaces - from the example above we see that IRI is listening on ports TCP and UDP no. 14600
 2. IRI is listening for API (or wallet connections) on a local interface (not accessible from "outside") no. 14265
 3. Iota-PM is listening on local interface port no. 8011
