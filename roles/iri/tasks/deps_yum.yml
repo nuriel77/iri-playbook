@@ -42,6 +42,7 @@
 - name: Install some packages
   yum: state=latest name={{ item }}
   with_items:
+    - policycoreutils-python
     - maven
     - libappindicator
     - firewalld

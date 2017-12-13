@@ -25,3 +25,8 @@
     state: enabled
     immediate: yes
   when: api_port_remote is defined and api_port_remote
+
+- name: ensure selinux enabled
+  selinux:
+    policy: targeted
+    state: enforcing 
