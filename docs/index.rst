@@ -33,49 +33,11 @@ Work in progress:
 
 |
 
-* [Introduction](#introduction)
-* [Getting Started Quickly](#getting-started-quickly)
-* [The Requirements](#the-requirements)
-  * [Virtual Private Server](#virtual-private-server)
-  * [Operating System](#operating-system)
-  * [Accessing the VPS](#accessing-the-vps)
-  * [System User](#system-user)
- * [Installation](#installation)
-  * [Update System Packages](#update-system-packages)
-  * [Installing Ansible](#installing-ansible)
-  * [Cloning the Repository](#cloning-the-repository)
-  * [Configuring Values](#configuring-values)
-    * [Set IOTA PM Access Password](#set-iota-pm-access-password)
-  * [Running the Playbook](#running-the-playbook)
-* [Post Installation](#post-installation)
-  * [Controlling IRI](#controlling-iri)
-  * [Controlling IOTA Peer Manager](#controlling-iota-peer-manager)
-  * [Checking Ports](#checking-ports)
-  * [Checking IRI Full Node Status](#checking-iri-full-node-status)
-  * [Connecting to IOTA Peer Manager](#connecting-to-iota-peer-manager)
-  * [Adding or Removing Neighbors](#adding-or-removing-neighbors)
-  * [Install IOTA Python libs](#install-iota-python-libs)
-* [Full Node Remote Access](#full-node-remote-access)
-  * [Tunneling IRI API for Wallet Connection](#tunneling-iri-api-for-wallet-connection)
-  * [Peer Manager Behind WebServer with Password](#peer-manager-behind-webserver-with-password)
-  * [Limiting Remote Commands](#limiting-remote-commands)
-* [Files and Locations](#files-and-locations)
-* [Maintenance](#maintenance)
-  * [Upgrade IRI](#upgrade-iri)
-  * [Check Database Size](#check-database-size)
-  * [Check Logs](#check-logs)
-    * [Replace Database](#replace-database)
-* [FAQ](#faq)
-* [Command Glossary](#command-glossary)
-* [Donations](#donations)
-
-
-
-
 ############
 Introduction
 ############
-My first [tutorial](https://x-vps.com/blog/?p=111) I wrote around August 2017. Due to the exponential growth of the community and users who want to run their own full node, I thought it is a good time to write a new, more comprehensive tutorial.
+My first `tutorial <https://x-vps.com/blog/?p=111>`_ I wrote around August 2017.
+Due to the exponential growth of the community and users who want to run their own full node, I thought it is a good time to write a new, more comprehensive tutorial.
 
 
 Why Another Tutorial?
@@ -86,6 +48,7 @@ I am hoping this tutorial will come in handy for those who posses less or almost
 I found that many tutorials lack some basic system configuration and explanations thereof. For example, running IRI as an unprivileged user, configuring firewalls, how to connect to it remotely and so on.
 
 A copy-paste tutorial is awesome, and as it so often happens, the user can miss on some basic technical explanation about the setup. While it is impossible to include a crash-course of Linux for the purpose of this tutorial, I will try to explain some basic concepts where I find that many users had troubles with.
+
 
 
 Disclaimer
@@ -120,7 +83,8 @@ If that is not the case run ``sudo su -`` to become root and enter the password 
 
 For **CentOS** you might need to install ``curl`` and ``screen`` before you can proceed:
 
-.. code-block:: bash
+.. code:: bash
+
    yum install curl screen -y
 
 
@@ -142,7 +106,7 @@ First, let's ensure the installation is running within a "screen" session. This 
 
 Now we can run the installer:
 
-.. code-block:: bash
+.. code:: bash
 
    bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
@@ -154,7 +118,8 @@ If you lost connection to your server during the installation, don't worry. It i
 
 You can always "reattach" back that session when you re-connect to your server:
 
-.. code-block:: bash
+.. code:: bash
+
    screen -r -d iota
 
 
@@ -170,16 +135,18 @@ Accessing Monitoring Graphs
 ***************************
 You can access the Grafana IOTA graphs using 'iotapm' and the password you've configured during the installaton 
 
-Big thanks to Chris Holliday's amazing tool for ,, _node monitoring: https://github.com/crholliday/iota-prom-exporter
 
   http://your-ip:5555
 
 
+Big thanks to Chris Holliday's amazing tool for `node monitoring <https://github.com/crholliday/iota-prom-exporter>`_
+
+|
 
 .. _overview:
 
 Overview
-********
+========
 
 
 
@@ -191,21 +158,34 @@ It will install IRI and IOTA peer manager, a web GUI with which you can view you
 
 # The Requirements
 
-* [Virtual Private Server](#virtual-private-server)
-* [Operating System](#operating-system)
-* [Accessing the VPS](#accessing-the-vps)
-* [System User](#system-user)
+* `Virtual Private Server`_
+* `Operating System`_
+* `Accessing the VPS`_
+* `System User`_
 
-## Virtual Private Server
+
+.. _virtualPrivateServer:
+
+Virtual Private Server
+^^^^^^^^^^^^^^^^^^^^^^
+
 This is probably the best and most common option for running a full node.
 I will not get into where or how to purchase a VPS (virtual private server). There are many companies offering a VPS for good prices. The basic recommendation is to have one with at least 4GB RAM, 2 cores and minimum 30GB harddrive (SSD preferably).
 
-## Operating System
+
+.. _operatingSystem:
+
+Operating System
+^^^^^^^^^^^^^^^^
 When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it. This tutorial currently supports CentOS (>=7) and Ubuntu (>=16).
 
 **Important**: this installation does not support operating systems with pre-installed panels such as cpane, whcms, plesk etc. If you can, choose a "bare" system.
 
-## Accessing the VPS
+
+.. _accessingTheVPS:
+
+Accessing the VPS
+^^^^^^^^^^^^^^^^^
 Once you have your VPS deployed, most hosting provide a terminal (either GUI application or web-based terminal). With the terminal you can login to your VPS's command line.
 You probably received a password with which you can login to the server. This can be a 'root' password, or a 'privileged' user (with which you can access 'root' privileges).
 
@@ -214,7 +194,11 @@ If your desktop is Mac or Linux, this is native on the command line. If you use 
 
 There are plenty of tutorials on the web explaining how to use SSH (or SSH via Putty). Basically, you can use a password login or SSH keys (better).
 
-## System User
+
+.. _systemUser:
+
+System User
+^^^^^^^^^^^
 Given you are the owner of the server, you should either have direct access to the 'root' account or to a user which is privileged.
 It is often recommended to run all commands as the privileges user, prefixing the commands with 'sudo'. In this tutorial I will leave it to the user to decide. 
 
@@ -222,11 +206,12 @@ If you accessed the server as a privileged user, and want to become 'root', you 
 Otherwise, you will have to prefix most commands with ``sudo``, e.g. 
 
 .. code-block:: bash
-   sudo apt-get install somepackage
+
+   sudo apt-get install something
 
 
-
-# Installation
+Installation
+************
 
 To prepare for running the automated "playbook" from this repository you require some basic packages.
 First, it is always a good practice to check for updates on the server.
@@ -253,7 +238,9 @@ and for **CentOS**:
 
 This will search for any packages to update on the system and require you to confirm the update.
 
-### Reboot Required?
+Reboot Required?
+^^^^^^^^^^^^^^^^
+
 Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
 
 For **Ubuntu** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``
@@ -264,13 +251,15 @@ For **Ubuntu** we can check if a reboot is required. Issue the command ``ls -l /
 
 If the file is found as seen here, you can issue a reboot (``shutdown -r now`` or simply ``reboot``).
 
-For **Centos** we have a few options how to check if a reboot is required. A simple one I've learned of recently is to install yum-utils:
+For **Centos** we have a few options how to check if a reboot is required.
 
 .. code-block:: bash
+
    yum install yum-utils -y
 
 There's a utility that comes with it, we can run ``needs-restarting  -r``:
 
+.. code-block:: bash
 
   # needs-restarting  -r
   Core libraries or services have been updated:
