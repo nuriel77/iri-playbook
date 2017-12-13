@@ -42,5 +42,6 @@ Work in progress
    getting-started-quickly
    requirements
    installation
+   post-installation
    disclaimer
 
