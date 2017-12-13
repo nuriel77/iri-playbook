@@ -56,7 +56,7 @@ Now we can run the installer:
    If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
 
 
-That's it. You can proceed to the `Post Installation`_ for additional information on managing your node.
+That's it. You can proceed to the :ref:`Post Installation`_ for additional information on managing your node.
 
 
 If you lost connection to your server during the installation, don't worry. It is running in the background because we are running it inside a "screen" session
