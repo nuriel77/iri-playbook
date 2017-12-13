@@ -11,7 +11,7 @@ IOTA Full Node Installation wiki
   :target: http://iri-playbook.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
-For a "click-'n-go" installation see gettingStartedQuickly_.
+For a "click-'n-go" installation see `Getting Started Quickly`_.
 
 In this installation we:
 
@@ -105,6 +105,7 @@ Good luck!
 
 
 .. _gettingStartedQuickly:
+
 Getting Started Quickly
 -----------------------
 
