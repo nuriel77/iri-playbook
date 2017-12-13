@@ -1,3 +1,7 @@
+.. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Iota_logo.png/320px-Iota_logo.png
+  :alt: IOTA Logo
+
+
 Welcome to IOTA Full Node Documentation
 =======================================
 
@@ -5,9 +9,6 @@ Welcome to IOTA Full Node Documentation
   :target: http://iri-playbook.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
-
-.. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Iota_logo.png/320px-Iota_logo.png
-  :alt: IOTA Logo
 
 Purpose
 -------
