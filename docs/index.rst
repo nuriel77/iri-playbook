@@ -34,18 +34,15 @@ Work in progress:
 |
 
 
-.. toctree::
-      :maxdepth: 2
-
-############
+************
 Introduction
-############
+************
 My first `tutorial <https://x-vps.com/blog/?p=111>`_ I wrote around August 2017.
 Due to the exponential growth of the community and users who want to run their own full node, I thought it is a good time to write a new, more comprehensive tutorial.
 
 
 Why Another Tutorial?
-*********************
+=====================
 
 I am hoping this tutorial will come in handy for those who posses less or almost no skills with Linux. And indeed, this tutorial focuses on Linux -- as suggested by many other tutorials (and justifiably), Linux is the best way to go.
 
@@ -73,9 +70,9 @@ Good luck!
 
 .. _gettingStartedQuickly:
 
-#######################
+***********************
 Getting Started Quickly
-#######################
+***********************
 
 You can skip most of the information in this tutorial should you wish to do so and go straight ahead to install the full node.
 
@@ -100,10 +97,14 @@ If you are missing these utilities on **Ubuntu** you can install them:
   apt-get install curl screen -y
 
 
-**Important**: your server's installation of Ubuntu or CentOS must be a "clean" one -- no pre-installed cpanel, whcms, plesk and so on.
+.. note:
+
+   your server's installation of Ubuntu or CentOS must be a "clean" one -- no pre-installed cpanel, whcms, plesk and so on.
+
+
 
 Run the Installer!
-******************
+==================
 
 First, let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to the server breaks:
 
@@ -118,9 +119,14 @@ Now we can run the installer:
 
    bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
-If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
+
+.. note::
+
+   If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
+
 
 That's it. You can proceed to the `Post Installation`_ for additional information on managing your node.
+
 
 If you lost connection to your server during the installation, don't worry. It is running in the background because we are running it inside a "screen" session.
 
@@ -157,8 +163,7 @@ Big thanks to Chris Holliday's amazing tool for `node monitoring <https://github
 .. _overview:
 
 Overview
-########
-
+********
 
 
 This tutorial will help you setup a full node on a Linux system (Ubuntu or CentOS).
@@ -167,7 +172,8 @@ I hope to be adding other distributions like Debian in the future.
 
 It will install IRI and IOTA peer manager, a web GUI with which you can view your neighbors, add or remove neighbors, view the sync etc.
 
-# The Requirements
+The Requirements
+================
 
 * `Virtual Private Server`_
 * `Operating System`_
@@ -178,7 +184,7 @@ It will install IRI and IOTA peer manager, a web GUI with which you can view you
 .. _virtualPrivateServer:
 
 Virtual Private Server
-""""""""""""""""""""""
+----------------------
 
 This is probably the best and most common option for running a full node.
 I will not get into where or how to purchase a VPS (virtual private server). There are many companies offering a VPS for good prices. The basic recommendation is to have one with at least 4GB RAM, 2 cores and minimum 30GB harddrive (SSD preferably).
@@ -187,7 +193,7 @@ I will not get into where or how to purchase a VPS (virtual private server). The
 .. _operatingSystem:
 
 Operating System
-""""""""""""""""
+----------------
 When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it. This tutorial currently supports CentOS (>=7) and Ubuntu (>=16).
 
 **Important**: this installation does not support operating systems with pre-installed panels such as cpane, whcms, plesk etc. If you can, choose a "bare" system.
@@ -196,7 +202,7 @@ When you purchase a VPS you are often given the option which operating system (L
 .. _accessingTheVPS:
 
 Accessing the VPS
-"""""""""""""""""
+-----------------
 Once you have your VPS deployed, most hosting provide a terminal (either GUI application or web-based terminal). With the terminal you can login to your VPS's command line.
 You probably received a password with which you can login to the server. This can be a 'root' password, or a 'privileged' user (with which you can access 'root' privileges).
 
@@ -209,7 +215,7 @@ There are plenty of tutorials on the web explaining how to use SSH (or SSH via P
 .. _systemUser:
 
 System User
-"""""""""""
+-----------
 Given you are the owner of the server, you should either have direct access to the 'root' account or to a user which is privileged.
 It is often recommended to run all commands as the privileges user, prefixing the commands with 'sudo'. In this tutorial I will leave it to the user to decide. 
 
@@ -221,8 +227,9 @@ Otherwise, you will have to prefix most commands with ``sudo``, e.g.
    sudo apt-get install something
 
 
+
 Installation
-############
+************
 
 To prepare for running the automated "playbook" from this repository you require some basic packages.
 First, it is always a good practice to check for updates on the server.
@@ -244,7 +251,7 @@ and for **CentOS**:
 This will search for any packages to update on the system and require you to confirm the update.
 
 Reboot Required?
-^^^^^^^^^^^^^^^^
+----------------
 
 Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
 
@@ -284,88 +291,117 @@ There's a utility that comes with it, we can run ``needs-restarting  -r``:
 As you can see, a reboot is required (do so by issuing a ``reboot`` or ``shutdown -r now``)
 
 
-## Installing Ansible
+Installing Ansible
+------------------
 Ansible is an awesome software used to automate configuration and/or deployment of services.
 This repository contains what Ansible refers to as a "Playbook" which is a set of instructions on how to configure the system.
 
 This playbook installs required dependencies, the IOTA IRI package and IOTA Peer Manager.
 In addition, it configures firewalls and places some handy files for us to control these services.
 
-To install Ansible on **Ubuntu** I refer to the [official documentation](http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt-ubuntu):
-```sh
-apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git -y
-```
+To install Ansible on **Ubuntu** I refer to the `official documentation <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt-ubuntu>`_:
+
+.. code:: bash
+
+   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git -y
+
 
 For **CentOS**, simply run:
-```sh
-yum install ansible git nano -y
-```
+
+.. code:: bash
+
+   yum install ansible git nano -y
+
 You will notice I've added 'git' which is required (at least on CentOS it doesn't have it pre-installed as in Ubuntu).
 In addition, I've added 'nano' which is helpful for beginners to edit files with (use vi or vim if you are adventurous).
 
-## Cloning the Repository
+
+Cloning the Repository
+----------------------
 To clone, run:
-```sh
-git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
-```
+
+.. code:: bash
+
+   git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
+
 This will pull the repository to the directory in which you are and move you into the repository's directory.
 
-## Configuring Values
+Configuring Values
+------------------
 There are some values you can tweak before the installation runs.
 There are two files you can edit:
-```sh
-group_vars/all/iri.yml
-```
+
+.. code:: bash
+   group_vars/all/iri.yml
+
 and
-```sh
-group_vars/all/iotapm.yml
-```
+
+.. code:: bash
+
+   group_vars/all/iotapm.yml
+
 (Use 'nano' or 'vi' to edit the files)
 
 These files have comments above each option to help you figure out if anything needs to be modified.
-In particular, look at the `iri_java_mem` and `iri_init_java_mem`. Depending on how much RAM your server has, you should set these accordingly.
+In particular, look at the ``iri_java_mem`` and ``iri_init_java_mem``.
+Depending on how much RAM your server has, you should set these accordingly.
 
 For example, if your server has 4096MB (4GB memory), a good setting would be:
-```sh
-iri_java_mem: 3072
-iri_init_java_mem: 256
-```
+
+.. code:: bash
+
+   iri_java_mem: 3072
+   iri_init_java_mem: 256
+
 Just leave some room for the operating system and other processes.
 You will also be able to tweak this after the installation, so don't worry about it too much.
 
-### Set IOTA PM Access Password
+Set IOTA PM Access Password
+---------------------------
 Very important value to set before the installation is the password and/or username with which you can access IOTA Peer Manager on the browser.
 
-Edit the `group_vars/all/iotapm.yml` file and set a user and (strong!) password of your choice:
-```sh
-iotapm_nginx_user: someuser
-iotapm_nginx_password: 'put-a-strong-password-here'
-```
+Edit the ``group_vars/all/iotapm.yml`` file and set a user and (strong!) password of your choice:
+
+.. code:: bash
+
+   iotapm_nginx_user: someuser
+   iotapm_nginx_password: 'put-a-strong-password-here'
+
 
 If you already finished the installation and would like to add an additional user to access IOTA PM, run:
-```sh
-htpasswd /etc/nginx/.htpasswd newuser
-```
+
+.. code:: bash
+
+   htpasswd /etc/nginx/.htpasswd newuser
+
 Replace 'newuser' with the user name of your choice. You will be prompted for a password.
 
 To remove a user from authenticating:
-```sh
-htpasswd -D /etc/nginx/.htpasswd username
-```
+
+.. code:: bash
+
+   htpasswd -D /etc/nginx/.htpasswd username
 
 
-## Running the Playbook
+
+Running the Playbook
+--------------------
+
 Two prerequisites here: you have already installed Ansible and cloned the playbook's repository.
 
 By default, the playbook will run locally on the server where you've cloned it to.
 You can run it:
-```sh
-ansible-playbook -i inventory site.yml
-```
+
+.. code:: bash
+
+   ansible-playbook -i inventory site.yml
+
 Or, for more verbose output add the `-v` flag:
-```sh
-ansible-playbook -i inventory -v site.yml
-```
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml
+
 
 This can take a while as it has to install packages, download IRI and compile it.
 Hopefully this succeeds without any errors (create a git Issue if it does, I will try to help).
@@ -375,21 +411,23 @@ Please go over the Post Installation chapters to verify everything is working pr
 Also note that after having added neighbors, it might take some time to fully sync the node.
 
 
-# Post Installation
+Post Installation
+*****************
+
 We can run a few checks to verify everything is running as expected.
 First, let's use the 'systemctl' utility to check status of iri (this is the main full node application)
 
-Using the `systemctl status iri` we can see if the process is `Active: active (running)`.
+Using the ``systemctl status iri`` we can see if the process is ``Active: active (running)``.
 
 See examples in the chapters below:
 
-* [Controlling IRI](#controlling-iri)
-* [Controlling IOTA Peer Manager](#controlling-iota-peer-manager)
-* [Checking Ports](#checking-ports)
-* [Checking IRI Full Node Status](#checking-iri-full-node-status)
-* [Connecting to IOTA Peer Manager](#connecting-to-iota-peer-manager)
-* [Adding or Removing Neighbors](#adding-or-removing-neighbors)
-* [Install IOTA Python libs](#install-iota-python-libs)
+* `Controlling IRI`_
+* `Controlling IOTA Peer Manager`_
+* `Checking Ports`_
+* `Checking IRI Full Node Status`_
+* `Connecting to IOTA Peer Manager`_
+* `Adding or Removing Neighbors`_
+* `Install IOTA Python libs`_
 
 
 ## Controlling IRI
