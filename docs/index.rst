@@ -79,7 +79,7 @@ My first [tutorial](https://x-vps.com/blog/?p=111) I wrote around August 2017. D
 
 
 Why Another Tutorial?
-=====================
+*********************
 
 I am hoping this tutorial will come in handy for those who posses less or almost no skills with Linux. And indeed, this tutorial focuses on Linux -- as suggested by many other tutorials (and justifiably), Linux is the best way to go.
 
@@ -106,36 +106,41 @@ Good luck!
 
 .. _gettingStartedQuickly:
 
+#######################
 Getting Started Quickly
-***********************
+#######################
 
 You can skip most of the information in this tutorial should you wish to do so and go straight ahead to install the full node.
 
 There are just two little things you need to do first:
 
-Once you are logged in to your server, make sure you are root (run `whoami`).
-If that is not the case run `sudo su -` to become root and enter the password if you are required to do so.
+Once you are logged in to your server, make sure you are root (run ``whoami``).
+If that is not the case run ``sudo su -`` to become root and enter the password if you are required to do so.
 
-For **CentOS** you might need to install 'curl' and 'screen' before you can proceed:
-```sh
-yum install curl screen -y
-```
+
+For **CentOS** you might need to install ``curl`` and ``screen`` before you can proceed:
+
+  yum install curl screen -y
+
+
 If you are missing these utilities on **Ubuntu** you can install them:
-```sh
-apt-get install curl screen -y
-```
+
+  apt-get install curl screen -y
+
 **Important**: your server's installation of Ubuntu or CentOS must be a "clean" one -- no pre-installed cpanel, whcms, plesk and so on.
 
-### Run the Installer!
+Run the Installer!
+******************
+
 First, let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to the server breaks:
-```sh
-screen -S iota
-```
+
+  screen -S iota
+
 
 Now we can run the installer:
-```sh
-bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
-```
+
+  bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+
 If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
 
 That's it. You can proceed to the [Post Installation](#post-installation) for additional information on managing your node.
@@ -143,24 +148,26 @@ That's it. You can proceed to the [Post Installation](#post-installation) for ad
 If you lost connection to your server during the installation, don't worry. It is running in the background because we are running it inside a "screen" session.
 
 You can always "reattach" back that session when you re-connect to your server:
-```sh
-screen -r -d iota
-```
+
+  screen -r -d iota
 
 
-#### Accessing Peer Manager
+
+Accessing Peer Manager
+**********************
 You can access the peer manager using the user 'iotapm' and the password you've configured during installation:
-```sh
-http://your-ip:8811
-```
 
-#### Accessing Monitoring Graphs
+  http://your-ip:8811
+
+
+Accessing Monitoring Graphs
+***************************
 You can access the Grafana IOTA graphs using 'iotapm' and the password you've configured during the installaton 
 
 Big thanks to Chris Holliday's amazing tool for node monitoring: https://github.com/crholliday/iota-prom-exporter
-```sh
-http://your-ip:5555
-```
+
+  http://your-ip:5555
+
 
 
 .. _overview:
