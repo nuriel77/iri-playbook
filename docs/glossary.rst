@@ -1,3 +1,5 @@
+.. _glossary:
+
 Command Glossary
 ****************
 This is a collection of most command commands to come in handy.

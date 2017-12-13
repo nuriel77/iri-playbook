@@ -1,3 +1,5 @@
+.. _introduction:
+
 Introduction
 ************
 My first `tutorial <https://x-vps.com/blog/?p=111>`_ I wrote around August 2017.

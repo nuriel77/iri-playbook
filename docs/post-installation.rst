@@ -19,6 +19,8 @@ See examples in the chapters below:
 * `Install IOTA Python libs`_
 
 
+.. controlingIRI::
+
 Controlling IRI
 ===============
 Check status:
@@ -48,6 +50,8 @@ Restart:
 
    systemctl restart iri
 
+
+.. controlingPM::
 
 Controlling IOTA Peer Manager
 =============================
@@ -80,6 +84,7 @@ Restart:
    systemctl restart iota-pm
 
 
+.. checkPorts::
 
 Checking Ports
 ==============
@@ -142,6 +147,8 @@ Note that the playbook installation automatically configured the firewall to all
 allow the new ports in the firewall (if you choose to do so, check google for iptables or firewalld commands).
 
 
+.. checkFullNode::
+
 Checking IRI Full Node Status
 =============================
 The tool ``curl`` can issue commands to the IRI API.
@@ -165,11 +172,15 @@ Using ``jq`` we can, for example, extract the fields of interest:
   This is expected, and after a while (10-15 minutes) your node should start syncing (given that you have neighbors).
 
 
+.. connectPeerManager::
+
 Connecting to IOTA Peer Manager
 ===============================
 
 For IOTA Peer Manager, this installation has already configured it to be accessible via a webserver. See `Peer Manager Behind WebServer with Password`_.
 
+
+.. addRemoveNeighbors::
 
 Adding or Removing Neighbors
 ============================
@@ -219,6 +230,8 @@ In Ubuntu:
 
 Edit the ``IRI_NEIGHBORS=""`` value as shown in the comment in the file.
 
+
+.. installPyota::
 
 Install IOTA Python libs
 ========================

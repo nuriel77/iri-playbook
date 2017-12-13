@@ -1,3 +1,5 @@
+.. _maintenance:
+
 Maintenance
 ***********
 
@@ -5,6 +7,7 @@ Maintenance
 * `Check Database Size`_
 * `Check Logs`_
 * `Replace Database`_
+
 
 .. upgradeIri::
 
@@ -43,6 +46,9 @@ This requires a iri restart (systemctl restart iri).
   The foundation normally announces additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
   Such options can be specified in the ``OPTIONS=""`` value in the same file.
 
+
+.. checkDatabaseSize:: 
+
 Check Database Size
 ===================
 You can check the size of the database using ``du -hs /var/lib/iri/target/mainnetdb/``, e.g.::
@@ -76,6 +82,9 @@ For iota-pm:
 Click 'Ctrl-C' to stop following and return to the prompt.
 
 Alternatively, omit the ``-f`` and use ``--no-pager`` to view the logs.
+
+
+.. replaceDatabase::
 
 Replace Database
 ================

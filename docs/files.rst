@@ -1,3 +1,5 @@
+.. _files:
+
 Files and Locations
 *******************
 Here's a list of files and locations that might be useful to know:

@@ -1,3 +1,5 @@
+.. _requirements:
+
 The Requirements
 ================
 
@@ -24,8 +26,9 @@ Operating System
 When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it. This tutorial currentl
 y supports CentOS (>=7) and Ubuntu (>=16).
 
-**Important**: this installation does not support operating systems with pre-installed panels such as cpane, whcms, plesk etc. If you can, choose a "bare" syst
-em.
+.. note::
+
+  This installation does not support operating systems with pre-installed panels such as cpane, whcms, plesk etc. If you can, choose a "bare" system.
 
 
 .. _accessingTheVPS:
@@ -38,8 +41,7 @@ You probably received a password with which you can login to the server. This ca
 ' privileges).
 
 The best way to access the server is via a Secure Shell (SSH).
-If your desktop is Mac or Linux, this is native on the command line. If you use Windows, I recommend installing .. _Putty: https://www.chiark.greenend.org.uk/~
-sgtatham/putty/latest.html
+If your desktop is Mac or Linux, this is native on the command line. If you use Windows, I recommend installing `Putty <https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html>`_
 
 There are plenty of tutorials on the web explaining how to use SSH (or SSH via Putty). Basically, you can use a password login or SSH keys (better).
 

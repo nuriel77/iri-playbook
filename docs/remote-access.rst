@@ -1,3 +1,5 @@
+.. _remote_access:
+
 Full Node Remote Access
 ***********************
 

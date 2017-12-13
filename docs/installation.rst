@@ -1,3 +1,5 @@
+.. _installation:
+
 Installation
 ************
 
@@ -25,7 +27,7 @@ Reboot Required?
 
 Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
 
-For **Ubuntu** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``
+For **Ubuntu** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``::
 
   # ls -l /var/run/reboot-required
   -rw-r--r-- 1 root root 32 Dec  8 10:09 /var/run/reboot-required
