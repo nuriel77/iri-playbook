@@ -79,7 +79,7 @@ My first [tutorial](https://x-vps.com/blog/?p=111) I wrote around August 2017. D
 
 
 Why Another Tutorial?
----------------------
+=====================
 
 I am hoping this tutorial will come in handy for those who posses less or almost no skills with Linux. And indeed, this tutorial focuses on Linux -- as suggested by many other tutorials (and justifiably), Linux is the best way to go.
 
@@ -89,7 +89,7 @@ A copy-paste tutorial is awesome, and as it so often happens, the user can miss 
 
 
 Disclaimer
-----------
+==========
 * This tutorial is based on the repository's Ansible-playbook I provided. It has been tested on CentOS 7.4 and Ubuntu 16.04.
 * This tutorial does not include information on how to harden security on your server.
 * For some details I will leave it to you to google (for example, how to SSH access your server). Otherwise the tutorial becomes too lofty.
@@ -107,7 +107,7 @@ Good luck!
 .. _gettingStartedQuickly:
 
 Getting Started Quickly
------------------------
+***********************
 
 You can skip most of the information in this tutorial should you wish to do so and go straight ahead to install the full node.
 
@@ -163,9 +163,10 @@ http://your-ip:5555
 ```
 
 
+.. _overview:
 
-# Overview
-
+Overview
+********
 
 
 
