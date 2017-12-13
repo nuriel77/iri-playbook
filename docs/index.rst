@@ -1,7 +1,5 @@
-Welcome to Read The Docs
-========================
-
-|docs|
+Welcome to IOTA Full Node Documentation
+=======================================
 
 Purpose
 -------
