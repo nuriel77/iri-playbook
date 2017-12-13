@@ -3,7 +3,6 @@
 
 |
 
-################################
 IOTA Full Node Installation wiki
 ################################
 
@@ -34,11 +33,11 @@ Work in progress:
 |
 
 .. toctree::
-         :maxdepth: 2
+   :maxdepth: 2
 
-   getting-started-quickly
+    getting-started-quickly
 
-************
+
 Introduction
 ************
 My first `tutorial <https://x-vps.com/blog/?p=111>`_ I wrote around August 2017.
