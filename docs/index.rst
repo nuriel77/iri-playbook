@@ -33,6 +33,11 @@ Work in progress:
 
 |
 
+.. toctree::
+         :maxdepth: 2
+
+   getting-started-quickly
+
 ************
 Introduction
 ************
@@ -66,9 +71,4 @@ all ports if not necessary.
 Feel free to comment, create issues or contact me on IOTA's slack channel (nuriel77) for advice and information.
 
 Good luck!
-
-.. toctree::
-   :maxdepth: 2
-
-   getting-started-quickly
 
