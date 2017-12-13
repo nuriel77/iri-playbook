@@ -1,5 +1,9 @@
 ![IOTA](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Iota_logo.png/320px-Iota_logo.png)
 
+.. image:: https://readthedocs.org/projects/iri-playbook/badge/?version=latest
+  :target: http://iri-playbook.readthedocs.io/en/latest/?badge=latest
+  :alt: Documentation Status
+
 # Welcome to the IOTA Full Node Installation wiki!
 
 For a "click-'n-go" installation skip to: [Getting Started Quickly](#getting-started-quickly)
