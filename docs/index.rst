@@ -43,5 +43,11 @@ Work in progress
    requirements
    installation
    post-installation
+   remote-access
+   files
+   maintenance
+   faq
+   glossary
+   donations
    disclaimer
 

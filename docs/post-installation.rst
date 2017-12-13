@@ -107,10 +107,13 @@ What does this tell us?
 2. IRI is listening for API (or wallet connections) on a local interface (not accessible from "outside") no. 14265
 3. Iota-PM is listening on local interface port no. 8011
 
-This is great. 
+Now we can tell new neighbors to connect to our IP address.
 
-We can now tell new neighbors to connect to our IP (what is your IP? If you have a static IP - which a VPS most probably has - you can view it by issuing a ``ip a``).
 
+
+Here's how to check your IP address:
+
+If you have a static IP - which a VPS most probably has - you can view it by issuing a ``ip a``.
 For example::
 
   ip a
@@ -154,8 +157,10 @@ Using ``jq`` we can, for example, extract the fields of interest:
    curl -s http://localhost:14265 -X POST -H 'X-IOTA-API-Version: someval' -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}' | jq '.latestSolidSubtangleMilestoneIndex, .latestMilestoneIndex'
 
 
-Something worth mentioning is: if you've just started up your IRI node (or restarted) you will see a matching low number for both ``latestSolidSubtangleMilestoneIndex`` and ``latestMilestoneIndex``.
-This is expected, and after a while (10-15 minutes) your node should start syncing (given that you have neighbors).
+.. note::
+
+  If you've just started up your IRI node (or restarted) you will see a matching low number for both ``latestSolidSubtangleMilestoneIndex`` and ``latestMilestoneIndex``.
+  This is expected, and after a while (10-15 minutes) your node should start syncing (given that you have neighbors).
 
 
 Connecting to IOTA Peer Manager
@@ -175,7 +180,6 @@ To use the command line you can use a script that was shipped with this installa
    nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321
 
 The script will default to connect to IRI API on ``http://localhost:14265``.
-
 If you need to connect to a different endpoint you can provide it via ``-i http://my-node-address:port``.
 
 If you don't have this helper script you will need to run a ``curl`` command, e.g. to add:
@@ -200,6 +204,7 @@ to remove:
 The reason to add it to the configuration file is that after a restart of IRI, any neighbors added with the peer manager will be gone.
 
 In CentOS you can add neighbors to the file:
+
 .. code:: bash
 
    /etc/sysconfig/iri
@@ -239,5 +244,9 @@ On **CentOS** this is a little more complicated, and better install pyota in a "
   pip install pip --upgrade
   pip install pyota
 
-Now you can test by running the reattach script as shown above. Note that if you log in back to your node you will have to run the ``source ~/venv/bin/activate`` to switch to the new python virtual environment.
+Now you can test by running the reattach script as shown above. 
+
+.. note::
+
+   Note that if you log in back to your node you will have to run the ``source ~/venv/bin/activate`` to switch to the new python virtual environment.
 
