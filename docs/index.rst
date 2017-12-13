@@ -48,6 +48,5 @@ Work in progress
    maintenance
    faq
    glossary
-   donations
    disclaimer
-
+   donations
