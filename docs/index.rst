@@ -22,7 +22,7 @@ In this installation we:
 * Install IOTA Peer Manager
 * Make IOTA Peer Manager accessible via the browser
 * Password protect IOTA Peer Manager
-* Install monitoring graphs. Big thanks to Chris Holliday's .. `_IOTA exporter`: https://github.com/crholliday/iota-prom-exporter
+* Install monitoring graphs. Big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
 
 Work in progress:
 
@@ -136,12 +136,14 @@ Run the Installer!
 First, let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to the server breaks:
 
 .. code:: bash
-    screen -S iota
+
+   screen -S iota
 
 
 Now we can run the installer:
 
 .. code-block:: bash
+
    bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
 If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
