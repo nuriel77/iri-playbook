@@ -36,8 +36,8 @@ If you are missing these utilities on **Ubuntu** you can install them:
 Run the Installer!
 ==================
 
-First, let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to
- the server breaks:
+First, let's ensure the installation is running within a "screen" session.
+This ensures that the installer stays running in the background if the connection to the server breaks:
 
 .. code:: bash
 

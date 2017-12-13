@@ -38,5 +38,9 @@ Work in progress
    :maxdepth: 2
 
    introduction
+   overview
    getting-started-quickly
+   requirements
+   installation
+   disclaimer
 
