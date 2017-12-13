@@ -22,7 +22,7 @@ In this installation we:
 * Install IOTA Peer Manager
 * Make IOTA Peer Manager accessible via the browser
 * Password protect IOTA Peer Manager
-* **NEW**: Install monitoring graphs (big thanks to Chris Holliday's IOTA exporter: https://github.com/crholliday/iota-prom-exporter)
+* Install monitoring graphs (big thanks to Chris Holliday's IOTA exporter: https://github.com/crholliday/iota-prom-exporter)
 
 Work in progress:
 
@@ -77,9 +77,9 @@ Introduction
 ############
 My first [tutorial](https://x-vps.com/blog/?p=111) I wrote around August 2017. Due to the exponential growth of the community and users who want to run their own full node, I thought it is a good time to write a new, more comprehensive tutorial.
 
-=====================
+
 Why Another Tutorial?
-=====================
+---------------------
 
 I am hoping this tutorial will come in handy for those who posses less or almost no skills with Linux. And indeed, this tutorial focuses on Linux -- as suggested by many other tutorials (and justifiably), Linux is the best way to go.
 
@@ -87,9 +87,9 @@ I found that many tutorials lack some basic system configuration and explanation
 
 A copy-paste tutorial is awesome, and as it so often happens, the user can miss on some basic technical explanation about the setup. While it is impossible to include a crash-course of Linux for the purpose of this tutorial, I will try to explain some basic concepts where I find that many users had troubles with.
 
-==========
+
 Disclaimer
-==========
+----------
 * This tutorial is based on the repository's Ansible-playbook I provided. It has been tested on CentOS 7.4 and Ubuntu 16.04.
 * This tutorial does not include information on how to harden security on your server.
 * For some details I will leave it to you to google (for example, how to SSH access your server). Otherwise the tutorial becomes too lofty.
