@@ -1,6 +1,9 @@
 Welcome to IOTA Full Node Documentation
 ===========================
 
+[![Documentation Status](https://readthedocs.org/projects/iri-playbook/badge/?version=latest)](http://iri-playbook.readthedocs.io/en/latest/?badge=latest)
+
+
 Purpose
 -------
 
