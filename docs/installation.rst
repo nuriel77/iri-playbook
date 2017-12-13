@@ -72,8 +72,7 @@ To install Ansible on **Ubuntu** I refer to the `official documentation <http://
 
 .. code:: bash
 
-   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && ap
-t-get update -y && apt-get install ansible git -y
+   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git -y
 
 
 For **CentOS**, simply run:
@@ -102,7 +101,8 @@ There are some values you can tweak before the installation runs.
 There are two files you can edit:
 
 .. code:: bash
-      group_vars/all/iri.yml
+
+   group_vars/all/iri.yml
 
 and
 
