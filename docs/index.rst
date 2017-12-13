@@ -4,7 +4,9 @@
   :target: http://iri-playbook.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
-# Welcome to the IOTA Full Node Installation wiki!
+================================================
+Welcome to the IOTA Full Node Installation wiki!
+================================================
 
 For a "click-'n-go" installation skip to: [Getting Started Quickly](#getting-started-quickly)
 
