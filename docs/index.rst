@@ -1,6 +1,8 @@
 .. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Iota_logo.png/320px-Iota_logo.png
    :alt: IOTA
 
+|
+
 ################################
 IOTA Full Node Installation wiki
 ################################
@@ -12,6 +14,7 @@ IOTA Full Node Installation wiki
 For a "click-'n-go" installation see: :ref:`getting-started-quickly`
 
 In this installation we:
+
 * Automate the installation
 * Take care of firewalls
 * Automatically configure the java memory limit based on your system's RAM
@@ -22,11 +25,13 @@ In this installation we:
 * **NEW**: Install monitoring graphs (big thanks to Chris Holliday's IOTA exporter: https://github.com/crholliday/iota-prom-exporter)
 
 Work in progress:
+
 * Integrate alerting/notifications when node is not healthy
 * Instead of compiling IRI, download the jar to expedite the installation a bit
 * Security hardening steps
 * Make it possible to install graphs for those who already did this installation. At the moment nodejs version will conflict.
 
+|
 
 * [Introduction](#introduction)
 * [Getting Started Quickly](#getting-started-quickly)
