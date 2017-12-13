@@ -33,6 +33,8 @@ Work in progress:
 
 |
 
+.. toctree::
+      :maxdepth: 2
 
 ************
 Introduction
@@ -410,6 +412,7 @@ Please go over the Post Installation chapters to verify everything is working pr
 
 Also note that after having added neighbors, it might take some time to fully sync the node.
 
+.. postInstallation::
 
 Post Installation
 *****************
