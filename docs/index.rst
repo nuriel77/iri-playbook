@@ -1,5 +1,5 @@
 Welcome to IOTA Full Node Documentation
-=======================================
+===========================
 
 Purpose
 -------
@@ -11,4 +11,4 @@ own full node running on a Linux machine.
 Documentaion
 ------------
 
-TODO: Index links here
+TODO: Index links here?!?!?!
