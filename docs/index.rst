@@ -1,12 +1,13 @@
-![IOTA](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Iota_logo.png/320px-Iota_logo.png)
-
-.. image:: https://readthedocs.org/projects/iri-playbook/badge/?version=latest
-  :target: http://iri-playbook.readthedocs.io/en/latest/?badge=latest
-  :alt: Documentation Status
+.. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Iota_logo.png/320px-Iota_logo.png
+   :alt: IOTA
 
 ################################
 IOTA Full Node Installation wiki
 ################################
+
+.. image:: https://readthedocs.org/projects/iri-playbook/badge/?version=latest
+  :target: http://iri-playbook.readthedocs.io/en/latest/?badge=latest
+  :alt: Documentation Status
 
 For a "click-'n-go" installation see: :ref:`getting-started-quickly`
 
@@ -83,7 +84,7 @@ A copy-paste tutorial is awesome, and as it so often happens, the user can miss 
 
 ==========
 Disclaimer
-=========
+==========
 * This tutorial is based on the repository's Ansible-playbook I provided. It has been tested on CentOS 7.4 and Ubuntu 16.04.
 * This tutorial does not include information on how to harden security on your server.
 * For some details I will leave it to you to google (for example, how to SSH access your server). Otherwise the tutorial becomes too lofty.
