@@ -90,7 +90,11 @@ For **CentOS** you might need to install ``curl`` and ``screen`` before you can 
 
 If you are missing these utilities on **Ubuntu** you can install them:
 
+
+.. code:: bash
+
   apt-get install curl screen -y
+
 
 **Important**: your server's installation of Ubuntu or CentOS must be a "clean" one -- no pre-installed cpanel, whcms, plesk and so on.
 
@@ -112,7 +116,7 @@ Now we can run the installer:
 
 If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
 
-That's it. You can proceed to the [Post Installation](#post-installation) for additional information on managing your node.
+That's it. You can proceed to the `Post Installation`_ for additional information on managing your node.
 
 If you lost connection to your server during the installation, don't worry. It is running in the background because we are running it inside a "screen" session.
 
@@ -125,16 +129,19 @@ You can always "reattach" back that session when you re-connect to your server:
 
 
 Accessing Peer Manager
-**********************
+^^^^^^^^^^^^^^^^^^^^^^
 You can access the peer manager using the user 'iotapm' and the password you've configured during installation:
+
+.. code:: bash
 
   http://your-ip:8811
 
 
 Accessing Monitoring Graphs
-***************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You can access the Grafana IOTA graphs using 'iotapm' and the password you've configured during the installaton 
 
+.. code:: bash
 
   http://your-ip:5555
 
@@ -146,7 +153,7 @@ Big thanks to Chris Holliday's amazing tool for `node monitoring <https://github
 .. _overview:
 
 Overview
-========
+########
 
 
 
@@ -167,7 +174,7 @@ It will install IRI and IOTA peer manager, a web GUI with which you can view you
 .. _virtualPrivateServer:
 
 Virtual Private Server
-^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""
 
 This is probably the best and most common option for running a full node.
 I will not get into where or how to purchase a VPS (virtual private server). There are many companies offering a VPS for good prices. The basic recommendation is to have one with at least 4GB RAM, 2 cores and minimum 30GB harddrive (SSD preferably).
@@ -176,7 +183,7 @@ I will not get into where or how to purchase a VPS (virtual private server). The
 .. _operatingSystem:
 
 Operating System
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it. This tutorial currently supports CentOS (>=7) and Ubuntu (>=16).
 
 **Important**: this installation does not support operating systems with pre-installed panels such as cpane, whcms, plesk etc. If you can, choose a "bare" system.
@@ -185,7 +192,7 @@ When you purchase a VPS you are often given the option which operating system (L
 .. _accessingTheVPS:
 
 Accessing the VPS
-^^^^^^^^^^^^^^^^^
+"""""""""""""""""
 Once you have your VPS deployed, most hosting provide a terminal (either GUI application or web-based terminal). With the terminal you can login to your VPS's command line.
 You probably received a password with which you can login to the server. This can be a 'root' password, or a 'privileged' user (with which you can access 'root' privileges).
 
@@ -198,7 +205,7 @@ There are plenty of tutorials on the web explaining how to use SSH (or SSH via P
 .. _systemUser:
 
 System User
-^^^^^^^^^^^
+"""""""""""
 Given you are the owner of the server, you should either have direct access to the 'root' account or to a user which is privileged.
 It is often recommended to run all commands as the privileges user, prefixing the commands with 'sudo'. In this tutorial I will leave it to the user to decide. 
 
@@ -211,19 +218,13 @@ Otherwise, you will have to prefix most commands with ``sudo``, e.g.
 
 
 Installation
-************
+############
 
 To prepare for running the automated "playbook" from this repository you require some basic packages.
 First, it is always a good practice to check for updates on the server.
 
-* [Update System Packages](#update-system-packages)
-* [Installing Ansible](#installing-ansible)
-* [Cloning the Repository](#cloning-the-repository)
-* [Configuring Values](#configuring-values)
-    * [Set IOTA PM Access Password](#set-iota-pm-access-password)
-* [Running the Playbook](#running-the-playbook)
-
-## Update System Packages
+Update System Packages
+======================
 
 For **Ubuntu** we can type:
 
