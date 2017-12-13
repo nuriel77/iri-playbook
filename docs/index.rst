@@ -22,7 +22,7 @@ In this installation we:
 * Install IOTA Peer Manager
 * Make IOTA Peer Manager accessible via the browser
 * Password protect IOTA Peer Manager
-* Install monitoring graphs (big thanks to Chris Holliday's IOTA exporter: https://github.com/crholliday/iota-prom-exporter)
+* Install monitoring graphs. Big thanks to Chris Holliday's .. _IOTA exporter: https://github.com/crholliday/iota-prom-exporter
 
 Work in progress:
 
