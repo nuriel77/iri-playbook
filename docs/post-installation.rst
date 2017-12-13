@@ -1,3 +1,5 @@
+.. _post_installation:
+
 Post Installation
 *****************
 
