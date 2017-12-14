@@ -24,7 +24,7 @@ The basic recommendation is to have one with at least 4GB RAM, 2 cores and minim
 
    At time of writing (December 2018) many users are experiencing out-of-memory errors with 4GB RAM. This should be remedied by next snapshot.
 
-.. note::
+.. warning::
 
    Some VPS providers provide a custom OS installation (Ubuntu or CentOS) with additional software installed (cpanel etc).
    These images will not work nicely with the installer.
