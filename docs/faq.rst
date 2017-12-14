@@ -150,37 +150,54 @@ https://iota.lukaseder.de/download.html
 
 Please consider donating them some iotas for the costs involved in making this possible.
 
-1. You can download the database using the following command::
+1. You can download the database using the following command:
+
+.. code:: bash
 
   cd /var/lib/iri/target && curl --output db.tar.gz https://iota.lukaseder.de/downloads/db.tar.gz
 
-2. Unpack it::
 
-  tar zxvf db.tar.gz
+2. Unpack it:
 
-3. Stop iri if its running::
+.. code:: bash
 
-  systemctl stop iri
+   tar zxvf db.tar.gz
 
-4. Remove older database::
+3. Stop iri if its running:
 
-  rm -rf /var/lib/iri/target/mainnet*
+.. code:: bash
 
-5. Move new database to required location::
+   systemctl stop iri
 
-  mv db/ mainnetdb
+4. Remove older database:
 
-6. Delete the lock file::
+.. code:: bash
 
-  rm -f mainnetdb/LOCK
+   rm -rf /var/lib/iri/target/mainnet*
 
-7. Set correct ownership of database::
+5. Move new database to required location:
 
-  chown iri.iri mainnetdb -R
+.. code:: bash
 
-8. Start iri::
+   mv db/ mainnetdb
 
-  systemctl start iri
+6. Delete the lock file:
+
+.. code:: bash
+
+   rm -f mainnetdb/LOCK
+
+7. Set correct ownership of database:
+
+.. code:: bash
+
+   chown iri.iri mainnetdb -R
+
+8. Start iri:
+
+.. code:: bash
+
+   systemctl start iri
 
 
 .. note::
