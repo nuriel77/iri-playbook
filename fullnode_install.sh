@@ -14,6 +14,69 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+clear
+cat <<'EOF'
+                                                                   .odNMMmy:                       
+                                                                   /MMMMMMMMMy                      
+                                                                  `NMMMMMMMMMM:                     
+                                                                   mMMMMMMMMMM-                     
+                                `::-                               -dMMMMMMMN/                      
+                    `+sys/`    sNMMMm/   /ydho`                      :oyhhs/`                       
+                   :NMMMMMm-  -MMMMMMm  :MMMMMy  .+o/`                                              
+                   hMMMMMMMs   sNMMMm:  `dMMMN/ .NMMMm                                              
+                   -mMMMMMd.    `-:-`     .:-`  `hMMNs -syo`          .odNNmy/        `.            
+                    `:oso:`                       `.`  mMMM+         -NMMMMMMMy    :yNNNNh/         
+                       `--.      :ydmh/    `:/:`       -os+`/s+`     sMMMMMMMMM`  +MMMMMMMMs        
+                     .hNNNNd/   /MMMMMM+  :mMMMm-   ``     -MMM+     -NMMMMMMMy   hMMMMMMMMN        
+            ``       mMMMMMMM-  :MMMMMM/  oMMMMM/ .hNNd:    -/:`      .odmmdy/`   :NMMMMMMN+        
+         -sdmmmh/    dMMMMMMN.   -shhs:   `/yhy/  /MMMMs `--`           ````       .ohddhs-         
+        :NMMMMMMMy   `odmNmy-                      /ss+``dNNm.         .-.`           ``            
+        yMMMMMMMMM`    ``.`                             `hNNh.       /dNNNms`      `-:-`            
+        :NMMMMMMMs          .--.      /yddy:    .::-`    `..`       /MMMMMMMh    `smNNNms`          
+         .ohdmdy:         -hmNNmh:   +MMMMMM/  /mMMNd.   ``         :MMMMMMMy    oMMMMMMMs   `-::.  
+            ```  ``      `NMMMMMMN.  +MMMMMN:  yMMMMM- -hmmh-        /hmNNdo`    +MMMMMMM+  +mNMNNh-
+              -sdmmdy:   `mMMMMMMN`   :yhhs-   `+hhy:  oMMMMo          ...`       /hmmmh/  :MMMMMMMm
+             /NMMMMMMNo   .sdmmmy-                     `+yy/`     -+ss+.            `.`    .NMMMMMMh
+             dMMMMMMMMN     `..`                                 /NMMMMm-      :shyo.       -sdmmh+`
+     `       /NMMMMMMMo                 .-.                      oMMMMMM/     sMMMMMm.        ```   
+ `/ydddho-    -sdmmdy:                `hNNms                     `odmmd+      yMMMMMN-   -shhs:     
+-mMMMMMMMNo     ````           `--.   `mMMMm                 `-//- `..        `odddy:   :NMMMMN/    
+mMMMMMMMMMM:            .//.   yNMN/   .+o/.                `dMMMNo       ./o+-  ``     /MMMMMM+    
+mMMMMMMMMMM:            dMMd   ommd:     -+o/.              .NMMMMy      -mMMMN+         /hddh/     
+:mMMMMMMMNs             -oo-    .:.     +NMMMm-         .//- -shy+`      -NMMMMo    `/oo:`  `       
+ `+ydmmdo-            `ohy/    smmdo    oMMMMN:        /NMMN+       `:++- -oso:    `dMMMMh          
+     ``               /MMMm   `NMMMN`    :oso-         :mMMN/       oMMMM/         `mMMMMh          
+                       :o+-    -oyo-         -+oo:`     .::.   -oo: /mNNm-     -+o/``/ss/`          
+                      `:oo:      .:/-`      oMMMMMh`          `NMMM- `--`     :MMMMy                
+                      oMMMM/    :mMMMm-     mMMMMMM.           +hho`     .+s+`.dNNm+                
+                      :mNNd-    oMMMMM/     -hmNNd/                 -o+. hMMMo  .-`                 
+                       `..``    `/yhy/        `.`  `:oss+.          mMMh -shs.                      
+                        :ydds.       .://.        `hMMMMMN+         -+/.                            
+                       .MMMMMm      +NMMMMy       /MMMMMMMm                                         
+                        yNNNN+      mMMMMMM-      `dMMMMMN+    ````                                 
+                         .--` ``    :dNNNmo         :oss+.   -ydNNmh/                               
+                            /hmmh+`   .--`  ./++:`          /MMMMMMMMy                              
+                           :MMMMMMs        yMMMMMm/         hMMMMMMMMM      `-::-`                  
+                           -NMMMMM+       /MMMMMMMN         :NMMMMMMMo    -yNMMMMMh:                
+                            .oyys-   ``   `mMMMMMMs          .ohmmds-    -NMMMMMMMMM+               
+                                  `+dNNmy- `+yhhs:   `ohmmds-            sMMMMMMMMMMd               
+                                  hMMMMMMM-         -NMMMMMMMs           :MMMMMMMMMMo               
+                                  dMMMMMMM:         yMMMMMMMMM`           :dMMMMMMm+                
+                                  .hMMMMm+          :MMMMMMMMy              .:++/.                  
+                                    `--.             -ymMMNh/                         
+
+EOF
+
+
+echo "Welcome to IOTA FullNode Installer!"
+echo "This script is going to install IOTA full node."
+read -p "Do you want to proceed? [y/N] " yn
+if echo "$yn" | grep -v -iq "^y"; then
+    echo Cancelled
+    exit 1
+fi
+
+
 function set_dist() {
     if [ -f /etc/os-release ]; then
         # freedesktop.org and systemd
