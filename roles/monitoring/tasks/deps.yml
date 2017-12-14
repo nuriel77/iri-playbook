@@ -75,16 +75,16 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
-- name: add grafana apt repository
-  apt_repository:
-    repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
-    state: present 
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
 - name: Add an Apt signing key for grafana repo
   apt_key:
     url: https://packagecloud.io/gpg.key
     state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: add grafana apt repository
+  apt_repository:
+    repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
+    state: present 
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install grafana

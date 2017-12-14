@@ -218,7 +218,7 @@ if [[ "$OS" =~ ^(CentOS|Red) ]]; then
     fi
     init_centos
 elif [[ "$OS" =~ ^Ubuntu ]]; then
-    if [[ ! "$VER" =~ ^16 ]]; then
+    if [[ ! "$VER" =~ ^(16|17) ]]; then
         echo "$OS version $VER not supported"
         exit 1
     fi
