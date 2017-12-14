@@ -65,3 +65,35 @@ In **Ubuntu**::
 
   ufw allow 14265/tcp
 
+
+Checking memory usage per application
+=====================================
+
+This is the ps_mem script that shipped with this installation. If you don't have it you can see total memory usage using ``free -m``.
+
+.. code:: bash
+
+   ps_mem
+
+
+Checking system load and memory usage
+=====================================
+
+All Linux systems have ``top``, but there's a nicer utility called ``htop``.
+
+You might need to install it:
+
+.. code:: bash
+
+   On Ubuntu: apt-get install htop -y
+   On CentOS: yum install htop -y
+
+
+Then run ``htop``
+
+.. note::
+
+  If 'htop' is not available in CentOS you need to install 'epel-release' and try again, i.e. 'yum install epel-release -y'
+
+
+
