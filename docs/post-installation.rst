@@ -4,7 +4,7 @@ Post Installation
 *****************
 
 We can run a few checks to verify everything is running as expected.
-First, let's use the ```systemctl``` utility to check status of iri (this is the main full node application)
+First, let's use the ``systemctl`` utility to check status of iri (this is the main full node application)
 
 Using the ``systemctl status iri`` we can see if the process is ``Active: active (running)``.
 
