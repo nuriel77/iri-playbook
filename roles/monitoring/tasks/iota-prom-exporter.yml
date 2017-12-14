@@ -23,9 +23,9 @@
   register: iota_prom_fulldir_git
 
 - name: check iota-prom-exporter requires updates
-  shell: "cd {{ iota_prom_fulldir }} && [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\\// /g') | cut -f1) ] && echo up to date || echo not up to date"
+  shell: "cd {{ iota_prom_fulldir }} && [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\\// /g') | cut -f1) ] && echo -n 'up to date' || echo -n 'not up to date'"
   when: iota_prom_fulldir_git.stat.exists
-  register: iota_exporter_needs_update
+  register: iota_exporter_update
   false_when: false
   changed_when: false
 
@@ -35,12 +35,13 @@
       systemd:
         name: iota-prom-exporter
         state: stopped
-      false_when: none
+      false_when: false
 
     - name: force remove iota-prom-exporter
       set_fact:
         remove_iota_prom_exporter_basedir: true
-  when: "iota_exporter_needs_update is defined and 'not up to date' in iota_exporter_needs_update.stdout"
+
+  when: "'stdout' in iota_exporter_update and iota_exporter_update.stdout == 'not up to date'"
 
 - name: remove existing iota-prom-exporter dir
   file:
