@@ -15,16 +15,13 @@ This requires that you have set up DNS service to point a fully qualified domain
 
 For example, ``x-vps.com`` points to 185.10.48.110 (if you simply ``ping x-vps.com`` you will see the IP address).
 
-Port 80 is used as the default HTTP port while 443 is the default for HTTPS.
+Instead of using the ports e.g. 8811 and 5555 with IP combination, we can use a FQDN, e.g. ``pm.example.com`` to reach peer manager on our server.
 
 |
 
-The automatic installer has configured IOTA Peer Manager and the grafana graphs to serve on ports other than 80.
 
 In this chapter we are going to configure nginx to serve IOTA Peer Manager and Grafana on port 80, while using a fully qualified domain name.
 
-
-What can be done, if you have a FQDN, is use port 80 for all those services.
 
 You should be able to create subdomains for your main domain name. For example, if your FQDN is "example.com", you can create in your DNS service an entry for::
 
@@ -99,5 +96,39 @@ The same can be done for grafana ``/etc/nginx/conf.d/grafana.conf``::
 Again, test nginx: ``nginx -t`` and reload nginx: ``systemctl reload nginx``.
 
 Now you should be able to point your browser to ``http://grafana.my-fqdn.com``.
+
+
+.. note::
+
+  It is recommended to run your server using HTTPS. This could not be configured by default on the installer because of self-signed certificates.
+  Browsers are not so keen on opening pages with self-signed certificates. While this should not be a problem when you know it is your server,
+  I chose to skip this and keep this for advanced users.
+
+  Using SSL/HTTPS makes it virtually impossible for someone to "sniff" passwords or sensitive information your browser passes to a server.
+
+
+Configuring my server with HTTPS
+================================
+
+There are amazing tutuorials out there explaining how to achieve this. What is important to realize is that you can either create your own "self-signed" certificates (you become the Certificate Authority which isn't recognized by anyone else), or use valid certificate authorities.
+
+Let's Encrypt is a free service which allows you to create a certificate per domain name. Other solution would be to purchase a certificates.
+
+By having a "valid" certificate for your server (signed by a trusted authority), you will get the green lock next to the URL in the browser, indicating that your connection is secure.
+
+Your connection will still be encrypted if you opt for a self-signed certificate. It is just so that the browser cannot verify who signed it.
+
+
+Here is a great tutorial on how to add HTTPS to your nginx, for Ubuntu:
+
+https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-16-04
+
+And for CentOS:
+
+https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-on-centos-7
+
+.. note::
+
+  I encourage you to refer to the previous chapter about configuring FQDN for Peer Manager and Grafana. From there you can proceed to adding HTTPS to those configurations.
 
 
