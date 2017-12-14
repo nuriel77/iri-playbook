@@ -1,4 +1,4 @@
-.. _gettingStartedQuickly:
+.. _getting_started_quickly:
 
 #######################
 Getting Started Quickly
