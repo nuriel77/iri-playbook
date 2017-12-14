@@ -138,6 +138,11 @@ You will see the OPTIONS variable, so you can tweak it like so::
 
 and restart IRI to take effect: ``systemctl restart iri``
 
+.. note::
+
+  Once you've restarted the service with the ``--rescan`` or ``--revalidate`` options you can remove the option from the configuration file.
+  If it stays in the configuration file, subsequent restarts will use that option again, perhaps when you do not explicitly choose to enable it.
+
 
 .. getFullySyncedDB::
 
