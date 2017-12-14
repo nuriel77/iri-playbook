@@ -69,6 +69,10 @@ You can always "reattach" back that session when you re-connect to your server:
    screen -r -d iota
 
 
+.. note::
+
+  Pressing arrow up on the keyboard will scroll up the command history you've been running. This saves some typing when you need to run the same command again!
+
 
 Accessing Peer Manager
 ----------------------
