@@ -9,7 +9,7 @@ First, it is always a good practice to check for updates on the server.
 Update System Packages
 ======================
 
-For **Ubuntu** we can type:
+For **Ubuntu** we type:
 
 .. code-block:: bash
      apt-get update
@@ -37,11 +37,11 @@ If the file is found as seen here, you can issue a reboot (``shutdown -r now`` o
 
 For **Centos** we have a few options how to check if a reboot is required.
 
-.. code-block:: bash
+One of these options requires to install ``yum-utils``::
 
-   yum install yum-utils -y
+  yum install yum-utils -y
 
-There's a utility that comes with it, we can run ``needs-restarting  -r``::
+Once installed, we can run ``needs-restarting  -r``::
 
   # needs-restarting  -r
   Core libraries or services have been updated:
@@ -93,7 +93,7 @@ To clone, run:
 
 .. code:: bash
 
-   git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
+   cd /opt && git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
 
 This will pull the repository to the directory in which you are and move you into the repository's directory.
 
@@ -115,7 +115,12 @@ and
 (Use 'nano' or 'vi' to edit the files)
 
 These files have comments above each option to help you figure out if anything needs to be modified.
-In particular, look at the ``iri_java_mem`` and ``iri_init_java_mem``.
+
+
+Configure Memory Limits
+------------------------
+The options ``iri_java_mem`` and ``iri_init_java_mem`` in the configuration files can determine what are the memory usage limits for IRI.
+
 Depending on how much RAM your server has, you should set these accordingly.
 
 For example, if your server has 4096MB (4GB memory), a good setting would be:
@@ -127,6 +132,13 @@ For example, if your server has 4096MB (4GB memory), a good setting would be:
 
 Just leave some room for the operating system and other processes.
 You will also be able to tweak this after the installation, so don't worry about it too much.
+
+.. note::
+
+  For the click-'n-go installation, these values are automatically configured. You can choose to auto-configure those values:
+  When running the playbook (later in this guide) you can add ``-e "memory_autoset=true"`` to the ansible-playbook command.
+
+
 
 Set Access Password
 -------------------
@@ -154,6 +166,10 @@ To remove a user from authenticating:
 
    htpasswd -D /etc/nginx/.htpasswd username
 
+
+.. note::
+
+  This username and password will also be used for Grafana (monitoring graphs)
 
 
 Running the Playbook

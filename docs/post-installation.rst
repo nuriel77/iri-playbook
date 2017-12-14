@@ -205,14 +205,15 @@ If you don't have this helper script you will need to run a ``curl`` command, e.
 
 .. code:: bash
 
-   curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"addNeighbors", "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
+   curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"addNeighbors",
+     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
 
 to remove:
 
 .. code:: bash
 
-   curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"removeNeighbors", "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
-
+   curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"removeNeighbors",
+     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
 
 
 
