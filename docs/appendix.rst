@@ -112,7 +112,7 @@ Configuring my server with HTTPS
 
 There are amazing tutuorials out there explaining how to achieve this. What is important to realize is that you can either create your own "self-signed" certificates (you become the Certificate Authority which isn't recognized by anyone else), or use valid certificate authorities.
 
-Let's Encrypt is a free service which allows you to create a certificate per domain name. Other solution would be to purchase a certificates.
+`Let's Encrypt <https://letsencrypt.org/getting-started/>`_ is a free service which allows you to create a certificate per domain name. Other solution would be to purchase a certificates.
 
 By having a "valid" certificate for your server (signed by a trusted authority), you will get the green lock next to the URL in the browser, indicating that your connection is secure.
 
