@@ -24,12 +24,6 @@ The basic recommendation is to have one with at least 4GB RAM, 2 cores and minim
 
    At time of writing (December 2018) many users are experiencing out-of-memory errors with 4GB RAM. This should be remedied by next snapshot.
 
-.. warning::
-
-   Some VPS providers provide a custom OS installation (Ubuntu or CentOS) with additional software installed (cpanel etc).
-   These images will not work nicely with the installer.
-   In some cases, VPS providers modify images and might deliver operating systems that will be incompatible with this installer.
-
 
 .. _operatingSystem:
 
@@ -37,11 +31,21 @@ Operating System
 ----------------
 When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it.
 
-This tutorial currently supports CentOS (>=7) and Ubuntu (>=16).
+This tutorial/installer was tested on:
+
+* Ubuntu 16.04 cloud image (Xenial)
+* Ubuntu 17.04 cloud image (Zesty)
+* CentOS 7.4 cloud image
 
 .. note::
 
   This installation does not support operating systems with pre-installed panels such as cpane, whcms, plesk etc. If you can, choose a "bare" system.
+
+.. warning::
+
+   Some VPS providers provide a custom OS installation (Ubuntu or CentOS) with additional software installed (cpanel etc).
+   These images will not work nicely with the installer.
+   In some cases, VPS providers modify images and might deliver operating systems that will be incompatible with this installer.
 
 
 .. _accessingTheVPS:
