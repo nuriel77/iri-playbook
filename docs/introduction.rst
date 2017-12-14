@@ -18,7 +18,6 @@ lls, how to connect to it remotely and so on.
 A copy-paste tutorial is awesome, and as it so often happens, the user can miss on some basic technical explanation about the setup. While it is impossible to
 include a crash-course of Linux for the purpose of this tutorial, I will try to explain some basic concepts where I find that many users had troubles with.
 
-|
 
 Feel free to comment, create issues or contact me on IOTA's slack channel (nuriel77) for advice and information.
 
