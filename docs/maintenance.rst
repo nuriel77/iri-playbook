@@ -4,6 +4,7 @@ Maintenance
 ***********
 
 * `Upgrade IRI`_
+* `Upgrade IOTA Monitoring`_
 * `Check Database Size`_
 * `Check Logs`_
 * `Replace Database`_
@@ -45,6 +46,25 @@ This requires a iri restart (systemctl restart iri).
 
   The foundation normally announces additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
   Such options can be specified in the ``OPTIONS=""`` value in the same file.
+
+
+.. upgradeIotaMonitoring::
+
+Upgrade IOTA Monitoring
+=======================
+
+IOTA Prometheus Monitoring is used by Grafana which are the awesome graphs about the full node.
+
+When an update is available, this is the procedure to get it upgraded on your server::
+
+  systemctl stop iota-prom-exporter
+  rm -rf /opt/prometheus/iota-prom-exporter/
+  cd /opt/iri-playbook/ && ansible-playbook -i inventory site.yml --tags=iota_prom_exporter -v
+
+.. note::
+
+  We are working on having this done with a single command which will automatically apply updates if any are available.
+
 
 
 .. checkDatabaseSize:: 
