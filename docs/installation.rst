@@ -129,7 +129,7 @@ Just leave some room for the operating system and other processes.
 You will also be able to tweak this after the installation, so don't worry about it too much.
 
 Set Access Password
-===================
+-------------------
 Very important value to set before the installation is the password and/or username with which you can access IOTA Peer Manager on the browser.
 
 Edit the ``group_vars/all/iotapm.yml`` file and set a user and (strong!) password of your choice:
