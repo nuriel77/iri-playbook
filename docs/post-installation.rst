@@ -4,7 +4,7 @@ Post Installation
 *****************
 
 We can run a few checks to verify everything is running as expected.
-First, let's use the 'systemctl' utility to check status of iri (this is the main full node application)
+First, let's use the ```systemctl``` utility to check status of iri (this is the main full node application)
 
 Using the ``systemctl status iri`` we can see if the process is ``Active: active (running)``.
 
@@ -17,6 +17,12 @@ See examples in the chapters below:
 * `Connecting to IOTA Peer Manager`_
 * `Adding or Removing Neighbors`_
 * `Install IOTA Python libs`_
+
+
+.. note::
+
+  See :ref:`maintenance` for additional information, for example checking logs and so on.
+  Also, you can refer to :ref:`glossary` for a quick over view of most common commands.
 
 
 .. controlingIRI::
