@@ -15,16 +15,29 @@ Virtual Private Server
 ----------------------
 
 This is probably the best and most common option for running a full node.
-I will not get into where or how to purchase a VPS (virtual private server). There are many companies offering a VPS for good prices. The basic recommendation
-is to have one with at least 4GB RAM, 2 cores and minimum 30GB harddrive (SSD preferably).
+
+I will not get into where or how to purchase a VPS (virtual private server). There are many companies offering a VPS for good prices.
+
+The basic recommendation is to have one with at least 4GB RAM, 2 cores and minimum 30GB harddrive (SSD preferably).
+
+.. note::
+
+   At time of writing (December 2018) many users are experiencing out-of-memory errors with 4GB RAM. This should be remedied by next snapshot.
+
+.. note::
+
+   Some VPS providers provide a custom OS installation (Ubuntu or CentOS) with additional software installed (cpanel etc).
+   These images will not work nicely with the installer.
+   In some cases, VPS providers modify images and might deliver operating systems that will be incompatible with this installer.
 
 
 .. _operatingSystem:
 
 Operating System
 ----------------
-When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it. This tutorial currentl
-y supports CentOS (>=7) and Ubuntu (>=16).
+When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it.
+
+This tutorial currently supports CentOS (>=7) and Ubuntu (>=16).
 
 .. note::
 

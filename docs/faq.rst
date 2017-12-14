@@ -117,20 +117,20 @@ What are the revalidate and rescan options for
 
 Here's a brief explanation what each does, courtesy of Alon Elmaliah:
 
-* **Revalidate** "drops" the stored solid milestone "table". So all the milestones are revalidated once the node starts (checks signatures, balances etc). This is used it you take a DB from someone else, or have an issue with solid milestones acting out.
+| **Revalidate** "drops" the stored solid milestone "table". So all the milestones are revalidated once the node starts (checks signatures, balances etc). This is used it you take a DB from someone else, or have an issue with solid milestones acting out.
 
-* **Rescan** drops all the tables, except for the raw transaction trits, and re stores the transactions (refilling the metadata, address indexes etc) - this is used when a migration is needed when the DB schema changes mostly.
+| **Rescan** drops all the tables, except for the raw transaction trits, and re stores the transactions (refilling the metadata, address indexes etc) - this is used when a migration is needed when the DB schema changes mostly.
 
 
 
-It is possible to add these options to the IRI configuration file (or startup command).
+It is possible to add these options to the IRI configuration file (or startup command):
 
 ``--revalidate`` or ``--rescan``.
 
-If you have used this installation's tutorial / automation, you will find the configuration file::
+If you have used this installation's tutorial / automation, you will find the configuration file in the following location::
 
-  Ubuntu: /etc/default/iri
-  CentOS: /etc/sysconfig/iri
+  On Ubuntu: /etc/default/iri
+  On CentOS: /etc/sysconfig/iri
 
 You will see the OPTIONS variable, so you can tweak it like so::
 
@@ -150,37 +150,35 @@ https://iota.lukaseder.de/download.html
 
 Please consider donating them some iotas for the costs involved in making this possible.
 
-You can download the database using the following command::
+1. You can download the database using the following command::
 
   cd /var/lib/iri/target && curl --output db.tar.gz https://iota.lukaseder.de/downloads/db.tar.gz
 
-Unpack it::
+2. Unpack it::
 
   tar zxvf db.tar.gz
 
-Stop iri if its running::
+3. Stop iri if its running::
 
   systemctl stop iri
 
-Remove older database::
+4. Remove older database::
 
   rm -rf /var/lib/iri/target/mainnet*
 
-Move new database to required location::
+5. Move new database to required location::
 
   mv db/ mainnetdb
 
-Delete the lock file::
+6. Delete the lock file::
 
   rm -f mainnetdb/LOCK
 
-
-Set correct ownership of database::
+7. Set correct ownership of database::
 
   chown iri.iri mainnetdb -R
 
-
-Start iri::
+8. Start iri::
 
   systemctl start iri
 
@@ -199,5 +197,5 @@ There are commonly two reasons for this to happen:
 
 If your full node is on a different machine from where the light wallet is running from, there might be a firewall between, or, your full node is not configured to accept external connections.
 
-See `Full Node Remote Access`_
+See :ref:`remote_access`
 

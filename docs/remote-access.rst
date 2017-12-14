@@ -67,7 +67,7 @@ More in this chapter:
 .. tunnelingIriApiForWalletConnections::
 
 Tunneling IRI API for Wallet Connection
----------------------------------------
+=======================================
 
 Another option for accessing IRI and/or the iota-pm GUI is to use a SSH tunnel.
 
@@ -97,11 +97,11 @@ A default installation would have IRI API listening on TCP port 14265.
 
 
 For Windows desktop/laptop
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 You can use Putty to create the tunnel/port forward - you can use `this example <http://realprogrammers.com/how_to/set_up_an_ssh_tunnel_with_putty.html>` to get you going, just replace the MySQL 3306 port with that of IRI API.
 
 For any type of bash command line (Mac/Linux/Windows bash)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------------------
 
 Here is the tunnel we would have to create (run this on our laptop/desktop)
 

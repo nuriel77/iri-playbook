@@ -62,7 +62,7 @@ As you can see, a reboot is required (do so by issuing a ``reboot`` or ``shutdow
 
 
 Installing Ansible
-------------------
+==================
 Ansible is an awesome software used to automate configuration and/or deployment of services.
 This repository contains what Ansible refers to as a "Playbook" which is a set of instructions on how to configure the system.
 
@@ -88,7 +88,7 @@ In addition, I've added 'nano' which is helpful for beginners to edit files with
 
 
 Cloning the Repository
-----------------------
+======================
 To clone, run:
 
 .. code:: bash
@@ -98,7 +98,7 @@ To clone, run:
 This will pull the repository to the directory in which you are and move you into the repository's directory.
 
 Configuring Values
-------------------
+==================
 There are some values you can tweak before the installation runs.
 There are two files you can edit:
 
@@ -128,8 +128,8 @@ For example, if your server has 4096MB (4GB memory), a good setting would be:
 Just leave some room for the operating system and other processes.
 You will also be able to tweak this after the installation, so don't worry about it too much.
 
-Set IOTA PM Access Password
----------------------------
+Set Access Password
+===================
 Very important value to set before the installation is the password and/or username with which you can access IOTA Peer Manager on the browser.
 
 Edit the ``group_vars/all/iotapm.yml`` file and set a user and (strong!) password of your choice:
@@ -157,7 +157,7 @@ To remove a user from authenticating:
 
 
 Running the Playbook
---------------------
+====================
 
 Two prerequisites here: you have already installed Ansible and cloned the playbook's repository.
 
