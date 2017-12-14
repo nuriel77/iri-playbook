@@ -213,5 +213,5 @@ You can use the username 'iotapm' and the password you entered during the instal
 
 
 Please refer to the tutorial for post-installation information:
-https://github.com/nuriel77/iri-playbook/wiki/IOTA-Full-Node-Tutorial---Linux#post-installation
+http://iri-playbook.readthedocs.io/en/docs/post-installation.html
 EOF
