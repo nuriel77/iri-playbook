@@ -55,16 +55,9 @@ Upgrade IOTA Monitoring
 
 IOTA Prometheus Monitoring is used by Grafana which are the awesome graphs about the full node.
 
-When an update is available, this is the procedure to get it upgraded on your server::
+Running this command will check for updates, if any, will update iota-prom-exporter::
 
-  systemctl stop iota-prom-exporter
-  rm -rf /opt/prometheus/iota-prom-exporter/
   cd /opt/iri-playbook/ && ansible-playbook -i inventory site.yml --tags=iota_prom_exporter -v
-
-.. note::
-
-  We are working on having this done with a single command which will automatically apply updates if any are available.
-
 
 
 .. checkDatabaseSize:: 
