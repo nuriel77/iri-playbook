@@ -4,8 +4,6 @@
 
 This playbook will install and configure and IOTA full node.
 
-[![Documentation Status](https://readthedocs.org/projects/iri-playbook/badge/?version=latest)](http://iri-playbook.readthedocs.io/en/latest/?badge=latest)
-
 It will:
 - Install and configure IOTA IRI full node
 - Install and configure iota-pm: a GUI to view/manage peers
