@@ -73,6 +73,12 @@ You can always "reattach" back that session when you re-connect to your server:
 
   Pressing arrow up on the keyboard will scroll up the command history you've been running. This saves some typing when you need to run the same command again!
 
+.. warning::
+
+  Some VPS providers might be depending on Network Block Devices (for example Scaleway). If using Ubuntu, you need to configure ufw prior to running the installer.
+  See: https://gist.github.com/georgkreimer/7a02af49604da91c5e3605b08b2872ec
+
+
 
 Accessing Peer Manager
 ----------------------
