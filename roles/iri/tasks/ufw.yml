@@ -27,7 +27,13 @@
     proto: tcp
     port: "{{ ssh_port }}"
 
-- name: ensure ufw started
+- name: ufw default outgoing policy allowed
+  ufw:
+    direction: outgoing
+    policy: allow
+
+- name: ensure ufw started and default incoming policy denied
   ufw:
     state: enabled
+    direction: incoming
     policy: deny
