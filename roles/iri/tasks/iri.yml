@@ -21,6 +21,15 @@
   tags:
     - mem_override
 
+- name: add user to run iri as
+  user:
+    name: "{{ iri_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ iri_basedir }}"
+  tags:
+    - iri_user
+
 - name: remove workdir
   file:
     path: "{{ iri_workdir }}"
@@ -43,15 +52,6 @@
     owner: "{{ iri_username }}"
     group: "{{ iri_username }}"
                                
-- name: add user to run iri as
-  user:
-    name: "{{ iri_username }}"
-    shell: /sbin/nologin
-    createhome: no
-    home: "{{ iri_basedir }}"
-  tags:
-    - iri_user
-
 - name: download iri jar
   get_url:
     url: "https://github.com/iotaledger/iri/releases/download/v{{ iri_version }}/iri-{{ iri_version }}.jar"
