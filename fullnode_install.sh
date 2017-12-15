@@ -70,7 +70,7 @@ EOF
 
 echo "Welcome to IOTA FullNode Installer!"
 echo "This script is going to install IOTA full node."
-read -p "Do you want to proceed? [y/N] " yn
+read -p "Do you wish to proceed? [y/N] " yn
 if echo "$yn" | grep -v -iq "^y"; then
     echo Cancelled
     exit 1
@@ -246,7 +246,7 @@ if [ -d iri-playbook ]; then
     rm -rf iri-playbook
 fi
 
-git clone https://github.com/nuriel77/iri-playbook.git
+git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
 cd iri-playbook
 
 
