@@ -49,3 +49,4 @@
     - curl
     - lsof
     - jq
+    - pv
