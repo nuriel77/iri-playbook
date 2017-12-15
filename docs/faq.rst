@@ -166,7 +166,7 @@ Please consider donating them some iotas for the costs involved in making this p
 
 .. code:: bash
 
-   tar zxvf db.tar.gz
+   mkdir -p db && pv db.tar.gz | tar xzf - -C db
 
 3. Stop iri if its running:
 
