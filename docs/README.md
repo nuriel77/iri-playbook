@@ -861,7 +861,7 @@ curl --output db.tar.gz https://iota.lukaseder.de/downloads/db.tar.gz
 ```
 Unpack it:
 ```sh
-tar zxvf db.tar.gz
+mkdir -p db && pv db.tar.gz | tar xzf - -C ./
 ```
 Stop iri if its running:
 ```sh
