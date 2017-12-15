@@ -90,5 +90,5 @@ sudo systemctl stop iri
 
 Then:
 ```sh
-ansible-playbook -i inventory -v site.yml -e "remove_iri_basedir=1"
+ansible-playbook -i inventory -v site.yml -e "remove_iri_workdir=1"
 ```

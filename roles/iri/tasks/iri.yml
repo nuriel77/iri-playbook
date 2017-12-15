@@ -1,3 +1,7 @@
+- name: set iri variables
+  set_fact:
+    iri_workdir: "{{ iri_basedir }}/target"
+
 - name: set variables centos/redhat
   set_fact:
     systemd_dir: /usr/lib/systemd/system
@@ -17,40 +21,11 @@
   tags:
     - mem_override
 
-- name: add user to run iri as
-  user:
-    name: "{{ iri_username }}"
-    shell: /sbin/nologin
-    createhome: no
-    home: "{{ iri_basedir }}"
-  tags:
-    - iri_user
-
-- name: remove existing iri basedir
+- name: remove workdir
   file:
-    path: "{{ iri_basedir }}"
+    path: "{{ iri_workdir }}"
     state: absent
-  when: remove_iri_basedir is defined and remove_iri_basedir
-
-# This will tell us whether to re-download iri package
-# The directory will not exists if it was removed
-# or never created before.
-- name: stat iri basedir
-  stat:
-    path: "{{ iri_basedir }}"
-  register: iri_basedir_stat
-
-- name: download and unarchive iri release
-  unarchive:
-    src: "https://github.com/iotaledger/iri/archive/v{{ iri_version }}.tar.gz"
-    dest: /tmp
-    remote_src: True
-  when: not iri_basedir_stat.stat.exists
-  register: iri_downloaded
-
-- name: move temporary extracted iri directory to its basedir
-  shell: "mv /tmp/iri-{{ iri_version }} {{ iri_basedir }}"
-  when: iri_downloaded and iri_downloaded.changed
+  when: remove_iri_workdir is defined and remove_iri_workdir
 
 - name: ensure iri basedir ownership and permissions
   file:
@@ -60,20 +35,34 @@
     owner: "{{ iri_username }}"
     group: "{{ iri_username }}"
 
-- name: run mvn compile
-  shell: "cd {{ iri_basedir }} && mvn clean compile"
-  when: iri_downloaded is defined and iri_downloaded.changed
-
-- name: run mvn packages
-  shell: "cd {{ iri_basedir }} && mvn package"
-  when: iri_downloaded is defined and iri_downloaded.changed
-
-- name: set iri directory's files ownership
+- name: ensure iri workdir ownership and permissions
   file:
-    path: "{{ iri_basedir }}"
+    path: "{{ iri_workdir }}"
+    state: directory
+    mode: 0700
     owner: "{{ iri_username }}"
     group: "{{ iri_username }}"
-    recurse: yes
+                               
+- name: add user to run iri as
+  user:
+    name: "{{ iri_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ iri_basedir }}"
+  tags:
+    - iri_user
+
+- name: download iri jar
+  get_url:
+    url: "https://github.com/iotaledger/iri/releases/download/v{{ iri_version }}/iri-{{ iri_version }}.jar"
+    dest: "{{ iri_workdir }}/iri-{{ iri_version }}.jar"
+    checksum: "{{ iri_jar_checksum }}"
+    owner: root
+    group: "{{ iri_username }}"
+    mode: 0640
+  register: iri_downloaded
+  notify:
+    - restart iri
 
 - name: copy utility scripts
   copy:
