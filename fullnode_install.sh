@@ -123,8 +123,8 @@ function init_centos(){
         exit 0
     fi
 
-    echo "Installing Ansible, net-tools git and pv..."
-    yum install ansible git net-tools pv -y
+    echo "Installing Ansible, git and pv..."
+    yum install ansible git pv -y
 
 }
 
@@ -141,11 +141,11 @@ function init_ubuntu(){
         exit 0
     fi
 
-    echo "Installing Ansible, net-tools git and pv..."
+    echo "Installing Ansible, git and pv..."
     apt-get install software-properties-common -y
     apt-add-repository ppa:ansible/ansible -y
     apt-get update -y
-    apt-get install ansible git net-tools pv -y
+    apt-get install ansible git pv -y
 }
 
 function inform_reboot() {
@@ -255,7 +255,7 @@ echo -e "\nRunning playbook..."
 
 ansible-playbook -i inventory -v site.yml -e "memory_autoset=true"
 
-PRIMARY_IP=$(hostname -I)
+PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
 
 cat <<EOF
 Installation done!
