@@ -163,10 +163,11 @@ Please consider donating them some iotas for the costs involved in making this p
 
 
 2. Unpack it:
+ Make sure module "pv" was installed previously (CentOS: ``yum install pv`` Ubuntu: ``apt-get install pv -y``).
 
 .. code:: bash
 
-   tar zxvf db.tar.gz
+ pv db.tar.gz | tar xzf - -C ./
 
 3. Stop iri if its running:
 
