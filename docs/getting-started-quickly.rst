@@ -6,9 +6,12 @@ Getting Started Quickly
 
 You can skip most of the information in this tutorial should you wish to do so and go straight ahead to install the full node.
 
-There are just two little things you need to do first:
+If you haven't already, just make sure your server matches the :ref:`requirements`.
 
-Once you are logged in to your server, make sure you are root (run ``whoami``).
+
+A few setup steps are required before you can run the click'n'go installation command:
+
+When you are logged in to your server, make sure you are root (run ``whoami``).
 If that is not the case run ``sudo su -`` to become root and enter the password if you are required to do so.
 
 
