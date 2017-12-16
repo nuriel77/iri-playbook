@@ -285,8 +285,8 @@ admin_password = {% if iotapm_nginx_password | regex_search('#|;') %}"""{% endif
 
 #################################### SMTP / Emailing ##########################
 [smtp]
-;enabled = false
-;host = localhost:25
+enabled = true
+host = localhost:25
 ;user =
 # If the password contains # or ; you have to wrap it with trippel quotes. Ex """#password;"""
 ;password =
