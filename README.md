@@ -33,6 +33,7 @@ Latest Ansible installation for your distribution (http://docs.ansible.com/ansib
 Playbook was tested with:
   - Ansible>=2.4
   - Ubuntu 16.04
+  - Ubuntu 17.04
   - CentOS 7.4
 
 
@@ -68,17 +69,30 @@ ansible-playbook -i inventory -v site.yml
 ```
 
 
-### Skip IRI or IOTA Peer Manager Installations
+### Installing Specific Roles
 
-You can skip IRI's installation:
+You can install a specific role (or skip) by using:
 ```sh
-ansible-playbook -i inventory -v site.yml --skip-tags=iri_config,iri_firewalld,iri_ufw,iri_config
+--tags=first-role-name,second-role-name or --skip-tags=rolename,etc
 ```
 
-or skip IOTA PM installation:
+For example, to skip the monitoring role:
 ```sh
-ansible-playbook -i inventory -v site.yml --skip-tags=iotapm_deps,iotapm_firewall,iotapm_config
+ansible-playbook -i inventory -v site.yml --skip-tags=monitoring_role
 ```
+
+To find available roles run `grep "\- .*_role$" roles/*/tasks/main.yml`:
+```sh
+# grep "\- .*_role$" roles/*/tasks/main.yml
+roles/iotapm/tasks/main.yml:    - iotapm_role
+roles/iri/tasks/main.yml:    - iri_role
+roles/monitoring/tasks/main.yml:    - monitoring_role
+```
+
+Note that some roles are dependant on other roles having been installed. For example, the monitoring_role depends on iri_role.
+
+Specifying tags or skipping tags is mostly handy when upgrading a role.
+
 
 ### Reinstall or Reconfigure
 To re-install iri (this will remove any existing database) or for example to install a different version after having edited the version in the `groups_vars/all/*.yml` file:
