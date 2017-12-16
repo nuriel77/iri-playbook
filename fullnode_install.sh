@@ -253,12 +253,15 @@ cd iri-playbook
 set_password
 echo -e "\nRunning playbook..."
 
-ansible-playbook -i inventory -v site.yml -e "memory_autoset=true"
+LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
+ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" | tee "$LOGFILE"
 
 PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
 
 cat <<EOF
-Installation done!
+*** Installation done! ***
+
+A log of this installation has been saved to: $LOGFILE
 
 
 You should be able to connect to IOTA Peer Manager pointing your browser to:
@@ -277,4 +280,5 @@ You can use the username 'iotapm' and the password you entered during the instal
 
 Please refer to the tutorial for post-installation information:
 http://iri-playbook.readthedocs.io/en/docs/post-installation.html
+
 EOF
