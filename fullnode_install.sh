@@ -6,6 +6,7 @@
 # Iri playbook: https://github.com/nuriel77/iri-playbook
 # By Nuriel Shem-Tov (https://github.com/nuriel77), December 2017
 
+set -o pipefail
 set -e
 
 if [[ $EUID -ne 0 ]]; then
@@ -246,19 +247,34 @@ if [ -d iri-playbook ]; then
     rm -rf iri-playbook
 fi
 
+# Clone the repository (optional branch)
 git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
 cd iri-playbook
 
-
+# Set password for web access (ipm and grafana)
 set_password
 echo -e "\nRunning playbook..."
 
-ansible-playbook -i inventory -v site.yml -e "memory_autoset=true"
+# Ansible output log file
+LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
+# Run the playbook
+set +e
+ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" | tee "$LOGFILE"
+RC=$?
+if [ $RC -ne 0 ]; then
+    echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
+    exit $RC
+fi
+set -e
+
+# Get primary IP
 PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
 
 cat <<EOF
-Installation done!
+*** Installation done! ***
+
+A log of this installation has been saved to: $LOGFILE
 
 
 You should be able to connect to IOTA Peer Manager pointing your browser to:
@@ -277,4 +293,5 @@ You can use the username 'iotapm' and the password you entered during the instal
 
 Please refer to the tutorial for post-installation information:
 http://iri-playbook.readthedocs.io/en/docs/post-installation.html
+
 EOF
