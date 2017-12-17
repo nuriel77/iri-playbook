@@ -64,7 +64,7 @@ More in this chapter:
 * `Limiting Remote Commands`_
 
 
-.. tunnelingIriApiForWalletConnections::
+.. _tunnelingIriApiForWalletConnections:
 
 Tunneling IRI API for Wallet Connection
 =======================================

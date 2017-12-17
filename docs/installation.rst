@@ -251,20 +251,20 @@ Then, clone this playbook to ``/opt``:
 
   cd /opt && git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
 
-This assumes that you haven't already cloned the repository to this location. If you have, you will should enter the ``/opt/iri-playbook`` directory and run a ``git pull``.
+This assumes that you haven't already cloned the repository to this location. If you have, you should enter the ``/opt/iri-playbook`` directory and run a ``git pull``.
 
 
-Some parameters require configuring before the installation. Both IOTA Peer Manager and the fullnode monitoring need to know on which port to access IRI API.
+Some parameters require configuration before the installation. Both IOTA Peer Manager and the fullnode monitoring need to know on which port to access IRI API.
 
 This is usually port 14265.
 
 1. Edit ``edit group_vars/all/iri.yml`` and make sure the ``iri_api_port:`` option points to the correct IRI API port. In addition, ensure that ``iri_udp_port`` and ``iri_tcp_port`` match the ports your IRI is using for neighbor peering.
 
-2. Edit ``group_vars/all/iotapm.yml``. Here you will see ``install_nginx: true``, set it to ``false`` if you don't want to install nginx to serve these services via webserver. If you choose to install nginx, leave it with ``true`` (if you already have nginx installed, just leave it as ``true``).
+2. Edit ``group_vars/all/iotapm.yml``. Find ``install_nginx: true`` and set it to ``false`` if you don't want to install nginx to serve these services via webserver. If you choose to install nginx, leave it as ``true`` (if you already have nginx installed, just leave it as ``true``).
 
 As mentioned earlier: currently, the fullnode monitoring depends on nginx being installed.
 
-3. If using nginx, edit ``iotapm_nginx_user`` and ``iotapm_nginx_password``, this will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
+3. In the same file ``group_vars/all/iotapm.yml``, if using nginx, edit ``iotapm_nginx_user`` and ``iotapm_nginx_password``. These will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
 
 
 * To install **IOTA Peer Manager only**, run:
