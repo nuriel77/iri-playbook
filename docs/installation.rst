@@ -208,6 +208,10 @@ Installing Only IOTA Peer Manager or Monitoring
 
 It is possible to install individual components from the playbook. For example, if you already have installed IRI following a different guide/method, you can use this playbook to install the full node monitoring graphs or IOTA Peer Manager.
 
+
+Overview
+--------
+
 * IOTA Peer Manager is a GUI to help monitor, add and remove neighbors: `IOTA Peer Manager <https://github.com/akashgoswami/ipm>`_.
 
 * The full node monitoring includes monitoring and graphs for IRI and your node: `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
@@ -228,6 +232,9 @@ It is possible to install individual components from the playbook. For example, 
   It is strongly discouraged to run a server without the firewall enabled. Therefore, this playbook does not support running without a firewall.
 
 
+Updates
+-------
+
 In order to install IOTA Peer Manager or fullnode monitoring, some packages and updates are required.
 
 
@@ -245,7 +252,9 @@ For **CentOS**:
   yum install git ansible curl -y
 
 
-Then, clone this playbook to ``/opt``:
+Installation
+------------
+Clone this playbook to ``/opt``:
 
 .. code:: bash
 
@@ -288,6 +297,8 @@ As mentioned earlier: currently, the fullnode monitoring depends on nginx being 
    ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role,monitoring_role
 
 
+Access
+------
 To access the **fullnode monitoring graphs**, point your browser to ``http://YOUR-IP:5555`` and use the username and password you've configured earlier to log in.
 
 To access the **IOTA Peer Manager** (assuming you've installed nginx), point your browser to ``http://YOUR-IP:8811`` and use the username and password you've configured earlier to log in.
