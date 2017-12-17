@@ -81,3 +81,5 @@
     name: iota-pm
     version: "{{ iotapm_version }}"
     global: yes
+  tags:
+    - iotapm_npm
