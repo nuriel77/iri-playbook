@@ -208,6 +208,10 @@ Installing Only IOTA Peer Manager or Monitoring
 
 It is possible to install individual components from the playbook. For example, if you already have installed IRI following a different guide/method, you can use this playbook to install the full node monitoring graphs or IOTA Peer Manager.
 
+IOTA Peer Manager is a GUI to help monitor, add and remove neoghbors: `IOTA Peer Manager <https://github.com/akashgoswami/ipm>`_.
+
+The full node monitoring is a monitoring for IRI and your node: `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
+
 .. note::
 
   If you haven’t already, just make sure your server matches the :ref:`requirements`.
