@@ -213,15 +213,15 @@ It is possible to install individual components from the playbook. For example, 
   If you haven’t already, just make sure your server matches the :ref:`requirements`.
 
 
-* IOTA Peer Manager doesn't require to be served via a webserver, but is the recommeneded method, unless you want to use SSH tunnel.
+* IOTA Peer Manager doesn't require to be served via a webserver. It is however the recommeneded method, unless you want to use SSH tunnel.
 
 * At this stage, the full node monitoring graphs require to be served via a webserver (nginx), which will be installed via this playbook.
 
 
 .. warning::
 
-  By installing either Peer Manager and/or the full node monitorting, the firewalls will be configured and enabled.
-  It is strongly discouraged to run a server without firewalls enabled. Therefore, this playbook does not support such configuration.
+  By installing either Peer Manager and/or the full node monitorting, the firewall will be configured and enabled.
+  It is strongly discouraged to run a server without the firewall enabled. Therefore, this playbook does not support running without a firewall.
 
 
 In order to install IOTA Peer Manager or fullnode monitoring, some packages and updates are required.
@@ -247,39 +247,44 @@ Then, clone this playbook to ``/opt``:
 
   cd /opt && git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
 
-This assumes that you haven't already cloned the repository to this location. If you have, you will have to entre the ``/opt/iri-playbook`` directory and run a ``git pull``.
+This assumes that you haven't already cloned the repository to this location. If you have, you will should enter the ``/opt/iri-playbook`` directory and run a ``git pull``.
 
 
-A few parameters might required configuring. Both IOTA Peer Manager and the fullnode monitoring need to know on which port to access IRI API.
+Some parameters require configuring before the installation. Both IOTA Peer Manager and the fullnode monitoring need to know on which port to access IRI API.
 
 This is usually port 14265.
 
-1. Edit ``edit group_vars/all/iri.yml`` and make sure ``iri_api_port:`` option points to the correct IRI API port. In addition, ensure that ``iri_udp_port`` and ``iri_tcp_port`` match the ports your IRI is using for neighbor peering.
+1. Edit ``edit group_vars/all/iri.yml`` and make sure the ``iri_api_port:`` option points to the correct IRI API port. In addition, ensure that ``iri_udp_port`` and ``iri_tcp_port`` match the ports your IRI is using for neighbor peering.
 
-2. Edit ``group_vars/all/iotapm.yml``. Here you will see ``install_nginx: true``, set it to ``false`` if you don't want to install nginx and serve these services via webserver. If you choose to install nginx leave it with ``true`` (if you already have nginx installed, just leave it as ``true``).
+2. Edit ``group_vars/all/iotapm.yml``. Here you will see ``install_nginx: true``, set it to ``false`` if you don't want to install nginx to serve these services via webserver. If you choose to install nginx, leave it with ``true`` (if you already have nginx installed, just leave it as ``true``).
 
 As mentioned earlier: currently, the fullnode monitoring depends on nginx being installed.
 
 3. If using nginx, edit ``iotapm_nginx_user`` and ``iotapm_nginx_password``, this will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
 
 
-* To install IOTA Peer Manager only, run:
+* To install **IOTA Peer Manager only**, run:
 
 .. code:: bash
 
    ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role
 
 
-* To install full node monitoring only, run:
+* To install **full node monitoring only**, run:
 
 .. code:: bash
 
    ansible-playbook -i inventory -v site.yml --skip-tags=iotapm_npm --tags=iri_firewalld,iri_ufw,iotapm_deps,monitoring_role
 
 
-* To install both Peer Manager and fullnode monitoring, run:
+* To install **both Peer Manager and fullnode monitoring**, run:
 
 .. code:: bash
 
    ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role,monitoring_role
+
+
+To access the fullnode monitoring graphs, point your browser to ``http://YOUR-IP:5555`` and use the username and password you've configured earlier to log in.
+
+To access the IOTA Peer Manager (assuming you've installed nginx), point your browser to ``http://YOUR-IP:8811`` and use the username and password you've configured earlier to log in.
 
