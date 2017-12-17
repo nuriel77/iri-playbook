@@ -12,12 +12,14 @@ Update System Packages
 For **Ubuntu** we type:
 
 .. code-block:: bash
-     apt-get update
+
+   apt-get update
 
 and for **CentOS**:
 
 .. code-block:: bash
-      yum update
+
+   yum update
 
 
 This will search for any packages to update on the system and require you to confirm the update.
@@ -197,4 +199,87 @@ Hopefully this succeeds without any errors (create a git Issue if it does, I wil
 Please go over the Post Installation chapters to verify everything is working properly and start adding your first neighbors!
 
 Also note that after having added neighbors, it might take some time to fully sync the node.
+
+
+.. installComponents::
+
+Installing Only IOTA Peer Manager or Monitoring
+===============================================
+
+It is possible to install individual components from the playbook. For example, if you already have installed IRI following a different guide/method, you can use this playbook to install the full node monitoring graphs or IOTA Peer Manager.
+
+.. note::
+
+  If you haven’t already, just make sure your server matches the The Requirements.
+
+
+* IOTA Peer Manager doesn't require to be served via a webserver, but is the recommeneded method, unless you want to use SSH tunnel.
+
+* At this stage, the full node monitoring graphs require to be served via a webserver (nginx), which will be installed via this playbook.
+
+
+.. warning::
+
+  By installing either Peer Manager and/or the full node monitorting, the firewalls will be configured and enabled.
+  It is strongly discouraged to run a server without firewalls enabled. Therefore, this playbook does not support such configuration.
+
+
+In order to install IOTA Peer Manager or fullnode monitoring, some packages and updates are required.
+
+
+For **Ubuntu**:
+
+.. code:: bash
+
+   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git -y
+
+
+For **CentOS**:
+
+.. code:: bash
+
+  yum install git ansible curl -y
+
+
+Then, clone this playbook to ``/opt``:
+
+.. code:: bash
+
+  cd /opt && git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
+
+This assumes that you haven't already cloned the repository to this location. If you have, you will have to entre the ``/opt/iri-playbook`` directory and run a ``git pull``.
+
+
+A few parameters might required configuring. Both IOTA Peer Manager and the fullnode monitoring need to know on which port to access IRI API.
+
+This is usually port 14265.
+
+1. Edit ``edit group_vars/all/iri.yml`` and make sure ``iri_api_port:`` option points to the correct IRI API port. In addition, ensure that ``iri_udp_port`` and ``iri_tcp_port`` match the ports your IRI is using for neighbor peering.
+
+2. Edit ``group_vars/all/iotapm.yml``. Here you will see ``install_nginx: true``, set it to ``false`` if you don't want to install nginx and serve these services via webserver. If you choose to install nginx leave it with ``true`` (if you already have nginx installed, just leave it as ``true``).
+
+As mentioned earlier: currently, the fullnode monitoring depends on nginx being installed.
+
+3. If using nginx, edit ``iotapm_nginx_user`` and ``iotapm_nginx_password``, this will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
+
+
+* To install IOTA Peer Manager only, run:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role
+
+
+* To install full node monitoring only, run:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --skip-tags=iotapm_npm --tags=iri_firewalld,iri_ufw,iotapm_deps,monitoring_role
+
+
+* To install both Peer Manager and fullnode monitoring, run:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role,monitoring_role
 
