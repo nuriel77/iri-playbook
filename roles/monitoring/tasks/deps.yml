@@ -96,6 +96,11 @@
   notify:
     - reload systemd
 
+# Required
+- name: Install epel-release
+  yum: state=latest name=epel-release
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
 - name: add grafana repository
   yum_repository:
     name: grafana
