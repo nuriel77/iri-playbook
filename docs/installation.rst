@@ -210,7 +210,7 @@ It is possible to install individual components from the playbook. For example, 
 
 .. note::
 
-  If you haven’t already, just make sure your server matches the The Requirements.
+  If you haven’t already, just make sure your server matches the :ref:`requirements`.
 
 
 * IOTA Peer Manager doesn't require to be served via a webserver, but is the recommeneded method, unless you want to use SSH tunnel.
