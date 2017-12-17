@@ -288,4 +288,4 @@ To access the **fullnode monitoring graphs**, point your browser to ``http://YOU
 
 To access the **IOTA Peer Manager** (assuming you've installed nginx), point your browser to ``http://YOUR-IP:8811`` and use the username and password you've configured earlier to log in.
 
-If you haven't install nginx and want to access IOTA Peer Manager, it is not configured to be accessible externally by default. It would pose a security risk to your server running it exposed and not locked with a password. As an alternative you can use a SSH tunnel to bind to it. See :ref:`tunnelingIriApiForWalletConnections`.
+If you haven't install nginx and want to access IOTA Peer Manager, it is not configured to be accessible externally by default. It would pose a security risk to your server running it exposed and not locked with a password. As an alternative you can use a SSH tunnel to bind to it (port 8011). See :ref:`tunnelingIriApiForWalletConnections`.
