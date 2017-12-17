@@ -30,6 +30,10 @@
   shell: "curl -sL https://rpm.nodesource.com/setup_{{ nodesource_version }}.x | bash -"
   when: "nodejs_version.rc == 1 and (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')"
 
+# Required
+- name: Install epel-release
+  yum: state=latest name=epel-release
+
 - name: Install some packages
   yum: state=latest name={{ item }}
   with_items:
@@ -37,9 +41,6 @@
     - firewalld
     - curl
     - lsof
-    - python-passlib
-    - httpd-tools
-    - nginx
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install nginx packages
