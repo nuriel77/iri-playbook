@@ -319,6 +319,9 @@ It is possible to install `Nelson <https://github.com/SemkoDev/nelson.cli>`_ as 
 
 Nelson depends on IRI being installed and running. Please check ``/opt/iri-playbook/group_vars/all/nelson.yml`` and configure to match you environment.
 
+Installation
+------------
+
 * To install Nelson, run:
 
 .. code:: bash
@@ -327,3 +330,30 @@ Nelson depends on IRI being installed and running. Please check ``/opt/iri-playb
 
 
 Join the ``#nelson`` channel on ``iotatangle.slack.com`` if you have questions regarding Nelson.
+
+
+You can stop, start and restart nelson via ``systemctl (start|stop|restart) nelson``.
+
+View Status/Logs
+----------------
+
+To view nelson status run: ``systemctl status nelson``.
+
+To view nelson logs run: ``journalctl -u nelson``.
+
+Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's log.
+
+
+Upgrade Nelson Version
+----------------------
+To upgrade to a newer version of nelson:
+
+1. Edit ``/opt/iri-playbook/group_vars/all/nelson.yml``, find the value ``nelson_version`` and set according to the version you want to install.
+
+2. Run the installation command:
+
+.. code:: bash
+ 
+  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
+
+3. Restart Nelson: ``systemctl restart nelson``
