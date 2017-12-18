@@ -348,7 +348,7 @@ Upgrade Nelson Version
 ----------------------
 To upgrade to a newer version of nelson:
 
-1. Edit ``/opt/iri-playbook/group_vars/all/nelson.yml``, find the value ``nelson_version`` and set according to the version you want to install.
+1. Edit ``/opt/iri-playbook/group_vars/all/nelson.yml``, find ``nelson_version`` and set the value according to the version you want to install.
 
 2. Run the installation command:
 
