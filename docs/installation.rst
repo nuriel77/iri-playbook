@@ -297,6 +297,7 @@ As mentioned earlier: currently, the fullnode monitoring depends on nginx being 
    ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role,monitoring_role
 
 
+
 Access
 ------
 To access the **fullnode monitoring graphs**, point your browser to ``http://YOUR-IP:5555`` and use the username and password you've configured earlier to log in.
@@ -304,3 +305,25 @@ To access the **fullnode monitoring graphs**, point your browser to ``http://YOU
 To access the **IOTA Peer Manager** (assuming you've installed nginx), point your browser to ``http://YOUR-IP:8811`` and use the username and password you've configured earlier to log in.
 
 If you haven't install nginx and want to access IOTA Peer Manager, it is not configured to be accessible externally by default. It would pose a security risk to your server running it exposed and not locked with a password. As an alternative you can use a SSH tunnel to bind to it (port 8011). See :ref:`tunnelingIriApiForWalletConnections`.
+
+
+Install Nelson
+==============
+
+It is possible to install `Nelson <https://github.com/SemkoDev/nelson.cli>`_ as part of this installation.
+
+.. note::
+
+  Nelso is still pre-release alpha. It is optional whether to install it.
+
+
+Nelson depends on IRI being installed and running. Please check ``/opt/iri-playbook/group_vars/all/nelson.yml`` and configure to match you environment.
+
+* To install Nelson, run:
+
+.. code:: bash
+
+   cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
+
+
+Join the ``#nelson`` channel on ``iotatangle.slack.com`` if you have questions regarding Nelson.
