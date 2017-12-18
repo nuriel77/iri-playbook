@@ -312,9 +312,9 @@ Install Nelson
 
 It is possible to install `Nelson <https://github.com/SemkoDev/nelson.cli>`_ as part of this installation.
 
-.. note::
+.. warning::
 
-  Nelso is still pre-release alpha. It is optional whether to install it.
+  Nelson is still at pre-release alpha.
 
 
 Nelson depends on IRI being installed and running. Please check ``/opt/iri-playbook/group_vars/all/nelson.yml`` and configure to match you environment.
