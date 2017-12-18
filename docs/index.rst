@@ -22,15 +22,14 @@ In this installation
 * Install IOTA Peer Manager
 * Make IOTA Peer Manager accessible via the browser
 * Password protect IOTA Peer Manager
+* Optionally install `Nelson <https://github.com/SemkoDev/nelson.cli>`_.
 * Install monitoring graphs. Big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
 
 Work in progress
 ================
 
 * Integrate alerting/notifications when node is not healthy
-* Instead of compiling IRI, download the jar to expedite the installation a bit
 * Security hardening steps
-* Make it possible to install graphs for those who already did this installation. At the moment nodejs version will conflict.
 
 |
 
