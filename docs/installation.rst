@@ -322,6 +322,13 @@ Nelson depends on IRI being installed and running. Please check ``/opt/iri-playb
 Installation
 ------------
 
+* If you installed this playbook before Nelson was added you need to update the git repository. Run:
+
+.. code:: bash
+
+   cd /opt/iri-playbook && git pull
+
+
 * To install Nelson, run:
 
 .. code:: bash
