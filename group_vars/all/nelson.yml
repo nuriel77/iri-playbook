@@ -1,0 +1,9 @@
+nelson_enabled: false
+nelson_version: 0.1.11
+nelson_username: nelson
+nelson_configdir: /etc/nelson
+nelson_datadir: /var/lib/nelson
+nelson_iri_host: 127.0.0.1
+nelson_bind_address: 127.0.0.1
+nelson_api_port: 18600
+nelson_tcp_port: 16600
