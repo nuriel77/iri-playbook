@@ -3,10 +3,3 @@
 # If using a remote host use either IP or a resolvable name.
 # Also, remove the ansible_connection=local if a remote host.
 localhost ansible_connection=local
-
-# Will install iota-pm on this node. Same as above,
-# can be local or remote host. (IOTA peer manager)
-# https://www.npmjs.com/package/iota-pm
-# You can also remove any host here under to skip installing iota-pm.
-[iotapm]
-localhost ansible_connection=local
