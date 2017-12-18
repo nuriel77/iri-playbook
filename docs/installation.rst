@@ -334,15 +334,19 @@ Join the ``#nelson`` channel on ``iotatangle.slack.com`` if you have questions r
 
 You can stop, start and restart nelson via ``systemctl (start|stop|restart) nelson``.
 
-View Status/Logs
-----------------
+View Status/Logs and configuration
+----------------------------------
 
-To view nelson status run: ``systemctl status nelson``.
+* To view nelson status run: ``systemctl status nelson``.
 
-To view nelson logs run: ``journalctl -u nelson``.
+* To view nelson logs run: ``journalctl -u nelson``.
 
 Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's log.
 
+
+* Nelson's configuration file can be found here: ``/etc/nelson/nelson.ini``.
+
+* Nelson's data directory can be found here: ``/var/lib/nelson/data``.
 
 Upgrade Nelson Version
 ----------------------
