@@ -16,17 +16,17 @@ Upgrade IRI
 ===========
 
 
-If a new version of IRI has been released, it should suffice to replace the jar file.
-The jar file is located e.g.::
+If a new version of IRI has been released, the jar file has to be replaced.
+The jar file is located in ``/var/lib/iri/target``, e.g.::
 
   /var/lib/iri/target/iri-1.4.1.4.jar
 
 
-Latest release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
+Latest IRI release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
 
 In the following example we assume that the new version is 1.4.1.4.
 
-You can download it to the directory:
+Download IRI to the directory:
 
 .. code:: bash
 
