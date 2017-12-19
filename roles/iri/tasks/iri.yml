@@ -87,7 +87,8 @@
   copy:
     src: files/iri.ini
     dest: "{{ iri_basedir }}/iri.ini"
-    force: no
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
 
 - name: flush handlers
   meta: flush_handlers
@@ -96,7 +97,8 @@
   template:
     src: templates/iri.sysconfig.j2
     dest: "{{ config_dir }}/iri"
-    force: no
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
   notify:
     - restart iri
 

@@ -41,6 +41,8 @@
     owner: "{{ nelson_username }}"
     group: "{{ nelson_username }}"
     mode: 0600
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
   notify:
     - restart nelson
 
