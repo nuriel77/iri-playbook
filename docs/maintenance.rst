@@ -53,7 +53,7 @@ The jar file is located e.g.::
 Let's say you downloaded a new version iri-1.6.2.jar (latest release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
 You can download it to the directory::
 
-  cd /var/lib/iri/target/ && curl -L https://github.com/iotaledger/iri/releases/download/v1.6.2/original-iri-1.6.2.jar --output iri-1.6.2.jar
+  cd /var/lib/iri/target/ && curl -L https://github.com/iotaledger/iri/releases/download/v1.6.2/iri-1.6.2.jar --output iri-1.6.2.jar
 
 Then edit the IRI configuration file:
 
