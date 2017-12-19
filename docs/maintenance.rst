@@ -20,13 +20,15 @@ There are two ways to upgrade IRI to a new version. The first method described h
 
 First Method
 ------------
-Log in to your full node. Then, run:
 
-.. code:: bash
+1. Edit the iri.yml file: ``/opt/iri-playbook/group_vars/all/iri.yml``
 
-   cd /opt/iri-playbook/ && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_role
+2. Set the version you with to upgrade to in ``iri_version`` (latest is 1.4.1.4).
 
-This will update your local iri repository and update to the latest release.
+3. For version 1.4.1.4, edit the ``iri_jar_checksum`` and set ``sha256:0154b57bf37b031142ae2a0d884b8bb65efdd5e08f670898f0ae82f1b41fba9b``
+
+4. Save the file and run ``cd /opt/iri-playbook/ && ansible-playbook -i inventory -v site.yml --tags=iri_role``
+
 
 To verify the version has been updated, run:
 
@@ -37,12 +39,6 @@ To verify the version has been updated, run:
 Of course, replace the version with the one you expect to see.
 
 This should output ``found`` if okay.
-
-.. note::
-
-   Should the command fail for any reason, you can edit the iri.yml file: ``/opt/iri-playbook/group_vars/all/iri.yml``:
-   Set the version you with to upgrade to in ``iri_version``.
-   For version 1.4.1.4, edit the ``iri_jar_checksum`` and set ``sha256:0154b57bf37b031142ae2a0d884b8bb65efdd5e08f670898f0ae82f1b41fba9b``
 
 
 Second Method
