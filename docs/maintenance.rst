@@ -28,7 +28,15 @@ Log in to your full node. Then, run:
 
 This will update your local iri repository and update to the latest release.
 
+To verify the version has been updated, run:
 
+.. code:: bash
+
+   ps aux|grep -q iri-1.4.1.4 && echo found
+
+Of course, replace the version with the one you expect to see.
+
+This should output ``found`` if okay.
 
 Second Method
 -------------
