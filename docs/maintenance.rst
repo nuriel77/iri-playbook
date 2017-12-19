@@ -15,34 +15,6 @@ Maintenance
 Upgrade IRI
 ===========
 
-There are two ways to upgrade IRI to a new version. The first method described here is the recommended one.
-
-
-First Method
-------------
-
-1. Edit the iri.yml file: ``/opt/iri-playbook/group_vars/all/iri.yml``
-
-2. Set the version you with to upgrade to in ``iri_version`` (latest is 1.4.1.4).
-
-3. For version 1.4.1.4, edit the ``iri_jar_checksum`` and set ``sha256:0154b57bf37b031142ae2a0d884b8bb65efdd5e08f670898f0ae82f1b41fba9b``
-
-4. Save the file and run ``cd /opt/iri-playbook/ && ansible-playbook -i inventory -v site.yml --tags=iri_role``
-
-
-To verify the version has been updated, run:
-
-.. code:: bash
-
-   ps aux|grep -q iri-1.4.1.4 && echo found
-
-Of course, replace the version with the one you expect to see.
-
-This should output ``found`` if okay.
-
-
-Second Method
--------------
 
 If a new version of IRI has been released, it should suffice to replace the jar file.
 The jar file is located e.g.::
@@ -50,7 +22,10 @@ The jar file is located e.g.::
   /var/lib/iri/target/iri-1.4.1.2.jar
 
 
-Let's say you downloaded a new version iri-1.6.2.jar (latest release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
+Latest release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
+
+In the following example we assume that the new version is 1.6.2.
+
 You can download it to the directory::
 
   cd /var/lib/iri/target/ && curl -L https://github.com/iotaledger/iri/releases/download/v1.6.2/iri-1.6.2.jar --output iri-1.6.2.jar
@@ -70,6 +45,18 @@ And update the version line to match, e.g.::
   IRI_VERSION=1.6.2
 
 This requires a iri restart (``systemctl restart iri``).
+
+
+To verify the new version is loaded:
+
+.. code:: bash
+
+   ps aux|grep -q iri-1.4.1.4 && echo found
+
+Of course, replace the version with the one you expect to see.
+
+This should output ``found`` if okay.
+
 
 .. note::
 
