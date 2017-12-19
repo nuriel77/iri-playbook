@@ -106,3 +106,10 @@ Then:
 ```sh
 ansible-playbook -i inventory -v site.yml -e "remove_iri_workdir=1"
 ```
+
+### Overwrite/Update Configuration Files
+By default the playbook will not overwrite essential configuration files which have been deployed, as this might throw away values configured by the users.
+
+In order to overwrite or update configuration files, the extra environment variable "overwrite=true" can be set i.e. `-e overwrite=true` when running the playbook.
+
+This will backup existing configuration files with a timestamp.
