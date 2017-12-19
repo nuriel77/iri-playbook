@@ -19,16 +19,18 @@ Upgrade IRI
 If a new version of IRI has been released, it should suffice to replace the jar file.
 The jar file is located e.g.::
 
-  /var/lib/iri/target/iri-1.4.1.2.jar
+  /var/lib/iri/target/iri-1.4.1.4.jar
 
 
 Latest release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
 
-In the following example we assume that the new version is 1.6.2.
+In the following example we assume that the new version is 1.4.1.4.
 
-You can download it to the directory::
+You can download it to the directory:
 
-  cd /var/lib/iri/target/ && curl -L https://github.com/iotaledger/iri/releases/download/v1.6.2/iri-1.6.2.jar --output iri-1.6.2.jar
+.. code:: bash
+
+   export IRIVER=1.4.1.4 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
 
 Then edit the IRI configuration file:
 
@@ -60,7 +62,7 @@ This should output ``found`` if okay.
 
 .. note::
 
-  The foundation normally announces additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
+  The foundation might announce additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
   Such options can be specified in the ``OPTIONS=""`` value in the same file.
 
 
