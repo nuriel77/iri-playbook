@@ -46,6 +46,7 @@
   template:
     src: templates/iota-pm.sysconfig.j2
     dest: "{{ config_dir }}/iota-pm"
+    force: no
   notify:
     - restart iota-pm
 
