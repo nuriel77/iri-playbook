@@ -47,6 +47,7 @@
     - libappindicator
     - firewalld
     - curl
+    - wget
     - lsof
     - jq
     - pv
