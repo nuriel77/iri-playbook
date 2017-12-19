@@ -183,7 +183,7 @@ Using ``jq`` we can, for example, extract the fields of interest:
 Connecting to IOTA Peer Manager
 ===============================
 
-For IOTA Peer Manager, this installation has already configured it to be accessible via a webserver. See `Peer Manager Behind WebServer with Password`_.
+For IOTA Peer Manager, this installation has already configured it to be accessible via a webserver. See :ref:`peerManagerBehindWebServerWithPassword`.
 
 
 .. addRemoveNeighbors::

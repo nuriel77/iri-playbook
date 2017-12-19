@@ -124,7 +124,7 @@ To stop the tunnel simply press ``Ctrl-C``.
 
 You can do the same using the IRI API port (14265) and use a light wallet from your desktop to connect to ``http://localhost:14265``.
 
-.. peerManagerBehindWebServerWithPassword::
+.. _peerManagerBehindWebServerWithPassword:
 
 Peer Manager Behind WebServer with Password
 ===========================================
