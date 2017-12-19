@@ -15,6 +15,24 @@ Maintenance
 Upgrade IRI
 ===========
 
+There are two ways to upgrade IRI to a new version. The first method described here is the recommended one.
+
+
+First Method
+------------
+Log in to your full node. Then, run:
+
+.. code:: bash
+
+   cd /opt/iri-playbook/ && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_role
+
+This will update your local iri repository and update to the latest release.
+
+
+
+Second Method
+-------------
+
 If a new version of IRI has been released, it should suffice to replace the jar file.
 The jar file is located e.g.::
 
