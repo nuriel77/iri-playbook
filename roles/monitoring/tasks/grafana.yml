@@ -2,7 +2,6 @@
   template:
     src: templates/grafana.ini.j2
     dest: /etc/grafana/grafana.ini
-    force: "{{ overwrite | default('no') }}"
     backup: yes
   notify:
     - restart grafana
