@@ -38,6 +38,13 @@ Of course, replace the version with the one you expect to see.
 
 This should output ``found`` if okay.
 
+.. note::
+
+   Should the command fail for any reason, you can edit the iri.yml file: ``/opt/iri-playbook/group_vars/all/iri.yml``:
+   Set the version you with to upgrade to in ``iri_version``.
+   For version 1.4.1.4, edit the ``iri_jar_checksum`` and set ``sha256:0154b57bf37b031142ae2a0d884b8bb65efdd5e08f670898f0ae82f1b41fba9b``
+
+
 Second Method
 -------------
 
@@ -66,7 +73,7 @@ And update the version line to match, e.g.::
 
   IRI_VERSION=1.6.2
 
-This requires a iri restart (systemctl restart iri).
+This requires a iri restart (``systemctl restart iri``).
 
 .. note::
 
