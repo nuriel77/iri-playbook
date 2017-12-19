@@ -50,3 +50,4 @@
     - lsof
     - jq
     - pv
+    - nano
