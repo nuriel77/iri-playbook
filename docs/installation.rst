@@ -320,7 +320,7 @@ It is possible to install `Nelson <https://github.com/SemkoDev/nelson.cli>`_ as 
 
 .. warning::
 
-  Nelson is still at pre-release alpha.
+  Nelson is still at beta stage.
 
 
 Nelson depends on IRI being installed and running. Please check ``/opt/iri-playbook/group_vars/all/nelson.yml`` and configure to match your environment.
