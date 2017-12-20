@@ -6,7 +6,7 @@
     group: "{{ prom_username }}"
     recurse: yes
 
-- name: copy exporter  systemd service file
+- name: copy exporter systemd service file
   template:
     src: templates/node-exporter.service.j2
     dest: /etc/systemd/system/node-exporter.service
