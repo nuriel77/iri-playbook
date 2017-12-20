@@ -6,6 +6,12 @@ Installation
 To prepare for running the automated "playbook" from this repository you require some basic packages.
 First, it is always a good practice to check for updates on the server.
 
+.. note::
+
+   If you want to test out the new IRI+Nelson auto-installer in Docker containers (does not include the monitoring graphs and peer manager):
+   I am looking for testers: https://github.com/SemkoDev/nelson.cli/tree/master/contrib/ansible-playbook
+
+
 Update System Packages
 ======================
 

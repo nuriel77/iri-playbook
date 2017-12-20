@@ -25,6 +25,13 @@ In this installation
 * Optionally install `Nelson <https://github.com/SemkoDev/nelson.cli>`_.
 * Install monitoring graphs. Big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
 
+
+.. note::
+
+   If you want to test out the new IRI+Nelson auto-installer in Docker containers (does not include the monitoring graphs and peer manager):
+   I am looking for testers: https://github.com/SemkoDev/nelson.cli/tree/master/contrib/ansible-playbook
+
+
 Work in progress
 ================
 

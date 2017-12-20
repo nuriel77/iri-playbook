@@ -62,6 +62,14 @@ Now we can run the installer:
 That's it. You can proceed to the :ref:`post_installation` for additional information on managing your node.
 
 
+If you liked this tutorial, and would like to leave a donation you can use this IOTA address::
+
+  LDWOMAW9IBFEPQ9DRMCIOLLOLVCWGT9OISWNXVQTXPQANRJNDRLNWZVITVBYLMVFSQQFNZXHXQYWLWHEXKWROI9FMZ
+
+Thanks!
+
+
+
 If you lost connection to your server during the installation, don't worry. It is running in the background because we are running it inside a "screen" session
 .
 
