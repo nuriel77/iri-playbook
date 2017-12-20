@@ -6,8 +6,8 @@
 IOTA Full Node Installation wiki
 ################################
 
-.. image:: https://readthedocs.org/projects/iri-playbook/badge/?version=latest
-   :target: http://iri-playbook.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/iri-playbook/badge/?version=master
+   :target: http://iri-playbook.readthedocs.io/en/master/?badge=master
    :alt: Documentation Status
 
 For a "click-'n-go" installation see :ref:`getting_started_quickly`.
