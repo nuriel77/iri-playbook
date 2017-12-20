@@ -13,9 +13,9 @@ It will:
 - NEW: Monitoring for IRI + Graphs amazing work of Chirs Holliday https://github.com/crholliday/iota-prom-exporter
 
 
-For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/docs/getting-started-quickly.html#getting-started-quickly)
+For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/master/getting-started-quickly.html#getting-started-quickly)
 
-For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/docs/index.html)
+For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/master/index.html)
 
 ## Screenshots Monitoring
 ![graph_a](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/top.png)
