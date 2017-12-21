@@ -1,0 +1,29 @@
+[Unit]
+Description=Alertmanager for Prometheus
+Wants=network-online.target
+After=network.target
+
+[Service]
+WorkingDirectory={{ alertmanager_basedir }}
+Restart=on-failure
+ExecStart={{ alertmanager_basedir }}/alertmanager -config.file config.yml -web.listen-address {{ alertmanager_bind }}:{{ alertmanager_port }} -web.external-url http://{{ ansible_default_ipv4.address }}:{{ alertmanager_nginx_port }} -mesh.listen-address "" -log.level {{ alertmanager_loglevel }}
+Type=simple
+
+# No need that exporter messes with /dev
+PrivateDevices=yes
+
+# Dedicated /tmp
+PrivateTmp=yes
+
+# Make /usr, /boot, /etc read only
+ProtectSystem=full
+
+# /home is not accessible at all
+ProtectHome=yes
+
+# Unprivileged user
+User={{ prom_username }}
+Group={{ prom_username }}
+
+[Install]
+WantedBy=multi-user.target

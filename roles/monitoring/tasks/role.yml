@@ -10,6 +10,10 @@
   tags:
     - prometheus_config
 
+- import_tasks: alertmanager.yml
+  tags:
+    - alertmanager_config
+
 - import_tasks: node_exporter.yml
   tags:
     - node_exporter_config

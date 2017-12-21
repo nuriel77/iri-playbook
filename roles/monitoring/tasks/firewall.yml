@@ -14,11 +14,12 @@
   with_items:
     - "{{ prom_nginx_port }}"
     - "{{ grafana_nginx_port }}"
+    - "{{ alertmanager_nginx_port }}"
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
-- name: allow prometheus grafana aginx port via selinux seport
+- name: allow prometheus grafana nginx port via selinux seport
   seport:
     ports: "{{ item }}"
     proto: tcp
@@ -27,6 +28,7 @@
   with_items:
     - "{{ prom_nginx_port }}"
     - "{{ grafana_nginx_port }}"
+    - "{{ alertmanager_nginx_port }}"
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
@@ -49,6 +51,7 @@
   with_items:
     - "{{ prom_nginx_port }}"
     - "{{ grafana_nginx_port }}"
+    - "{{ alertmanager_nginx_port }}"
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
