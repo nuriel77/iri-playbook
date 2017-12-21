@@ -24,7 +24,7 @@ In this installation
 * Password protect IOTA Peer Manager
 * Optionally install `Nelson <https://github.com/SemkoDev/nelson.cli>`_.
 * Install monitoring graphs. Big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
-
+* Alert notifications manager
 
 .. note::
 

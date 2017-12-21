@@ -132,3 +132,37 @@ https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl
   I encourage you to refer to the previous chapter about configuring FQDN for Peer Manager and Grafana. From there you can proceed to adding HTTPS to those configurations.
 
 
+
+Sending Alert Notifications
+===========================
+
+Since release v1.1 a new feature has been introduced to support alerting.
+
+This is considered an advanced feature. Configuration hereof requires some basic Linux and system configuration experience.
+
+The monitoring system has a set of default alerting rules. These are configured to monitor various data of the full node.
+
+|
+
+For example:
+
+* CPU load high
+* Memory usage high
+* Swap usage high
+* Disk space low
+* Too few or too many neighbors
+* Inactive neighbors
+* Milestones sync
+
+
+It is possible to add or tweak existing rules. The alerting rules are part of Prometheus and are configured in ``/etc/prometheus/alert.rules.yml``.
+
+The alerting manager is a daemon to which Prometheus will send alerts when they occur.
+
+
+The configuration file for alertmanager can be found in ``/opt/prometheus/alertmanager/config.yml``. This is where you can set your email address and/or slack channel (not from iota!) to where you want to send the notifications.
+
+The email template used for the emails can be found in ``/opt/prometheus/alertmanager/template/email.tmpl``.
+
+
+For more information see `Documentation Prometheus Alertmanager <https://prometheus.io/docs/alerting/alertmanager/>`_
