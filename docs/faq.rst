@@ -204,7 +204,7 @@ This has been added recently (21 December 2017) so please contact me on `github 
 
 .. raw:: html
 
-  <iframe width="300" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
+  <iframe width="400" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
 
 Please consider donating some iotas for the costs involved in making this possible::
 
