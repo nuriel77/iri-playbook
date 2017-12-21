@@ -192,61 +192,20 @@ and restart IRI to take effect: ``systemctl restart iri``
 Where can I get a fully synced database to help kick start my node
 ==================================================================
 
-There's a public node that makes a copy of the database once every hour.
+For the sake of the community, I create a copy of the fully synced database once every hour.
 
-https://iota.lukaseder.de/download.html
+This has been added recently (21 December 2017) so please contact me on `github <https://github.com/nuriel77/iri-playbook/issues>` or iota slack @nuriel77 if any issues.
 
-Please consider donating them some iotas for the costs involved in making this possible.
-
-1. You can download the database using the following command:
 
 .. code:: bash
 
-  cd /var/lib/iri/target && curl --output db.tar.gz https://iota.lukaseder.de/downloads/db.tar.gz
+   cd /tmp && curl -LO https://x-vps.com/iota.db.tgz && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && pv iota.db.tgz | tar xzf - -C /var/lib/iri/target/ && chown iri.iri /var/lib/iri -R && rm -f /tmp/iota.db.tgz && systemctl start iri
 
 
-2. Unpack it:
- Make sure module "pv" was installed previously (CentOS: ``yum install pv`` Ubuntu: ``apt-get install pv -y``).
+Please consider donating some iotas for the costs involved in making this possible::
 
-.. code:: bash
+  LDWOMAW9IBFEPQ9DRMCIOLLOLVCWGT9OISWNXVQTXPQANRJNDRLNWZVITVBYLMVFSQQFNZXHXQYWLWHEXKWROI9FMZ
 
- pv db.tar.gz | tar xzf - -C ./
-
-3. Stop iri if its running:
-
-.. code:: bash
-
-   systemctl stop iri
-
-4. Remove older database:
-
-.. code:: bash
-
-   rm -rf /var/lib/iri/target/mainnet*
-
-5. Move new database to required location:
-
-.. code:: bash
-
-   mv db/ mainnetdb
-
-6. Delete the lock file:
-
-.. code:: bash
-
-   rm -f mainnetdb/LOCK
-
-7. Set correct ownership of database:
-
-.. code:: bash
-
-   chown iri.iri mainnetdb -R
-
-8. Start iri:
-
-.. code:: bash
-
-   systemctl start iri
 
 
 .. note::
