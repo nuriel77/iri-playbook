@@ -154,15 +154,52 @@ For example:
 * Inactive neighbors
 * Milestones sync
 
+**Prometheus** is the service responsible for collecting metrics data from the node's services and status.
 
-It is possible to add or tweak existing rules. The alerting rules are part of Prometheus and are configured in ``/etc/prometheus/alert.rules.yml``.
-
-The alerting manager is a daemon to which Prometheus will send alerts when they occur.
+**Alert Manager** is the service responsible for sending out notifications.
 
 
-The configuration file for alertmanager can be found in ``/opt/prometheus/alertmanager/config.yml``. This is where you can set your email address and/or slack channel (not from iota!) to where you want to send the notifications.
+
+Configuration Files
+-------------------
+It is possible to add or tweak existing rules:
+
+
+Alerts
+^^^^^^
+The alerting rules are part of Prometheus and are configured in ``/etc/prometheus/alert.rules.yml``.
+
+.. note::
+
+   Changes to Prometheus's configuration requires a restart of prometheus.
+
+
+Notifications
+^^^^^^^^^^^^^
+The configuration file for alertmanager can be found in ``/opt/prometheus/alertmanager/config.yml``.
+
+This is where you can **set your email address and/or slack channel** (not from iota!) to where you want to send the notifications.
 
 The email template used for the emails can be found in ``/opt/prometheus/alertmanager/template/email.tmpl``.
+
+
+.. note::
+
+   Changes to Alert Manager configuration files require a restart of alertmanager.
+
+
+Controls
+--------
+Prometheus can be controlled via systemctl, for example:
+
+.. code:: bash
+
+   To restart: systemctl restart prometheus
+   To stop: systemctl stop prometheus
+   Status: systemctl status prometheus
+   Log: journalctl -u prometheus
+
+The same can be done with ``alertmanager``.
 
 
 For more information see `Documentation Prometheus Alertmanager <https://prometheus.io/docs/alerting/alertmanager/>`_
