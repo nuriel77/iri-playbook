@@ -119,10 +119,14 @@ function init_centos(){
     echo "Install yum utils..."
     yum install -y yum-utils
 
+    set +e
+    set +o pipefail
     if $(needs-restarting -r 2>&1 | grep -q "Reboot is required"); then
         inform_reboot
         exit 0
     fi
+    set -o pipefail
+    set -e
 
     echo "Installing Ansible and git..."
     yum install ansible git -y
