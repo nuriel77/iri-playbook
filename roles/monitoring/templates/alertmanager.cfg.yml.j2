@@ -26,7 +26,8 @@ receivers:
   email_configs:
   - to: {{ alertmanager_email_to }}
     from: {{ alertmanager_email_from }}@{{ ansible_hostname }}
-    html: {% raw %}{{ template "email.tmpl" . }}{% endraw %}
+    html: {% raw %}'{{ template "email.tmpl" . }}'{% endraw %}
+
     smarthost: {{ smtp_host }}:{{ smtp_port }}
 
 # For gmail, replace the variables/placeholders with your data
