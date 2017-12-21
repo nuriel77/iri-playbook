@@ -202,6 +202,10 @@ This has been added recently (21 December 2017) so please contact me on `github 
    cd /tmp && curl -LO https://x-vps.com/iota.db.tgz && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && pv iota.db.tgz | tar xzf - -C /var/lib/iri/target/ && chown iri.iri /var/lib/iri -R && rm -f /tmp/iota.db.tgz && systemctl start iri
 
 
+.. raw:: html
+
+  <iframe width="300" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
+
 Please consider donating some iotas for the costs involved in making this possible::
 
   LDWOMAW9IBFEPQ9DRMCIOLLOLVCWGT9OISWNXVQTXPQANRJNDRLNWZVITVBYLMVFSQQFNZXHXQYWLWHEXKWROI9FMZ
