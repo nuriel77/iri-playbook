@@ -49,6 +49,32 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
+# Re-download alertmanager?
+- name: stat alertmanager basedir
+  stat:
+    path: "{{ alertmanager_basedir }}"
+  register: alertmanager_basedir_stat
+
+- name: download and unarchive alertmanager release
+  unarchive:
+    src: "https://github.com/prometheus/alertmanager/releases/download/v{{ alertmanager_version }}/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+    dest: /tmp
+    remote_src: True
+  when: not alertmanager_basedir_stat.stat.exists
+  register: alertmanager_downloaded
+
+- name: move temporary extracted alertmanager directory to its basedir
+  shell: "mv /tmp/alertmanager-{{ alertmanager_version }}.linux-amd64 {{ alertmanager_basedir }}"
+  when: alertmanager_downloaded and alertmanager_downloaded.changed
+
+- name: ensure alertmanager basedir ownership and permissions
+  file:
+    path: "{{ alertmanager_basedir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+
 # Re-download node_exporter?
 - name: stat node exporter basedir
   stat:
@@ -75,50 +101,67 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
-- name: Add an Apt signing key for grafana repo
-  apt_key:
-    url: https://packagecloud.io/gpg.key
-    state: present
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+# Apt installs for Ubuntu
+- block:
 
-- name: add grafana apt repository
-  apt_repository:
-    repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
-    state: present 
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    - name: Add an Apt signing key for grafana repo
+      apt_key:
+        url: https://packagecloud.io/gpg.key
+        state: present
 
-- name: Install grafana
-  apt:
-    state: latest
-    name: grafana
-    update_cache: yes
+    - name: add grafana apt repository
+      apt_repository:
+        repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
+        state: present 
+
+    - name: Install grafana and postfix
+      apt:
+        state: latest
+        name: "{{ item }}"
+        update_cache: yes
+      with_items:
+        - grafana
+        - postfix
+        - mutt
+        - mailutils
+      notify:
+        - reload systemd
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-  notify:
-    - reload systemd
 
 # Required
-- name: Install epel-release
-  yum: state=latest name=epel-release
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+- block:
 
-- name: add grafana repository
-  yum_repository:
-    name: grafana
-    description: grafana
-    baseurl: https://packagecloud.io/grafana/stable/el/6/$basearch
-    gpgcheck: yes
-    enabled: yes
-    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
-    repo_gpgcheck: yes
-    gpgkey: 'https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana'
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    - name: Install epel-release
+      yum: state=latest name=epel-release
 
-- name: Install grafana
-  yum:
-    name: grafana
-    state: latest
+    - name: add grafana repository
+      yum_repository:
+        name: grafana
+        description: grafana
+        baseurl: https://packagecloud.io/grafana/stable/el/6/$basearch
+        gpgcheck: yes
+        enabled: yes
+        sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+        repo_gpgcheck: yes
+        gpgkey: 'https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana'
+
+    - name: Install grafana and postfix
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - grafana
+        - mutt
+        - postfix
+        - mailx
+
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: flush handlers
   meta: flush_handlers
 
+- name: Ensure postfix is started and enabled
+  systemd:
+    name: postfix
+    state: started
+    enabled: yes

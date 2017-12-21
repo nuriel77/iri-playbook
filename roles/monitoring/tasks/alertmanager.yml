@@ -1,0 +1,49 @@
+- name: ensure template directory exists for alertmanager
+  file:
+    path: "{{ alertmanager_basedir }}/template"
+    state: directory
+
+- name: copy email template for alertmanager
+  template:
+    src: templates/email.tmpl.j2
+    dest: "{{ alertmanager_basedir }}/template/email.tmpl"
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+
+- name: copy alertmanager systemd service file
+  template:
+    src: templates/alertmanager.service.j2
+    dest: /etc/systemd/system/alertmanager.service
+  notify:
+    - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: copy alertmanager config
+  template:
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+    src: templates/alertmanager.cfg.yml.j2
+    dest: "{{ alertmanager_basedir }}/config.yml"
+    mode: 0600
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+  notify:
+    - restart alertmanager
+
+- name: ensure alertmanager enabled and started
+  systemd:
+    name: alertmanager.service
+    state: started
+    enabled: yes
+
+- name: copy alertmanager nginx config
+  template:
+    src: templates/alertmanager.conf.j2
+    dest: /etc/nginx/conf.d/alertmanager.conf
+    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/alertmanager.conf -r"
+  when: install_nginx is defined and install_nginx
+  notify:
+    - reload nginx
+
