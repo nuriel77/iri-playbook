@@ -39,7 +39,7 @@ If you are missing these utilities on **Ubuntu** you can install them:
 Run the Installer!
 ==================
 
-1. This installation requires to be run as user ``root``. You can become root by running:
+1. This installation requires to be run as user ``root``. Make sure you are already root by running ``whoami``. If that is not the case, you can become root using:
 
 .. code:: bash
 
