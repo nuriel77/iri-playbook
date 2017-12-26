@@ -155,12 +155,15 @@ function init_ubuntu(){
 
 function inform_reboot() {
 cat <<EOF
-It is required to reboot the machine because of upgraded system packages.
+Some system packages have been updated which require a reboot
+and allow the node installer to proceed with the installation.
 
-*** Please reboot this machine and re-run the script ***
+*** Please reboot this machine and re-run this script ***
 
 To reboot run: 'shutdown -r now'
--> Remember to re-run the script inside a "screen" session: 'screen -S iota'.
+-> Remember to re-run this script inside a "screen" session: 'screen -S iota'.
+
+
 EOF
 }
 
