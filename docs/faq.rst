@@ -206,7 +206,7 @@ This has been added recently (21 December 2017) so please contact me on `github 
 
 .. code:: bash
 
-   cd /tmp && curl -LO https://x-vps.com/iota.db.tgz && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && pv iota.db.tgz | tar xzf - -C /var/lib/iri/target/ && chown iri.iri /var/lib/iri -R && rm -f /tmp/iota.db.tgz && systemctl start iri
+   cd /tmp && curl -LO https://x-vps.com/iota.db.tgz && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb/ && pv iota.db.tgz | tar xzf - -C /var/lib/iri/target/mainnetdb/ && chown iri.iri /var/lib/iri -R && rm -f /tmp/iota.db.tgz && systemctl start iri
 
 
 .. raw:: html
