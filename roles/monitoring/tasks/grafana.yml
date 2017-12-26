@@ -31,7 +31,7 @@
 - name: flush handlers
   meta: flush_handlers
 
-- name: Wait max 90 seconds for grafana nginx port to become available
+- name: Wait max 90 seconds for grafana port to become available
   wait_for:
     timeout: 90
     port: "{{ grafana_port }}"
