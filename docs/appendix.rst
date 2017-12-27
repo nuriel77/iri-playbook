@@ -168,9 +168,11 @@ TL;DR version
 
 3. Replace the email address in the line: ``- to: root@localhost`` with your email address.
 
-4. Save the file (in nano CTRL-X and confirm 'y')
+4. Replace the email address in the line ``from: alertmanager@test001`` with your node's name, e.g: ``alertmanager@fullnode01``.
 
-5. Restart alertmanager: ``systemctl restart alertmanager``
+5. Save the file (in nano CTRL-X and confirm 'y')
+
+6. Restart alertmanager: ``systemctl restart alertmanager``
 
 
 **Note**
