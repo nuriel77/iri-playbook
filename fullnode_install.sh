@@ -129,7 +129,7 @@ function init_centos(){
     set -e
 
     echo "Installing Ansible and git..."
-    yum install ansible git -y
+    yum install ansible git expect-devel -y
 
 }
 
@@ -150,18 +150,25 @@ function init_ubuntu(){
     apt-get install software-properties-common -y
     apt-add-repository ppa:ansible/ansible -y
     apt-get update -y
-    apt-get install ansible git -y
+    apt-get install ansible git expect-dev -y
 }
 
 function inform_reboot() {
 cat <<EOF
+
+
+======================== PLEASE REBOOT AND RE-RUN THIS SCRIPT =========================
+
 Some system packages have been updated which require a reboot
 and allow the node installer to proceed with the installation.
 
 *** Please reboot this machine and re-run this script ***
 
-To reboot run: 'shutdown -r now'
--> Remember to re-run this script inside a "screen" session: 'screen -S iota'.
+
+>>> To reboot run: 'shutdown -r now', when back online:
+bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+
+!! Remember to re-run this script inside a "screen" session: 'screen -S iota' !!
 
 
 EOF
@@ -267,7 +274,7 @@ LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Run the playbook
 set +e
-ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" | tee "$LOGFILE"
+unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" | tee "$LOGFILE"
 RC=$?
 if [ $RC -ne 0 ]; then
     echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
