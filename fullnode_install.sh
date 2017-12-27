@@ -275,8 +275,8 @@ if [ $RC -ne 0 ]; then
 fi
 set -e
 
-# Get primary IP
-PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+# Get primary IP from ICanHazIP, if it fails fallback to local
+PRIMARY_IP=($(curl -s -f -4 https://icanhazdip.com)) || PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
 
 cat <<EOF
 *** Installation done! ***
