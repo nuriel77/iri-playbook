@@ -39,15 +39,21 @@ If you are missing these utilities on **Ubuntu** you can install them:
 Run the Installer!
 ==================
 
-First, let's ensure the installation is running within a "screen" session.
-This ensures that the installer stays running in the background if the connection to the server breaks:
+1. This installation requires to be run as user ``root``. Make sure you are already root by running ``whoami``. If that is not the case, you can become root using:
+
+.. code:: bash
+
+   sudo su
+
+
+2. Let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to the server breaks:
 
 .. code:: bash
 
    screen -S iota
 
 
-Now we can run the installer:
+3. Finally, we can run the installer:
 
 .. code:: bash
 
@@ -56,7 +62,7 @@ Now we can run the installer:
 
 .. note::
 
-   If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
+   If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
 
 
 That's it. You can proceed to the :ref:`post_installation` for additional information on managing your node.
