@@ -29,6 +29,7 @@ receivers:
     html: {% raw %}'{{ template "email.tmpl" . }}'{% endraw %}
 
     smarthost: {{ smtp_host }}:{{ smtp_port }}
+    send_resolved: true
 
 # For gmail, replace the variables/placeholders with your data
 #- name: email-me
