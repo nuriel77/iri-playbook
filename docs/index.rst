@@ -35,8 +35,8 @@ In this installation
 Work in progress
 ================
 
-* Integrate alerting/notifications when node is not healthy
-* Security hardening steps
+* Security hardening guide
+
 
 |
 
