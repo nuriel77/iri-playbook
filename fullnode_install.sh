@@ -222,6 +222,20 @@ function set_password() {
     sed -i "s/^iotapm_nginx_password:.*$/iotapm_nginx_password: '$PASSWORD_A'/" group_vars/all/iotapm.yml
 }
 
+# Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
+function set_primary_ip()
+{
+  echo "Getting external IP address..."
+  local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
+  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+    echo "Got IP $ip"
+    PRIMARY_IP=$ip
+  else
+    PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+    echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
+  fi
+}
+
 # Get OS and version
 set_dist
 
@@ -282,20 +296,8 @@ if [ $RC -ne 0 ]; then
 fi
 set -e
 
-# Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
-function setPrimaryIP()
-{
-  echo "Getting external IP address..."
-  local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
-  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-    echo "Got IP $ip"
-    PRIMARY_IP=$ip
-  else
-    PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
-    echo "Failed to get external IP... using local hostname $PRIMARY_IP"
-  fi
-}
-setPrimaryIP
+# Calling set_primary_ip
+set_primary_ip
 
 cat <<EOF
 *** Installation done! ***
