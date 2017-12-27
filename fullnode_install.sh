@@ -282,8 +282,20 @@ if [ $RC -ne 0 ]; then
 fi
 set -e
 
-# Get primary IP from ICanHazIP, if it fails fallback to local
-PRIMARY_IP=($(curl -s -f -4 https://icanhazip.com)) || PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+# Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
+function setPrimaryIP()
+{
+  echo "Getting external IP address..."
+  local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
+  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+    echo "Got IP $ip"
+    PRIMARY_IP=$ip
+  else
+    PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+    echo "Failed to get external IP... using local hostname $PRIMARY_IP"
+  fi
+}
+setPrimaryIP
 
 cat <<EOF
 *** Installation done! ***
