@@ -352,7 +352,7 @@ If you installed the playbook before this feature was release you can still inst
 
    cd /opt/iri-playbook && git pull
 
-If this command breaks, it means that you have conflicting changes in one of the configuration files. Try to identify those manually, create a backup of those files if required, revert and re-run the above command (or hit me up on slack or github for assitance)
+If this command breaks, it means that you have conflicting changes in one of the configuration files. See :ref:`gitConflicts` on how to apply new changes (or hit me up on slack or github for assitance)
 
 2. WARNING, this will overwrite changes to your monitoring configuration files if you had any manually applied! Run the playbook's monitoring role:
 
@@ -367,10 +367,12 @@ If this command breaks, it means that you have conflicting changes in one of the
    ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e overwrite=true -e iotapm_nginx_password="mypassword"
 
 
+.. _gitConflicts:
+
 How to Handle Git Conflicts
 ===========================
 
-This is by no means a git tutorial, and the method suggested here has nothing to do with how one should use git.
+This is by no means a git tutorial, and the method suggested here has nothing to do with how one should be using git.
 
 
 Background
@@ -392,7 +394,7 @@ If you run a ``git pull`` and receive a message about conflicts, e.g.::
   Please, commit your changes or stash them before you can merge.
   Aborting
 
-This means you've applied changes in files which have been since updated upsteam.
+This means you've applied changes in files which have already been updated upstream.
 
 You can identify those files::
 
@@ -402,7 +404,7 @@ And view the changes you've applied::
 
   git diff
 
-What you can do in order to pull the new files is run the following:
+You can run the following command which will backup the files you've changed and allow to pull the updated versions:
 
 .. code:: bash
 
@@ -417,9 +419,9 @@ Apply Changes
 -------------
 The next step is to identify the changes. You can view the files that have been backed up using ``ls -l /tmp/my-changes``.
 
-For each file in that directory you can find its corresponding (new) updated file: ``find -name filename``.
+For each file in that directory find its corresponding (new) updated file: ``find -name filename``.
 
-To view the differeneces you can run ``diff /tmp/my-changes/my-old-file my-newfile``. The command's output might not be the prettiest; you can choose to handle the conflicts manually.
+To view the differeneces run ``diff /tmp/my-changes/my-old-file my-newfile``. The command's output might not be the prettiest; you can choose to handle the conflicts manually.
 
 Once you are done applying your changes, you can proceed to run the playbook command you were about to apply.
 
