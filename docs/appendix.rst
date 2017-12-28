@@ -254,3 +254,84 @@ The same can be done with ``alertmanager``.
 
 
 For more information see `Documentation Prometheus Alertmanager <https://prometheus.io/docs/alerting/alertmanager/>`_
+
+
+
+Restart IRI On Latest Subtangle Milestone Stuck
+===============================================
+
+A feature is added to alertmanager through which it is possible to trigger a IRI restart when the Latest Subtangle Milestone Stuck is stuck.
+
+
+.. warning::
+
+   This feature is disabled by default as this is not considered a permanent or ideal solution. Please, first try to download a fully sycned database as proposed in the faq, or try to find "healthier" neighbors.
+
+
+Enabling the Feature
+--------------------
+
+Log in to your node and edit the alertmanager configuration file: ``/opt/prometheus/alertmanager/config.yml``.
+
+You will find the following lines::
+
+  # routes:
+  # - receiver: 'executor'
+  #  match:
+  #    alertname: MileStoneNoIncrease
+
+Remove the ``#`` comments, resulting in::
+
+  routes:
+  - receiver: 'executor'
+    match:
+     alertname: MileStoneNoIncrease
+
+Try not to mess up the indentation (should be 2 spaces to begin with).
+
+After having applied the changes, save the file and restart alertmanager: ``systemctl restart alertmanager``.
+
+What will happen next is that the service called ``prom-am-executor`` will be called and trigger a restart to IRI when the Latest Subtangle Milestone is stuck for more than ``30`` minutes.
+
+
+.. note::
+
+  This alert-trigger is set to only execute if the Latest Subtangle Milestone is stuck and not equal to 243000 (which is the case when starting up or restarting IRI).
+
+
+Disabling the Feature
+---------------------
+A quick way to disable this feature:
+
+.. code:: bash
+
+   systemctl stop prom-am-executor && systemctl disable && prom-am-executor
+
+To re-enable:
+
+.. code:: bash
+
+   systemctl enable prom-am-executor && systemctl start prom-am-executor
+
+
+Configuring the Feature
+-----------------------
+
+You can choose to tweak some values for this feature, for example how long to wait on stuck milestones before restarting IRI:
+
+Edit the file ``/etc/prometheus/alert.rules.yml``, find the alert definition::
+
+    # If latest subtangle milestone doesn't increase for 30 minutes
+    - alert: MileStoneNoIncrease
+      expr: increase(iota_node_info_latest_subtangle_milestone[30m]) == 0
+        and iota_node_info_latest_subtangle_milestone != 243000
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        description: 'Latest Subtangle Milestone increase is {{ $value }}'
+        summary: 'Latest Subtangle Milestone not increasing'
+
+The line that denotes the time: ``increase(iota_node_info_latest_subtangle_milestone[30m]) == 0`` -- here you can replace the ``30m`` with any other value in the same format (e.g. ``1h``, ``15m`` etc...)
+
+If any changes to this file, remember to restart prometheus: ``systemctl restart prometheus``
