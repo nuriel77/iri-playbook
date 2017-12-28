@@ -335,3 +335,32 @@ Edit the file ``/etc/prometheus/alert.rules.yml``, find the alert definition::
 The line that denotes the time: ``increase(iota_node_info_latest_subtangle_milestone[30m]) == 0`` -- here you can replace the ``30m`` with any other value in the same format (e.g. ``1h``, ``15m`` etc...)
 
 If any changes to this file, remember to restart prometheus: ``systemctl restart prometheus``
+
+
+Upgrading the Playbook to Get the Feature
+-----------------------------------------
+
+If you installed the playbook before this feature was release you can still install it.
+
+1. Enter the iri-playbook directory and pull new changes:
+
+.. code:: bash
+
+   cd /opt/iri-playbook && git pull
+
+If this command breaks, it means that you have conflicting changes in one of the configuration files. Try to identify those manually, create a backup of those files if required, revert and re-run the above command (or hit me up on slack or github for assitance)
+
+2. WARNING, this will overwrite changes to your monitoring configuration files if you had any manually applied! Run the playbook's monitoring role:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e overwrite=true
+
+3. **If** the playbook fails with 401 authorization error (probably when trying to run prometheus grafana datasource), you will have to re-run the command and supply your web-authentication password together with the command:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e overwrite=true -e iotapm_nginx_password="mypassword"
+
+
+
