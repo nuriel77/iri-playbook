@@ -1,3 +1,4 @@
+# Executor credits go to https://github.com/imgix/prometheus-am-executor
 - name: copy prometheus alertmanager executor binary
   copy:
     src: files/prom-am-executor
