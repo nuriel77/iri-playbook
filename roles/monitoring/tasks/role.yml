@@ -25,3 +25,7 @@
 - import_tasks: iota-prom-exporter.yml
   tags:
     - iota_prom_exporter
+
+- import_tasks: prom-am-executor.yml
+  tags:
+    - prom_am_executor

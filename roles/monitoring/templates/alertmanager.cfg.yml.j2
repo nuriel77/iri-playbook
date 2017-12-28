@@ -14,10 +14,22 @@ route:
   group_by: [Alertname]
   repeat_interval: 1h
   receiver: email-me
+
+# Uncomment these lines to enable webhook executor to restart iri
+# when subtangle milestone stuck:
+
+#  routes:
+#  - receiver: 'executor'
+#    match:
+#      alertname: MileStoneNoIncrease
+
+
+
+# Templates directory
 templates:
   - {{ alertmanager_basedir }}/template/*.tmpl
-receivers:
 
+receivers:
 # Send using postfix local mailer
 # You can send to a gmail or hotmail address
 # but these will most probably be put into junkmail
@@ -30,6 +42,10 @@ receivers:
 
     smarthost: {{ smtp_host }}:{{ smtp_port }}
     send_resolved: true
+
+- name: executor
+  webhook_configs:
+  - url: http://localhost:{{ prom_am_executor_port }}
 
 # For gmail, replace the variables/placeholders with your data
 #- name: email-me
