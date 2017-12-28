@@ -260,7 +260,9 @@ For more information see `Documentation Prometheus Alertmanager <https://prometh
 Restart IRI On Latest Subtangle Milestone Stuck
 ===============================================
 
-A feature is added to alertmanager through which it is possible to trigger a IRI restart when the Latest Subtangle Milestone Stuck is stuck.
+A trigger to restart IRI restart when the Latest Subtangle Milestone Stuck is stuck has been added to alertmanager.
+
+If you don't have alert manager or had it installed before this feature was introduced, see :ref:`upgradeToFeature`.
 
 
 .. warning::
@@ -336,6 +338,8 @@ The line that denotes the time: ``increase(iota_node_info_latest_subtangle_miles
 
 If any changes to this file, remember to restart prometheus: ``systemctl restart prometheus``
 
+
+.. _upgradeToFeature:
 
 Upgrading the Playbook to Get the Feature
 -----------------------------------------
