@@ -367,4 +367,59 @@ If this command breaks, it means that you have conflicting changes in one of the
    ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e overwrite=true -e iotapm_nginx_password="mypassword"
 
 
+How to Handle Git Conflicts
+===========================
+
+This is by no means a git tutorial, and the method suggested here has nothing to do with how one should use git.
+
+
+Background
+----------
+
+It is simply the case that updates are applied to configuration files over time. A user might have configured values that might later conflict with new updates.
+
+I was looking for a quick solution for users who are not familiar with Linux or git. One idea was to rename all the variable files adding the extension ``.example`` and using those as the "source".
+
+The other solution is the one I am presenting here.
+
+Backup My Changes
+-----------------
+
+If you run a ``git pull`` and receive a message about conflicts, e.g.::
+
+  error: Your local changes to the following files would be overwritten by merge:
+          somefile
+  Please, commit your changes or stash them before you can merge.
+  Aborting
+
+This means you've applied changes in files which have been since updated upsteam.
+
+You can identify those files::
+
+  git status
+
+And view the changes you've applied::
+
+  git diff
+
+What you can do in order to pull the new files is run the following:
+
+.. code:: bash
+
+  mkdir -p /tmp/my-changes && for f in $(git status|grep modified|awk {'print $3'});do cp $f /tmp/my-changes/ ; git checkout -- $f ;done
+
+This will copy any conflicting file into the directory ``/tmp/my-changes``.
+
+At this point you will not have any conflicts and be able to run ``git pull``.
+
+
+Apply Changes
+-------------
+The next step is to identify the changes. You can view the files that have been backed up using ``ls -l /tmp/my-changes``.
+
+For each file in that directory you can find its corresponding (new) updated file: ``find -name filename``.
+
+To view the differeneces you can run ``diff /tmp/my-changes/my-old-file my-newfile``. The command's output might not be the prettiest; you can choose to handle the conflicts manually.
+
+Once you are done applying your changes, you can proceed to run the playbook command you were about to apply.
 
