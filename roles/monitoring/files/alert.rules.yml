@@ -235,7 +235,7 @@ groups:
   # No increase in latest subtangle milestone for 30 minutes
   # Ignore the case when it is 243000, there's an alert for that
   - alert: MileStoneNoIncrease
-    expr: rate(iota_node_info_latest_subtangle_milestone[30m]) == 0
+    expr: increase(iota_node_info_latest_subtangle_milestone[30m]) == 0
       and iota_node_info_latest_subtangle_milestone != 243000
     for: 1m
     labels:
