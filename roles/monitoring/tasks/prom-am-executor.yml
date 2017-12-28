@@ -18,8 +18,8 @@
   notify:
     - reload systemd
 
-- name: ensure prometheus enabled and started
+- name: ensure prom-am-executor enabled and started
   systemd:
-    name: prometheus.service
+    name: prom-am-executor.service
     state: started
     enabled: yes
