@@ -225,9 +225,21 @@ groups:
   # No metrics?
   - alert: NoMileStoneMetrics
     expr: absent(iota_node_info_latest_milestone{job="iota_exporter"})
-    for: 1m
+    for: 2m
     labels:
       severity: critical
     annotations:
       description: 'Rate of metric not available {{ $value }}'
       summary: 'Rate of metrics is 0, IRI instance down?'
+
+  # No increase in latest subtangle milestone for 30 minutes
+  # Ignore the case when it is 243000, there's an alert for that
+  - alert: MileStoneNoIncrease
+    expr: rate(iota_node_info_latest_subtangle_milestone[30m]) == 0
+      and iota_node_info_latest_subtangle_milestone != 243000
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: 'Latest Subtangle Milestone increase is {{ $value }}'
+      summary: 'Latest Subtangle Milestone not increasing'
