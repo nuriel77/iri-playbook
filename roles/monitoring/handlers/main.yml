@@ -21,3 +21,9 @@
     name: iota-prom-exporter.service
     state: restarted
     enabled: yes
+
+- name: restart prom-am-executor
+  systemd:
+    name: prom-am-executor.service
+    state: restarted
+    enabled: yes

@@ -231,3 +231,14 @@ groups:
     annotations:
       description: 'Rate of metric not available {{ $value }}'
       summary: 'Rate of metrics is 0, IRI instance down?'
+
+  # If latest subtangle milestone doesn't increase for 30 minutes
+  - alert: MileStoneNoIncrease
+    expr: increase(iota_node_info_latest_subtangle_milestone[30m]) == 0
+      and iota_node_info_latest_subtangle_milestone != 243000
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: 'Latest Subtangle Milestone increase is {{ $value }}'
+      summary: 'Latest Subtangle Milestone not increasing'
