@@ -80,6 +80,9 @@ This is how the error would look like::
 
 This can happen for a number of reasons. It is most probably a password mismatch between what the playbook sees in ``group_vars/all/iotapm.yml`` under the value ``iotapm_nginx_password`` and perhaps the ``iotapm_nginx_user`` too.
 
+
+Solution A
+----------
 Try to correct this by checking the password which is currently configured in grafana:
 
 .. code:: bash
@@ -97,19 +100,31 @@ You can try to override the password when running the playbook, appending it to 
 
    ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e iotapm_nginx_password=hello123
 
-If this doesn't work, there's a way to force-reset the password:
 
-1. Stop grafana-server::
+Solution B
+----------
+If Solution A doesn't work, there's a way to force-reset the password.
+
+This solution also works if you haven't installed Grafana via this tutorial and cannot login.
+
+
+1. Stop grafana-server:
+
+.. code:: bash
 
   systemctl stop grafana-server
 
-2. Delete grafana's database::
+2. Delete grafana's database:
+
+.. code:: bash
 
   rm -f /var/lib/grafana/grafana.db
 
-3. Edit ``/etc/grafana/grafana.ini`` and ensure the correct username and password for the values ``admin_user`` and ``admin_password``.
+3. Edit ``/etc/grafana/grafana.ini``, set correct values for ``admin_user`` and ``admin_password``.
 
-4. Start grafana-server::
+4. Start grafana-server:
+
+.. code:: bash
 
   systemctl start grafana-server
 
