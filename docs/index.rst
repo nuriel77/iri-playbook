@@ -53,6 +53,7 @@ Work in progress
    files
    maintenance
    faq
+   troubleshooting
    glossary
    appendix
    disclaimer
