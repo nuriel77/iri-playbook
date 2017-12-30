@@ -309,7 +309,7 @@ SSH Daemon
 
 Edit the file ``/etc/ssh/sshd_config`` and find the line with ``# Port 22``.
 
-It might have a ``#`` (or not). In any case, make sure to remove the ``#`` and any trailing spaces. Set the new port number::
+There might be a ``#`` before ``Port`` (or not). In any case, make sure to remove the ``#`` and any trailing spaces. Set the new port number::
 
   Port 9922
 
@@ -326,10 +326,4 @@ Your current SSH connection will not drop. But you should be able to see SSHD li
   lsof -Pni|grep sshd
 
 Next, configure your putty session (click "Load" when selecting your saved session, change the port number and click "Save", then "Open").
-
-
-
-
-
-
 
