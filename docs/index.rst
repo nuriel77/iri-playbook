@@ -52,8 +52,9 @@ Work in progress
    remote-access
    files
    maintenance
-   faq
+   securityhardening
    troubleshooting
+   faq
    glossary
    appendix
    disclaimer
