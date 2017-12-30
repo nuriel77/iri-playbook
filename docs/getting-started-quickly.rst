@@ -57,7 +57,7 @@ Run the Installer!
 
 .. code:: bash
 
-   bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+   bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
 
 .. note::
