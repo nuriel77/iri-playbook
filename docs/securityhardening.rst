@@ -255,6 +255,10 @@ There are more than 65k ports on a Linux system to choose from. No hacker is goi
 
 To change the port, a few things have to be done. The most important step is to ensure that you have some terminal/console access provided to you by your hosting provider. This is important in case you lock yourself out. Then you can still access the server and revert or fix any faults.
 
+.. warning::
+
+  I'd like to repeat this again: make sure you have a terminal or console access to your server provided by the hosting provider. It is very important in case something in the configuration goes wrong and you cannot access using SSH anymore.
+
 Firewall
 --------
 
