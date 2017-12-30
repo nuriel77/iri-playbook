@@ -12,13 +12,13 @@ It includes disabling SSH root access, switching SSH port, creating SSH keys and
 SSH Key Access
 ==============
 
-On most servers, password authentication is allowed by default and thereby making the server more susceptible to SSH password brute forcing. Moving to SSH key access is a first good step in making your server more secure.
+On most servers, password authentication is allowed by default making the server more susceptible to SSH password brute forcing. Switching to SSH key access only is a first good step in making your server more secure.
 
-Once you have created SSH keys with which you can access the server (using a user other than root), it is safe to disable password authentication.
+Once SSH keys authentication is configured (using a user other than root), it is safe to disable password authentication and root SSH access.
 
 .. note::
 
-  Most VPS providers provide a terminal/console access to the server. This is NOT SSH, and can be used to recover access to your server if you cannot access using SSH for whatever reason (configuration error, missing SSH keys, locking yourself out etc.)
+  Most VPS providers provide a terminal/console access to the server. This is NOT SSH, and can be used to recover access to your server if you get locked out SSH (e.g. configuration error, missing SSH keys, firewall lockout etc.)
 
 
 Overview
@@ -35,9 +35,9 @@ This guide is focused on using Putty as a SSH client. If you are using Mac, the 
 
 Access User
 -----------
-The first step is to ensure you have a user on the system other than root. We will make sure to grant this user "sudo" privileges.
+The first step is to ensure you have a user on the system other than root. Then, grant this user "sudo" privileges.
 
-The following command assume that you are currently user ``root`` (check with ``whoami``).
+The following commands assume that you are currently operating as user ``root`` (verify with ``whoami``).
 
 If you already have a user with sudo privileges you can skip this part.
 
@@ -61,7 +61,7 @@ If you already have a user with sudo privileges you can skip this part.
 
   echo "myuser ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/myuser
 
-4. Check the user is okay, run the following commands:
+4. Check the user is configured properly, run the following commands:
 
 .. code:: bash
 
@@ -73,35 +73,39 @@ The above should result in ``root``. This means that the new user can become roo
 
 .. note::
 
-  It is worth mentioning that a slightly more secure approach would be to add the user to group ``wheel``. The difference is that if you add the user to group ``wheel``, each time you try to become root you will have to enter the user's password. Should you want to use this approach, skip step 3 and run ``usermod -aG wheel myuser`` instead. If you already performed step 3, you can simply remove the file ``/etc/sudoers.d/myuser``.
+  It is worth mentioning that a slightly more secure approach would be to add the user to group ``wheel``. 
+  The difference is that if you add the user to group ``wheel``, each time you try to become root you will have to enter the user's password.
+
+  Should you want to use this approach, skip step 3 and run ``usermod -aG wheel myuser`` instead.
+  If you already performed step 3, you can simply remove the file ``/etc/sudoers.d/myuser``.
 
 
-At this point you should be able to SSH into your server using the new user + password. For example: ``ssh myuser@myfullnode`` for cli, or using putty.
+At this point you should be able to SSH into your server using the new user + password. For example: ``ssh myuser@myfullnode`` for cli, or use Putty.
 
 
 Creating SSH Keys
 -----------------
 
-You can download Putty for Windows `here <https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html>`_. Install the MSI ("Windows Installer") package.
+You can download **Putty** for Windows `here <https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html>`_. Install the MSI ("Windows Installer") package.
 
-This includes: putty, puttygen and pagent.
+The installer includes: putty, puttygen and pagent.
 
 
-The first step is to create SSH keys. SSH keys are made of a private key (never share with anyone and keep safe!) and a public key (this you can actually share).
+The first step is to create SSH keys. A SSH key pair consists of a private key and a public key (**never** share your private key with anyone and keep it safe!).
 
 1. In Windows, open the application called ``PuTTYgen``. Set the number of bits to 4096 and click ``generate``:
 
 .. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/puttygen_001.png
    :alt: Puttygen001
 
-2. Once the key is generated, fill in the details: comment, choose a (strong) password and click "Save private key". Don't close Puttygen yet!
+2. Once the key is generated, fill in the comment, choose a (strong) password and click "Save private key". Don't close Puttygen yet!
 
-Remember where you save the key to, as you will need to use it in the following steps
+Remember where you save the key to. We are going to use it in the following steps.
 
 .. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/puttygen_002.png
    :alt: Puttygen002
 
-3. On the server, make sure you are the user you've created earlier (``whoami`` to check, or ``su - myuser`` to switch to the user).
+3. On the server, make sure you are operating as the user you've created earlier (``whoami`` to verify, or ``su - myuser`` to switch to the user).
 
 4. Create the ssh folder:
 
@@ -122,13 +126,13 @@ Remember where you save the key to, as you will need to use it in the following 
 
 Now you should be able to access the server using the SSH keys.
 
-You can close Puttygen now. If needed, you can always run puttygen again, create a new key, load an existing key (it will require the password you've configured with it), replace the password or copy the public key from it.
+You can close Puttygen. If needed, you can always run puttygen again, create a new key, load an existing key (it will require the password you've configured with it), replace the password or copy the public key from it.
 
 
 Access Using the SSH Keys
 -------------------------
 
-1. Open the application ``Putty``. On the left side you will have a tree browser. Open "Connection", "SSH", and "Auth". Configure as shown in the image below, browse to select the private ssh key you've created earlier:
+1. Open the application ``Putty``. On the left side you will have a tree browser. Open "Connection", "SSH", and "Auth". Configure as shown in the image below, browse the file system to select the private ssh key you've created earlier:
 
 .. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/putty_001.png
    :alt: putty001
