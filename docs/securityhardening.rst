@@ -301,7 +301,7 @@ SSH Daemon
 
 Edit the file ``/etc/ssh/sshd_config`` and find the line with ``# Port 22``.
 
-It might have a ``# `` (or not). In any case, make sure to remove the ``# `` and any trailing spaces. Set the new port number::
+It might have a ``#`` (or not). In any case, make sure to remove the ``#`` and any trailing spaces. Set the new port number::
 
   Port 9922
 
