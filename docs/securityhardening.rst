@@ -59,7 +59,7 @@ If you already have a user with sudo privileges you can skip this part.
 
 .. code:: bash
 
-  echo "myuser ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/myuser
+  echo "myuser ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/myuser && chmod 440 /etc/sudoers.d/myuser
 
 4. Check the user is configured properly, run the following commands:
 
