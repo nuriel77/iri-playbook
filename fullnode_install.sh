@@ -236,21 +236,39 @@ function set_primary_ip()
   fi
 }
 
+function display_requirements_url() {
+    echo "Please check requirements here: http://iri-playbook.readthedocs.io/en/master/requirements.html#the-requirements"
+}
+
+function check_arch() {
+    # Check architecture
+    ARCH=$(uname -m)
+    if [ "$ARCH" != "x86_64" ]; then
+        echo "ERROR: $ARCH architecture not supported"
+        display_requirements_url
+        exit 1
+    fi
+}
+
 # Get OS and version
 set_dist
 
 # Check OS version compatibility
 if [[ "$OS" =~ ^(CentOS|Red) ]]; then
     if [ "$VER" != "7" ]; then
-        echo "$OS version $VER not supported"
+        echo "ERROR: $OS version $VER not supported"
+        display_requirements_url
         exit 1
     fi
+    check_arch
     init_centos
 elif [[ "$OS" =~ ^Ubuntu ]]; then
     if [[ ! "$VER" =~ ^(16|17) ]]; then
-        echo "$OS version $VER not supported"
+        echo "ERROR: $OS version $VER not supported"
+        display_requirements_url
         exit 1
     fi
+    check_arch
     init_ubuntu
 else
     echo "$OS not supported"
