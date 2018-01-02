@@ -80,6 +80,7 @@
     url: https://raw.githubusercontent.com/pixelb/ps_mem/master/ps_mem.py
     dest: /usr/bin/ps_mem
     mode: 0755
+  ignore_errors: yes
   tags:
     - scripts
 
