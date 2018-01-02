@@ -72,7 +72,14 @@
   with_items:
     - nbctl
     - reattach
-    - ps_mem
+  tags:
+    - scripts
+
+- name: download ps_mem
+  get_url:
+    url: https://raw.githubusercontent.com/pixelb/ps_mem/master/ps_mem.py
+    dest: /usr/bin/ps_mem
+    mode: 0755
   tags:
     - scripts
 
