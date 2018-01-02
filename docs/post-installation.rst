@@ -196,7 +196,9 @@ To use the command line you can use a script that was shipped with this installa
 
 .. code:: bash
 
-   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321
+   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600
+
+Note the IPv6 syntax in the example (address within square brackets). This is necessary when using IPv6 addresses.
 
 The script will default to connect to IRI API on ``http://localhost:14265``.
 If you need to connect to a different endpoint you can provide it via ``-i http://my-node-address:port``.
@@ -206,7 +208,7 @@ If you don't have this helper script you will need to run a ``curl`` command, e.
 .. code:: bash
 
    curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"addNeighbors",
-     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
+     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port", "udp://[2a01:a0a0:c0c0:1234::1]:14600"]}' http://localhost:14265
 
 to remove:
 
