@@ -42,7 +42,7 @@ This tutorial/installer was tested on:
 
 .. note::
 
-  This installation does not support operating systems with pre-installed panels such as cpane, whcms, plesk etc. If you can, choose a "bare" system.
+  This installation does not support operating systems with pre-installed panels such as cpanel, whcms, plesk etc. If you can, choose a "bare" system.
 
 .. warning::
 
