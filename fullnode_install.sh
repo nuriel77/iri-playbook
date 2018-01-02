@@ -219,7 +219,7 @@ function set_password() {
         echo -e "\n\nPasswords do not match!\n"
         set_password
     fi
-    PASSWORD=$(echo "${PASSWORD_A}" | sed 's/\\/\\\\/g' | sed 's/\&/\\&/g')
+    PASSWORD=$(echo ${PASSWORD} | sed 's|\\|\\\\|g' | sed 's|/|\\/|g' | sed 's|\&|\\&|g')
     sed -i "s/^iotapm_nginx_password:.*$/iotapm_nginx_password: '${PASSWORD}'/" group_vars/all/iotapm.yml
 }
 
