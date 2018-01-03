@@ -366,3 +366,105 @@ If this command breaks, it means that you have conflicting changes in one of the
 
    ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e overwrite=true -e iotapm_nginx_password="mypassword"
 
+
+.. _configMultipleSSHHost:
+
+Configuring Multiple Nodes for Ansible
+======================================
+
+Using the Ansible playbook, it is possible to configure multiple full nodes at once.
+
+How does it work?
+
+Basically, following the manual installation instructions should get you there: :ref:`installation`.
+
+This chapter includes some information on how to prepare your nodes.
+
+Overview
+--------
+The idea is to clone the iri-playbook repository onto one of the servers/nodes, configure values and run the playbook.
+
+The node from where you run the playbook will SSH connect to the rest of the nodes and configure them. Of course, it will also become a full node by itself.
+
+
+SSH Access
+----------
+For simplicity, let's call the node from where you run the playbook the "master node".
+
+In order for this to work, you need to have SSH access to all nodes from the master node. This guide is based on user ``root`` access. There is a possibility to run as a user with privileges and become root, but we will skip this for simplicity.
+
+
+Assuming you already have SSH access to all the nodes (using password?) let's prepare SSH key authentication which allows you to connect without having to enter a password each time.
+
+Make sure you are root ``whoami``. If not, run ``sudo su -`` to become root.
+
+Create New SSH Key
+^^^^^^^^^^^^^^^^^^
+Let's create a new SSH key:
+
+.. code:: bash
+
+  ssh-keygen -b 2048 -t rsa
+
+You will be asked to enter the path (allow the default ``/root/.ssh/id_rsa``) and password (for simplicity, just click 'Enter' to use no password).
+
+Output should look similar to this::
+
+  # ssh-keygen -b 2048 -t rsa
+  Generating public/private rsa key pair.
+  Enter file in which to save the key (/root/.ssh/id_rsa):
+  Enter passphrase (empty for no passphrase):
+  Enter same passphrase again:
+  Your identification has been saved in /root/.ssh/id_rsa.
+  Your public key has been saved in /root/.ssh/id_rsa.pub.
+  The key fingerprint is:
+  SHA256:tCmiLASAsDLPAhH3hcI0s0TKDCXg/QwQukVQZCHL3Ok root@test001
+  The key's randomart image is:
+  +---[RSA 2048]----+
+  |#%/. ..          |
+  |@%*=o.           |
+  |X*o*.   .        |
+  |+*. +  . o       |
+  |o.oE.o. S        |
+  |.o . . .         |
+  |. o              |
+  | .               |
+  |                 |
+  +----[SHA256]-----+
+
+The generated key is the default key to be used by SSH when authenticating to other nodes (``/root/.ssh/id_rsa``).
+
+
+Copy SSH Key Identity
+^^^^^^^^^^^^^^^^^^^^^
+Next, we copy the public key to the other nodes:
+
+.. code:: bash
+
+  ssh-copy-id -i /root/.ssh/id_rsa root@other-node-name-or-ip
+
+Given that you have root SSH access to the other nodes, you will be asked to enter a password, and possibly a question about host authenticity.
+
+Output should look like::
+
+  # ssh-copy-id root@other-node-name-or-ip
+  /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/root/.ssh/id_rsa.pub"
+  The authenticity of host 'node-name (10.10.1.1)' can't be established.
+  ECDSA key fingerprint is SHA256:4QAhCxldhxR2bWes4uSVGl7ZAKiVXqgNT7geWAS043M.
+  Are you sure you want to continue connecting (yes/no)? yes
+  /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+  /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+  root@other-node-name-or-ip's password:
+
+  Number of key(s) added: 1
+
+  Now try logging into the machine, with:   "ssh 'root@other-node-name-or-ip'"
+  and check to make sure that only the key(s) you wanted were added.
+
+Perform the authentication test, e.g ``ssh 'root@other-node-name-or-ip'``. This should work without a password.
+
+
+Run the ``ssh-copy-id -i /root/.ssh/id_rsa root@other-node-name-or-ip`` for each node you want to configure.
+
+
+Once this is done you can use Ansible to configure these nodes.

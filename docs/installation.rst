@@ -190,7 +190,7 @@ Configure Multiple Fullnodes
 
 You can skip this section and proceed to "Running the Playbook" below if you are only installing on a single server.
 
-The nice thing about Ansible's playbooks is the ability to configure multiple servers at once.
+The nice thing about Ansible's playbooks is the ability to configure multiple nodes at once.
 
 You can have hundreds of fullnodes installed simultaneously!
 
@@ -204,7 +204,7 @@ Edit the file ``inventory``. Here's an example of how we would list four hosts, 
   iota02.tangle.io ansible_user=root
   10.20.30.40      ansible_ssh_port=9922
 
-A requirement is that you can SSH access these servers from the server you are working on.
+A requirement is that you can SSH access these servers from the server you are working on. Please check :ref:`configMultipleSSHHost` for more information.
 
 
 Running the Playbook
