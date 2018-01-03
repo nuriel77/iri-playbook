@@ -187,9 +187,12 @@ To remove a user from authenticating:
 
 Configure Multiple Fullnodes
 ----------------------------
-The nice thing about Ansible's playbooks is that you can run those on multiple servers at once from one of the servers.
 
-You could have hundreds of fullnodes installed simultaneously.
+You can skip this section and proceed to "Running the Playbook" below if you are only installing on a single server.
+
+The nice thing about Ansible's playbooks is the ability to configure multiple servers at once.
+
+You can have hundreds of fullnodes installed simultaneously!
 
 To configure multiple hosts you need to use their IP addresses or hostnames (hostnames must resolve to their respective IP).
 
