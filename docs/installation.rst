@@ -82,7 +82,7 @@ To install Ansible on **Ubuntu** I refer to the `official documentation <http://
 
 .. code:: bash
 
-   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git -y
+   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git nano -y
 
 
 For **CentOS**, simply run:
@@ -107,8 +107,8 @@ This will pull the repository to the directory in which you are and move you int
 
 Configuring Values
 ==================
-There are some values you can tweak before the installation runs.
-There are two files you can edit:
+
+In these two variable files you will find some configuration parameters for the installation:
 
 .. code:: bash
 
@@ -120,13 +120,15 @@ and
 
    group_vars/all/iotapm.yml
 
-(Use 'nano' or 'vi' to edit the files)
+Use 'nano' or 'vi' to edit the files and follow the sections below.
 
-These files have comments above each option to help you figure out if anything needs to be modified.
 
 
 Configure Memory Limits
 ------------------------
+
+In **group_vars/all/iri.yml**:
+
 The options ``iri_java_mem`` and ``iri_init_java_mem`` in the configuration files can determine what are the memory usage limits for IRI.
 
 Depending on how much RAM your server has, you should set these accordingly.
@@ -150,9 +152,10 @@ You will also be able to tweak this after the installation, so don't worry about
 
 Set Access Password
 -------------------
-Very important value to set before the installation is the password and/or username with which you can access IOTA Peer Manager on the browser.
 
-Edit the ``group_vars/all/iotapm.yml`` file and set a user and (strong!) password of your choice:
+This user name and password are used for all web-based authentications (e.g. Peer Manager, Monitoring Graphs).
+
+Edit the **group_vars/all/iotapm.yml** file and set a user and (strong!) a password of your choice:
 
 .. code:: bash
 
@@ -160,7 +163,7 @@ Edit the ``group_vars/all/iotapm.yml`` file and set a user and (strong!) passwor
    iotapm_nginx_password: 'put-a-strong-password-here'
 
 
-If you already finished the installation and would like to add an additional user to access IOTA PM, run:
+You can always add new users after the installation has finished:
 
 .. code:: bash
 
@@ -178,6 +181,27 @@ To remove a user from authenticating:
 .. note::
 
   This username and password will also be used for Grafana (monitoring graphs)
+
+
+.. _multipleHosts:
+
+Configure Multiple Fullnodes
+----------------------------
+The nice thing about Ansible's playbooks is that you can run those on multiple servers at once from one of the servers.
+
+You could have hundreds of fullnodes installed simultaneously.
+
+To configure multiple hosts you need to use their IP addresses or hostnames (hostnames must resolve to their respective IP).
+
+Edit the file ``inventory``. Here's an example of how we would list four hosts, using hostname and/or IP::
+
+  [fullnode]
+  localhost        ansible_connection=local
+  iota01.tangle.io ansible_user=john
+  iota02.tangle.io ansible_user=root
+  10.20.30.40      ansible_ssh_port=9922
+
+A requirement is that you can SSH access these servers from the server you are working on.
 
 
 Running the Playbook
