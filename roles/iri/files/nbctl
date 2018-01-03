@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from pprint import pprint
 import argparse
 import urllib2
 import json
@@ -19,7 +20,6 @@ def parse_args():
 
     parser.add_argument('--neighbors', '-n',
                         action='append',
-                        required=True,
                         help='Neighbors to process. Can be specified'
                              ' multiple times.')
 
@@ -28,6 +28,9 @@ def parse_args():
 
     parser.add_argument('--add', '-a', action='store_true',
                         help='Add neighbors')
+
+    parser.add_argument('--list', '-l', action='store_true',
+                        help='List neighbors')
 
     parser.add_argument('--host', '-i',
                         default='http://localhost:14265',
@@ -51,11 +54,17 @@ def run():
         sys.stderr.write("You can either select `--add` or `--remove`"
                          ", not both.\n")
         sys.exit(1)
-    elif not args.add and not args.remove:
-        sys.stderr.write("You must select either `--add` or `--remove`\n")
-        sys.exit(1)
 
-    command = 'addNeighbors' if args.add else 'removeNeighbors'
+    if args.add:
+        command = 'addNeighbors'
+    elif args.remove:
+        command = 'removeNeighbors'
+    elif args.list:
+        command = 'getNeighbors'
+
+    if (args.add or args.remove) and args.neighbors is None:
+        sys.stderr.write("Error: argument --neighbors/-n is required\n")
+        sys.exit(1)
 
     headers = {
         'content-type': 'application/json',
@@ -73,7 +82,7 @@ def run():
 
     return_data = urllib2.urlopen(request).read()
     json_data = json.loads(return_data)
-    print(json_data)
+    print (json.dumps(json_data, indent=4, sort_keys=True))
 
 
 if __name__ == "__main__":
