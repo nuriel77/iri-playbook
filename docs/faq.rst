@@ -197,6 +197,11 @@ For the sake of the community, I regularly create a copy of a fully synced datab
 This has been added recently (21 December 2017) so please contact me on `github <https://github.com/nuriel77/iri-playbook/issues>`_ or iota slack @nuriel77 if any issues.
 
 
+**NOTE** My costs for making the database copy available are increasing due to frequent downloads/bandwidth usage. Please consider donating to help keep this possible::
+
+  CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
+
+
 * The full command will only work if you've installed your full node using this tutorial/playbook.
 
 .. code:: bash
@@ -207,11 +212,6 @@ This has been added recently (21 December 2017) so please contact me on `github 
 .. raw:: html
 
   <iframe width="700" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
-
-Please consider donating some iotas for the costs involved in making this possible::
-
-  CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
-
 
 
 .. note::
