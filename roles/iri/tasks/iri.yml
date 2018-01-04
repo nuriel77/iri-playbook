@@ -17,6 +17,8 @@
 - name: set memory limit for java-iri
   set_fact:
     iri_java_mem: "{{ (ansible_memtotal_mb * 0.8)|int|abs }}m"
+    iri_init_java_mem: "{{ (ansible_memtotal_mb * 0.2)|int|abs }}m"
+    iri_java_heap_mem: "{{ (ansible_memtotal_mb * 0.2)|int|abs }}m"
   when: memory_autoset is defined and memory_autoset
   tags:
     - mem_override
