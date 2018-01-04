@@ -26,6 +26,9 @@ iri_java_mem: 4096m
 # Initial memory usage
 iri_init_java_mem: 1024m
 
+# IRI memory heap size Xmn
+iri_java_heap_mem: 1024m
+
 # Exclude from the API the commands below
 # works in conjunction with `--remote` / `api_port_remote: true`
 iri_remote_limit_api: "removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors"
