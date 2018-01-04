@@ -197,7 +197,7 @@ For the sake of the community, I regularly create a copy of a fully synced datab
 This has been added recently (21 December 2017) so please contact me on `github <https://github.com/nuriel77/iri-playbook/issues>`_ or iota slack @nuriel77 if any issues.
 
 
-**NOTE** My costs for making the database copy available are increasing due to frequent downloads/bandwidth usage. Please consider donating to help keep this possible::
+**NOTE** I am providing this database copy to help the community. Making this possible involves increasing costs due to the frequent downloads/bandwidth usage. Please consider donating to help keep this possible::
 
   CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
 
