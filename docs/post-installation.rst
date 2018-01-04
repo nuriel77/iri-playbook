@@ -3,7 +3,7 @@
 Post Installation
 *****************
 
-At time of writing, the database is quite large (10GB+). In order to help your node catch up to speed it is recommended to download a fully synced database copy. Please refer to ref:`getFullySyncedDB` on how to get this done.
+At time of writing, the database is quite large (10GB+). In order to help your node catch up to speed it is recommended to download a fully synced database copy. Please refer to :ref:`getFullySyncedDB` on how to get this done.
 
 
 We can run a few checks to verify everything is running as expected.
