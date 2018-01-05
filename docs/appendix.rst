@@ -475,7 +475,7 @@ Testing New IRI Patch PR #459
 
 Anyone having troubles getting synced, there is a pending `Pull Request <https://github.com/iotaledger/iri/pull/459>`_ you can try to apply to see if it helps.
 
-This requires to replace the current iri jar file and download a fully sycned database (even if you have down so before).
+This requires to replace the current iri jar file and download a fully sycned database (even if you have done so before).
 
 .. note::
 
