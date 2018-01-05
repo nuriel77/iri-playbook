@@ -477,6 +477,10 @@ Anyone having troubles getting synced, there is a pending `Pull Request <https:/
 
 This requires to replace the current iri jar file and download a fully sycned database (even if you have down so before).
 
+.. note::
+
+  The following steps will only work if you installed using this playbook. If you haven't, and are technical enough to understand where to copy the file to, feel free to follow the compiling steps.
+
 First stop IRI:
 
 .. code:: bash
