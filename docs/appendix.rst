@@ -468,3 +468,69 @@ Run the ``ssh-copy-id -i /root/.ssh/id_rsa root@other-node-name-or-ip`` for each
 
 
 Once this is done you can use Ansible to configure these nodes.
+
+
+Testing New IRI Patch PR #459
+=============================
+
+Anyone having troubles getting synced, there is a pending `Pull Request <https://github.com/iotaledger/iri/pull/459>`_ you can try to apply to see if it helps.
+
+This requires to compile IRI with the changes and replace the current iri jar file. In addition, downloading a new fully sycned database is adviced.
+
+First stop IRI:
+
+.. code:: bash
+
+  systemctl stop iri
+
+
+Then, if you want to download a pre-compiled version run the command below, or proceed to the manual compilation steps:
+
+.. code:: bash
+
+  wget https://459-iri-1.4.1.4.jar -O /var/lib/iri/target/iri-1.4.1.4.jar
+
+Now proceed to download a fully synced database :ref:`getFullySyncedDB` and you should be set.
+
+Manual Compilation
+^^^^^^^^^^^^^^^^^^
+
+Here are the manual steps:
+
+1. Clone IRI repository:
+
+.. code:: bash
+
+  cd /tmp && git clone https://github.com/iotaledger/iri.git && cd iri
+
+2. Download the changes:
+
+.. code:: bash
+
+  wget https://github.com/iotaledger/iri/pull/459.patch
+
+3. Patch it up:
+
+.. code:: bash
+
+  git am 459.patch
+
+4. Compile:
+
+.. code:: bash
+
+  mvn clean compile
+
+5. Package:
+
+.. code:: bash
+
+  mvn package
+
+6. Copy result to current iri-1.4.1.4.jar location:
+
+.. code:: bash
+
+  cp target/iri-1.4.1.4.jar /var/lib/iri/target/iri-1.4.1.4.jar
+
+Now proceed to download a fully synced database :ref:`getFullySyncedDB` and you should be set.
