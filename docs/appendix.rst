@@ -475,7 +475,7 @@ Testing New IRI Patch PR #459
 
 Anyone having troubles getting synced, there is a pending `Pull Request <https://github.com/iotaledger/iri/pull/459>`_ you can try to apply to see if it helps.
 
-This requires to compile IRI with the changes and replace the current iri jar file. In addition, downloading a new fully sycned database is adviced.
+This requires to replace the current iri jar file and download a fully sycned database (even if you have down so before).
 
 First stop IRI:
 
@@ -486,14 +486,18 @@ First stop IRI:
 
 Then, if you want to download a pre-compiled version run the command below, or proceed to the manual compilation steps:
 
+
+Precompiled File
+----------------
 .. code:: bash
 
-  wget https://459-iri-1.4.1.4.jar -O /var/lib/iri/target/iri-1.4.1.4.jar
+  wget https://x-vps.com/459-iri-1.4.1.4.jar -O /var/lib/iri/target/iri-1.4.1.4.jar
 
 Now proceed to download a fully synced database :ref:`getFullySyncedDB` and you should be set.
 
+
 Manual Compilation
-^^^^^^^^^^^^^^^^^^
+------------------
 
 Here are the manual steps:
 
