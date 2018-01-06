@@ -3,7 +3,7 @@
 nelson_enabled: false
 
 # Nelson version to install
-nelson_version: 0.3.12
+nelson_version: latest
 
 # User name under which to run nelson
 nelson_username: nelson
