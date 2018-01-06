@@ -13,10 +13,12 @@ There are basically two ways you can connect to the full node remotely:
 ===============================
 IRI has a command-line argument ("option") ``--remote``. Here's an explanation on what it does:
 
-By default, IRI's API port will listen on the local interface (127.0.0.1). This doesn't allow to connect to it externally.
+By default, IRI's API port will listen on the local interface (127.0.0.1). This prevents any external connections to it.
 
 
-By using the ``--remote`` option, you cause IRI to listen on the external IP.
+By using the ``--remote`` option, IRI will "listen" on the external interface/IP.
+
+We are going to have to edit the configuration file to enable this option and restart IRI. Follow the next steps.
 
 .. note::
 
@@ -28,7 +30,7 @@ The ``--remote`` option can be specified in the configuration file:
 * on **CentOS** ``/etc/sysconfig/iri``
 * on **Ubuntu** ``/etc/default/iri``
 
-Find the line:
+Edit the file and find the line:
 
 .. code:: bash
 
@@ -40,7 +42,7 @@ and add ``--remote`` to it:
 
    OPTIONS="--remote"
 
-Then restart iri: ``systemctl restart iri``
+Save the file and exit, then restart iri: ``systemctl restart iri``
 
 After IRI initializes, you will see (by issuing ``lsof -Pni|grep java``) that the API port is listening on your external IP.
 
@@ -53,13 +55,13 @@ After IRI initializes, you will see (by issuing ``lsof -Pni|grep java``) that th
 Expose IRI API Port in Firewall
 -------------------------------
 
-In **CentOS**:
+On **CentOS** we run the command:
 
 .. code:: bash
 
    firewall-cmd --add-port=14265/tcp --zone=public --permanent && firewall-cmd --reload
 
-In **Ubuntu**:
+And on **Ubuntu**:
 
 .. code:: bash
 
