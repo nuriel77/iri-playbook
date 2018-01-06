@@ -71,6 +71,17 @@ Then, reload nginx configuration::
 
 You should be able to point your browser to ``http://pm.my-fqdn.com`` and see the Peer Manager.
 
+.. note::
+
+  For **Ubuntu** you will have to allow http port in ufw firewall:
+
+  ufw allow http
+
+
+  For **Centos**:
+
+  firewall-cmd --add-service=http --permanent --zone=public && firewall-cmd --reload
+
 
 The same can be done for grafana ``/etc/nginx/conf.d/grafana.conf``::
 
@@ -130,6 +141,20 @@ https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl
 .. note::
 
   I encourage you to refer to the previous chapter about configuring FQDN for Peer Manager and Grafana. From there you can proceed to adding HTTPS to those configurations.
+
+
+
+.. note::
+
+  For **Ubuntu** you will have to allow https port in ufw firewall:
+
+  ufw allow https
+
+
+  For **Centos**:
+
+  firewall-cmd --add-service=https --permanent --zone=public && firewall-cmd --reload
+
 
 
 
