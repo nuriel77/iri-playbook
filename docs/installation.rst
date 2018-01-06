@@ -357,6 +357,8 @@ It is possible to install `Nelson <https://github.com/SemkoDev/nelson.cli>`_ as 
 
 Nelson depends on IRI being installed and running. Please check ``/opt/iri-playbook/group_vars/all/nelson.yml`` and configure to match your environment.
 
+If you installed using the Getting Started Quickly chapter, you can just proceed to the installation below.
+
 Installation
 ------------
 
