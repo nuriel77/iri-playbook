@@ -234,9 +234,26 @@ Or, for more verbose output add the `-v` flag:
 This can take a while as it has to install packages, download IRI and compile it.
 Hopefully this succeeds without any errors (create a git Issue if it does, I will try to help).
 
-Please go over the Post Installation chapters to verify everything is working properly and start adding your first neighbors!
+Final Steps
+-----------
 
-Also note that after having added neighbors, it might take some time to fully sync the node.
+Please go over the :ref:`post_installation` chapters to verify everything is working properly and start adding your first neighbors!
+
+Also note that after having added neighbors, it might take some time to fully sync the node, or read below the "Fully Synchronized Database Download" section.
+
+If you installed `monitoring` and `IOTA Peer Manager` you should be able to access those::
+
+  Peer Manager: http://your-external-ip:8811
+  Grafana: http://your-external-ip:5555
+
+Use the username and password from ``group_vars/all/iotapm.yml``.
+
+If you followed the Getting Started Quickly guide, you configured a password during the installation, and you can use user ``iotapm``.
+
+
+Fully Synchronized Database Download
+------------------------------------
+In order to get up to speed quickly you can download a fully sycned database. Please check :ref:`getFullySyncedDB`
 
 
 .. installComponents::

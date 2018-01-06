@@ -67,6 +67,10 @@ Run the Installer!
 
 That's it. You can proceed to the :ref:`post_installation` for additional information on managing your node.
 
+A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
+
+This is normally ``http://your-ip:5555`` for graphs and ``http://your-ip:8811`` for Peer Manager. You can use the user ``iotapm`` and the password you've configured during the installation.
+
 
 If you liked this tutorial, and would like to leave a donation you can use this IOTA address::
 
