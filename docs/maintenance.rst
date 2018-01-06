@@ -24,13 +24,13 @@ The jar file is located in ``/var/lib/iri/target``, e.g.::
 
 Latest IRI release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
 
-In the following example we assume that the new version is 1.4.1.4.
+In the following example we assume that the new version is 1.4.1.6.
 
 Download IRI to the directory:
 
 .. code:: bash
 
-   export IRIVER=1.4.1.4 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
+   export IRIVER=1.4.1.6 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
 
 Then edit the IRI configuration file:
 
@@ -44,7 +44,7 @@ In **CentOS**::
 
 And update the version line to match, e.g.::
 
-  IRI_VERSION=1.6.2
+  IRI_VERSION=1.4.1.6
 
 This requires a iri restart (``systemctl restart iri``).
 
@@ -53,7 +53,7 @@ To verify the new version is loaded:
 
 .. code:: bash
 
-   ps aux|grep -q iri-1.4.1.4 && echo found
+   ps aux|grep -q iri-1.4.1.6 && echo found
 
 Of course, replace the version with the one you expect to see.
 
