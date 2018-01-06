@@ -56,6 +56,18 @@ Of course, replace the version with the one you expect to see.
 This should output ``found`` if okay.
 
 
+.. warning::
+
+   In version 1.4.1.6 a new API command has been added: ``setApiRateLimit``. It is adviced to add it to the limited commands list.
+   This will prevent external connections from being able to use this command.
+   
+   On **Ubuntu** edit the file ``/etc/default/iri``, find the line beginning with REMOTE_LIMIT_API and append it on the end:
+
+   REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"
+
+   On **CentOS** you can find the configuration file in ``/etc/sysconfig/iri`` and do the same as above.
+
+
 .. note::
 
   The foundation might announce additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
