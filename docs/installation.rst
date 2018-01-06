@@ -392,6 +392,11 @@ Installation
 
    cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
 
+* To upgrade Nelson when a new version is out you can run:
+
+.. code:: bash
+
+  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_npm -e "nelson_enabled=true"
 
 Join the ``#nelson`` channel on ``iotatangle.slack.com`` if you have questions regarding Nelson.
 
