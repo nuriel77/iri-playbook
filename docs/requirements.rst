@@ -46,7 +46,7 @@ This tutorial/installer was tested on:
 
 .. warning::
 
-   Some VPS providers provide a custom OS installation (Ubuntu or CentOS) with additional software installed (cpanel etc).
+   Some VPS providers provide a custom OS installation (Ubuntu or CentOS) with additional software installed (LAMP, cpanel etc).
    These images will not work nicely with the installer.
    In some cases, VPS providers modify images and might deliver operating systems that will be incompatible with this installer.
 
