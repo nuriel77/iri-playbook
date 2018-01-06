@@ -112,7 +112,7 @@ This will pull the repository to the directory in which you are and move you int
 Configuring Values
 ==================
 
-In these two variable files you will find some configuration parameters for the installation:
+In these two variable files you will find some configuration parameters for the installation. You can edit those using "nano" (see Note below).
 
 .. code:: bash
 
