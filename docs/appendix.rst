@@ -168,6 +168,10 @@ Since release v1.1 a new feature has been introduced to support alerting.
    This is considered an advanced feature. Configuration hereof requires some basic Linux and system configuration experience.
 
 
+.. note::
+
+  To edit files you can use ``nano`` which is a simple editor. See :ref:`usingNano` for instructions.
+
 
 TL;DR version
 -------------
@@ -493,3 +497,44 @@ Run the ``ssh-copy-id -i /root/.ssh/id_rsa root@other-node-name-or-ip`` for each
 
 
 Once this is done you can use Ansible to configure these nodes.
+
+
+.. _usingNano:
+
+Using Nano to Edit Files
+========================
+
+Nano is a linux editor with which you can easily edit files. Of course, this is nothing like a graphical editor (e.g. notepad) but it does its job.
+
+Most Linux experts use ``vi`` or ``vim`` which is much harder for beginners.
+
+First, ensure you have ``nano`` installed:
+
+* On **Ubuntu**: ``apt-get install nano -y``
+* On **CentOS**: ``yum install nano -y``
+
+Next, you can use nano to create a new file or edit an existing one. For example, we want to create a new file ``/tmp/test.txt``, we run:
+
+.. code:: bash
+
+  nano /tmp/test.txt
+
+Nano opens the file and we can start writing. Let's add the following lines::
+
+  IRI_NEIGHBORS="tcp://just-testing.com:13000 udp://testing:15600"
+
+Instead of writing this, you can copy paste it. Pasting can be done using right mouse click or **SHIFT-INSERT**.
+
+To save the file you can click **F3** or, to exit and save you can click **CTRL-X**, if any modifications it will ask you if to safe the file.
+
+
+After having saved the file, you can run ``nano /tmp/test.txt`` again in order to edit the existing file.
+
+
+.. note::
+
+  Please check `Nano's Turorial <https://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/>`_ for more information.
+
+
+
+

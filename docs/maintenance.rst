@@ -63,9 +63,11 @@ This should output ``found`` if okay.
    
    On **Ubuntu** edit the file ``/etc/default/iri``, find the line beginning with REMOTE_LIMIT_API and append it on the end:
 
-   REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"
+   ``REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"``
 
    On **CentOS** you can find the configuration file in ``/etc/sysconfig/iri`` and do the same as above.
+
+   See :ref:`usingNano` on how to edit files.
 
 
 .. note::

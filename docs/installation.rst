@@ -94,6 +94,10 @@ For **CentOS**, simply run:
 You will notice I've added 'git' which is required (at least on CentOS it doesn't have it pre-installed as in Ubuntu).
 In addition, I've added 'nano' which is helpful for beginners to edit files with (use vi or vim if you are adventurous).
 
+.. note::
+
+  See :ref:`usingNano` for instructions on how to use ``nano``.
+
 
 Cloning the Repository
 ======================
@@ -120,8 +124,9 @@ and
 
    group_vars/all/iotapm.yml
 
-Use 'nano' or 'vi' to edit the files and follow the sections below.
+.. note::
 
+  To edit files you can use ``nano`` which is a simple editor. See :ref:`usingNano` for instructions.
 
 
 Configure Memory Limits
