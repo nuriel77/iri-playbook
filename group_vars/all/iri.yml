@@ -29,9 +29,9 @@ iri_init_java_mem: 1024m
 # IRI memory heap size Xmn
 iri_java_heap_mem: 1024m
 
-# Exclude from the API the commands below
-# works in conjunction with `--remote` / `api_port_remote: true`
-iri_remote_limit_api: "removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors"
+# Exclude the commands below from the API.
+# Applied only to connections other than localhost/127.0.0.1
+iri_remote_limit_api: "removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"
 
 # Let the iri_api_port bind to all interfaces (0.0.0.0).
 # `true` is necessary in order to allow external wallets/APIs to connect without tunneling.
