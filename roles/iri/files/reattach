@@ -6,6 +6,7 @@ from iota import *
 
 """Script to reattach a transaction to tangle
    source: https://github.com/nuriel77/iri-playbook
+   Copyright (c) 2017 Nuriel Shem-Tov
 """
 
 def parse_args():

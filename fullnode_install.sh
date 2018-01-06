@@ -5,6 +5,7 @@
 
 # Iri playbook: https://github.com/nuriel77/iri-playbook
 # By Nuriel Shem-Tov (https://github.com/nuriel77), December 2017
+# Copyright (c) 2017 Nuriel Shem-Tov
 
 set -o pipefail
 set -e

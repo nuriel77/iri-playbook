@@ -14,6 +14,7 @@ from argparse import RawTextHelpFormatter
 """Script to add or remove neighbors
    from IRI API and configutaion file
    source: https://github.com/nuriel77/iri-playbook
+   Copyright (c) 2017 Nuriel Shem-Tov
 """
 
 def parse_args():
