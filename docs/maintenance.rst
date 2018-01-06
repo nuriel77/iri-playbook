@@ -53,7 +53,7 @@ To verify the new version is loaded:
 
 .. code:: bash
 
-   ps aux|grep -q iri-1.4.1.6 && echo found
+  ps aux|grep iri-1.4.1.6|grep -vq grep && echo found
 
 Of course, replace the version with the one you expect to see.
 
