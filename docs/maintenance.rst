@@ -32,21 +32,21 @@ Download IRI to the directory:
 
    export IRIVER=1.4.1.6 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
 
-Then edit the IRI configuration file:
+Then update the IRI configuration file in place using ``sed``:
 
 In **Ubuntu**::
 
-   /etc/default/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.6/' /etc/default/iri
 
 In **CentOS**::
 
-  /etc/sysconfig/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.6/' /etc/sysconfig/iri
 
-And update the version line to match, e.g.::
+This will update the version line to match, e.g.::
 
   IRI_VERSION=1.4.1.6
 
-This requires a iri restart (``systemctl restart iri``).
+This requires a iri **restart**: ``systemctl restart iri``.
 
 
 To verify the new version is loaded:
