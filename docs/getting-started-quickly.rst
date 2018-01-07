@@ -80,9 +80,13 @@ and Peer Manager via::
 You can use the user ``iotapm`` and the password you've configured during the installation.
 
 
-If you liked this tutorial, and would like to leave a donation you can use this IOTA address::
+**DONATIONS**
 
-  LDWOMAW9IBFEPQ9DRMCIOLLOLVCWGT9OISWNXVQTXPQANRJNDRLNWZVITVBYLMVFSQQFNZXHXQYWLWHEXKWROI9FMZ
+Making this installer happen, supporting and maintaing it takes much effort and time. Nevertheless, it is done happily in order to contribute and help the community.
+
+If you want to leave a donation you can use this address::
+
+  CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
 
 Thanks!
 
