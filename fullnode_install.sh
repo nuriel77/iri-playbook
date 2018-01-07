@@ -332,7 +332,7 @@ http://${PRIMARY_IP}:8811
 
 You can reach the monitoring (grafana) graphs at:
 
-http://${PRIMARY_IP}:5555
+http://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
 
 
 Note that your IP might be different as this one has been auto-detected in best-effort.
