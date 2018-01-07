@@ -114,7 +114,7 @@ def run():
         sys.exit()
 
     tmpfile = tempfile.NamedTemporaryFile(delete=False)
-    neighbors_regex = r'^IRI_NEIGHBORS=.*$'
+    neighbors_regex = r'^IRI_NEIGHBORS=.*$|^NEIGHBORS = .*$'
     # Update config file
     try:
         with open(args.file ,"r") as orig:
@@ -144,9 +144,17 @@ def run():
     else:
         print("No changes in configuration file")
 
+
 def process_neighbors_line(command, line, neighbors_to_process):
+    file_type = 'sysconfig'
     # Check neighbor line valid
     m = re.search(r"""^IRI_NEIGHBORS=["'](.+?)["']""", line)
+
+    # Check if ini type
+    if m is None:
+        m = re.search(r"""^NEIGHBORS = (.*)$""", line)
+        file_type = 'ini'
+
     if m is None:
         sys.stderr.write("Error: Neigbors line seems invalid: '%s'\n" % line)
         sys.exit(1)
@@ -170,7 +178,10 @@ def process_neighbors_line(command, line, neighbors_to_process):
             if neighbor_to_process not in neighbors:
                 neighbors.append(neighbor_to_process)
 
-    return 'IRI_NEIGHBORS="%s"' % " ".join(neighbors)
+    if file_type == 'ini':
+        return 'NEIGHBORS = %s' % " ".join(neighbors)
+    else:
+        return 'IRI_NEIGHBORS="%s"' % " ".join(neighbors)
 
 
 def remove_neighbor_from_list(neighbors, neighbor_to_process):
