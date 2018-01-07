@@ -195,18 +195,74 @@ Adding or Removing Neighbors
 ============================
 In order to add neighbors you can either use the iota Peer Manager or do that on the command-line.
 
-To use the command line you can use a script that was shipped with this installation, e.g:
+To use the command line you can use a script ``nbctl`` that was shipped with this installation.
+
+If you don't have ``nbctl`` installed you can get it by running::
+
+  wget -O /bin/nbctl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/nbctl && chmod +x /bin/nbctl
+
+
+
+nbct script
+-----------
+
+You can run ``nbctl`` with ``-h`` to get help on all the options::
+
+  # nbctl -h
+  usage: nbctl [-h] [--neighbors NEIGHBORS] [--remove] [--add] [--list]
+               [--file FILE] [--host HOST] [--api-version API_VERSION]
+
+  Add or remove full node neighbors.
+
+  optional arguments:
+    -h, --help            show this help message and exit
+    --neighbors NEIGHBORS, -n NEIGHBORS
+                          Neighbors to process. Can be specified multiple times.
+    --remove, -r          Removes neighbors
+    --add, -a             Add neighbors
+    --list, -l            List neighbors
+    --file FILE, -f FILE  Configuration file to update
+    --host HOST, -i HOST  IRI API endpoint. Default: http://localhost:15265
+    --api-version API_VERSION, -x API_VERSION
+                          IRI API Version. Default: 1.4
+
+  Example: nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
+
+
+The nice thing about ``nbctl`` is that it communicates with IRI to add/remove neighbors and also updates the configuration file.
+
+Updating the configuration file is important - if you restart IRI it will always start with the neighbors that are in the configuration file only.
+
+* The script will default to connect to IRI API on ``http://localhost:14265``.
+* If you need to connect to a different endpoint you can provide it via ``-i http://my-node-address:port``.
+* ``nbctl`` also has the ability to configure the configuration file for you.
+* If you want to list neighbors, simply run ``nbctl -l``.
+
+Adding Neighbors
+^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
-   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600
+   nbctl -r -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /etc/default/iri
 
-Note the IPv6 syntax in the example (address within square brackets). This is necessary when using IPv6 addresses.
+Note that the last options ``-f /etc/default/iri`` will also remove the neighbors from the configuration file.
 
-The script will default to connect to IRI API on ``http://localhost:14265``.
-If you need to connect to a different endpoint you can provide it via ``-i http://my-node-address:port``.
+In addition, see how the IPv6 address is written? You must encapsulate the address in the square brackets.
 
-If you don't have this helper script you will need to run a ``curl`` command, e.g. to add:
+Removing Neighbors
+^^^^^^^^^^^^^^^^^^
+To remove one or more neighbors use the following syntax:
+
+.. code:: bash
+
+  nbctl -r -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
+
+Note that the last options ``-f /etc/default/iri`` will also remove the neighbors from the configuration file.
+
+Using curl
+----------
+
+If you don't have ``nbctl`` script you can to run a ``curl`` command, e.g. to add:
 
 .. code:: bash
 
@@ -224,7 +280,7 @@ to remove:
 
 .. note::
 
-   Adding or remove neighbors is done "on the fly", so you will also have to add (or remove) the neighbor(s) in the configuration file of IRI.
+   Adding or remove neighbors is done "on the fly" with curl, so you will also have to add (or remove) the neighbor(s) in the configuration file of IRI.
 
 The reason to add it to the configuration file is that after a restart of IRI, any neighbors added with the peer manager will be gone.
 
@@ -241,6 +297,10 @@ In Ubuntu:
    /etc/default/iri
 
 Edit the ``IRI_NEIGHBORS=""`` value as shown in the comment in the file.
+
+.. note::
+
+  See :ref:`usingNano` for instructions on how to use ``nano`` for editing files.
 
 
 .. installPyota::
