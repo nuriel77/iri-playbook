@@ -193,9 +193,9 @@ For IOTA Peer Manager, this installation has already configured it to be accessi
 
 Adding or Removing Neighbors
 ============================
-In order to add neighbors you can either use the iota Peer Manager or do that on the command-line.
+In order to add neighbors you can either use the iota Peer Manager or the command-line.
 
-To use the command line you can use a script ``nbctl`` that was shipped with this installation.
+To use the command line you can use the script ``nbctl`` that was shipped with this installation.
 
 If you don't have ``nbctl`` installed you can get it by running::
 
@@ -231,7 +231,7 @@ You can run ``nbctl`` with ``-h`` to get help on all the options::
 
 The nice thing about ``nbctl`` is that it communicates with IRI to add/remove neighbors and also updates the configuration file.
 
-Updating the configuration file is important - if you restart IRI it will always start with the neighbors that are in the configuration file only.
+Updating the configuration file is important - if you restart IRI it will always start with the neighbors that are in the configuration file.
 
 * The script will default to connect to IRI API on ``http://localhost:14265``.
 * If you need to connect to a different endpoint you can provide it via ``-i http://my-node-address:port``.
@@ -245,7 +245,7 @@ To add one or more neighbors we use the ``-a`` option and specify the neighbors 
 
 .. code:: bash
 
-   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /etc/default/iri
+   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /home/iota/node/iota.ini
 
 Note that the last options ``-f /etc/default/iri`` will also remove the neighbors from the configuration file.
 
