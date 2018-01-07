@@ -279,6 +279,11 @@ to remove:
      "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
 
 
+to list:
+
+.. code:: bash
+
+  curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"getNeighbors"}' http://localhost:14265
 
 .. note::
 
