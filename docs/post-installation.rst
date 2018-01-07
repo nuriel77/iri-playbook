@@ -241,9 +241,11 @@ Updating the configuration file is important - if you restart IRI it will always
 Adding Neighbors
 ^^^^^^^^^^^^^^^^
 
+To add one or more neighbors we use the ``-a`` option and specify the neighbors using ``-n neighbors-address`` once or multiple times, e.g.:
+
 .. code:: bash
 
-   nbctl -r -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /etc/default/iri
+   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /etc/default/iri
 
 Note that the last options ``-f /etc/default/iri`` will also remove the neighbors from the configuration file.
 
@@ -251,7 +253,7 @@ In addition, see how the IPv6 address is written? You must encapsulate the addre
 
 Removing Neighbors
 ^^^^^^^^^^^^^^^^^^
-To remove one or more neighbors use the following syntax:
+To remove one or more neighbors we use the ``-r`` option and specify the neighbors using ``-n neighbors-address`` once or multiple times, e.g:
 
 .. code:: bash
 
@@ -284,13 +286,13 @@ to remove:
 
 The reason to add it to the configuration file is that after a restart of IRI, any neighbors added with the peer manager will be gone.
 
-In CentOS you can add neighbors to the file:
+On **CentOS** you can add neighbors to the file:
 
 .. code:: bash
 
    /etc/sysconfig/iri
 
-In Ubuntu:
+On **Ubuntu**:
 
 .. code:: bash
 
