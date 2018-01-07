@@ -203,8 +203,8 @@ If you don't have ``nbctl`` installed you can get it by running::
 
 
 
-nbct script
------------
+nbctl script
+------------
 
 You can run ``nbctl`` with ``-h`` to get help on all the options::
 
@@ -249,7 +249,7 @@ To add one or more neighbors we use the ``-a`` option and specify the neighbors 
 
 Note that the last options ``-f /etc/default/iri`` will also remove the neighbors from the configuration file.
 
-In addition, see how the IPv6 address is written? You must encapsulate the address in the square brackets.
+In the example above you see that the IPv6 address is encapsulated in the square brackets. This is the correct syntax for IPv6 addresses.
 
 Removing Neighbors
 ^^^^^^^^^^^^^^^^^^
