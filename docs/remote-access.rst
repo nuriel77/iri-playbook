@@ -70,12 +70,6 @@ And on **Ubuntu**:
 
 Now you should be able to point your (desktop's) light wallet to your server's IP:port (e.g. 80.120.140.100:14265)
 
-More in this chapter:
-
-* :ref:`tunnelingIriApiForWalletConnections`
-* `Peer Manager Behind WebServer with Password`_
-* `Limiting Remote Commands`_
-
 
 .. _tunnelingIriApiForWalletConnections:
 
