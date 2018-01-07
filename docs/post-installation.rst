@@ -231,35 +231,35 @@ You can run ``nbctl`` with ``-h`` to get help on all the options::
 
 The nice thing about ``nbctl`` is that it communicates with IRI to add/remove neighbors and also updates the configuration file.
 
-Updating the configuration file is important - if you restart IRI it will always start with the neighbors that are in the configuration file.
+Updating the configuration file is important - if you restart IRI it will start with the neighbors listed in the configuration file.
 
-* The script will default to connect to IRI API on ``http://localhost:14265``.
-* If you need to connect to a different endpoint you can provide it via ``-i http://my-node-address:port``.
-* ``nbctl`` also has the ability to configure the configuration file for you.
+* The script will connect by default to IRI API on ``http://localhost:14265``.
+* If you need to connect to a different endpoint you can specify that using ``-i http://my-node-address:port``.
+* ``nbctl`` also has the ability to configure the configuration file for you!
 * If you want to list neighbors, simply run ``nbctl -l``.
 
 Adding Neighbors
 ^^^^^^^^^^^^^^^^
 
-To add one or more neighbors we use the ``-a`` option and specify the neighbors using ``-n neighbors-address`` once or multiple times, e.g.:
+To add one or more neighbors use the ``-a`` option and specify the neighbors using ``-n neighbors-address``, once or multiple times, e.g.:
 
 .. code:: bash
 
    nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /home/iota/node/iota.ini
 
-Note that the last options ``-f /etc/default/iri`` will also remove the neighbors from the configuration file.
+Note that the last options ``-f /etc/default/iri`` will also add the neighbors to the configuration file.
 
-In the example above you see that the IPv6 address is encapsulated in the square brackets. This is the correct syntax for IPv6 addresses.
+In the example above note the IPv6 address: it is encapsulated in square brackets. This is the correct syntax for IPv6 addresses.
 
 Removing Neighbors
 ^^^^^^^^^^^^^^^^^^
-To remove one or more neighbors we use the ``-r`` option and specify the neighbors using ``-n neighbors-address`` once or multiple times, e.g:
+To remove one or more neighbors use the ``-r`` option and specify the neighbors using ``-n neighbors-address``, once or multiple times, e.g:
 
 .. code:: bash
 
   nbctl -r -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
 
-Note that the last options ``-f /etc/default/iri`` will also remove the neighbors from the configuration file.
+Note that the last options ``-f /etc/default/iri`` will remove the neighbors from the configuration file.
 
 Using curl
 ----------
