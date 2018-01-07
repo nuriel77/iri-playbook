@@ -80,8 +80,8 @@ and Peer Manager via::
 You can use the user ``iotapm`` and the password you've configured during the installation.
 
 
-**DONATIONS**
-
+DONATIONS
+---------
 Making this installer happen, supporting and maintaing it takes much effort and time. Nevertheless, it is done happily in order to contribute and help the community.
 
 If you want to leave a donation you can use this address::
@@ -91,6 +91,8 @@ If you want to leave a donation you can use this address::
 Thanks!
 
 
+Connection Lost
+---------------
 
 If you lost connection to your server during the installation, don't worry. It is running in the background because we are running it inside a "screen" session
 .
