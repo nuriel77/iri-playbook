@@ -38,6 +38,8 @@
     - curl
     - pv
     - nano
+    - sysstat
+    - atop
 
 - name: Install oracle-java8-set-default
   apt: state=latest name=oracle-java8-set-default update_cache=yes

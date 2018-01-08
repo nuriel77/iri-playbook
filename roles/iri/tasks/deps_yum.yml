@@ -52,3 +52,6 @@
     - jq
     - pv
     - nano
+    - sysstat
+    - atop
+    - htop
