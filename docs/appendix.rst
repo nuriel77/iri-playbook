@@ -581,7 +581,7 @@ Here are the manual steps:
 
 .. code:: bash
 
-     git am 459.patch
+     git am 470.patch
 
 4. Compile:
 
@@ -595,7 +595,7 @@ Here are the manual steps:
 
      mvn package
 
-6. Copy result to current iri-1.4.1.4.jar location:
+6. Copy result to current iri-1.4.1.6.jar location:
 
 .. code:: bash
 
