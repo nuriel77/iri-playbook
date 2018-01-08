@@ -537,4 +537,68 @@ After having saved the file, you can run ``nano /tmp/test.txt`` again in order t
 
 
 
+Testing New IRI Patch PR #470
+=============================
 
+A new Pull Request has been made on github for IRI, `Pull Request <https://github.com/iotaledger/iri/pull/470>`_ it is supposed to fix high CPU usage.
+
+You can give it a try and report back on the issue if it helped reduce your node's CPU usage (graph screenshots would be nice too).
+
+This requires to compile IRI with the changes and replace the current iri jar file. In addition, downloading a new fully sycned database is adviced.
+
+First stop IRI:
+
+.. code:: bash
+
+     systemctl stop iri
+
+Then, if you want to download a pre-compiled version run the command below, or proceed to the manual compilation steps:
+
+.. code:: bash
+
+     wget https://470-iri-1.4.1.6.jar -O /var/lib/iri/target/iri-1.4.1.6.jar
+
+Now proceed to download a fully synced database :ref:`getFullySyncedDB` and you should be set.
+
+Manual Compilation
+^^^^^^^^^^^^^^^^^^
+
+Here are the manual steps:
+
+1. Clone IRI repository:
+
+.. code:: bash
+
+     cd /tmp && git clone https://github.com/iotaledger/iri.git && cd iri
+
+2. Download the changes:
+
+.. code:: bash
+
+     wget https://github.com/iotaledger/iri/pull/470.patch
+
+3. Patch it up:
+
+.. code:: bash
+
+     git am 459.patch
+
+4. Compile:
+
+.. code:: bash
+
+     mvn clean compile
+
+5. Package:
+
+.. code:: bash
+
+     mvn package
+
+6. Copy result to current iri-1.4.1.4.jar location:
+
+.. code:: bash
+
+     cp target/iri-1.4.1.6.jar /var/lib/iri/target/iri-1.4.1.6.jar
+
+If your database/milestones were previously stuck, consider downloading a fully sycned database: :ref:`getFullySyncedDB`.
