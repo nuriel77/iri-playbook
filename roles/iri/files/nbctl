@@ -114,7 +114,7 @@ def run():
         sys.exit()
 
     tmpfile = tempfile.NamedTemporaryFile(delete=False)
-    neighbors_regex = r'^IRI_NEIGHBORS=.*$|^NEIGHBORS = .*$'
+    neighbors_regex = r'^IRI_NEIGHBORS=.*$|^NEIGHBORS =.*$'
     # Update config file
     try:
         with open(args.file ,"r") as orig:
@@ -147,20 +147,26 @@ def run():
 
 def process_neighbors_line(command, line, neighbors_to_process):
     file_type = 'sysconfig'
-    # Check neighbor line valid
-    m = re.search(r"""^IRI_NEIGHBORS=["'](.+?)["']""", line)
 
-    # Check if ini type
-    if m is None:
-        m = re.search(r"""^NEIGHBORS = (.*)$""", line)
-        file_type = 'ini'
-
-    if m is None:
-        sys.stderr.write("Error: Neigbors line seems invalid: '%s'\n" % line)
-        sys.exit(1)
-
-    # Store neigbor URIs in a list
-    neighbors = m.group(1).split(" ")
+    # Check neighbor line valid, get existing neighbors
+    if re.match(r"""^IRI_NEIGHBORS=["']["']""", line):
+        neighbors = []
+    else:
+        m = re.search(r"""^IRI_NEIGHBORS=["'](.+?)["']""", line)
+        # If no results from above, check if ini config type
+        if m is None:
+            file_type = 'ini'
+            if re.match(r"""^NEIGHBORS =[ ]*$""", line):
+                neighbors = []
+            else:
+                m = re.search(r"""^NEIGHBORS = (.*)$""", line)
+                if m is None:
+                    sys.stderr.write("Error: Neigbors line seems invalid: '%s'\n" % line)
+                    sys.exit(1)
+                neighbors = m.group(1).split(" ")
+        else:
+            # Store neigbor URIs in a list
+            neighbors = m.group(1).split(" ")
 
     # Validate syntax in existing file and provided neighbors list
     if validate_uris(neighbors) is False:
