@@ -558,7 +558,7 @@ Then, if you want to download a pre-compiled version run the command below, or p
 
      wget https://x-vps.com/470-iri-1.4.1.6.jar -O /var/lib/iri/target/iri-1.4.1.6.jar
 
-Now proceed to download a fully synced database :ref:`getFullySyncedDB` and you should be set.
+If your database/milestones were previously stuck, consider downloading a fully sycned database: :ref:`getFullySyncedDB`.
 
 Manual Compilation
 ^^^^^^^^^^^^^^^^^^
