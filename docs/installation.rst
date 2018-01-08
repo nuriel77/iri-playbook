@@ -419,11 +419,8 @@ Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's lo
 
 Upgrade Nelson Version
 ----------------------
-To upgrade to a newer version of nelson:
 
-1. Edit ``/opt/iri-playbook/group_vars/all/nelson.yml``, find ``nelson_version`` and set the value according to the version you want to install.
-
-2. Run the installation command:
+Run the installation command:
 
 .. code:: bash
  
