@@ -59,7 +59,7 @@
 - name: Install nelson package
   npm:
     name: nelson.cli
-    version: "{{ nelson_version }}"
+    state: latest
     global: yes
   tags:
     - nelson_npm

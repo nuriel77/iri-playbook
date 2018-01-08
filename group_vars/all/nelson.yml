@@ -2,9 +2,6 @@
 # NOTE: Nelson is in alpha pre-release
 nelson_enabled: false
 
-# Nelson version to install
-nelson_version: latest
-
 # User name under which to run nelson
 nelson_username: nelson
 
