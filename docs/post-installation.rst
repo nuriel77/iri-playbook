@@ -199,7 +199,7 @@ To use the command line you can use the script ``nbctl`` that was shipped with t
 
 If you don't have ``nbctl`` installed you can get it by running::
 
-  wget -O /bin/nbctl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/nbctl && chmod +x /bin/nbctl
+  wget -O /usr/bin/nbctl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/nbctl && chmod +x /bin/nbctl
 
 
 
