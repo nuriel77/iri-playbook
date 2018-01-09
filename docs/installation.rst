@@ -3,6 +3,8 @@
 Installation
 ************
 
+If you have little to no experience with Linux, I recommend you use the :ref:`getting_started_quickly`.
+
 To prepare for running the automated "playbook" from this repository you require some basic packages.
 First, it is always a good practice to check for updates on the server.
 
