@@ -79,6 +79,8 @@ and Peer Manager via::
 
 You can use the user ``iotapm`` and the password you've configured during the installation.
 
+To configure an email for alerts see :ref:`alerting`.
+
 
 DONATIONS
 ---------

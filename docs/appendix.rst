@@ -157,6 +157,7 @@ https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl
 
 
 
+.. _alerting:
 
 Sending Alert Notifications
 ===========================

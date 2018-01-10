@@ -253,6 +253,9 @@ Use the username and password from ``group_vars/all/iotapm.yml``.
 If you followed the Getting Started Quickly guide, you configured a password during the installation, and you can use user ``iotapm``.
 
 
+To configure an email for alerts see :ref:`alerting`.
+
+
 Fully Synchronized Database Download
 ------------------------------------
 In order to get up to speed quickly you can download a fully sycned database. Please check :ref:`getFullySyncedDB`
