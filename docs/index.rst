@@ -1,3 +1,10 @@
+.. raw:: html
+
+  <meta name="description" content="A fully automated full node installer based on Ansible. Including Peer manager, graphs, alerting, utility scripts and an extensive wiki.">
+  <meta name="author" content="Nuriel Shem-Tov">
+  <meta name="keywords" lang="en" content="tangle IOTA full node instructions iri installation server centos ubuntu tangle guide wiki">
+  <title>IOTA Full Node Installation wiki</title> 
+  
 .. image:: https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Iota_logo.png/320px-Iota_logo.png
       :alt: IOTA
 
