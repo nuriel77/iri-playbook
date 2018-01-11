@@ -4,6 +4,78 @@
 Troubleshooting
 ###############
 
+
+.. _pastebin:
+
+Upload Logs to Pastebin
+=======================
+
+Sometimes it helps to share your logs with someone who can help figure out problems.
+
+First make sure you have the pastebin tool installed.
+
+On **CentOS**: ``yum install -y fpaste``
+
+On **Ubuntu**: ``apt-get install -y pastebinit``
+
+
+
+Below are examples for Ubuntu and CentOS how to upload various files. You can tweak parameters as required.
+
+Note that the long ``sed`` commands are there to hide IP addresses.
+
+The command will return a URL link which you can share, that will open the logs in the browser.
+
+
+Ubuntu Logs
+-----------
+
+Here are a few examples. You can change the log file name if required.
+
+The two ``sed`` commands can be added in between any command to hide IP addresses: ``sed 's/\([0-9]\{1,3\}\.\)\{3,3\}[0-9]\{1,3\}/x.x.x.x/g'|sed  -r 's#\[.*\]:([0-9]+)#\[xxxx:xxxx:xxxx:xxxx\]:\1#g'``.
+
+.. code:: bash
+
+  # Example uploading last 200 lines of main syslog, hide IPv4 and IPv6 addresses
+  tail -200 /var/log/syslog | sed 's/\([0-9]\{1,3\}\.\)\{3,3\}[0-9]\{1,3\}/x.x.x.x/g'|sed  -r 's#\[.*\]:([0-9]+)#\[xxxx:xxxx:xxxx:xxxx\]:\1#g'| pastebinit -b pastebin.com -P
+
+  # Example uploading iri-playbook log
+  cat /tmp/iri-playbook-201801061902.log | pastebinit -b pastebin.com -P
+
+
+  # Example uploading last 200 lines of iota-pm service log
+  journalctl -u iota-pm --no-pager -n 200
+
+  # Example uploading last 200 lines of iri service log
+  journalctl -u iri --no-pager -n 200
+
+
+CentOS Logs
+-----------
+
+Here are a few examples. You can change the log file name if required.
+
+The two ``sed`` commands can be added in between any command to hide IP addresses: ``sed 's/\([0-9]\{1,3\}\.\)\{3,3\}[0-9]\{1,3\}/x.x.x.x/g'|sed  -r 's#\[.*\]:([0-9]+)#\[xxxx:xxxx:xxxx:xxxx\]:\1#g'``.
+
+
+.. code:: bash
+
+  # Example uploading last 200 lines of main syslog, hide IPv4 and IPv6 addresses
+  tail -200 /var/log/messages | sed 's/\([0-9]\{1,3\}\.\)\{3,3\}[0-9]\{1,3\}/x.x.x.x/g'|sed  -r 's#\[.*\]:([0-9]+)#\[xxxx:xxxx:xxxx:xxxx\]:\1#g'| pastebinit -b pastebin.com -P
+
+  # Example uploading iri-playbook log
+  cat /tmp/iri-playbook-201801061902.log | pastebinit -b pastebin.com -P
+
+
+  # Example uploading last 200 lines of iota-pm service log
+  journalctl -u iota-pm --no-pager -n 200
+
+  # Example uploading last 200 lines of iri service log
+  journalctl -u iri --no-pager -n 200
+
+
+
+
 .. _gitConflicts:
 
 How to Handle Git Conflicts
