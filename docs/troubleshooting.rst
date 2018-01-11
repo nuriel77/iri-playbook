@@ -27,6 +27,8 @@ Note that the long ``sed`` commands are there to hide IP addresses.
 The command will return a URL link which you can share, that will open the logs in the browser.
 
 
+** DO NOT COPY PASTE BLINDLY, edit commands as required before execution! **
+
 Ubuntu Logs
 -----------
 
