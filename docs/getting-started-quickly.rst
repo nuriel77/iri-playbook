@@ -39,28 +39,62 @@ If you are missing these utilities on **Ubuntu** you can install them:
 Run the Installer!
 ==================
 
-First, let's ensure the installation is running within a "screen" session.
-This ensures that the installer stays running in the background if the connection to the server breaks:
+1. This installation requires to be run as user ``root``. Make sure you are already root by running ``whoami``. If that is not the case, you can become root using:
+
+.. code:: bash
+
+   sudo su
+
+
+2. Let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to the server breaks:
 
 .. code:: bash
 
    screen -S iota
 
 
-Now we can run the installer:
+3. Finally, we can run the installer:
 
 .. code:: bash
 
-   bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+   bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
 
 .. note::
 
-   If during the installation you are requested to reboot the node, just do so and re-run the command above once the node is back.
+   If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
 
 
 That's it. You can proceed to the :ref:`post_installation` for additional information on managing your node.
 
+A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
+
+By default you can access the grpahs at::
+
+  http://your-ip:5555/dashboard/db/iota?refresh=30s&orgId=1
+
+and Peer Manager via::
+
+  http://your-ip:8811
+
+You can use the user ``iotapm`` and the password you've configured during the installation.
+
+To configure an email for alerts see :ref:`alerting`.
+
+
+DONATIONS
+---------
+Making this installer happen, supporting and maintaing it takes much effort and time. Nevertheless, it is done happily in order to contribute and help the community.
+
+If you want to leave a donation you can use this address::
+
+  CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
+
+Thanks!
+
+
+Connection Lost
+---------------
 
 If you lost connection to your server during the installation, don't worry. It is running in the background because we are running it inside a "screen" session
 .

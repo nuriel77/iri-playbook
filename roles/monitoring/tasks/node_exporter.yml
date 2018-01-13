@@ -6,7 +6,15 @@
     group: "{{ prom_username }}"
     recurse: yes
 
-- name: copy exporter  systemd service file
+- name: copy exporter rsyslog config file
+  copy:
+    src: files/node_exporter.rsyslog.conf
+    dest: /etc/rsyslog.d/node_exporter.conf
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  notify:
+    - restart rsyslog
+
+- name: copy exporter systemd service file
   template:
     src: templates/node-exporter.service.j2
     dest: /etc/systemd/system/node-exporter.service

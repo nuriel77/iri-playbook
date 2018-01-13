@@ -3,8 +3,16 @@
 Installation
 ************
 
+If you have little to no experience with Linux, I recommend you use the :ref:`getting_started_quickly`.
+
 To prepare for running the automated "playbook" from this repository you require some basic packages.
 First, it is always a good practice to check for updates on the server.
+
+.. note::
+
+   If you want to test out the new IRI+Nelson auto-installer in Docker containers (does not include the monitoring graphs and peer manager):
+   I am looking for testers: https://github.com/SemkoDev/nelson.cli/tree/master/contrib/ansible-playbook
+
 
 Update System Packages
 ======================
@@ -12,12 +20,14 @@ Update System Packages
 For **Ubuntu** we type:
 
 .. code-block:: bash
-     apt-get update
+
+   apt-get update
 
 and for **CentOS**:
 
 .. code-block:: bash
-      yum update
+
+   yum update
 
 
 This will search for any packages to update on the system and require you to confirm the update.
@@ -74,7 +84,7 @@ To install Ansible on **Ubuntu** I refer to the `official documentation <http://
 
 .. code:: bash
 
-   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git -y
+   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git nano -y
 
 
 For **CentOS**, simply run:
@@ -85,6 +95,10 @@ For **CentOS**, simply run:
 
 You will notice I've added 'git' which is required (at least on CentOS it doesn't have it pre-installed as in Ubuntu).
 In addition, I've added 'nano' which is helpful for beginners to edit files with (use vi or vim if you are adventurous).
+
+.. note::
+
+  See :ref:`usingNano` for instructions on how to use ``nano``.
 
 
 Cloning the Repository
@@ -99,8 +113,8 @@ This will pull the repository to the directory in which you are and move you int
 
 Configuring Values
 ==================
-There are some values you can tweak before the installation runs.
-There are two files you can edit:
+
+In these two variable files you will find some configuration parameters for the installation. You can edit those using "nano" (see Note below).
 
 .. code:: bash
 
@@ -112,13 +126,16 @@ and
 
    group_vars/all/iotapm.yml
 
-(Use 'nano' or 'vi' to edit the files)
+.. note::
 
-These files have comments above each option to help you figure out if anything needs to be modified.
+  To edit files you can use ``nano`` which is a simple editor. See :ref:`usingNano` for instructions.
 
 
 Configure Memory Limits
 ------------------------
+
+In **group_vars/all/iri.yml**:
+
 The options ``iri_java_mem`` and ``iri_init_java_mem`` in the configuration files can determine what are the memory usage limits for IRI.
 
 Depending on how much RAM your server has, you should set these accordingly.
@@ -142,9 +159,10 @@ You will also be able to tweak this after the installation, so don't worry about
 
 Set Access Password
 -------------------
-Very important value to set before the installation is the password and/or username with which you can access IOTA Peer Manager on the browser.
 
-Edit the ``group_vars/all/iotapm.yml`` file and set a user and (strong!) password of your choice:
+This user name and password are used for all web-based authentications (e.g. Peer Manager, Monitoring Graphs).
+
+Edit the **group_vars/all/iotapm.yml** file and set a user and (strong!) a password of your choice:
 
 .. code:: bash
 
@@ -152,7 +170,7 @@ Edit the ``group_vars/all/iotapm.yml`` file and set a user and (strong!) passwor
    iotapm_nginx_password: 'put-a-strong-password-here'
 
 
-If you already finished the installation and would like to add an additional user to access IOTA PM, run:
+You can always add new users after the installation has finished:
 
 .. code:: bash
 
@@ -170,6 +188,30 @@ To remove a user from authenticating:
 .. note::
 
   This username and password will also be used for Grafana (monitoring graphs)
+
+
+.. _multipleHosts:
+
+Configure Multiple Fullnodes
+----------------------------
+
+You can skip this section and proceed to "Running the Playbook" below if you are only installing on a single server.
+
+The nice thing about Ansible's playbooks is the ability to configure multiple nodes at once.
+
+You can have hundreds of fullnodes installed simultaneously!
+
+To configure multiple hosts you need to use their IP addresses or hostnames (hostnames must resolve to their respective IP).
+
+Edit the file ``inventory``. Here's an example of how we would list four hosts, using hostname and/or IP::
+
+  [fullnode]
+  localhost        ansible_connection=local
+  iota01.tangle.io ansible_user=john
+  iota02.tangle.io ansible_user=root
+  10.20.30.40      ansible_ssh_port=9922
+
+A requirement is that you can SSH access these servers from the server you are working on. Please check :ref:`configMultipleSSHHost` for more information.
 
 
 Running the Playbook
@@ -194,7 +236,199 @@ Or, for more verbose output add the `-v` flag:
 This can take a while as it has to install packages, download IRI and compile it.
 Hopefully this succeeds without any errors (create a git Issue if it does, I will try to help).
 
-Please go over the Post Installation chapters to verify everything is working properly and start adding your first neighbors!
+Final Steps
+-----------
 
-Also note that after having added neighbors, it might take some time to fully sync the node.
+Please go over the :ref:`post_installation` chapters to verify everything is working properly and start adding your first neighbors!
 
+Also note that after having added neighbors, it might take some time to fully sync the node, or read below the "Fully Synchronized Database Download" section.
+
+If you installed `monitoring` and `IOTA Peer Manager` you should be able to access those::
+
+  Peer Manager: http://your-external-ip:8811
+  Grafana: http://your-external-ip:5555
+
+Use the username and password from ``group_vars/all/iotapm.yml``.
+
+If you followed the Getting Started Quickly guide, you configured a password during the installation, and you can use user ``iotapm``.
+
+
+To configure an email for alerts see :ref:`alerting`.
+
+
+Fully Synchronized Database Download
+------------------------------------
+In order to get up to speed quickly you can download a fully sycned database. Please check :ref:`getFullySyncedDB`
+
+
+.. installComponents::
+
+Installing Only IOTA Peer Manager or Monitoring
+===============================================
+
+It is possible to install individual components from the playbook. For example, if you already have installed IRI following a different guide/method, you can use this playbook to install the full node monitoring graphs or IOTA Peer Manager.
+
+
+Overview
+--------
+
+* IOTA Peer Manager is a GUI to help monitor, add and remove neighbors: `IOTA Peer Manager <https://github.com/akashgoswami/ipm>`_.
+
+* The full node monitoring includes monitoring and graphs for IRI and your node: `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
+
+.. note::
+
+  If you haven’t already, just make sure your server matches the :ref:`requirements`.
+
+
+* IOTA Peer Manager doesn't require to be served via a webserver. It is however the recommeneded method, unless you want to use SSH tunnel.
+
+* At this stage, the full node monitoring graphs require to be served via a webserver (nginx), which will be installed via this playbook.
+
+
+.. warning::
+
+  By installing either Peer Manager and/or the full node monitorting, the firewall will be configured and enabled.
+  It is strongly discouraged to run a server without the firewall enabled. Therefore, this playbook does not support running without a firewall.
+
+
+Updates
+-------
+
+In order to install IOTA Peer Manager or fullnode monitoring, some packages and updates are required.
+
+
+For **Ubuntu**:
+
+.. code:: bash
+
+   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git -y
+
+
+For **CentOS**:
+
+.. code:: bash
+
+  yum install git ansible curl -y
+
+
+Installation
+------------
+Clone this playbook to ``/opt``:
+
+.. code:: bash
+
+  cd /opt && git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
+
+This assumes that you haven't already cloned the repository to this location. If you have, you should enter the ``/opt/iri-playbook`` directory and run a ``git pull``.
+
+
+Some parameters require configuration before the installation. Both IOTA Peer Manager and the fullnode monitoring need to know on which port to access IRI API.
+
+This is usually port 14265.
+
+1. Edit ``edit group_vars/all/iri.yml`` and make sure the ``iri_api_port:`` option points to the correct IRI API port. In addition, ensure that ``iri_udp_port`` and ``iri_tcp_port`` match the ports your IRI is using for neighbor peering.
+
+2. Edit ``group_vars/all/iotapm.yml``. Find ``install_nginx: true`` and set it to ``false`` if you don't want to install nginx to serve these services via webserver. If you choose to install nginx, leave it as ``true`` (if you already have nginx installed, just leave it as ``true``).
+
+As mentioned earlier: currently, the fullnode monitoring depends on nginx being installed.
+
+3. In the same file ``group_vars/all/iotapm.yml``, if using nginx, edit ``iotapm_nginx_user`` and ``iotapm_nginx_password``. These will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
+
+
+* To install **IOTA Peer Manager only**, run:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role
+
+
+* To install **full node monitoring only**, run:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --skip-tags=iotapm_npm --tags=iri_firewalld,iri_ufw,iotapm_deps,monitoring_role
+
+
+* To install **both Peer Manager and fullnode monitoring**, run:
+
+.. code:: bash
+
+   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role,monitoring_role
+
+
+
+Access
+------
+To access the **fullnode monitoring graphs**, point your browser to ``http://YOUR-IP:5555`` and use the username and password you've configured earlier to log in.
+
+To access the **IOTA Peer Manager** (assuming you've installed nginx), point your browser to ``http://YOUR-IP:8811`` and use the username and password you've configured earlier to log in.
+
+If you haven't install nginx and want to access IOTA Peer Manager, it is not configured to be accessible externally by default. It would pose a security risk to your server running it exposed and not locked with a password. As an alternative you can use a SSH tunnel to bind to it (port 8011). See :ref:`tunnelingIriApiForWalletConnections`.
+
+
+Install Nelson
+==============
+
+It is possible to install `Nelson <https://github.com/SemkoDev/nelson.cli>`_ as part of this installation.
+
+.. warning::
+
+  Nelson is still at beta stage.
+
+
+Nelson depends on IRI being installed and running. Please check ``/opt/iri-playbook/group_vars/all/nelson.yml`` and configure to match your environment.
+
+If you installed using the Getting Started Quickly chapter, you can just proceed to the installation below.
+
+Installation
+------------
+
+* If you installed this playbook before Nelson was added you need to update the git repository. Run:
+
+.. code:: bash
+
+   cd /opt/iri-playbook && git pull
+
+
+* To install Nelson, run:
+
+.. code:: bash
+
+   cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
+
+* To upgrade Nelson when a new version is out you can run:
+
+.. code:: bash
+
+  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_npm -e "nelson_enabled=true"
+
+Join the ``#nelson`` channel on ``iotatangle.slack.com`` if you have questions regarding Nelson.
+
+
+You can stop, start and restart nelson via ``systemctl (start|stop|restart) nelson``.
+
+View Status/Logs and configuration
+----------------------------------
+
+* To view nelson status run: ``systemctl status nelson``.
+
+* To view nelson logs run: ``journalctl -u nelson``.
+
+Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's log.
+
+
+* Nelson's configuration file can be found here: ``/etc/nelson/nelson.ini``.
+
+* Nelson's data directory can be found here: ``/var/lib/nelson/data``.
+
+Upgrade Nelson Version
+----------------------
+
+Run the installation command:
+
+.. code:: bash
+ 
+  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
+
+3. Restart Nelson: ``systemctl restart nelson``

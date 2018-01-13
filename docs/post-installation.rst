@@ -3,6 +3,9 @@
 Post Installation
 *****************
 
+At time of writing, the database is quite large (10GB+). In order to help your node catch up to speed it is recommended to download a fully synced database copy. Please refer to :ref:`getFullySyncedDB` on how to get this done.
+
+
 We can run a few checks to verify everything is running as expected.
 First, let's use the ``systemctl`` utility to check status of iri (this is the main full node application)
 
@@ -183,30 +186,90 @@ Using ``jq`` we can, for example, extract the fields of interest:
 Connecting to IOTA Peer Manager
 ===============================
 
-For IOTA Peer Manager, this installation has already configured it to be accessible via a webserver. See `Peer Manager Behind WebServer with Password`_.
+For IOTA Peer Manager, this installation has already configured it to be accessible via a webserver. See :ref:`peerManagerBehindWebServerWithPassword`.
 
 
 .. addRemoveNeighbors::
 
 Adding or Removing Neighbors
 ============================
-In order to add neighbors you can either use the iota Peer Manager or do that on the command-line.
+In order to add neighbors you can either use the iota Peer Manager or the command-line.
 
-To use the command line you can use a script that was shipped with this installation, e.g:
+To use the command line you can use the script ``nbctl`` that was shipped with this installation.
+
+If you don't have ``nbctl`` installed you can get it by running::
+
+  wget -O /usr/bin/nbctl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/nbctl && chmod +x /usr/bin/nbctl
+
+
+
+nbctl script
+------------
+
+You can run ``nbctl`` with ``-h`` to get help on all the options::
+
+  # nbctl -h
+  usage: nbctl [-h] [--neighbors NEIGHBORS] [--remove] [--add] [--list]
+               [--file FILE] [--host HOST] [--api-version API_VERSION]
+
+  Add or remove full node neighbors.
+
+  optional arguments:
+    -h, --help            show this help message and exit
+    --neighbors NEIGHBORS, -n NEIGHBORS
+                          Neighbors to process. Can be specified multiple times.
+    --remove, -r          Removes neighbors
+    --add, -a             Add neighbors
+    --list, -l            List neighbors
+    --file FILE, -f FILE  Configuration file to update
+    --host HOST, -i HOST  IRI API endpoint. Default: http://localhost:15265
+    --api-version API_VERSION, -x API_VERSION
+                          IRI API Version. Default: 1.4
+
+  Example: nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
+
+
+The nice thing about ``nbctl`` is that it communicates with IRI to add/remove neighbors and also updates the configuration file.
+
+Updating the configuration file is important - if you restart IRI it will start with the neighbors listed in the configuration file.
+
+* The script will connect by default to IRI API on ``http://localhost:14265``.
+* If you need to connect to a different endpoint you can specify that using ``-i http://my-node-address:port``.
+* ``nbctl`` also has the ability to configure the configuration file for you!
+* If you want to list neighbors, simply run ``nbctl -l``.
+
+Adding Neighbors
+^^^^^^^^^^^^^^^^
+
+To add one or more neighbors use the ``-a`` option and specify the neighbors using ``-n neighbors-address``, once or multiple times, e.g.:
 
 .. code:: bash
 
-   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321
+   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /etc/default/iri
 
-The script will default to connect to IRI API on ``http://localhost:14265``.
-If you need to connect to a different endpoint you can provide it via ``-i http://my-node-address:port``.
+Note that the last options ``-f /etc/default/iri`` will also add the neighbors to the configuration file, but **make sure** you are pointing to the correct file. For example, in CentOS it is ``/etc/sysconfig/iri``, on other guides it is locted in ``/home/iota/node/iota.ini``!!!
 
-If you don't have this helper script you will need to run a ``curl`` command, e.g. to add:
+In the example above note the IPv6 address: it is encapsulated in square brackets. This is the correct syntax for IPv6 addresses.
+
+Removing Neighbors
+^^^^^^^^^^^^^^^^^^
+To remove one or more neighbors use the ``-r`` option and specify the neighbors using ``-n neighbors-address``, once or multiple times, e.g:
+
+.. code:: bash
+
+  nbctl -r -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
+
+Note that the last options ``-f /etc/default/iri`` will remove the neighbors from the configuration file, but **make sure** you are pointing to the correct file. For example, in CentOS it is ``/etc/sysconfig/iri``, on other guides it is locted in ``/home/iota/node/iota.ini``!!!
+
+Using curl
+----------
+
+If you don't have ``nbctl`` script you can to run a ``curl`` command, e.g. to add:
 
 .. code:: bash
 
    curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"addNeighbors",
-     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
+     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port", "udp://[2a01:a0a0:c0c0:1234::1]:14600"]}' http://localhost:14265
 
 to remove:
 
@@ -216,26 +279,35 @@ to remove:
      "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
 
 
+to list:
+
+.. code:: bash
+
+  curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"getNeighbors"}' http://localhost:14265
 
 .. note::
 
-   Adding or remove neighbors is done "on the fly", so you will also have to add (or remove) the neighbor(s) in the configuration file of IRI.
+   Adding or remove neighbors is done "on the fly" with curl, so you will also have to add (or remove) the neighbor(s) in the configuration file of IRI.
 
 The reason to add it to the configuration file is that after a restart of IRI, any neighbors added with the peer manager will be gone.
 
-In CentOS you can add neighbors to the file:
+On **CentOS** you can add neighbors to the file:
 
 .. code:: bash
 
    /etc/sysconfig/iri
 
-In Ubuntu:
+On **Ubuntu**:
 
 .. code:: bash
 
    /etc/default/iri
 
 Edit the ``IRI_NEIGHBORS=""`` value as shown in the comment in the file.
+
+.. note::
+
+  See :ref:`usingNano` for instructions on how to use ``nano`` for editing files.
 
 
 .. installPyota::

@@ -2,6 +2,7 @@
   template:
     src: templates/grafana.ini.j2
     dest: /etc/grafana/grafana.ini
+    backup: yes
   notify:
     - restart grafana
 
@@ -30,9 +31,9 @@
 - name: flush handlers
   meta: flush_handlers
 
-- name: Wait max 30 seconds for grafana nginx port to become available
+- name: Wait max 90 seconds for grafana port to become available
   wait_for:
-    timeout: 30
+    timeout: 90
     port: "{{ grafana_port }}"
 
 - name: create prometheus datasource in grafana

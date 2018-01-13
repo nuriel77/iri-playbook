@@ -1,21 +1,19 @@
 # IOTA IRI Fullnode Ansible Playbook
 
-[![Documentation Status](https://readthedocs.org/projects/iri-playbook/badge/?version=latest)](http://iri-playbook.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/iri-playbook/badge/?version=master)](http://iri-playbook.readthedocs.io/en/master/?badge=master)
 
-This playbook will install and configure and IOTA full node.
+This playbook will install and configure the IOTA full node. In addition:
 
-It will:
-- Install and configure IOTA IRI full node
 - Install and configure iota-pm: a GUI to view/manage peers
 - Password protect iota-pm
 - Run iota-pm and IRI as systemd controlled processes (unprivileged users)
+- Alerting and notifications
 - Configure firewalls
 - NEW: Monitoring for IRI + Graphs amazing work of Chirs Holliday https://github.com/crholliday/iota-prom-exporter
 
+For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/master/getting-started-quickly.html#getting-started-quickly)
 
-For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/docs/getting-started-quickly.html#getting-started-quickly)
-
-For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/docs/index.html)
+For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/master/index.html)*
 
 ## Screenshots Monitoring
 ![graph_a](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/top.png)
@@ -106,3 +104,10 @@ Then:
 ```sh
 ansible-playbook -i inventory -v site.yml -e "remove_iri_workdir=1"
 ```
+
+### Overwrite/Update Configuration Files
+By default the playbook will not overwrite essential configuration files which have been deployed, as this might throw away values configured by the users.
+
+In order to overwrite or update configuration files, the extra environment variable "overwrite=true" can be set i.e. `-e overwrite=true` when running the playbook.
+
+This will backup existing configuration files with a timestamp.

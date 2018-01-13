@@ -47,6 +47,12 @@
     - libappindicator
     - firewalld
     - curl
+    - wget
     - lsof
     - jq
     - pv
+    - nano
+    - sysstat
+    - atop
+    - htop
+    - fpaste

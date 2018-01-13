@@ -15,36 +15,64 @@ Maintenance
 Upgrade IRI
 ===========
 
-If a new version of IRI has been released, it should suffice to replace the jar file.
-The jar file is located e.g.::
 
-  /var/lib/iri/target/iri-1.4.1.2.jar
+Latest IRI release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
 
+If a new version has been announced, you can follow this guide to get the new version.
 
-Let's say you downloaded a new version iri-1.6.2.jar (latest release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
-You can download it to the directory::
+In the following example we assume that the new version is **1.4.1.6**.
 
-  cd /var/lib/iri/target/ && curl https://github.com/iotaledger/iri/releases/download/v1.6.2/original-iri-1.6.2.jar --output iri-1.6.2.jar
+Download new IRI to the directory:
 
-Then edit the IRI configuration file:
+.. code:: bash
+
+   export IRIVER=1.4.1.6 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
+
+Then update the IRI configuration file in place using ``sed``:
 
 In **Ubuntu**::
 
-   /etc/default/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.6/' /etc/default/iri
 
 In **CentOS**::
 
-  /etc/sysconfig/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.6/' /etc/sysconfig/iri
 
-And update the version line to match, e.g.::
+This will update the version line to match, e.g.::
 
-  IRI_VERSION=1.6.2
+  IRI_VERSION=1.4.1.6
 
-This requires a iri restart (systemctl restart iri).
+This requires a iri **restart**: ``systemctl restart iri``.
+
+
+To verify the new version is loaded:
+
+.. code:: bash
+
+  ps aux|grep iri-1.4.1.6|grep -vq grep && echo found
+
+Of course, replace the version with the one you expect to see.
+
+This should output ``found`` if okay.
+
+
+.. warning::
+
+   In version 1.4.1.6 a new API command has been added: ``setApiRateLimit``. It is advised to add it to the limited commands list.
+   This will prevent external connections from being able to use this command.
+   
+   On **Ubuntu** edit the file ``/etc/default/iri``, find the line beginning with REMOTE_LIMIT_API and append it on the end:
+
+   ``REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"``
+
+   On **CentOS** you can find the configuration file in ``/etc/sysconfig/iri`` and do the same as above.
+
+   See :ref:`usingNano` on how to edit files.
+
 
 .. note::
 
-  The foundation normally announces additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
+  The foundation might announce additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
   Such options can be specified in the ``OPTIONS=""`` value in the same file.
 
 

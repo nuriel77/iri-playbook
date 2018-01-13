@@ -10,6 +10,10 @@
   tags:
     - prometheus_config
 
+- import_tasks: alertmanager.yml
+  tags:
+    - alertmanager_config
+
 - import_tasks: node_exporter.yml
   tags:
     - node_exporter_config
@@ -21,3 +25,7 @@
 - import_tasks: iota-prom-exporter.yml
   tags:
     - iota_prom_exporter
+
+- import_tasks: prom-am-executor.yml
+  tags:
+    - prom_am_executor

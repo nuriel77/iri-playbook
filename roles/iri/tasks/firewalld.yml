@@ -55,4 +55,4 @@
                         If it is, the host needs to be rebooted `shutdown -r now`.
                         Refusing to continue.
     - meta: end_play
-  when: "'stdout' in getenforce and 'Disabled' in getenforce.stdout"
+  when: "getenforce is defined and 'stdout' in getenforce and 'Disabled' in getenforce.stdout"

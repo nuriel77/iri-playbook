@@ -5,6 +5,7 @@
 
 # Iri playbook: https://github.com/nuriel77/iri-playbook
 # By Nuriel Shem-Tov (https://github.com/nuriel77), December 2017
+# Copyright (c) 2017 Nuriel Shem-Tov
 
 set -o pipefail
 set -e
@@ -119,13 +120,17 @@ function init_centos(){
     echo "Install yum utils..."
     yum install -y yum-utils
 
+    set +e
+    set +o pipefail
     if $(needs-restarting -r 2>&1 | grep -q "Reboot is required"); then
         inform_reboot
         exit 0
     fi
+    set -o pipefail
+    set -e
 
     echo "Installing Ansible and git..."
-    yum install ansible git -y
+    yum install ansible git expect-devel -y
 
 }
 
@@ -146,17 +151,27 @@ function init_ubuntu(){
     apt-get install software-properties-common -y
     apt-add-repository ppa:ansible/ansible -y
     apt-get update -y
-    apt-get install ansible git -y
+    apt-get install ansible git expect-dev -y
 }
 
 function inform_reboot() {
 cat <<EOF
-It is required to reboot the machine because of upgraded system packages.
 
-*** Please reboot this machine and re-run the script ***
 
-To reboot run: 'shutdown -r now'
--> Remember to re-run the script inside a "screen" session: 'screen -S iota'.
+======================== PLEASE REBOOT AND RE-RUN THIS SCRIPT =========================
+
+Some system packages have been updated which require a reboot
+and allow the node installer to proceed with the installation.
+
+*** Please reboot this machine and re-run this script ***
+
+
+>>> To reboot run: 'shutdown -r now', when back online:
+bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+
+!! Remember to re-run this script inside a "screen" session: 'screen -S iota' !!
+
+
 EOF
 }
 
@@ -205,7 +220,36 @@ function set_password() {
         echo -e "\n\nPasswords do not match!\n"
         set_password
     fi
-    sed -i "s/^iotapm_nginx_password:.*$/iotapm_nginx_password: '$PASSWORD_A'/" group_vars/all/iotapm.yml
+    PASSWORD=$(echo ${PASSWORD_A} | sed 's|\\|\\\\|g' | sed 's|/|\\/|g' | sed 's|\&|\\&|g')
+    sed -i "s/^iotapm_nginx_password:.*$/iotapm_nginx_password: '${PASSWORD}'/" group_vars/all/iotapm.yml
+}
+
+# Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
+function set_primary_ip()
+{
+  echo "Getting external IP address..."
+  local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
+  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+    echo "Got IP $ip"
+    PRIMARY_IP=$ip
+  else
+    PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+    echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
+  fi
+}
+
+function display_requirements_url() {
+    echo "Please check requirements here: http://iri-playbook.readthedocs.io/en/master/requirements.html#the-requirements"
+}
+
+function check_arch() {
+    # Check architecture
+    ARCH=$(uname -m)
+    if [ "$ARCH" != "x86_64" ]; then
+        echo "ERROR: $ARCH architecture not supported"
+        display_requirements_url
+        exit 1
+    fi
 }
 
 # Get OS and version
@@ -214,15 +258,19 @@ set_dist
 # Check OS version compatibility
 if [[ "$OS" =~ ^(CentOS|Red) ]]; then
     if [ "$VER" != "7" ]; then
-        echo "$OS version $VER not supported"
+        echo "ERROR: $OS version $VER not supported"
+        display_requirements_url
         exit 1
     fi
+    check_arch
     init_centos
 elif [[ "$OS" =~ ^Ubuntu ]]; then
     if [[ ! "$VER" =~ ^(16|17) ]]; then
-        echo "$OS version $VER not supported"
+        echo "ERROR: $OS version $VER not supported"
+        display_requirements_url
         exit 1
     fi
+    check_arch
     init_ubuntu
 else
     echo "$OS not supported"
@@ -260,7 +308,7 @@ LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Run the playbook
 set +e
-ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" | tee "$LOGFILE"
+unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" | tee "$LOGFILE"
 RC=$?
 if [ $RC -ne 0 ]; then
     echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
@@ -268,8 +316,8 @@ if [ $RC -ne 0 ]; then
 fi
 set -e
 
-# Get primary IP
-PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+# Calling set_primary_ip
+set_primary_ip
 
 cat <<EOF
 *** Installation done! ***
@@ -284,7 +332,7 @@ http://${PRIMARY_IP}:8811
 
 You can reach the monitoring (grafana) graphs at:
 
-http://${PRIMARY_IP}:5555
+http://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
 
 
 Note that your IP might be different as this one has been auto-detected in best-effort.
@@ -292,6 +340,6 @@ You can use the username 'iotapm' and the password you entered during the instal
 
 
 Please refer to the tutorial for post-installation information:
-http://iri-playbook.readthedocs.io/en/docs/post-installation.html
+http://iri-playbook.readthedocs.io/en/master/post-installation.html
 
 EOF

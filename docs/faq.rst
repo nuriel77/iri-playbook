@@ -3,6 +3,7 @@
 FAQ
 ***
 
+* `UDP bad length`_
 * `How to tell if my node is synced`_
 * `Why do I see the Latest Milestone as 243000`_
 * `How do I tell if I am syncing with my neighbors`_
@@ -11,6 +12,43 @@ FAQ
 * `What are the revalidate and rescan options for`_
 * `Where can I get a fully synced database to help kick start my node`_
 * `I try to connect the light wallet to my node but get connection refused`_
+
+
+.. _whyAmISeeingUDPBadLength:
+
+UDP bad length
+==============
+
+If you happen to run tcpdump on the udp port and see lots of ``UDP, bad length 1650 > 1472`` messages, consider switching these neighbors to TCP.
+
+1. run `ip a`.
+2. This should output a list of your interfaces.
+3. In most cases you will see one interface called eth0, which is normally the main interface.
+4. Find the number next to `mtu`, e.g.:
+
+.. code:: bash
+
+   2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+
+5. If the value is 1500 and most of your neighbors are connected using UDP you are going to experience packet fragmentation. It is better to switch to TCP connections in this case.
+6. If your interface supports jumbo-frames (mtu 9000) you have no problem with packets fragmentation.
+
+If your neighbor supports larger frames (jumbo frames) you can still connect to him using his UDP port. Your neighbor better switch to your TCP port ad.
+
+
+To run tcp dump (use the UDP IRI port here and your main interface):
+
+.. code:: bash
+
+   tcpdump -nn -i eth0 udp port 14600
+
+If you don't have tcpdump installed you can install it:
+
+.. code:: bash
+
+   On Ubuntu: apt-get install tcpdump -y
+   On CentOS: yum install tcpdump -y
+
 
 .. howToTellNodeSynced::
 
@@ -42,6 +80,11 @@ You can install ``jq``:
 Alternatively, use python::
 
   curl -s http://localhost:14265   -X POST  -H 'X-IOTA-API-Version: 1' -H 'Content-Type: application/json'   -d '{"command": "getNodeInfo"}'|python -m json.tool|egrep "latestSolidSubtangleMilestoneIndex|latestMilestoneIndex"
+
+
+If you have problems getting in sync after a very long time, consider downloading a fully synced database as described here: :ref:`getFullySyncedDB`
+
+If the issue still persists, perhaps difficulties syncing are related to this: :ref:`whyAmISeeingUDPBadLength`
 
 
 .. whyDoIseeLatestMileStoneLow::
@@ -144,66 +187,31 @@ and restart IRI to take effect: ``systemctl restart iri``
   If it stays in the configuration file, subsequent restarts will use that option again, perhaps when you do not explicitly choose to enable it.
 
 
-.. getFullySyncedDB::
+.. _getFullySyncedDB:
 
 Where can I get a fully synced database to help kick start my node
 ==================================================================
 
-There's a public node that makes a copy of the database once every hour.
+For the sake of the community, I regularly create a copy of a fully synced database.
 
-https://iota.lukaseder.de/download.html
-
-Please consider donating them some iotas for the costs involved in making this possible.
-
-1. You can download the database using the following command:
-
-.. code:: bash
-
-  cd /var/lib/iri/target && curl --output db.tar.gz https://iota.lukaseder.de/downloads/db.tar.gz
+This has been added recently (21 December 2017) so please contact me on `github <https://github.com/nuriel77/iri-playbook/issues>`_ or iota slack @nuriel77 if any issues.
 
 
-2. Unpack it:
- Make sure module "pv" was installed previously (CentOS: ``yum install pv`` Ubuntu: ``apt-get install pv -y``).
+**NOTE** I am providing this database copy to help the community. Making this possible involves increasing costs due to the frequent downloads/bandwidth usage. Please consider donating to help keep this possible::
+
+  CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
+
+
+* The full command will only work if you've installed your full node using this tutorial/playbook.
 
 .. code:: bash
 
- pv db.tar.gz | tar xzf - -C ./
+   cd /tmp && curl -LO https://x-vps.com/iota.db.tgz && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb/ && pv iota.db.tgz | tar xzf - -C /var/lib/iri/target/mainnetdb/ && chown iri.iri /var/lib/iri -R && rm -f /tmp/iota.db.tgz && systemctl start iri
 
-3. Stop iri if its running:
 
-.. code:: bash
+.. raw:: html
 
-   systemctl stop iri
-
-4. Remove older database:
-
-.. code:: bash
-
-   rm -rf /var/lib/iri/target/mainnet*
-
-5. Move new database to required location:
-
-.. code:: bash
-
-   mv db/ mainnetdb
-
-6. Delete the lock file:
-
-.. code:: bash
-
-   rm -f mainnetdb/LOCK
-
-7. Set correct ownership of database:
-
-.. code:: bash
-
-   chown iri.iri mainnetdb -R
-
-8. Start iri:
-
-.. code:: bash
-
-   systemctl start iri
+  <iframe width="700" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
 
 
 .. note::

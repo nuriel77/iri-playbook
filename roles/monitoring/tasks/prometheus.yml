@@ -37,6 +37,13 @@
   notify:
     - restart prometheus
 
+- name: copy alerting rules
+  copy:
+    src: files/alert.rules.yml
+    dest: "{{ prom_configdir }}/alert.rules.yml"
+  notify:
+    - restart prometheus
+
 - name: ensure prometheus enabled and started
   systemd:
     name: prometheus.service

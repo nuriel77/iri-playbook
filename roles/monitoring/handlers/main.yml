@@ -10,8 +10,20 @@
     state: restarted
     enabled: yes
 
+- name: restart alertmanager
+  systemd:
+    name: alertmanager.service
+    state: restarted
+    enabled: yes
+
 - name: restart iota-prom-exporter
   systemd:
     name: iota-prom-exporter.service
+    state: restarted
+    enabled: yes
+
+- name: restart prom-am-executor
+  systemd:
+    name: prom-am-executor.service
     state: restarted
     enabled: yes

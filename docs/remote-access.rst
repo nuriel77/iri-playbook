@@ -3,21 +3,34 @@
 Full Node Remote Access
 ***********************
 
-There are basically two ways you can connect to the full node remotely. One is describe here, the other in the 'tunneling' chapter below.
+There are basically two ways you can connect to the full node remotely:
 
+1. Letting IRI port to be exposed externally
+2. Tunneling IRI port via SSH (see :ref:`tunnelingIriApiForWalletConnections`)
+
+
+1. Exposing IRI Port Externally
+===============================
 IRI has a command-line argument ("option") ``--remote``. Here's an explanation on what it does:
 
-By default, IRI's API port will listen on the local interface (127.0.0.1). This doesn't allow to connect to it externally.
+By default, IRI's API port will listen on the local interface (127.0.0.1). This prevents any external connections to it.
 
 
-By using the ``--remote`` option, you cause IRI to listen on the external IP.
+By using the ``--remote`` option, IRI will "listen" on the external interface/IP.
 
-This option can be specified in the configuration file:
+We are going to have to edit the configuration file to enable this option and restart IRI. Follow the next steps.
+
+.. note::
+
+  To edit files you can use ``nano`` which is a simple editor. See :ref:`usingNano` for instructions.
+
+
+The ``--remote`` option can be specified in the configuration file:
 
 * on **CentOS** ``/etc/sysconfig/iri``
 * on **Ubuntu** ``/etc/default/iri``
 
-Find the line:
+Edit the file and find the line:
 
 .. code:: bash
 
@@ -29,7 +42,7 @@ and add ``--remote`` to it:
 
    OPTIONS="--remote"
 
-Then restart iri: ``systemctl restart iri``
+Save the file and exit, then restart iri: ``systemctl restart iri``
 
 After IRI initializes, you will see (by issuing ``lsof -Pni|grep java``) that the API port is listening on your external IP.
 
@@ -40,15 +53,15 @@ After IRI initializes, you will see (by issuing ``lsof -Pni|grep java``) that th
 
 
 Expose IRI API Port in Firewall
-===============================
+-------------------------------
 
-In **CentOS**:
+On **CentOS** we run the command:
 
 .. code:: bash
 
    firewall-cmd --add-port=14265/tcp --zone=public --permanent && firewall-cmd --reload
 
-In **Ubuntu**:
+And on **Ubuntu**:
 
 .. code:: bash
 
@@ -57,17 +70,11 @@ In **Ubuntu**:
 
 Now you should be able to point your (desktop's) light wallet to your server's IP:port (e.g. 80.120.140.100:14265)
 
-More in this chapter:
 
-* `Tunneling IRI API for Wallet Connection`_
-* `Peer Manager Behind WebServer with Password`_
-* `Limiting Remote Commands`_
+.. _tunnelingIriApiForWalletConnections:
 
-
-.. tunnelingIriApiForWalletConnections::
-
-Tunneling IRI API for Wallet Connection
-=======================================
+2. Tunneling IRI API for Wallet Connection
+===========================================
 
 Another option for accessing IRI and/or the iota-pm GUI is to use a SSH tunnel.
 
@@ -98,7 +105,7 @@ A default installation would have IRI API listening on TCP port 14265.
 
 For Windows desktop/laptop
 --------------------------
-You can use Putty to create the tunnel/port forward - you can use `this example <http://realprogrammers.com/how_to/set_up_an_ssh_tunnel_with_putty.html>` to get you going, just replace the MySQL 3306 port with that of IRI API.
+You can use Putty to create the tunnel/port forward - you can use `this example <http://realprogrammers.com/how_to/set_up_an_ssh_tunnel_with_putty.html>`_ to get you going, just replace the MySQL 3306 port with that of IRI API.
 
 For any type of bash command line (Mac/Linux/Windows bash)
 ----------------------------------------------------------
@@ -124,7 +131,7 @@ To stop the tunnel simply press ``Ctrl-C``.
 
 You can do the same using the IRI API port (14265) and use a light wallet from your desktop to connect to ``http://localhost:14265``.
 
-.. peerManagerBehindWebServerWithPassword::
+.. _peerManagerBehindWebServerWithPassword:
 
 Peer Manager Behind WebServer with Password
 ===========================================
@@ -147,10 +154,19 @@ There's an option in the configuration file which works in conjunction with the 
 
 .. code:: bash
 
-   REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors"
+   REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"
+
+When connecting to IRI via an external IP these commands will be blocked so that others cannot mess with the node's configuration.
+
+Below we describe how to edit these commands, if necessary.
+
+.. note::
+
+  To edit files you can use ``nano`` which is a simple editor. See :ref:`usingNano` for instructions.
 
 
-On CentOS edit ``/etc/sysconfig/iri``, on Ubuntu ``/etc/default/iri``.
+* On **CentOS** edit the file ``/etc/sysconfig/iri``
+* On **Ubuntu** edit the file ``/etc/default/iri``.
 
 This option excludes the commands in it for the remote connection. This is to protect your node.
-If you make changes to this option, you will have to restart IRI (``systemctl restart iri``).
+If you make changes to this option, you will have to **restart IRI**: ``systemctl restart iri``.

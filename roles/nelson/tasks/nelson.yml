@@ -1,0 +1,63 @@
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+    nodejs_bin: /usr/bin/node
+    nelson_bin: /bin/nelson
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /etc/systemd/system
+    config_dir: /etc/default
+    nodejs_bin: /usr/bin/nodejs
+    nelson_bin: /usr/bin/nelson
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: add user to run nelson as
+  user:
+    name: "{{ nelson_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ nelson_datadir }}"
+  tags:
+    - nelson_user
+
+- name: create nelson data and config directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ nelson_username }}"
+    group: "{{ nelson_username }}"
+    mode: 0700
+  with_items:
+    - "{{ nelson_configdir }}"
+    - "{{ nelson_datadir }}"
+
+- name: copy nelson config
+  template:
+    src: "templates/nelson.ini.j2"
+    dest: "{{ nelson_configdir }}/nelson.ini"
+    owner: "{{ nelson_username }}"
+    group: "{{ nelson_username }}"
+    mode: 0600
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+  notify:
+    - restart nelson
+
+- name: copy systemd service file
+  template:
+    src: templates/nelson.service.j2
+    dest: "{{ systemd_dir }}/nelson.service"
+  notify:
+    - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure nelson started and enabled
+  systemd:
+    name: nelson.service
+    state: started
+    enabled: yes
