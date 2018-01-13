@@ -56,6 +56,24 @@
     - nodejs
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+# Fix for ansible npm bug not upgrading package to latest
+- name: upgrade nelson
+  block:
+    - name: Stop any active nelson service
+      systemd:
+        name: nelson
+        state: stopped
+
+    - name: Remove current nelson package
+      npm:
+        name: nelson.cli
+        global: yes
+        state: absent
+  when: upgrade_nelson is defined and upgrade_nelson
+  ignore_errors: yes
+  tags:
+    - nelson_npm
+
 - name: Install nelson package
   npm:
     name: nelson.cli

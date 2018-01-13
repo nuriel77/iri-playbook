@@ -425,10 +425,9 @@ Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's lo
 Upgrade Nelson Version
 ----------------------
 
-Run the installation command:
+Run the upgrade command:
 
 .. code:: bash
- 
-  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
 
-3. Restart Nelson: ``systemctl restart nelson``
+  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "upgrade_nelson=true" -e "nelson_enabled=true"
+
