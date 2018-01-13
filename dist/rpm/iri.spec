@@ -5,7 +5,7 @@
 %define            _systemd_dir /usr/lib/systemd/system
 
 Name:              iri
-Version:           1.4.1.2
+Version:           1.4.1.6
 Release:           1%{?dist}
 Summary:           IOTA Reference Implementation
 Group:             Applications/System
@@ -68,5 +68,8 @@ getent passwd %{name} >/dev/null || useradd -r -g %{name} -G %{name} -d %{_iri_d
 %systemd_postun_with_restart iri.service
 
 %changelog
+* Sat Jan 13 2018 Nuriel Shem-Tov <nurielst@hotmail.com>
+- Updated systemd and configuration files
+
 * Mon Dec 18 2017 Nuriel Shem-Tov <nurielst@hotmail.com>
 - Initial spec creation

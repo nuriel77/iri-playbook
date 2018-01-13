@@ -11,10 +11,14 @@ IRI_TCP_PORT=14600
 JAVA_MEM=1024m
 
 # Java initial mem usage
-JAVA_INIT_MEM=512m
+JAVA_INIT_MEM=256m
 
-# Limit commands to API
-REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors"
+# Java heap mem
+JAVA_HEAP_MEM=256m
+
+# Exclude the commands below from the API.
+# # Applied only to connections other than localhost/127.0.0.1
+REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"
 
 # Optional OPTIONS can contain multiple values e.g.
 #OPTIONS="--rescan --debug --remote"
