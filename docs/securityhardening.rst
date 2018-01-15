@@ -118,6 +118,8 @@ Remember where you save the key to. We are going to use it in the following step
 .. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/puttygen_003.png
    :alt: Puttygen003
 
+See :ref:`usingNano` to learn how to use nano.
+
 6. Set correct permissions:
 
 .. code:: bash
