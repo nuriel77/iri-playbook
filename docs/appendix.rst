@@ -526,7 +526,7 @@ Nano opens the file and we can start writing. Let's add the following lines::
 
 Instead of writing this, you can copy paste it. Pasting can be done using right mouse click or **SHIFT-INSERT**.
 
-To save the file you can click **F3** or, to exit and save you can click **CTRL-X**, if any modifications it will ask you if to safe the file.
+To save the file you can click **F3** or, to exit and save you can click **CTRL-X**, if any modifications it will ask you if to save the file.
 
 
 After having saved the file, you can run ``nano /tmp/test.txt`` again in order to edit the existing file.
