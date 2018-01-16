@@ -69,8 +69,17 @@
   shell: "mv {{ iota_prom_tempdir }} {{ iota_prom_fulldir }}"
   when: iota_prom_git and iota_prom_git.changed
 
+- name: set ownership on iota-prom-exporter path
+  file:
+    path: "{{ iota_prom_fulldir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ prom_username }}"
+
 - name: install iota-prom-exporter
   shell: "cd {{ iota_prom_fulldir }} && npm install"
+  become: yes
+  become_user: "{{ prom_username }}"
   when: iota_prom_git and iota_prom_git.changed
 
 - name: intsall iota-prom-exporter config
@@ -81,13 +90,6 @@
     group: "{{ prom_username }}"
   notify:
     - restart iota-prom-exporter
-
-- name: set ownership on iota-prom-exporter path
-  file:
-    path: "{{ iota_prom_fulldir }}"
-    state: directory
-    recurse: yes
-    owner: "{{ prom_username }}"
 
 - name: copy iota-prom-exporter systemd service file
   template:
