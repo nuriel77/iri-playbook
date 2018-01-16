@@ -16,9 +16,9 @@ For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playb
 For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/master/index.html)*
 
 ## Screenshots Monitoring
-![graph_a](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/top.png)
+![graph_a](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/top_new.png)
 
-![graph_b](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/market_all_neighbors.png)
+![graph_b](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/zmq.png)
 
 ![graph_c](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/neighbors.png)
 
