@@ -61,7 +61,7 @@
         user: "{{ iotapm_nginx_user }}"
         password: "{{ iotapm_nginx_password }}"
         force_basic_auth: yes
-        status_code: 200
+        status_code: 200,404
         body_format: json
       register: dashboard
       changed_when: dashboard.status == 200
