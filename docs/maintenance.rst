@@ -83,7 +83,33 @@ Upgrade IOTA Monitoring
 
 IOTA Prometheus Monitoring is used by Grafana which are the awesome graphs about the full node.
 
-Running this command will check for updates, if any, will update iota-prom-exporter::
+
+New update for installations done before January 16th 2018
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+A new feature has been added to read extra metrics from IRI using ZeroMQ. ZMQ has to be enabled in IRI first::
+
+  grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri
+
+After about 10-30 seconds (depending on how long it takes IRI to restart) you should be able to see the ZMQ port listening for connections::
+
+  lsof -Pni:5556
+
+Output should look similar to::
+
+  java     5192       iota   47u  IPv6 38464889      0t0  TCP *:5556 (LISTEN)
+
+Next we can update iota-prom-exporter and the respective Grafana dashboard::
+
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
+
+Now you should be able to open Grafana and see the new row of metrics (ZMQ).
+
+If you encounter errors when running the command, depending on the error, please refer to :ref:`httpErrorUnauthorized` or :ref:`gitConflicts`.
+
+
+Updates for installations done after January 16th 2018
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In any other case, if any updates, the following command will perform an update::
 
   cd /opt/iri-playbook/ && ansible-playbook -i inventory site.yml --tags=iota_prom_exporter -v
 

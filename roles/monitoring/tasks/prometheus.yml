@@ -41,6 +41,7 @@
   copy:
     src: files/alert.rules.yml
     dest: "{{ prom_configdir }}/alert.rules.yml"
+    validate: "{{ prom_basedir }}/promtool check rules %s"
   notify:
     - restart prometheus
 

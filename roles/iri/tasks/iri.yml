@@ -105,15 +105,17 @@
   notify:
     - reload systemd
 
+- name: flush handlers
+  meta: flush_handlers
+
 - name: copy iri config file
-  copy:
-    src: files/iri.ini
+  template:
+    src: templates/iri.ini.j2
     dest: "{{ iri_basedir }}/iri.ini"
     force: "{{ overwrite | default('no') }}"
     backup: yes
-
-- name: flush handlers
-  meta: flush_handlers
+  notify:
+    - restart iri
 
 - name: copy iri environment file
   template:
