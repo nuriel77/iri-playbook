@@ -17,4 +17,5 @@ HEADLESS = true
 
 {% if iri_zmq_enabled is defined and iri_zmq_enabled %}
 ZMQ_ENABLED = true
+ZMQ_PORT = {{ iri_zmq_port }}
 {% endif %}
