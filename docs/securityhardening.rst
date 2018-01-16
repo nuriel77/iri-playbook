@@ -185,6 +185,8 @@ Disabling Password Authentication
 
 In this part we will disable SSH password authentication to the server, thereby making it less susceptible to password brute forcing.
 
+You need to run the following commands as user ``root``, either by becoming root i.e. ``sudo su`` or prepend ``sudo`` to the commands e.g. ``sudo systemctl restart sshd``.
+
 .. warning::
 
   Only follow these steps if you've successfully completed the previous chapter and can access your server using SSH keys!
@@ -270,7 +272,7 @@ Firewall
 
 Choose a port number (let's say 9922) and allow it through the firewall.
 
-The following command have to be run as user root or by prefixing the commands with ``sudo``.
+The following command have to be run as user root or by prefixing the commands with ``sudo`` e.g. ``sudo yum install policycoreutils-python``.
 
 
 CentOS
