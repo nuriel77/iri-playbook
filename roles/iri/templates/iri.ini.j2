@@ -14,3 +14,7 @@ HEADLESS = true
 
 # set max find transactions value
 #MAX_FIND_TRANSACTIONS = 100000
+
+{% if iri_zmq_enabled is defined and iri_zmq_enabled %}
+ZMQ_ENABLED = true
+{% endif %}
