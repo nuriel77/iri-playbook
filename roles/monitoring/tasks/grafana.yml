@@ -51,6 +51,29 @@
   tags:
     - grafana_api
 
+- name: remove existing dashboards for update
+  block:
+
+    - name: deleting dashboards
+      uri:
+        url: "http://localhost:{{ grafana_port }}/api/dashboards/db/{{ item }}"
+        method: DELETE
+        user: "{{ iotapm_nginx_user }}"
+        password: "{{ iotapm_nginx_password }}"
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+      register: dashboard
+      changed_when: dashboard.status == 200
+      with_items:
+        - "iota"
+        - "node-exporter-single-server"
+        - "prometheus-system"
+
+  when: update_dashboards is defined and update_dashboards
+  tags:
+    - grafana_api
+
 - name: create node exporter dashboard in grafana
   uri:
     url: "http://localhost:{{ grafana_port }}/api/dashboards/db"
