@@ -8,27 +8,6 @@
 - name: Install software-properties-common
   apt: state=latest name=software-properties-common update_cache=yes
 
-### Installation via packages disabled due to the chance
-### of Oracle changing links/versions. Update will be
-### faster in the playbook rather than wait for ppa:webupd8team/java
-#- name: apt add repository
-#  apt_repository:
-#    repo: 'ppa:webupd8team/java'
-#    state: present
-
-#- name: debian | ensure the webupd8 launchpad apt repository key is present
-#  apt_key:
-#    id=0xC2518248EEA14886
-#    keyserver=keyserver.ubuntu.com
-#    state=present
-
-#- name: set license as accepted
-#  debconf:
-#    name: 'oracle-java8-installer'
-#    question: 'shared/accepted-oracle-license-v1-1'
-#    value: 'true'
-#    vtype: 'select'
-
 - name: install oracle java
   block:
 
@@ -95,11 +74,9 @@
     - htop
     - pastebinit
 
-#- name: Install oracle-java8-set-default
-#  apt: state=latest name=oracle-java8-set-default update_cache=yes
-
 - name: set java home environment
   lineinfile:
     path: /etc/environment
     regexp: '^JAVA_HOME'
-    line: 'JAVA_HOME="/usr/lib/jvm/java-8-oracle"'
+    line: 'JAVA_HOME="/opt/jdk/{{ oracle_java_dir }}"'
+  when: jdk_downloaded is defined and jdk_downloaded.changed
