@@ -1,6 +1,6 @@
 # --- CentOS
 - name: check jdk installed
-  shell: "rpm -q jdk1.8-1.8.0_152-fcs.x86_64"
+  shell: "rpm -qa|grep -q ^jdk1.8"
   register: check_jdk
   failed_when: false
   changed_when: false
@@ -9,8 +9,8 @@
 
 - name: Download java jdk rpm
   get_url:
-    url: "http://download.oracle.com/otn-pub/java/jdk/8u152-b16/aa0333dd3019491ca4f6ddbe78cdb6d0/jdk-8u152-linux-x64.rpm"
-    dest: /tmp/jdk-8u152-linux-x64.rpm
+    url: "{{ oracle_java_url }}"
+    dest: /tmp/jdk-oracle.x86_64.rpm
     headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
     validate_certs: no
     force: yes
@@ -22,7 +22,7 @@
 
 - name: yum install oracle java rpm
   yum:
-    name: /tmp/jdk-8u152-linux-x64.rpm
+    name: /tmp/jdk-oracle.x86_64.rpm
     state: present
   when: dl_oracle_java.changed
   tags:
@@ -30,7 +30,7 @@
 
 - name: remove local jdk rpm
   file:
-    path: /tmp/jdk-8u152-linux-x64.rpm
+    path: /tmp/jdk-oracle.x86_64.rpm
     state: absent
   tags:
     - oracle_java_rpm
