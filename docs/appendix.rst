@@ -538,8 +538,13 @@ After having saved the file, you can run ``nano /tmp/test.txt`` again in order t
 
 
 
-Testing New IRI Patch PR #470
-=============================
+Testing IRI Patch PR
+====================
+
+.. note::
+
+  These instructions have originally been written for pull request #470. However, the steps below can be used for any other PR number. Just replace 470 with the required PR number.
+
 
 A new Pull Request has been made on github for IRI, `Pull Request <https://github.com/iotaledger/iri/pull/470>`_ it is supposed to fix high CPU usage.
 
