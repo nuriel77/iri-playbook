@@ -20,27 +20,27 @@ Latest IRI release is available `here <https://github.com/iotaledger/iri/release
 
 If a new version has been announced, you can follow this guide to get the new version.
 
-In the following example we assume that the new version is **1.4.1.6**.
+In the following example we assume that the new version is **1.4.1.7**.
 
 Download new IRI to the directory:
 
 .. code:: bash
 
-   export IRIVER=1.4.1.6 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
+   export IRIVER=1.4.1.7 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
 
 Then update the IRI configuration file in place using ``sed``:
 
 In **Ubuntu**::
 
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.6/' /etc/default/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7/' /etc/default/iri
 
 In **CentOS**::
 
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.6/' /etc/sysconfig/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7/' /etc/sysconfig/iri
 
 This will update the version line to match, e.g.::
 
-  IRI_VERSION=1.4.1.6
+  IRI_VERSION=1.4.1.7
 
 This requires a iri **restart**: ``systemctl restart iri``.
 
@@ -49,7 +49,7 @@ To verify the new version is loaded:
 
 .. code:: bash
 
-  ps aux|grep iri-1.4.1.6|grep -vq grep && echo found
+  ps aux|grep iri-1.4.1.7|grep -vq grep && echo found
 
 Of course, replace the version with the one you expect to see.
 
@@ -58,7 +58,7 @@ This should output ``found`` if okay.
 
 .. warning::
 
-   In version 1.4.1.6 a new API command has been added: ``setApiRateLimit``. It is advised to add it to the limited commands list.
+   In version 1.4.1.7 a new API command has been added: ``setApiRateLimit``. It is advised to add it to the limited commands list.
    This will prevent external connections from being able to use this command.
    
    On **Ubuntu** edit the file ``/etc/default/iri``, find the line beginning with REMOTE_LIMIT_API and append it on the end:
