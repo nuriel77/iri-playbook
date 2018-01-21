@@ -13,3 +13,8 @@
 - name: reload systemd
   sudo: yes
   command: systemctl daemon-reload
+
+- name: restart systemd-journald
+  systemd:
+    name: systemd-journald
+    state: restarted

@@ -8,6 +8,10 @@
     - iri_deps_yum
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
+- import_tasks: logging.yml
+  tags:
+    - logging_config
+
 - import_tasks: firewalld.yml
   tags:
     - iri_firewalld

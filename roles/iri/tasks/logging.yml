@@ -1,0 +1,19 @@
+- name: copy new journald.conf with limits
+  copy:
+    src: files/journald.conf
+    dest: /etc/systemd/journald.conf
+    backup: yes
+  notify:
+    - restart systemd-journald
+
+- name: copy logrotate overrides system logs ubuntu
+  copy:
+    src: files/rsyslog.ubuntu
+    dest: /etc/logrotate.d/rsyslog
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: copy logrotate override system logs centos
+  copy:
+    src: files/syslog.centos
+    dest: /etc/logrotate.d/syslog
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
