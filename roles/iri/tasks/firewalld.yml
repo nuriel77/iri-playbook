@@ -26,6 +26,13 @@
     immediate: yes
   when: api_port_remote is defined and api_port_remote
 
+- name: log api port access in firewall
+  firewalld:
+    rich_rule: 'rule port port="{{ iri_api_port }}" protocol="tcp" log prefix="iri_api" level="info" limit value="120/m"'
+    permanent: true
+    state: enabled
+    immediate: yes
+
 - name: ensure selinux enabled
   selinux:
     policy: targeted
