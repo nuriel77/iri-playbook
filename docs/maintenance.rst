@@ -28,15 +28,15 @@ SPECIAL for 1.4.1.7 Release Candidate
 
 Download IRI Release Candidate or check below for the official release (when ready!)::
 
-  curl -L "https://github.com/iotaledger/iri/releases/download/v1.4.1.7_RC2/iri-1.4.1.7_RC2.jar" --output "/var/lib/iri/target/iri-1.4.1.7_RC2.jar"
+  curl -L "https://github.com/iotaledger/iri/releases/download/v1.4.1.7_RC/iri-1.4.1.7.jar" --output "/var/lib/iri/target/iri-1.4.1.7_RC.jar"
 
 In **Ubuntu**::
 
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7_RC2/' /etc/default/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7_RC/' /etc/default/iri
 
 In **CentOS**::
 
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7_RC2/' /etc/sysconfig/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7_RC/' /etc/sysconfig/iri
 
 This requires a iri **restart**: ``systemctl restart iri``.
 
