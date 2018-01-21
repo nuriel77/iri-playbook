@@ -20,6 +20,18 @@
     port: "{{ iri_api_port }}"
   when: api_port_remote is defined and api_port_remote
 
+# ufw supports connection rate limiting, which is useful for protecting
+# against denial of service attacks. ufw will deny connections if an IP
+# address has attempted to initiate 6 or more connections in the last
+# 30 seconds. See  http://www.debian-administration.org/articles/187
+# for details.
+- name: rate limit iri api port in firewall
+  ufw:
+    rule: limit
+    direction: in
+    proto: tcp
+    port: "{{ iri_api_port }}"
+
 - name: allow ssh port firewall
   ufw:
     rule: allow
