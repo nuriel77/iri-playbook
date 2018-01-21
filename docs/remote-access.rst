@@ -55,17 +55,43 @@ After IRI initializes, you will see (by issuing ``lsof -Pni|grep java``) that th
 Expose IRI API Port in Firewall
 -------------------------------
 
-On **CentOS** we run the command:
+Allowing the port via the playbook
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If you followed the steps above (enabling the ``--remote`` option in the configuration file) you will need to allow the port in the firewall.
+
+You can do this using the playbook which as a bonus also adds rate limiting (approximately max. 6 connections per 30 seconds).
+
+On **CentOS**::
+
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_firewalld -e api_port_remote=yes
+
+On **Ubuntu**::
+
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ufw -e api_port_remote=yes
+
+
+Allowing the port manually
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+On **CentOS** we run the command (which also adds rate limiting):
 
 .. code:: bash
 
-   firewall-cmd --add-port=14265/tcp --zone=public --permanent && firewall-cmd --reload
+   firewall-cmd --remove-port=14265/tcp --zone=public --permanent && firewall-cmd --zone=public --permanent --add-rich-rule='rule port port="14265" protocol="tcp" limit value=10/m accept' && firewall-cmd --reload
 
-And on **Ubuntu**:
+
+
+On **Ubuntu**:
 
 .. code:: bash
 
    ufw allow 14265/tcp
+
+And to add rate limits:
+
+.. code:: bash
+
+   ufw limit 14265/tcp comment 'IRI API port rate limit'
 
 
 Now you should be able to point your (desktop's) light wallet to your server's IP:port (e.g. 80.120.140.100:14265)
