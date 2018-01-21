@@ -23,40 +23,6 @@ If a new version has been announced, you can follow this guide to get the new ve
 In the following example we assume that the new version is **1.4.1.7**.
 
 
-SPECIAL for 1.4.1.7 Release Candidate
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Download IRI Release Candidate or check below for the official release (when ready!)::
-
-  curl -L "https://github.com/iotaledger/iri/releases/download/v1.4.1.7_RC/iri-1.4.1.7.jar" --output "/var/lib/iri/target/iri-1.4.1.7_RC.jar"
-
-In **Ubuntu**::
-
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7_RC/' /etc/default/iri
-
-In **CentOS**::
-
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.1.7_RC/' /etc/sysconfig/iri
-
-This requires a iri **restart**: ``systemctl restart iri``.
-
-
-To verify the new version is loaded:
-
-.. code:: bash
-
-  ps aux|grep iri-1.4.1.7_RC|grep -vq grep && echo found
-
-Of course, replace the version with the one you expect to see.
-
-This should output ``found`` if okay.
-
-
-
-
-Official release (wnen ready, follow OFFICIAL announcements)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 Download new IRI to the directory:
 
 .. code:: bash
