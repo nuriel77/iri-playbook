@@ -77,11 +77,11 @@ On **CentOS** we run the command (which also adds rate limiting):
 
 .. code:: bash
 
-   firewall-cmd --zone=public --permanent --add-rich-rule='rule port port="14265" protocol="tcp" limit value=10/m accept' && firewall-cmd --reload
+   firewall-cmd --remove-port=14265/tcp --zone=public --permanent && firewall-cmd --zone=public --permanent --add-rich-rule='rule port port="14265" protocol="tcp" limit value=10/m accept' && firewall-cmd --reload
 
 
 
-And on **Ubuntu**:
+On **Ubuntu**:
 
 .. code:: bash
 
