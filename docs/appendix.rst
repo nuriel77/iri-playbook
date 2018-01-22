@@ -178,7 +178,7 @@ Proxy Warning
 ^^^^^^^^^^^^^
 Should you choose to reverse proxy from your webserver/loadbalancer/proxy to IRI API (on the same machine) there's something very important you need to take into account.
 
-If you point your proxy to IRI API at address 127.0.0.1 (127.0.0.1:14265) anyone connecting can run any command they want. The reason is that IRI sees the connection originating from 127.0.0.1, thereby bypassing the limitations of LIMIT_REMOTE_API.
+If you point your proxy to IRI API at address 127.0.0.1 (127.0.0.1:14265) anyone connecting can run any command they want. The reason is that IRI sees the connection originating from 127.0.0.1, thereby bypassing the limitations of LIMIT_REMOTE_API. This means, just as a quick example: anybody can add or remove neighbors from your node (and more). That's not something you want.
 
 So, what to do about this?
 
@@ -189,7 +189,9 @@ Let's say your API port is 14265 and you only want people to connect via ``https
 - In the webserver/proxy configuration point the proxy to ``http://your-external-interface-ip-address:14265``.
 - Ensure IRI is configured with the ``API_HOST = 0.0.0.0`` or ``--remote`` startup argument.
 
-That's it. Now you might be wondering: "I didn't allow 14265 in the firewall, why should my nginx be able to connect to IRI on the external IP?".
+That's it.
+
+You might be wondering: "I didn't allow 14265 in the firewall, why should my nginx be able to connect to IRI on the external IP?".
 
 It will succeed because the IP tables rule will only apply for external connections.
 
