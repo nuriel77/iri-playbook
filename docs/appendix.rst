@@ -178,7 +178,7 @@ Proxy Warning
 ^^^^^^^^^^^^^
 Should you choose to reverse proxy from your webserver/loadbalancer/proxy to IRI API (on the same machine) there's something very important you need to take into account.
 
-If you point your proxy to IRI API at address 127.0.0.1 (127.0.0.1:14265) **anyone connecting can run any command they want**. The reason is that IRI sees the connection originating from 127.0.0.1, thereby bypassing the limitations of LIMIT_REMOTE_API. Just as a simple example: anybody can add or remove neighbors from your node (and more). That's not something you want.
+If you point your proxy to IRI API at address 127.0.0.1 (127.0.0.1:14265) **anyone connecting can run any command they want**. The reason is that IRI sees the connection originating from 127.0.0.1, thereby bypassing the limitations of LIMIT_REMOTE_API. For example, anybody can add or remove neighbors from your node (and more). That's not something you want.
 
 So, what to do about this?
 
