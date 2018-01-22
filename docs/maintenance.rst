@@ -59,7 +59,7 @@ This should output ``found`` if okay.
 
 .. warning::
 
-   In version 1.4.1.7 a new API command has been added: ``setApiRateLimit``. It is advised to add it to the limited commands list.
+   In version 1.4.1.6 a new API command has been added: ``setApiRateLimit``. It is advised to add it to the limited commands list.
    This will prevent external connections from being able to use this command.
    
    On **Ubuntu** edit the file ``/etc/default/iri``, find the line beginning with REMOTE_LIMIT_API and append it on the end:
