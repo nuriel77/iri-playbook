@@ -204,3 +204,24 @@ This solution also works if you haven't installed Grafana via this tutorial and 
 
 
 Now you should be able to login to grafana.
+
+
+Error Starting or Restarting IRI
+================================
+
+
+Hostname can't be null
+^^^^^^^^^^^^^^^^^^^^^^
+
+If you get this message in the logs::
+
+  java.lang.IllegalArgumentException: hostname can't be null
+
+It is most likely you have a typo in one (or more) of the neighbors in your configuration file, or the entire line is invalid.
+
+Make sure all neighbors adhere to the format examples::
+
+  tcp://some-node.myserver.com:15600
+  udp://10.20.30.40:14600
+  tcp://[2xxx:7xx:aaaf:111:2222:ff:ffff:xxxx]:12345
+
