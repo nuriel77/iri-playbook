@@ -403,7 +403,7 @@ Installation
 
   cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_npm -e "nelson_enabled=true"
 
-Join the ``#nelson`` channel on ``iotatangle.slack.com`` if you have questions regarding Nelson.
+Join the ``#nelson-peering`` channel on IOTA's Discord if you have questions regarding Nelson.
 
 
 You can stop, start and restart nelson via ``systemctl (start|stop|restart) nelson``.

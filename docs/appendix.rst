@@ -423,7 +423,7 @@ If you installed the playbook before this feature was release you can still inst
 
    cd /opt/iri-playbook && git pull
 
-If this command breaks, it means that you have conflicting changes in one of the configuration files. See :ref:`gitConflicts` on how to apply new changes (or hit me up on slack or github for assitance)
+If this command breaks, it means that you have conflicting changes in one of the configuration files. See :ref:`gitConflicts` on how to apply new changes (or hit me up on Discord or github for assitance:  @nuriel77)
 
 2. WARNING, this will overwrite changes to your monitoring configuration files if you had any manually applied! Run the playbook's monitoring role:
 
