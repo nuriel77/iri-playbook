@@ -213,13 +213,17 @@ Error Starting or Restarting IRI
 Hostname can't be null
 ^^^^^^^^^^^^^^^^^^^^^^
 
-If you get this message in the logs::
+If you get this message in the logs:
+
+.. code:: bash
 
   java.lang.IllegalArgumentException: hostname can't be null
 
 It is most likely you have a typo in one (or more) of the neighbors in your configuration file, or the entire line is invalid.
 
-Make sure all neighbors adhere to the format examples::
+Make sure all neighbors adhere to the format examples:
+
+.. code:: bash
 
   tcp://some-node.myserver.com:15600
   udp://10.20.30.40:14600
