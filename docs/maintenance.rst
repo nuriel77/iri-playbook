@@ -23,7 +23,7 @@ If a new version has been announced, you can follow this guide to get the new ve
 In the following example we assume that the new version is **1.4.1.7**.
 
 
-Download new IRI to the directory:
+First, make sure you are running all the commands as 'root' (run ``sudo su`` first). Then, download new IRI to the directory:
 
 .. code:: bash
 
