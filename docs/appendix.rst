@@ -118,6 +118,7 @@ Now you should be able to point your browser to ``http://grafana.my-fqdn.com``.
   Using SSL/HTTPS makes it virtually impossible for someone to "sniff" passwords or sensitive information your browser passes to a server.
 
 
+
 Configuring my server with HTTPS
 ================================
 
@@ -154,6 +155,44 @@ https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl
   For **Centos**:
 
   firewall-cmd --add-service=https --permanent --zone=public && firewall-cmd --reload
+
+
+.. _revProxyWallet:
+
+Reverse Proxy for IRI API (wallet)
+==================================
+
+If you read the two chapters above about configuring nginx to support FQDN or HTTPS you might be wondering whether you should reverse proxy from the web server to IRI API port (for wallet connections etc).
+
+Here are my thoughts about it:
+
+1. HTTPS servers two main purposes in this context: sending data encrypted and verifying the identity of the server. Is sending encrypted data important for a wallet? Well, not really, considering all the data is public. Unless you use ``--remote-auth`` or lock the API port with password (``htpasswd?``) there's no benefit in HTTPS. In my opinion, its just a nice-to-have. But maybe in the future as the network grows we will learn that using HTTPS is helpful for certificate/server validation.
+ 
+2. Serving IRI API port via nginx, haproxy or other web-servers with proxy capabilities adds a few benefits. For example, better logging. IP blacklisting or whitelisting, inspecting headers and body/contents of the data.
+
+.. warning::
+
+  Please read the section below if you choose to reverse proxy to IRI API port.
+
+Proxy Warning
+^^^^^^^^^^^^^
+Should you choose to reverse proxy from your webserver/loadbalancer/proxy to IRI API (on the same machine) there's something very important you need to take into account.
+
+If you point your proxy to IRI API at address 127.0.0.1 (127.0.0.1:14265) anyone connecting can run any command they want. The reason is that IRI sees the connection originating from 127.0.0.1, thereby bypassing the limitations of LIMIT_REMOTE_API.
+
+So, what to do about this?
+
+Let's say your API port is 14265 and you only want people to connect via ``https://my.node-name.com:443``:
+
+- If any rules in the firewall allow 14265, remove those.
+- Make sure 443 (https) is allowed in the firewall.
+- In the webserver/proxy configuration point the proxy to ``http://your-external-interface-ip-address:14265``.
+- Ensure IRI is configured with the ``API_HOST = 0.0.0.0`` or ``--remote`` startup argument.
+
+That's it. Now you might be wondering: "I didn't allow 14265 in the firewall, why should my nginx be able to connect to IRI on the external IP?".
+
+It will succeed because the IP tables rule will only apply for external connections.
+
 
 
 
