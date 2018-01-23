@@ -46,6 +46,8 @@ Save the file and exit, then restart iri: ``systemctl restart iri``
 
 After IRI initializes, you will see (by issuing ``lsof -Pni|grep java``) that the API port is listening on your external IP.
 
+You can follow the instructions below on how to enable access to the port on the firewall.
+
 .. note::
 
   By default, this installation is set to **not** allow external communication to this port for security reasons.
@@ -59,15 +61,23 @@ Allowing the port via the playbook
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If you followed the steps above (enabling the ``--remote`` option in the configuration file) you will need to allow the port in the firewall.
 
-You can do this using the playbook which as a bonus also adds rate limiting (approximately max. 6 connections per 30 seconds).
+You can do this using the playbook which as a bonus also adds rate limiting.
 
 On **CentOS**::
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_firewalld -e api_port_remote=yes
 
-On **Ubuntu**::
+On **Ubuntu** without rate limiting::
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ufw -e api_port_remote=yes
+
+On **Ubuntu** with rate limiting::
+
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ufw -e api_port_remote=yes -e ufw_limit_iri_api=yes
+
+.. note::
+
+  Rate limiting in ubuntu is using ufw which is a very simple wrapper to the iptables firewalls. It only allows one value of max 6 connections per 30 seconds. This might prevent doing PoW on your node if you choose to expose attachToTangle.
 
 
 Allowing the port manually
@@ -77,7 +87,7 @@ On **CentOS** we run the command (which also adds rate limiting):
 
 .. code:: bash
 
-   firewall-cmd --remove-port=14265/tcp --zone=public --permanent && firewall-cmd --zone=public --permanent --add-rich-rule='rule port port="14265" protocol="tcp" limit value=10/m accept' && firewall-cmd --reload
+   firewall-cmd --remove-port=14265/tcp --zone=public --permanent && firewall-cmd --zone=public --permanent --add-rich-rule='rule port port="14265" protocol="tcp" limit value=30/m accept' && firewall-cmd --reload
 
 
 
@@ -93,8 +103,13 @@ And to add rate limits:
 
    ufw limit 14265/tcp comment 'IRI API port rate limit'
 
+.. note::
 
-Now you should be able to point your (desktop's) light wallet to your server's IP:port (e.g. 80.120.140.100:14265)
+   Rate limiting via ufw on ubuntu is very simple in that it only allows a value of 6 hits per 30 seconds. This can be a problem if you want to enable PoW -- attachToTangle on your node.
+
+
+Now you should be able to point your (desktop's) light wallet to your server's IP:port (e.g. 80.120.140.100:14265).
+
 
 
 .. _tunnelingIriApiForWalletConnections:

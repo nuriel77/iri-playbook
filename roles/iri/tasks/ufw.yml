@@ -34,6 +34,7 @@
         proto: tcp
         port: "{{ iri_api_port }}"
         log: yes
+      when: ufw_limit_iri_api is defined and ufw_limit_iri_api
 
   when: api_port_remote is defined and api_port_remote
 
