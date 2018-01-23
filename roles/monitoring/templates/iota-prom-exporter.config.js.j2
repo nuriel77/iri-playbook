@@ -18,5 +18,5 @@ module.exports = {
 
     // if true, will pull in market info (IOT to USD, IOT to BTC, etc)
     // *** Leave blank if you do not want market into pulled in ***
-    market_info_flag: '{% if iota_prom_exporter_market_data defined and iota_prom_exporter_market_data %}true{% endif %}'
+    market_info_flag: '{% if iota_prom_exporter_market_data is defined and iota_prom_exporter_market_data %}true{% endif %}'
 }
