@@ -68,7 +68,7 @@ function set_iphash(){
 function block_tor_addressess() {
     IPLIST=($(wget -qO- https://check.torproject.org/exit-addresses | grep ExitAddress | cut -d ' ' -f 2))
     for IP in "${IPLIST[@]}"; do
-        ipset add blacklist $IP 2>/dev/null && echo Added new IP $IP to blacklist
+        ipset add blacklist $IP 2>/dev/null && echo Added new IP $IP to blacklist || /bin/true
     done
 }
 
