@@ -9,6 +9,9 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 
+IPSET=/sbin/ipset
+IPTABLES=/sbin/iptables
+
 function set_dist() {
     if [ -f /etc/os-release ]; then
         # freedesktop.org and systemd
@@ -55,11 +58,11 @@ function init_centos(){
 
 function set_iphash(){
     echo ensure ipset blacklist exits
-    ipset list|grep -q '^Name: blacklist' || ipset create blacklist hash:ip hashsize 4096
-    iptables -L -nv|grep -q 'match-set blacklist src' || {
+    $IPSET list|grep -q '^Name: blacklist' || $IPSET create blacklist hash:ip hashsize 4096
+    $IPTABLES -L -nv|grep -q 'match-set blacklist src' || {
         echo create drop rules for set in iptables
-        iptables -I INPUT -m set --match-set blacklist src -j DROP;
-        iptables -I FORWARD -m set --match-set blacklist src -j DROP;
+        $IPTABLES -I INPUT -m set --match-set blacklist src -j DROP;
+        $IPTABLES -I FORWARD -m set --match-set blacklist src -j DROP;
     } && {
         echo drop rules in iptables already exist;
     }
@@ -68,7 +71,7 @@ function set_iphash(){
 function block_tor_addressess() {
     IPLIST=($(wget -qO- https://check.torproject.org/exit-addresses | grep ExitAddress | cut -d ' ' -f 2))
     for IP in "${IPLIST[@]}"; do
-        ipset add blacklist $IP 2>/dev/null && echo Added new IP $IP to blacklist || /bin/true
+        $IPSET add blacklist $IP 2>/dev/null && echo Added new IP $IP to blacklist || /bin/true
     done
 }
 
