@@ -33,6 +33,8 @@ In this installation
 * Install monitoring graphs. Big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
 * Alert notifications manager
 
+Feel free to star this repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
+
 .. note::
 
    If you want to test out the new IRI+Nelson auto-installer in Docker containers (does not include the monitoring graphs and peer manager):

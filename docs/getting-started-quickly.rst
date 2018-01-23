@@ -90,6 +90,8 @@ If you want to leave a donation you can use this address::
 
   CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
 
+And star the repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
+
 Thanks!
 
 
