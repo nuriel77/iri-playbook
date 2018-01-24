@@ -577,3 +577,26 @@ After having saved the file, you can run ``nano /tmp/test.txt`` again in order t
 
   Please check `Nano's Turorial <https://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/>`_ for more information.
 
+Running IRI API Port Behind HAProxy
+===================================
+
+We can configure IRI API port to be accessible via HAProxy. The benefits in doing so is:
+
+- Logging
+- Whitelist/blacklisting
+- Password protection
+- Rate limiting per IP, or per command
+- Denying invalid requests
+
+To get it configured and installed run::
+
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
+
+**Note** that if you have previously enabled IRI with ``--remote`` option or ``API_HOST = 0.0.0.0`` you can disable those now. HAProxy will take care of that.
+
+In addition, the **REMOTE_LIMIT_API** in the configuration files are no longer playing any role. HAProxy has taken control over the limited commands.
+
+To see the configured denied/limited commands see ``group_vars/all/lb.yml``. The regex is different from what you have been used to.
+
+If you need help with this, please find help on Discord #fullnodes channel.
+
