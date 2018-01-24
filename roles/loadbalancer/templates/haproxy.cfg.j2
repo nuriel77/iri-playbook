@@ -28,7 +28,7 @@ userlist lb_auth
 
 frontend iri_front
     mode http
-    capture request header User-Agent len 64
+    capture request header User-Agent len 128
     option forwardfor
     maxconn {{ iri_api_max_connections }}
     timeout client 5m
@@ -83,7 +83,7 @@ frontend iri_front
 
 backend iri_back
     mode http
-    fullconn 12
+    fullconn {{ iri_api_max_connections }}
     option redispatch
     timeout server 5m
     timeout server-fin 5m
