@@ -580,6 +580,8 @@ After having saved the file, you can run ``nano /tmp/test.txt`` again in order t
 Running IRI API Port Behind HAProxy
 ===================================
 
+This is still work in progress but feel free to test this functionality.
+
 We can configure IRI API port to be accessible via HAProxy. The benefits in doing so is:
 
 - Logging
@@ -591,6 +593,11 @@ We can configure IRI API port to be accessible via HAProxy. The benefits in doin
 To get it configured and installed run::
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
+
+
+Please read this **important information**:
+
+The API port will be accessible on **14267** by default.
 
 **Note** that if you have previously enabled IRI with ``--remote`` option or ``API_HOST = 0.0.0.0`` you can disable those now. HAProxy will take care of that.
 
