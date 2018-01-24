@@ -20,7 +20,7 @@
 
 - name: allow and rate limit api port in firewall
   firewalld:
-    rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="12/m" accept'
+    rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="24/m" accept'
     permanent: true
     state: enabled
     immediate: yes
