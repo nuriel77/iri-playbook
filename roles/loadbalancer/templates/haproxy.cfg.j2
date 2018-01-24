@@ -1,0 +1,66 @@
+global
+    user haproxy
+    group haproxy
+    log /dev/log local0 debug
+
+defaults
+    http-reuse safe
+    log global
+    option  httplog
+    option  dontlognull
+    retries 3
+    timeout connect 10s
+    timeout queue 10s
+    timeout server 300s
+    timeout http-request 10s
+    maxconn {{ lb_max_connections }}
+    default-server inter 10s fastinter 2s downinter 30s
+
+# Can be used for various authentications
+# in case user wants to add more backends
+userlist lb_auth
+    user {{ iotapm_nginx_user }} password {{ lb_password.stdout | replace("\n", "") }}
+
+listen iri-cluster
+    bind {{ lb_bind_address }}:{{ iri_api_port_remote }}
+    timeout client 30m
+    mode http
+
+    # Credits @Ralf Rottmann & @orth
+    # This is important. It sends the server's name (the string after the word
+    # "server") in our backend definitions below for our API calls as a 'Host'.
+    # header. This doesn't work with the health check though unfortunately.
+    http-send-name-header Host
+
+    # We want to get the POST data content so we can deny some requests before
+    # we even bother distributing them to the nodes
+    option http-buffer-request
+
+    # We're only looking for about the first 50 bytes of content which should be
+    # something like {"command":"getInclusionStates"} for example to verify 
+    # if it's a valid command.
+    declare capture request len 50
+    http-request capture req.body id 0
+
+    # If the content requests contains the regular expression we deny it. We
+    # could consider this instead to be inclusive and list only commands that
+    # should be valid but that list might grow often.
+    acl invalid_command req.body -m reg {{ haproxy_deny_regex }}
+    http-request deny if invalid_command
+
+{% if iri_remote_auth is defined and iri_remote_auth %}
+    # Lock with password
+    acl lb_allow http_auth(lb_auth)
+    http-request allow if lb_allow
+    http-request deny
+{% endif %}
+    server iri-api 127.0.0.1:{{ iri_api_port }} weight 3 maxconn {{ iri_api_max_connections }} check
+
+listen stats
+    bind 127.0.0.1:{{ lb_stats_port }}
+    mode http
+    timeout client 1h
+    stats enable
+    stats uri /
+    stats realm Strictly\ Private
+    stats auth iota:{{ stats_password.stdout }}

@@ -1,0 +1,25 @@
+# Change to 0.0.0.0 to bind to all interfaces (expose remotely)
+lb_bind_address: 127.0.0.1
+
+# This will be the external accessible port
+iri_api_port_remote: 14267
+
+# Max connections to API
+iri_api_max_connections: 12
+
+# Enable remote auth with password (uses the same as iotapm/grafana)
+iri_remote_auth: false
+
+# Load balancer max connections (all backends)
+lb_max_connections: 24
+
+# Stats port for haproxy
+lb_stats_port: 9292
+
+haproxy_dir: '/opt/haproxy'
+haproxy_username: haproxy
+haproxy_base_version: 1.8
+haproxy_min_version: 3
+
+# Commands to deny access to
+haproxy_deny_regex: '(get|remove|add)Neighbors|setApiRateLimit'

@@ -1,0 +1,3 @@
+- import_tasks: role.yml
+  tags:
+    - loadbalancer_role

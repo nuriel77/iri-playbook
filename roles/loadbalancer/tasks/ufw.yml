@@ -1,0 +1,6 @@
+- name: allow iri api port remote in firewall
+  ufw:
+    rule: allow
+    direction: in
+    proto: tcp
+    port: "{{ iri_api_port_remote }}"
