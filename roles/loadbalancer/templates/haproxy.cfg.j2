@@ -112,7 +112,7 @@ backend iri_back
     compression type application/json text/html text/plain text/xml text/json text/css text/javascript application/javascript
 
     option redispatch
-    server iri 127.0.0.01:14265 maxconn {{ iri_api_max_connections }} check
+    server iri 127.0.0.01:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check
 
 listen stats
     bind 127.0.0.1:9292
