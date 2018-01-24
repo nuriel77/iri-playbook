@@ -1,0 +1,27 @@
+- import_tasks: deps_apt.yml
+  tags:
+    - lb_deps_apt
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- import_tasks: deps_yum.yml
+  tags:
+    - lb_deps_yum
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- import_tasks: install.yml
+  tags:
+    - lb_install
+
+- import_tasks: firewalld.yml
+  tags:
+    - lb_firewalld
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- import_tasks: ufw.yml
+  tags:
+    - lb_ufw
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- import_tasks: lb.yml
+  tags:
+    - lb_config

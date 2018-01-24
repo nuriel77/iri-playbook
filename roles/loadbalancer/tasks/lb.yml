@@ -1,0 +1,79 @@
+- name: set etc config dir ubuntu
+  set_fact:
+    etc_config_dir: default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: set etc config dir centos
+  set_fact:
+    etc_config_dir: sysconfig
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: generate access passwd for stats
+  shell: "echo -n $(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')"
+  changed_when: false
+  register: stats_password
+
+- name: convert password to sha512
+  #shell: "python -c 'import crypt; print(crypt.crypt(\"{{ iotapm_nginx_password }}\", crypt.mksalt(crypt.METHOD_SHA512)))'"
+  shell: "python -c \"import crypt, getpass, pwd; print crypt.crypt('{{ iotapm_nginx_password }}', '\\$6\\$saltsalt\\$')\""
+  register: lb_password
+  changed_when: false
+  tags:
+    - lb_passwd
+
+- name: ensure chroot dir
+  file:
+    path: /var/lib/haproxy
+    state: directory
+    mode: 0700
+    owner: "{{ haproxy_username }}"
+    group: "{{ haproxy_username }}"
+
+- name: ensure dev log in chroot dir
+  file:
+    path: /var/lib/haproxy/dev
+    state: directory
+    mode: '2700'
+    owner: "{{ haproxy_username }}"
+    group: "{{ haproxy_username }}"
+
+- name: ensure etc haproxy dir
+  file:
+    path: /etc/haproxy
+    state: directory
+    owner: root
+    group: "{{ haproxy_username }}"
+    mode: 750
+
+- name: copy haproxy sysconfig file
+  copy:
+    src: files/haproxy.sysconfig
+    dest: "/etc/{{ etc_config_dir }}/haproxy"
+  notify:
+    - restart haproxy
+
+- name: copy haproxy service file
+  template:
+    src: templates/haproxy.service.j2
+    dest: /etc/systemd/system/haproxy.service
+  notify:
+    - reload systemd
+   
+- name: copy haproxy config
+  template:
+    src: templates/haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    backup: yes
+    force: "{{ overwrite | default('no') }}"
+    mode: 0600
+    owner: root
+    group: root
+    validate: '/usr/local/sbin/haproxy -c -f %s'
+  notify:
+    - restart haproxy
+
+- name: start and enable haproxy
+  systemd:
+    name: haproxy
+    state: started
+    enabled: yes

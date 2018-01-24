@@ -1,0 +1,45 @@
+- name: add user to run haproxy as
+  user:
+    name: "{{ haproxy_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ haproxy_dir }}"
+  tags:
+    - haproxy_user
+
+- name: remove existing haproxy dir
+  file:
+    path: "{{ haproxy_dir }}"
+    state: absent
+  when: remove_haproxy_dir is defined and remove_haproxy_dir
+
+# Re-download haproxy?
+- name: stat haproxy dir
+  stat:
+    path: "{{ haproxy_dir }}"
+  register: haproxy_dir_stat
+
+- name: download and unarchive haproxy release
+  unarchive:
+    src: "http://www.haproxy.org/download/{{ haproxy_base_version }}/src/haproxy-{{ haproxy_base_version }}.{{ haproxy_min_version }}.tar.gz"
+    dest: /tmp
+    remote_src: True
+  when: not haproxy_dir_stat.stat.exists
+  register: haproxy_downloaded
+
+- name: move temporary extracted haproxy directory to its dir
+  shell: "mv /tmp/haproxy-{{ haproxy_base_version }}.{{ haproxy_min_version }} {{ haproxy_dir }}"
+  when: haproxy_downloaded and haproxy_downloaded.changed
+
+- name: ensure haproxy dir ownership and permissions
+  file:
+    path: "{{ haproxy_dir }}"
+    state: directory
+    mode: 0750
+    owner: root
+    group: "{{ haproxy_username }}"
+
+- name: make haproxy compile and install
+  shell: "cd {{ haproxy_dir }} && make clean && make TARGET=custom CPU=native USE_PCRE=1 USE_LIBCRYPT=1 USE_LINUX_SPLICE=1 USE_LINUX_TPROXY=1 USE_OPENSSL=1 USE_ZLIB=1 && make install"
+  when: haproxy_downloaded is defined and haproxy_downloaded.changed
+
