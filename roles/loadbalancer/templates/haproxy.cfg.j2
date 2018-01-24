@@ -23,7 +23,7 @@ defaults
 # Can be used for various authentications
 # in case user wants to add more backends
 userlist lb_auth
-    user iotapm password {{ lb_password }}
+    user iotapm password {{ lb_password.stdout }}
 
 
 frontend iri_front
