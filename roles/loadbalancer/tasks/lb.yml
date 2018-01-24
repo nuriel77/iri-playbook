@@ -14,7 +14,8 @@
   register: stats_password
 
 - name: convert password to sha512
-  shell: "python -c 'import crypt; print(crypt.crypt(\"{{ iotapm_nginx_password }}\", crypt.mksalt(crypt.METHOD_SHA512)))'"
+  #shell: "python -c 'import crypt; print(crypt.crypt(\"{{ iotapm_nginx_password }}\", crypt.mksalt(crypt.METHOD_SHA512)))'"
+  shell: "python -c \"import crypt, getpass, pwd; print crypt.crypt('{{ iotapm_nginx_password }}', '\\$6\\$saltsalt\\$')\""
   register: lb_password
   changed_when: false
   tags:
