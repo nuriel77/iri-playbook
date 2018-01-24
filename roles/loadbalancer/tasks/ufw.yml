@@ -4,3 +4,12 @@
     direction: in
     proto: tcp
     port: "{{ iri_api_port_remote }}"
+
+- name: rate limit iri api port in firewall
+  ufw:
+    rule: limit
+    direction: in
+    proto: tcp
+    port: "{{ iri_api_port_remote }}"
+    log: yes
+  when: ufw_limit_iri_api is defined and ufw_limit_iri_api
