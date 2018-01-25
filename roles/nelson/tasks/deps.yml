@@ -71,6 +71,8 @@
         state: absent
   when: upgrade_nelson is defined and upgrade_nelson
   ignore_errors: yes
+  notify:
+    - restart nelson
   tags:
     - nelson_npm
 
