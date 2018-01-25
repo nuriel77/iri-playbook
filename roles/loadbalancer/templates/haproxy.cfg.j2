@@ -119,14 +119,16 @@ backend iri_back
     option httpchk POST /
     http-check expect status 400
     default-server inter 10s fall 4 rise 2
-    server iri 127.0.0.01:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check
+    server iri 127.0.0.1:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check
 
 listen stats
-    bind 127.0.0.1:9292
+    bind {{ haproxy_stats_address }}:{{ haproxy_stats_port }}
     mode http
     timeout client 1h
     stats enable
     stats hide-version
     stats uri /
-    stats realm Strictly\ Private
-    stats auth iota:{{ stats_password.stdout }}
+
+    # Lock with password
+    acl lb_allow http_auth(lb_auth)
+    http-request auth realm UserAuth if !lb_allow

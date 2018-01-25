@@ -1,6 +1,9 @@
 - name: allow iri api port remote in firewall
   firewalld:
-    port: "{{ iri_api_port_remote }}/tcp"
+    port: "{{ item }}/tcp"
     permanent: true
     state: enabled
     immediate: yes
+  with_items:
+    - "{{ haproxy_stats_port }}"
+    - "{{ iri_api_port_remote }}"
