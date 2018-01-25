@@ -115,7 +115,10 @@ backend iri_back
     compression algo gzip
     compression type application/json text/html text/plain text/xml text/json text/css text/javascript application/javascript
 
-    option redispatch
+    option log-health-checks
+    option httpchk POST /
+    http-check expect status 400
+    default-server inter 10s fall 4 rise 2
     server iri 127.0.0.01:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check
 
 listen stats
