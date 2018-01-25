@@ -236,7 +236,21 @@ Updating the configuration file is important - if you restart IRI it will start 
 * The script will connect by default to IRI API on ``http://localhost:14265``.
 * If you need to connect to a different endpoint you can specify that using ``-i http://my-node-address:port``.
 * ``nbctl`` also has the ability to configure the configuration file for you!
-* If you want to list neighbors, simply run ``nbctl -l``.
+
+Listing Neigbors
+^^^^^^^^^^^^^^^^
+If you want to list neighbors, simply run:
+
+.. code:: bash
+
+  nbctl -l
+
+To show only the addresses and ports, run:
+
+.. code:: bash
+
+  nbctl -l | jq -r '.neighbors[] | "\(.address)/\(.connectionType)"'
+
 
 Adding Neighbors
 ^^^^^^^^^^^^^^^^
