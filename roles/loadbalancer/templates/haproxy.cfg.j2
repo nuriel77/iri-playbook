@@ -75,7 +75,11 @@ frontend iri_front
 {% endif %}
 
     # Check denied commands
+    acl command_exists req.body -m sub -i command
     acl invalid_command req.body -m reg {{ haproxy_deny_regex }}
+    acl bad_command req.body -m reg \"getTransactionsToApprove\"(.*)GFCCGTGSUEVBZYFK9QNAHOVHXUMEATUFLGBZLDKMOGWCXVUZDVEJVCLLCJJ9NQOIMOLMUMFMGZSI99999
+    http-request deny if bad_command
+    http-request deny unless command_exists
     http-request deny if invalid_command
 
     bind {{ lb_bind_address }}:{{ iri_api_port_remote }}
