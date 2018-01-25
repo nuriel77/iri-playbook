@@ -73,6 +73,7 @@
     - atop
     - htop
     - pastebinit
+    - openssl
 
 - name: set java home environment
   lineinfile:

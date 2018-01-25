@@ -25,3 +25,7 @@
 - import_tasks: iri.yml
   tags:
     - iri_config
+
+- import_tasks: ssl.yml
+  tags:
+    - iri_ssl
