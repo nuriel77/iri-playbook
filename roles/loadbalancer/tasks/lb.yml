@@ -39,8 +39,32 @@
 - name: selinux specific block
   block:
 
-    - name: set selinux context for dev dir in haproxy jail
-      shell: "semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy && semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy/dev && semanage fcontext -a -t var_log_t /var/lib/haproxy/dev/log && restorecon -Rv /var/lib/haproxy"
+    #- name: set selinux context for dev dir in haproxy jail
+    #  shell: "semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy && semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy/dev && semanage fcontext -a -t var_log_t /var/lib/haproxy/dev/log && restorecon -Rv /var/lib/haproxy"
+    #  notify:
+        - restart rsyslog
+        - restart haproxy
+
+    - name: sefcontext syslogd_var_lib_t haproxy jail
+      sefcontext:
+        target: "{{ item }}"
+        setype: syslogd_var_lib_t
+        state: present
+      with_items:
+        - "/var/lib/haproxy"
+        - "/var/lib/haproxy/dev"
+      register: sefcontext
+
+    - name: sefcontext var_log_t haproxy jail log dir
+      sefcontext:
+        target: "/var/lib/haproxy/dev/log"
+        setype: syslogd_var_lib_t
+        state: present
+      register: sefcontext
+
+    - name: restorecon haproxy jail directories
+      shell: "restorecon -Rv /var/lib/haproxy"
+      when: sefcontext.changed
       notify:
         - restart rsyslog
         - restart haproxy
