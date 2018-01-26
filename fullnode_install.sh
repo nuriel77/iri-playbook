@@ -220,6 +220,10 @@ function set_password() {
         echo -e "\n\nPasswords do not match!\n"
         set_password
     fi
+    if [ "$PASSWORD_B" == "" ]; then
+        echo -e "\n\nPassword cannot be empty!\n"
+        set_password
+    fi
     PASSWORD=$(echo ${PASSWORD_A} | sed 's|\\|\\\\|g' | sed 's|/|\\/|g' | sed 's|\&|\\&|g')
     sed -i "s/^iotapm_nginx_password:.*$/iotapm_nginx_password: '${PASSWORD}'/" group_vars/all/iotapm.yml
 }
@@ -251,6 +255,7 @@ function check_arch() {
         exit 1
     fi
 }
+
 
 # Get OS and version
 set_dist
