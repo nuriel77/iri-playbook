@@ -9,3 +9,9 @@
     name: haproxy
     state: reloaded
     enabled: yes
+
+- name: restart rsyslog
+  systemd:
+    name: rsyslog
+    state: restarted
+    enabled: yes

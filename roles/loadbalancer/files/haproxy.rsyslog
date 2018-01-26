@@ -1,0 +1,1 @@
+$AddUnixListenSocket /var/lib/haproxy/dev/log

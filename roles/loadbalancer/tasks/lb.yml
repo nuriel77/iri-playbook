@@ -36,6 +36,24 @@
     owner: "{{ haproxy_username }}"
     group: "{{ haproxy_username }}"
 
+- name: selinux specific block
+  block:
+
+    - name: set selinux context for dev dir in haproxy jail
+      shell: "semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy/dev && semanage fcontext -a -t var_log_t /var/lib/haproxy/dev/log && restorecon -Rv /var/lib/haproxy"
+      notify:
+        - restart rsyslog
+        - restart haproxy
+
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: rsyslog haproxy jail path config
+  copy:
+    src: files/haproxy.rsyslog
+    dest: /etc/rsyslog.d/00-haproxy-jail.conf
+  notify:
+    - restart rsyslog
+
 - name: ensure etc haproxy dir
   file:
     path: /etc/haproxy
