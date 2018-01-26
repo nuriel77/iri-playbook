@@ -2,11 +2,15 @@ global
     user haproxy
     group haproxy
     log /dev/log local0 debug
+    tune.ssl.default-dh-param 2048
+    ssl-server-verify none
 
 defaults
     http-reuse safe
     log global
     option dontlognull
+    option forwardfor
+    option http-server-close
     retries 3
     timeout connect 10s
     timeout client 10s
@@ -82,7 +86,13 @@ frontend iri_front
     http-request deny unless command_exists
     http-request deny if invalid_command
 
+    # Enable these two lines for SSL to IRI
+    #reqadd X-Forwarded-Proto:\ https
+    #bind {{ lb_bind_address }}:{{ iri_api_port_remote }} ssl crt {{ ssl_certkey_file }}
+
+    # Disable this line and use line above for SSL
     bind {{ lb_bind_address }}:{{ iri_api_port_remote }}
+
     use_backend iri_back
 
 backend iri_back
@@ -122,7 +132,8 @@ backend iri_back
     server iri 127.0.0.1:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check
 
 listen stats
-    bind {{ haproxy_stats_address }}:{{ haproxy_stats_port }}
+    bind {{ haproxy_stats_address }}:{{ haproxy_stats_port }} ssl crt {{ ssl_certkey_file }}
+    reqadd X-Forwarded-Proto:\ https
     mode http
     timeout client 1h
     stats enable

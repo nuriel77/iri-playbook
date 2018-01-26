@@ -30,11 +30,14 @@ If you are missing these utilities on **Ubuntu** you can install them:
   apt-get install curl screen -y
 
 
-.. note:
+.. note::
 
    your server's installation of Ubuntu or CentOS must be a "clean" one -- no pre-installed cpanel, whcms, plesk and so on.
 
 
+.. warning::
+
+  All web pages served by this installer will be served on HTTPS with self-signed certificates. The browser will issue a warning when you connect for the first time. You can proceed and accept the certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and look for the Let's encrypt link.
 
 Run the Installer!
 ==================

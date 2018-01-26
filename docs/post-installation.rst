@@ -28,6 +28,11 @@ See examples in the chapters below:
   Also, you can refer to :ref:`glossary` for a quick over view of most common commands.
 
 
+.. warning::
+
+  All web pages served by this installer will be served on HTTPS with self-signed certificates. The browser will issue a warning when you connect for the first time. You can proceed and accept the certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and look for the Let's encrypt
+link.
+
 .. controlingIRI::
 
 Controlling IRI

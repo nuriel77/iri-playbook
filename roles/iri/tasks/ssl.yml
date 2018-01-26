@@ -1,0 +1,42 @@
+- name: ensure private key directory
+  file:
+    state: directory
+    path: /etc/ssl/private
+    mode: 0710
+    owner: root
+    group: root
+
+- name: stat certificate file
+  stat:
+    path: "{{ ssl_cert_file }}"
+  register: cert_file
+
+- name: stat key file
+  stat:
+    path: "{{ ssl_key_file }}"
+  register: key_file
+
+- name: stat cert-key file
+  stat:
+    path: "{{ ssl_certkey_file }}"
+  register: certkey_file
+
+- name: Create self-signed SSL key and certificate
+  shell: 'openssl req -x509 -nodes -days {{ ssl_default_days }} -newkey rsa:{{ ssl_rsa_bits }} -keyout {{ ssl_key_file }} -out {{ ssl_cert_file }} -subj "{{ ssl_subject }}"'
+  when: >
+        not cert_file.stat.exists or
+        not key_file.stat.exists
+
+- name: create combined cert key file
+  shell: "cat {{ ssl_cert_file }} {{ ssl_key_file }} > {{ ssl_certkey_file }}"
+  when: not certkey_file.stat.exists
+
+- name: Set permissions on key file
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0400 
+  with_items:
+    - "{{ ssl_key_file }}"
+    - "{{ ssl_certkey_file}}"
