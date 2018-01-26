@@ -18,7 +18,7 @@ iotapm_nginx_user: iotapm
 # The password to use when accessing iota-pm
 # through the webserver
 # PLEASE CHANGE THIS BEFORE INSTALLATION!!!
-iotapm_nginx_password: 'AllTangle81'
+iotapm_nginx_password: ''
 
 # If setting `iotapm_bind_address` to anything other than
 # localhost (127.0.0.1) should the port be opened in firewall
