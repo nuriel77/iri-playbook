@@ -118,6 +118,7 @@ Now you should be able to point your browser to ``http://grafana.my-fqdn.com``.
   Using SSL/HTTPS makes it virtually impossible for someone to "sniff" passwords or sensitive information your browser passes to a server.
 
 
+.. _serverHTTPS:
 
 Configuring my server with HTTPS
 ================================

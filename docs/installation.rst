@@ -14,6 +14,12 @@ First, it is always a good practice to check for updates on the server.
    I am looking for testers: https://github.com/SemkoDev/nelson.cli/tree/master/contrib/ansible-playbook
 
 
+.. warning::
+
+  All web pages served by this installer will be served on HTTPS with self-signed certificates. The browser will issue a warning when you connect for the first time. You can proceed and accept the certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and look for the Let's encrypt
+link.
+
+
 Update System Packages
 ======================
 
