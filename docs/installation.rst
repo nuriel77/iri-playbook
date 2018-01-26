@@ -16,9 +16,7 @@ First, it is always a good practice to check for updates on the server.
 
 .. warning::
 
-  All web pages served by this installer will be served on HTTPS with **self-signed certificates**. The browser will issue a warning when you connect for the first time. You can proceed and add the sites certificate as an exception.
-
-  If you want valid certificates you can refer to :ref:`serverHTTPS` and search for the "Let's Encrypt" link.
+  All web pages served by this installer will be served on HTTPS with **self-signed certificates**. The browser will issue a warning when you connect for the first time. You can proceed and add the sites certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and search for the "Let's Encrypt" link.
 
 
 Update System Packages
