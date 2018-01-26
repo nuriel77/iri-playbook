@@ -8,11 +8,6 @@
     etc_config_dir: sysconfig
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: generate access passwd for stats
-  shell: "echo -n $(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')"
-  changed_when: false
-  register: stats_password
-
 - name: convert password to sha512
   shell: "python -c \"import crypt, getpass, pwd; print crypt.crypt('{{ iotapm_nginx_password }}', '\\$6\\$saltsalt\\$')\""
   register: lb_password
@@ -38,12 +33,6 @@
 
 - name: selinux specific block
   block:
-
-    #- name: set selinux context for dev dir in haproxy jail
-    #  shell: "semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy && semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy/dev && semanage fcontext -a -t var_log_t /var/lib/haproxy/dev/log && restorecon -Rv /var/lib/haproxy"
-    #  notify:
-    #    - restart rsyslog
-    #    - restart haproxy
 
     - name: sefcontext syslogd_var_lib_t haproxy jail
       sefcontext:
