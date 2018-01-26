@@ -40,7 +40,7 @@
   block:
 
     - name: set selinux context for dev dir in haproxy jail
-      shell: "semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy && semanage fcontext -a -t var_log_t /var/lib/haproxy/dev/log && restorecon -Rv /var/lib/haproxy"
+      shell: "semanage fcontext -a -t syslogd_var_lib_t /var/lib/haproxy/dev && semanage fcontext -a -t var_log_t /var/lib/haproxy/dev/log && restorecon -Rv /var/lib/haproxy"
       notify:
         - restart rsyslog
         - restart haproxy
