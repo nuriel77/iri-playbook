@@ -32,7 +32,7 @@
   file:
     path: /var/lib/haproxy/dev
     state: directory
-    mode: '2700'
+    mode: 0700
     owner: "{{ haproxy_username }}"
     group: "{{ haproxy_username }}"
 
@@ -50,7 +50,7 @@
 - name: rsyslog haproxy jail path config
   copy:
     src: files/haproxy.rsyslog
-    dest: /etc/rsyslog.d/00-haproxy-jail.conf
+    dest: /etc/rsyslog.d/haproxy.conf
   notify:
     - restart rsyslog
 
@@ -75,6 +75,11 @@
     dest: /etc/systemd/system/haproxy.service
   notify:
     - reload systemd
+
+- name: copy haproxy logrotate file
+  copy:
+    src: files/haproxy.logrotate
+    dest: /etc/logrotate.d/haproxy
    
 - name: copy haproxy config
   template:
