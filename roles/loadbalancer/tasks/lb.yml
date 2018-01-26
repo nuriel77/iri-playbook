@@ -36,6 +36,13 @@
     owner: "{{ haproxy_username }}"
     group: "{{ haproxy_username }}"
 
+- name: rsyslog haproxy jail path config
+  copy:
+    src: files/haproxy.rsyslog
+    dest: /etc/rsyslog.d/00-haproxy-jail.conf
+  notify:
+    - restart rsyslog
+
 - name: ensure etc haproxy dir
   file:
     path: /etc/haproxy
