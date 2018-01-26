@@ -1,2 +1,0 @@
-- name: Create self-signed SSL key and certificate
-  shell: "openssl req -x509 -nodes -days {{ ssl_default_days }} -newkey rsa:{{ ssl_rsa_bit }} -keyout {{ ssl_key_file }} -out {{ ssl_cert_file }} -subj "{{ ssl_subject }}"
