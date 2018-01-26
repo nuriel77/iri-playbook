@@ -27,11 +27,10 @@ In this installation
 * Automatically configure the java memory limit based on your system's RAM
 * Explain how to connect a wallet to your full node
 * Install IOTA Peer Manager
-* Make IOTA Peer Manager accessible via the browser
-* Password protect IOTA Peer Manager
+* Serve IOTA PM and Graphs password protected via HTTPS
 * Optionally install `Nelson <https://github.com/SemkoDev/nelson.cli>`_.
 * Install monitoring graphs. Big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
-* Alert notifications manager
+* Email alert notifications manager
 
 Feel free to star this repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
 
