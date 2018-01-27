@@ -123,8 +123,7 @@ function init_centos(){
     set +e
     set +o pipefail
     if $(needs-restarting -r 2>&1 | grep -q "Reboot is required"); then
-        [ -z "$SKIP_REBOOT" ] && inform_reboot
-        exit 0
+        [ -z "$SKIP_REBOOT" ] && { inform_reboot; exit 0; }
     fi
     set -o pipefail
     set -e
@@ -143,8 +142,7 @@ function init_ubuntu(){
 
     echo "Check reboot required..."
     if [ -f /var/run/reboot-required ]; then
-        [ -z "$SKIP_REBOOT" ] && inform_reboot
-        exit 0
+        [ -z "$SKIP_REBOOT" ] && { inform_reboot; exit 0; }
     fi
 
     echo "Installing Ansible and git..."
