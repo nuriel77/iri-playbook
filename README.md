@@ -5,10 +5,11 @@
 This playbook will install and configure the IOTA full node. In addition:
 
 - Install and configure iota-pm: a GUI to view/manage peers
-- Password protect iota-pm
-- Run iota-pm and IRI as systemd controlled processes (unprivileged users)
+- Password protected, HTTPS accessible dashboards
+- Run all services as systemd controlled processes (unprivileged users)
 - Alerting and notifications
 - Configure firewalls
+- HAProxy for Wallet/API connections
 - NEW: Monitoring for IRI + Graphs amazing work of Chirs Holliday https://github.com/crholliday/iota-prom-exporter
 
 For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/master/getting-started-quickly.html#getting-started-quickly)
