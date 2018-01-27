@@ -68,9 +68,7 @@ Run the Installer!
    If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
 
 
-That's it. You can proceed to the :ref:`post_installation` for additional information on managing your node.
-
-A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
+* A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
 
 By default you can access the grpahs at::
 
@@ -82,7 +80,11 @@ and Peer Manager via::
 
 You can use the user ``iotapm`` and the password you've configured during the installation.
 
-To configure an email for alerts see :ref:`alerting`.
+* Please consider hardening the security of your node. Any server is a target for attacks/brute forcing. Even more so if you are going to list your node publicly. See :ref:`securityHardening`.
+
+* You can proceed to the :ref:`post_installation` for additional information on managing your node.
+
+* To configure an email for alerts see :ref:`alerting`.
 
 
 DONATIONS
