@@ -28,3 +28,22 @@ Grafana configuration file::
 
    /etc/grafana/grafana.ini
 
+Grafana Database file::
+
+  /var/lib/grafana/grafana.db
+
+Prometheus configuration file::
+
+  /etc/prometheus/prometheus.yaml
+
+IOTA-Prom-Exporter configuration file::
+
+  /opt/prometheus/iota-prom-exporter/config.js
+
+Alert Manager configuration file::
+
+  /opt/prometheus/alertmanager/config.yml
+
+HAProxy configuration file::
+
+  /etc/haproxy/haproxy.cfg
