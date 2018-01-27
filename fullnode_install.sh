@@ -123,14 +123,13 @@ function init_centos(){
     set +e
     set +o pipefail
     if $(needs-restarting -r 2>&1 | grep -q "Reboot is required"); then
-        inform_reboot
-        exit 0
+        [ -z "$SKIP_REBOOT" ] && { inform_reboot; exit 0; }
     fi
     set -o pipefail
     set -e
 
     echo "Installing Ansible and git..."
-    yum install ansible git expect-devel -y
+    yum install ansible git expect-devel cracklib -y
 
 }
 
@@ -143,15 +142,14 @@ function init_ubuntu(){
 
     echo "Check reboot required..."
     if [ -f /var/run/reboot-required ]; then
-        inform_reboot
-        exit 0
+        [ -z "$SKIP_REBOOT" ] && { inform_reboot; exit 0; }
     fi
 
     echo "Installing Ansible and git..."
     apt-get install software-properties-common -y
     apt-add-repository ppa:ansible/ansible -y
     apt-get update -y
-    apt-get install ansible git expect-dev -y
+    apt-get install ansible git expect-dev libcrack2 -y
 }
 
 function inform_reboot() {
@@ -220,12 +218,14 @@ function set_password() {
         echo -e "\n\nPasswords do not match!\n"
         set_password
     fi
-    if [ "$PASSWORD_B" == "" ]; then
-        echo -e "\n\nPassword cannot be empty!\n"
+    PASSWD_CHECK=$(echo -n "$PASSWORD_A" | cracklib-check)
+    if [[ $(echo "$PASSWD_CHECK" | awk {'print $2'}) != "OK" ]]; then
+        echo;echo
+        echo -n "Please choose a better password:"
+        echo ${PASSWD_CHECK}|cut -d: -f2-
         set_password
     fi
-    PASSWORD=$(echo ${PASSWORD_A} | sed 's|\\|\\\\|g' | sed 's|/|\\/|g' | sed 's|\&|\\&|g')
-    sed -i "s/^iotapm_nginx_password:.*$/iotapm_nginx_password: '${PASSWORD}'/" group_vars/all/iotapm.yml
+    echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
 }
 
 # Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
