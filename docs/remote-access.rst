@@ -146,7 +146,31 @@ A default installation would have IRI API listening on TCP port 14265.
 
 For Windows desktop/laptop
 --------------------------
-You can use Putty to create the tunnel/port forward. As reference you can use `this example <http://realprogrammers.com/how_to/set_up_an_ssh_tunnel_with_putty.html>`_ to get you going. This example is forwarding a port for a service called MySQL. In our case we want to forward IRI service (port 14265), so just replace the MySQL 3306 port from the example with that of IRI API.
+
+You can use Putty to create the tunnel/port forward. This can be done for any port on the server. Here we are going to forward the IRI API port from the server to your local machine.
+
+1. Open putty and create a new session name.  Start by entering the node's address and SSH port.
+
+.. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/tunnel_putty_01.png
+      :alt: tunnel_putty_01.png
+
+2. On the menu on the left choose 'Tunnels'. Then fill in the Source port and Destination as shown in the image below. The destination is comprised of the IP address and the port. We use 127.0.0.1:14265, as this is by default where we want to forward the port from.
+
+.. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/tunnel_putty_02.png
+      :alt: tunnel_putty_02.png
+
+3. Next click 'Add'. You will see that the configuration has been added to the 'Forwarded ports' area.
+
+.. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/tunnel_putty_03.png
+         :alt: tunnel_putty_03.png
+
+4. Back in the 'Session' menu, enter a name with which you want to save this configuration/session, last check that the node's address and port are correct, and click 'Save'. The session will be added to the list.
+
+.. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/tunnel_putty_04.png
+         :alt: tunnel_putty_04.png
+
+5. To open the session and start the port forwarding, all you have to do is to load the session and click 'Open'. To test that the port is being forwarded you can open the browser and point it to ``http://localhost:14265``. This should reply something in the lines of ``error: Invalid API Version``. if this is the case, your API port is being forwarded successfully. You can edit the wallet's node configuration and point it to this address to start using your full node!
+
 
 For any type of bash command line (Mac/Linux/Windows bash)
 ----------------------------------------------------------
