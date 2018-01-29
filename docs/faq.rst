@@ -5,8 +5,8 @@ FAQ
 
 * `UDP bad length`_
 * `How to tell if my node is synced`_
-* `Why do I see the Latest Milestone as 243000`_
 * `How do I tell if I am syncing with my neighbors`_
+* `Where to get the latest milestone index from`_
 * `Why is latestSolidSubtangleMilestoneIndex always behind latestMilestoneIndex`_
 * `How to get my node swap less`_
 * `What are the revalidate and rescan options for`_
@@ -55,7 +55,7 @@ If you don't have tcpdump installed you can install it:
 How to tell if my node is synced
 ================================
 
-You can check that looking at iota-pm GUI.
+You can check if your node is synced by looking at iota-pm GUI.
 Check if ``Latest Mile Stone Index`` and ``Latest Solid Mile Stone Index`` are equal:
 
 .. image:: https://x-vps.com/static/images/synced_milestones.png
@@ -87,14 +87,6 @@ If you have problems getting in sync after a very long time, consider downloadin
 If the issue still persists, perhaps difficulties syncing are related to this: :ref:`whyAmISeeingUDPBadLength`
 
 
-.. whyDoIseeLatestMileStoneLow::
-
-Why do I see the Latest Milestone as 243000
-===========================================
-This is expected behavior of you restarted IRI recently.
-Depending on various factors, it might take up to 30 minutes for this number to clear and the mile stones start increasing.
-
-
 .. howDoITellIfIamSyncing::
 
 How do I tell if I am syncing with my neighbors
@@ -106,6 +98,21 @@ Here's an example of a healthy neighbor, you can see it is also sending new tran
    :alt: health_neighbor
 
 |
+
+.. whereToGetLSMI::
+
+Where to get the latest milestone index from
+============================================
+It used to be possible via the botbox on Slack. And since Slack is no longer in use, you can get it by running:
+
+.. code:: bash
+
+  curl https://x-vps.com/lsmi | jq
+
+This is a value which is based on querying approximately 100 full nodes.
+
+At time of writing, we are still waiting for the official ``botbox`` to be added to IOTA's Discord chat application.
+
 
 .. whyIsLSMAlwaysBehind::
 
