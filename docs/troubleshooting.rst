@@ -218,8 +218,8 @@ If you get an error that looks like this when starting up nelson::
   Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:   <rejected> Error: "toString()" failed
   Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:     at stringSlice (buffer.js:560:43)
   Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:     at Buffer.toString (buffer.js:633:10)
-  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:     at FSReqWrap.readFileAfterClose [as oncomplete] (fs.js:506:23) } reason: Error: "toString()" faileJan
-  29 20:57:40 vmi1111112.contaboserver.net nelson[3178]:     at stringSlice (buffer.js:560:43)
+  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:     at FSReqWrap.readFileAfterClose [as oncomplete] (fs.js:506:23) } reason: Error: "toString()" faile
+  Jan 29 20:57:40 vmi1111112.contaboserver.net nelson[3178]:     at stringSlice (buffer.js:560:43)
 
 The nelson database might have become corrupt. You can remove it and it will re-create::
 
