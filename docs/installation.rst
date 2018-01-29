@@ -402,16 +402,20 @@ Installation
 
    cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
 
-* To upgrade Nelson when a new version is out you can run:
-
-.. code:: bash
-
-  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_npm -e "nelson_enabled=true" -e "upgrade_nelson=true"
+You can stop, start and restart nelson via ``systemctl (start|stop|restart) nelson``.
 
 Join the ``#nelson-peering`` channel on IOTA's Discord if you have questions regarding Nelson.
 
 
-You can stop, start and restart nelson via ``systemctl (start|stop|restart) nelson``.
+Upgrade Nelson Version
+----------------------
+
+Run the upgrade command:
+
+.. code:: bash
+
+  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "upgrade_nelson=true" -e "nelson_enabled=true"
+
 
 View Status/Logs and configuration
 ----------------------------------
@@ -426,13 +430,4 @@ Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's lo
 * Nelson's configuration file can be found here: ``/etc/nelson/nelson.ini``.
 
 * Nelson's data directory can be found here: ``/var/lib/nelson/data``.
-
-Upgrade Nelson Version
-----------------------
-
-Run the upgrade command:
-
-.. code:: bash
-
-  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "upgrade_nelson=true" -e "nelson_enabled=true"
 
