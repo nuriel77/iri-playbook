@@ -8,12 +8,6 @@ If you have little to no experience with Linux, I recommend you use the :ref:`ge
 To prepare for running the automated "playbook" from this repository you require some basic packages.
 First, it is always a good practice to check for updates on the server.
 
-.. note::
-
-   If you want to test out the new IRI+Nelson auto-installer in Docker containers (does not include the monitoring graphs and peer manager):
-   I am looking for testers: https://github.com/SemkoDev/nelson.cli/tree/master/contrib/ansible-playbook
-
-
 .. warning::
 
   All web pages served by this installer will be served on HTTPS with **self-signed certificates**. The browser will issue a warning when you connect for the first time. You can proceed and add the sites certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and search for the "Let's Encrypt" link.
