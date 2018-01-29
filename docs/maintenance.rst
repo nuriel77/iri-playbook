@@ -23,7 +23,13 @@ If a new version has been announced, you can follow this guide to get the new ve
 In the following example we assume that the new version is **1.4.2.1**.
 
 
-First, make sure you are running all the commands as 'root' (run ``sudo su`` first). Then, download new IRI to the directory:
+.. note::
+
+  The foundation might announce additional information in tandem with upgrades, for example whether to use the ``--rescan`` flag, remove older database etc.
+  If required, additional options can be specified under the ``OPTIONS=""`` value in the configuration file (/etc/default/iri for Ubuntu or /etc/sysconfig/iri for CentOS). The database folder is in ``/var/lib/iri/target/mainnetdb`` and can be removed using ``rm -rf /var/lib/iri/target/mainnetdb*``.
+
+
+Make sure you are running all the commands as 'root' (run ``sudo su`` first). Then, download new IRI to the directory:
 
 .. code:: bash
 
@@ -56,11 +62,6 @@ Of course, replace the version with the one you expect to see.
 
 This should output ``found`` if okay.
 
-
-.. note::
-
-  The foundation might announce additional information in tandem with upgrades, for example whether to use the ``--rescan`` flag, remove older database etc.
-  If required, additional options can be specified under the ``OPTIONS=""`` value in the configuration file (/etc/default/iri for Ubuntu or /etc/sysconfig/iri for CentOS). The database folder is in ``/var/lib/iri/target/mainnetdb`` and can be removed using ``rm -rf /var/lib/iri/target/mainnetdb*``.
 
 .. upgradeIotaMonitoring::
 
