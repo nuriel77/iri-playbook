@@ -345,21 +345,21 @@ As mentioned earlier: currently, the fullnode monitoring depends on nginx being 
 
 .. code:: bash
 
-   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role
+   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iri_ssl,iotapm_role
 
 
 * To install **full node monitoring only**, run:
 
 .. code:: bash
 
-   ansible-playbook -i inventory -v site.yml --skip-tags=iotapm_npm --tags=iri_firewalld,iri_ufw,iotapm_deps,monitoring_role
+   ansible-playbook -i inventory -v site.yml --skip-tags=iotapm_npm --tags=iri_firewalld,iri_ufw,iri_ssl,iotapm_deps,monitoring_role
 
 
 * To install **both Peer Manager and fullnode monitoring**, run:
 
 .. code:: bash
 
-   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iotapm_role,monitoring_role
+   ansible-playbook -i inventory -v site.yml --tags=iri_firewalld,iri_ufw,iri_ssl,iotapm_role,monitoring_role
 
 
 
