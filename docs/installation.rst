@@ -406,7 +406,7 @@ Installation
 
 .. code:: bash
 
-  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_npm -e "nelson_enabled=true"
+  cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_npm -e "nelson_enabled=true" -e "upgrade_nelson=true"
 
 Join the ``#nelson-peering`` channel on IOTA's Discord if you have questions regarding Nelson.
 
