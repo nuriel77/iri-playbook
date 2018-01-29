@@ -20,28 +20,28 @@ Latest IRI release is available `here <https://github.com/iotaledger/iri/release
 
 If a new version has been announced, you can follow this guide to get the new version.
 
-In the following example we assume that the new version is **1.4.2.0**.
+In the following example we assume that the new version is **1.4.2.1**.
 
 
 First, make sure you are running all the commands as 'root' (run ``sudo su`` first). Then, download new IRI to the directory:
 
 .. code:: bash
 
-   export IRIVER=1.4.2.0 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
+   export IRIVER=1.4.2.1 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
 
 Then update the IRI configuration file in place using ``sed``:
 
 In **Ubuntu**::
 
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.2.0/' /etc/default/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.2.1/' /etc/default/iri
 
 In **CentOS**::
 
-  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.2.0/' /etc/sysconfig/iri
+  sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.4.2.1/' /etc/sysconfig/iri
 
 This will update the version line to match, e.g.::
 
-  IRI_VERSION=1.4.2.0
+  IRI_VERSION=1.4.2.1
 
 This requires a iri **restart**: ``systemctl restart iri``.
 
@@ -50,7 +50,7 @@ To verify the new version is loaded:
 
 .. code:: bash
 
-  ps aux|grep iri-1.4.2.0|grep -vq grep && echo found
+  ps aux|grep iri-1.4.2.1|grep -vq grep && echo found
 
 Of course, replace the version with the one you expect to see.
 
