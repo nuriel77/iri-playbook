@@ -219,7 +219,7 @@ There's an option in the configuration file which works in conjunction with the 
 
 .. code:: bash
 
-   REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"
+   REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors"
 
 When connecting to IRI via an external IP these commands will be blocked so that others cannot mess with the node's configuration.
 

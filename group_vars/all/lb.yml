@@ -25,7 +25,7 @@ haproxy_base_version: 1.8
 haproxy_min_version: 3
 
 # Commands to deny access to
-haproxy_deny_regex: '(get|remove|add)Neighbors|setApiRateLimit'
+haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'
 
-# Bad commands regex
+# Bad commands regex example
 haproxy_bad_command: '\"getTransactionsToApprove\"(.*)GFCCGTGSUEVBZYFK9QNAHOVHXUMEATUFLGBZLDKMOGWCXVUZDVEJVCLLCJJ9NQOIMOLMUMFMGZSI99999'
