@@ -59,9 +59,8 @@ This should output ``found`` if okay.
 
 .. note::
 
-  The foundation might announce additional information regarding upgrades, for example whether to use the ``--rescan`` flag etc.
-  Such options can be specified in the ``OPTIONS=""`` value in the same file.
-
+  The foundation might announce additional information in tandem with upgrades, for example whether to use the ``--rescan`` flag, remove older database etc.
+  If required, additional options can be specified under the ``OPTIONS=""`` value in the configuration file (/etc/default/iri for Ubuntu or /etc/sysconfig/iri for CentOS). The database folder is in ``/var/lib/iri/target/mainnetdb`` and can be removed using ``rm -rf /var/lib/iri/target/mainnetdb*``.
 
 .. upgradeIotaMonitoring::
 
