@@ -153,4 +153,4 @@ To remove an existing database:
 
 3. start IRI: ``systemctl start iri``
 
-If you want to import an already existing database, check the [FAQ](#where-can-i-get-a-fully-synced-database-to-help-kick-start-my-node) -- there's information on who to do that.
+If you want to import an already existing database, check :ref:`getFullySyncedDB`.
