@@ -5,11 +5,11 @@ iri_username: iri
 iri_basedir: /var/lib/iri
 
 # The iri version to install
-iri_version: 1.4.1.7
+iri_version: 1.4.2.1
 
 # This is the sha256sum of the iri version noted above. Checksum has to change to match the
 # version of the file https://github.com/iotaledger/iri/releases/download/v{version}/iri-{version}.jar
-iri_jar_checksum: 'sha256:dcd337723d07bde1293015dbc2dd75ed61b70d8567e708f4cc382f37666e11b6'
+iri_jar_checksum: 'sha256:528a1c7839db0038714921faaefcb45609154b4f20a00bf1e8512bffacf77358'
 
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
 iri_api_port: 14265
