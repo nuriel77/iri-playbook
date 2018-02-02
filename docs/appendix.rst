@@ -168,31 +168,8 @@ Here are my thoughts about it:
  
 2. Serving IRI API port via nginx, haproxy or other web-servers with proxy capabilities adds a few benefits. For example, better logging. IP blacklisting or whitelisting, inspecting headers and body/contents of the data.
 
-.. warning::
 
-  Please read the section below if you choose to reverse proxy to IRI API port.
-
-Proxy Warning
-^^^^^^^^^^^^^
-Should you choose to reverse proxy from your webserver/loadbalancer/proxy to IRI API (on the same machine) there's something very important you need to take into account.
-
-If you point your proxy to IRI API at address 127.0.0.1 (127.0.0.1:14265) **anyone connecting can run any command they want**. The reason is that IRI sees the connection originating from 127.0.0.1, thereby bypassing the limitations of LIMIT_REMOTE_API. For example, anybody can add or remove neighbors from your node (and more). That's not something you want.
-
-So, what to do about this?
-
-Let's say your API port is 14265 and you only want people to connect via ``https://my.node-name.com:443``:
-
-- If any rules in the firewall allow 14265, remove those.
-- Make sure 443 (https) is allowed in the firewall.
-- In the webserver/proxy configuration point the proxy to ``http://your-external-interface-ip-address:14265``.
-- Ensure IRI is configured with the ``API_HOST = 0.0.0.0`` or ``--remote`` startup argument.
-
-That's it.
-
-You might be wondering: "I didn't allow 14265 in the firewall, why should my nginx be able to connect to IRI on the external IP?".
-
-It will succeed because the IP tables rule will only apply for external connections.
-
+See :ref:`haproxyEnable` on how to enable HAproxy for wallet via reverse proxy (added 24 January 2018).
 
 
 
@@ -574,6 +551,8 @@ After having saved the file, you can run ``nano /tmp/test.txt`` again in order t
 .. note::
 
   Please check `Nano's Turorial <https://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/>`_ for more information.
+
+.. _haproxyEnable:
 
 Running IRI API Port Behind HAProxy
 ===================================
