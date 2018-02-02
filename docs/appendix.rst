@@ -132,13 +132,10 @@ By having a "valid" certificate for your server (signed by a trusted authority),
 Your connection will still be encrypted if you opt for a self-signed certificate. It is just so that the browser cannot verify who signed it.
 
 
-Here is a great tutorial on how to add HTTPS to your nginx, for Ubuntu:
+Here is a great tutorial on how to add HTTPS to your **nginx**, choose nginx and the OS version you are using (Ubuntu/CentOS):
 
-https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-16-04
+https://certbot.eff.org/
 
-And for CentOS:
-
-https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-on-centos-7
 
 .. note::
 
