@@ -82,7 +82,7 @@
   become_user: "{{ prom_username }}"
   when: iota_prom_git and iota_prom_git.changed
 
-- name: intsall iota-prom-exporter config
+- name: install iota-prom-exporter config
   template:
     src: templates/iota-prom-exporter.config.js.j2
     dest: "{{ iota_prom_fulldir }}/config.js"
