@@ -3,13 +3,19 @@ import argparse
 import tempfile
 import urllib2
 import hashlib
+import yaml
 import json
 import sys
 import re
+import os
 from shutil import copyfile
+from os.path import expanduser
 from ipaddress import ip_address
 from argparse import RawTextHelpFormatter
 
+
+DEFAULT_API_VERSION = '1.4'
+DEFAULT_HOST = 'http://127.0.0.1:14265'
 
 """Script to add or remove neighbors
    from IRI API and configutaion file
@@ -24,7 +30,10 @@ def parse_args():
         description='Add or remove full node neighbors.',
         epilog='Example: nbctl -a -n'
                ' udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321'
-               ' -f /etc/default/iri')
+               ' -f /etc/default/iri\n'
+               '--host and --api-version can be placed in a file in the home directory ~/.nbctl:\n'
+               'api_version: 1.4.2.1\n'
+               'host: http://127.0.0.1:12345')
 
     parser.add_argument('--neighbors', '-n',
                         action='append',
@@ -44,17 +53,18 @@ def parse_args():
                         help='Configuration file to update')
 
     parser.add_argument('--host', '-i',
-                        default='http://localhost:14265',
-                        help='IRI API endpoint. Default: %(default)s')
+                        help='IRI API endpoint. Default: %s' %
+                        DEFAULT_HOST)
 
     parser.add_argument('--api-version', '-x',
-                        default='1.4',
-                        help='IRI API Version. Default: %(default)s')
+                        help='IRI API Version. Default: %s' %
+                        DEFAULT_API_VERSION)
 
     return parser
 
 
 def run():
+
     try:
         parser = parse_args()
         args = parser.parse_args()
@@ -92,6 +102,18 @@ def run():
         'uris': args.neighbors
     })
 
+    # Set defaults
+    local_config = get_homedir_nbctl()
+    if args.api_version is None and 'api_version' in local_config:
+        args.api_version = local_config['api_version']
+    elif args.api_version is None:
+        args.api_version = DEFAULT_API_VERSION
+
+    if args.host is None and 'host' in local_config:
+        args.host = local_config['host']
+    elif args.host is None:
+        args.host = DEFAULT_HOST
+
     request = urllib2.Request(url=args.host,
                               data=to_send,
                               headers=headers)
@@ -115,6 +137,7 @@ def run():
 
     tmpfile = tempfile.NamedTemporaryFile(delete=False)
     neighbors_regex = r'^IRI_NEIGHBORS=.*$|^NEIGHBORS =.*$'
+
     # Update config file
     try:
         with open(args.file ,"r") as orig:
@@ -244,6 +267,25 @@ def valid_address(address, uri):
         # Check if valid hostname
         return is_valid_hostname(address)
     return True
+
+
+def get_homedir_nbctl():
+    home = expanduser("~")
+    config_file = home + '/.nbctl'
+    if not os.path.exists(config_file):
+        return {}
+
+    with open(config_file, 'r') as stream:
+        try:
+            data = yaml.load(stream)
+        except yaml.YAMLError as e:
+            sys.stderr("Error reading '%s': %s" %
+                       (config_file, e))
+
+    if data is None:
+        return {}
+
+    return data
 
 
 if __name__ == "__main__":

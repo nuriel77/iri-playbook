@@ -98,6 +98,13 @@
   tags:
     - scripts
 
+- name: config default ~/.nbctl
+  copy:
+    dest: "{{ ansible_env.HOME }}/.nbctl"
+    content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_api_port }}\n"
+  tags:
+    - nbctl_config
+
 - name: copy iri systemd file
   template:
     src: templates/iri.service.j2
