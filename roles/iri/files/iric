@@ -4,10 +4,27 @@ set -o pipefail
 # This is just a proof-of-concept
 # Only use if you installed your node using iri-playbook
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   echo "Please change to root: 'sudo su -' and re-run"
+   exit 1
+fi
+
+CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
 window=,
 '
+
+function pause(){
+   read -p "$*"
+}
+
+function cleanup() {
+    cd "$CUR_DIR"
+}
+
+trap cleanup INT TERM EXIT
 
 function set_admin_user() {
     USER_CHOICE=$(whiptail --inputbox "Pick a name for the administrator account:" 8 $WIDTH ${ADMIN_USER} --title "Username (allowed regex: a-zA-Z0-9_)" 3>&1 1>&2 2>&3)
@@ -58,30 +75,76 @@ function get_admin_password() {
     ADMIN_PASSWORD="${PASSWORD_A}"
 }
 
+### Playbook ###
+function verify_playbook() {
+    local OUTPUT
+    local HEIGHT
+    local RC
+    if [ ! -d /opt/iri-playbook ]; then
+        whiptail --title "Missing Playbook!" \
+                 --msgbox "ERROR: Cannot find the iri-playbook in /opt/iri-playbook!" \
+                 8 $WIDTH
+        return 1
+    fi
+    cd /opt/iri-playbook
+    OUTPUT=$(git pull 2>&1)
+    RC=$?
+    HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 7)
+    if [[ $RC -ne 0 ]]; then
+        whiptail --title "Git Errors" \
+                 --msgbox "Errors when trying to update the playbook repository: $OUTPUT" \
+                 8 $WIDTH
+    fi
+}
+
+### Nelson ###
+function enable_nelson() {
+    local RC
+    if (whiptail --title "Enable Nelson" \
+                 --yesno "Are you sure you want to enable Nelson automatic peering?" \
+                 8 $WIDTH) then
+        verify_playbook
+        if [[ $RC -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: Cannot enable Nelson." \
+                      8 $WIDTH
+             return 1
+        fi
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
+        pause                
+    fi
+}
+
 function upgrade_nelson() {
     whiptail --title "Upgrade Nelson" \
              --msgbox "This will upgrade nelson" \
              8 $WIDTH
 }
 
+### IRI ###
 function upgrade_iri() {
     whiptail --title "Upgrade IRI" \
              --msgbox "This will upgrade IRI" \
              8 $WIDTH
 }
 
+### Monitoring ###
 function upgrade_monitoring() {
     whiptail --title "Upgrade Monitoring" \
              --msgbox "This will upgrade monitoring" \
              8 $WIDTH
 }
 
+
+### Notice ###
 function how_to_setup() {
     whiptail --title "Instructions" \
              --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.1\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
              15 $WIDTH
 }
 
+
+### Neighbors ###
 function add_neighbors() {
     local NEIGHBORS=
     local HEIGHT=
@@ -201,6 +264,8 @@ function list_neighbors() {
     fi
 }
 
+
+### Node info ###
 function show_lsmi() {
     if [ ! -f $HOME/.nbctl ]; then
         whiptail --title "Missing .nbctl" \
@@ -253,6 +318,7 @@ function get_node_info() {
              $HEIGHT $WIDTH
 }
 
+### Services ###
 function service_status() {
     local SERVICE
     SERVICE=$1
@@ -421,15 +487,18 @@ function main_menu() {
              --menu "Choose an option" \
              --cancel-button "Exit" \
               25 $WIDTH 16 \
-    "a)" "Upgrade IRI software." \
-    "b)" "Upgrade Nelson" \
-    "c)" "Upgrade Monitoring" \
-    "d)" "Add neighbors" \
-    "e)" "Remove neighbors" \
-    "f)" "List neighbors" \
-    "g)" "Show LatestMilestoneIndex" \
-    "h)" "Get node info" \
-    "i)" "Manage services" \
+    "a)" "Enable Nelson" \
+    "b)" "Update Nelson" \
+    "c)" "Update IRI software" \
+    "d)" "Update Monitoring" \
+    "e)" "Enable HAProxy" \
+    "f)" "Update HAProxy" \
+    "g)" "Add Neighbors" \
+    "h)" "Remove neighbors" \
+    "i)" "List neighbors" \
+    "j)" "Show LatestMilestoneIndex" \
+    "k)" "Get node info" \
+    "l)" "Manage services" \
     "Z)" "Configure this script" \
     3>&1 1>&2 2>&3
 }
@@ -450,7 +519,7 @@ function run_installer_menus() {
             ;;
 
         "a)")
-            upgrade_iri
+            enable_nelson
             run_installer_menus
             ;;
 
@@ -460,36 +529,51 @@ function run_installer_menus() {
             ;;
 
         "c)")
-            upgrade_monitoring
+            upgrade_iri
             run_installer_menus
             ;;
 
         "d)")
-            add_neighbors
+            upgrade_monitoring
             run_installer_menus
             ;;
 
         "e)")
-            remove_neighbors
+            enable_haproxy
             run_installer_menus
             ;;
 
         "f)")
-            list_neighbors
+            upgrade_haproxy
             run_installer_menus
             ;;
 
         "g)")
-            show_lsmi
+            add_neighbors
             run_installer_menus
             ;;
 
         "h)")
-            get_node_info
+            remove_neighbors
             run_installer_menus
             ;;
 
         "i)")
+            list_neighbors
+            run_installer_menus
+            ;;
+
+        "j)")
+            show_lsmi
+            run_installer_menus
+            ;;
+
+        "k)")
+            get_node_info
+            run_installer_menus
+            ;;
+
+        "l)")
             services
             run_installer_menus
             ;;
