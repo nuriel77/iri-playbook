@@ -18,10 +18,12 @@ window=,
 
 function pause(){
    read -p "$*"
+   clear
 }
 
 function cleanup() {
     cd "$CUR_DIR"
+    clear
 }
 
 trap cleanup INT TERM EXIT
@@ -111,21 +113,97 @@ function enable_nelson() {
              return 1
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
-        pause                
+        pause "Installation finished successfully if 'failed=0'. Press any key to return to menu."
     fi
 }
 
+function get_latest_nelson_release {
+    curl -s -m 5 -f https://api.github.com/repos/SemkoDev/nelson.cli/releases/latest | awk '/tag_name/{print $2}' | tr -d '"v,' | cut -d- -f1
+}
+
 function upgrade_nelson() {
-    whiptail --title "Upgrade Nelson" \
-             --msgbox "This will upgrade nelson" \
-             8 $WIDTH
+    local RC
+    NELSON_LATEST=$(get_latest_nelson_release)
+    if [[ $? -ne 0 ]]; then
+        NELSON_LATEST=unknown
+    fi
+    NELSON_VERSION=$(nelson --version 2>&1)
+    if [[ $? -ne 0 ]]; then
+        whiptail --title "Error!" \
+                 --msgbox "ERROR: Is Nelson installed?\n$NELSON_VERSION" \
+                 10 $WIDTH
+        return 1
+    fi
+
+    if [ "$NELSON_VERSION" == "$NELSON_LATEST" ]; then
+        whiptail --title "No Updates" \
+                 --msgbox "You are already running the latest version: $NELSON_VERSION" \
+                 8 $WIDTH
+        return
+    fi
+
+    if (whiptail --title "Upgrade Nelson" \
+                 --yesno "Are you sure you want to upgrade Nelson from ${NELSON_VERSION} to ${NELSON_LATEST}?" \
+                 8 $WIDTH) then
+        verify_playbook
+        if [[ $RC -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: Cannot update Nelson." \
+                      8 $WIDTH
+             return 1
+        fi
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "upgrade_nelson=true" -e "nelson_enabled=true"
+        pause "Update finished successfully if 'failed=0'. Press any key to return to menu."
+    fi    
 }
 
 ### IRI ###
+function get_latest_iri_release {
+    curl -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest  | awk '/tag_name/{print $2}' | tr -d '"v,'
+}
+
 function upgrade_iri() {
-    whiptail --title "Upgrade IRI" \
-             --msgbox "This will upgrade IRI" \
-             8 $WIDTH
+    local RC
+    echo "Checking for updates..."
+    IRI_LATEST=$(get_latest_iri_release)
+    if [[ $? -ne 0 ]]; then
+        IRI_LATEST=unknown
+    fi
+    IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
+    if [[ $? -ne 0 ]]; then
+        whiptail --title "Error!" \
+                 --msgbox "ERROR: Cannot find $HOME/.nbctl" \
+                 8 $WIDTH
+        return 1
+    fi
+
+    if [ "$IRI_VERSION" == "$IRI_LATEST" ]; then
+        whiptail --title "No Updates" \
+                 --msgbox "You are already running the latest version: $IRI_VERSION" \
+                 8 $WIDTH
+        return
+    fi
+
+    if (whiptail --title "Upgrade IRI" \
+                 --yesno "Are you sure you want to upgrade IRI from ${IRI_VERSION} to ${IRI_LATEST}?\nWARNING: only do this if you know what your are doing!" \
+                 8 $WIDTH) then
+        verify_playbook
+        if [[ $RC -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: Cannot upgrade IRI." \
+                      8 $WIDTH
+             return 1
+        fi
+        echo "Downloading new version..."
+        export IRIVER=${IRI_LATEST} ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
+        echo "Update iri configuration files"
+        IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
+        sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST/" $IRI_CONFIG
+        sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
+        echo "Restart IRI, this can take a few moments..."
+        systemctl restart iri
+        pause "Update finished successfully, however it is recommended to check the status of IRI. Press any key to return to menu."
+    fi
 }
 
 ### Monitoring ###
