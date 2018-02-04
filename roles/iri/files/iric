@@ -4,8 +4,10 @@ set -o pipefail
 # This is just a proof-of-concept
 # Only use if you installed your node using iri-playbook
 
+WIDTH=78
+
 function set_admin_user() {
-    USER_CHOICE=$(whiptail --inputbox "Pick a name for the administrator account:" 8 78 ${ADMIN_USER} --title "Username (allowed regex: a-zA-Z0-9_)" 3>&1 1>&2 2>&3)
+    USER_CHOICE=$(whiptail --inputbox "Pick a name for the administrator account:" 8 $WIDTH ${ADMIN_USER} --title "Username (allowed regex: a-zA-Z0-9_)" 3>&1 1>&2 2>&3)
     RC=$?
     if [[ $RC -eq 0 ]]; then
         echo -n "${USER_CHOICE}"
@@ -19,17 +21,17 @@ function get_admin_user() {
     if [[ "$ADMIN_USER" =~ [^a-zA-Z0-9_] ]]; then
         whiptail --title "Invalid Username!" \
                  --msgbox "Username can only contain alphanumeric characters and underscores." \
-                 8 78
+                 8 $WIDTH
         get_admin_user
     fi
 }
 
 function set_admin_password_a() {
-    whiptail --passwordbox "please enter your secret password" 8 78 --title "password dialog" 3>&1 1>&2 2>&3
+    whiptail --passwordbox "please enter your secret password" 8 $WIDTH --title "password dialog" 3>&1 1>&2 2>&3
 }
 
 function set_admin_password_b() {
-    whiptail --passwordbox "please repeat" 8 78 --title "password dialog" 3>&1 1>&2 2>&3
+    whiptail --passwordbox "please repeat" 8 $WIDTH --title "password dialog" 3>&1 1>&2 2>&3
 }
 
 function get_admin_password() {
@@ -39,7 +41,7 @@ function get_admin_password() {
     if [ "$PASSWORD_A" != "$PASSWORD_B" ]; then
         whiptail --title "Passwords Mismatch!" \
                  --msgbox "Passwords do not match, please try again." \
-                 8 78
+                 8 $WIDTH
         get_admin_password
     fi
 
@@ -47,7 +49,7 @@ function get_admin_password() {
     if [[ $(echo "$PASSWD_CHECK" | awk {'print $2'}) != "OK" ]]; then
         whiptail --title "Weak Password!" \
                  --msgbox "Please choose a better password:$(echo ${PASSWD_CHECK}|cut -d: -f2-)" \
-                 8 78
+                 8 $WIDTH
         get_admin_password
     fi
     ADMIN_PASSWORD="${PASSWORD_A}"
@@ -56,25 +58,25 @@ function get_admin_password() {
 function upgrade_nelson() {
     whiptail --title "Upgrade Nelson" \
              --msgbox "This will upgrade nelson" \
-             8 78
+             8 $WIDTH
 }
 
 function upgrade_iri() {
     whiptail --title "Upgrade IRI" \
              --msgbox "This will upgrade IRI" \
-             8 78
+             8 $WIDTH
 }
 
 function upgrade_monitoring() {
     whiptail --title "Upgrade Monitoring" \
              --msgbox "This will upgrade monitoring" \
-             8 78
+             8 $WIDTH
 }
 
 function how_to_setup() {
     whiptail --title "Instructions" \
              --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.1\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
-             15 78
+             15 $WIDTH
 }
 
 function add_neighbors() {
@@ -82,7 +84,7 @@ function add_neighbors() {
     local HEIGHT
     local NBCTL_OUTPUT
     local RC
-    NEIGHBORS=$(whiptail --inputbox "Enter a list of neighbors separated by space:" 8 78 --title "Add Neighbors" 3>&1 1>&2 2>&3)
+    NEIGHBORS=$(whiptail --inputbox "Enter a list of neighbors separated by space:" 8 $WIDTH --title "Add Neighbors" 3>&1 1>&2 2>&3)
     RC=$?
     if [[ $RC -ne 0 ]]; then
         return
@@ -91,7 +93,7 @@ function add_neighbors() {
     HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 8)
     if (whiptail --title "Add Neighbors" \
                  --yesno "This will the following add neighbors:\n\n $NEIGHBORS" \
-                 $HEIGHT 78) then
+                 $HEIGHT $WIDTH) then
         ADD_LIST=$(echo "$NEIGHBORS" | sed 's/ / -n /g' | sed 's/^\(.*\)/-n \1/')
         NBCTL_OUTPUT=$(nbctl -a $ADD_LIST 2>&1)
         RC=$?
@@ -99,12 +101,12 @@ function add_neighbors() {
             HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 7)
             whiptail --title "Added Neighbors" \
                      --msgbox "$NBCTL_OUTPUT" \
-                    $HEIGHT 78
+                    $HEIGHT $WIDTH
         else
             HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 10)
             whiptail --title "Adding Neighbors Failed" \
                      --msgbox "Failure: $NBCTL_OUTPUT" \
-                     $HEIGHT 78
+                     $HEIGHT $WIDTH
         fi
     fi
 }
@@ -119,19 +121,19 @@ function remove_neighbors() {
     if [[ $RC -ne 0 ]]; then
         whiptail --title "Neighbors Failed" \
                  --msgbox "Failed to get list of neighbors" \
-                 8 78
+                 8 $WIDTH
         return
     fi
     if [ "$NEIGHBORS" == "" ]; then
         whiptail --title "No Neighbors" \
                  --msgbox "There are no neighbors configured" \
-                 8 78
+                 8 $WIDTH
         return
     fi
     HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 5)
     read -ra NEIGHBORS_ARRAY <<<$(echo "$NEIGHBORS")
     read -ra NEIGHBORS_ARRAY_INDEXED <<<$(echo "$NEIGHBORS"| awk '!/^ / && NF { print NR")"; print $1}')
-    NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 78 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
+    NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 $WIDTH 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
     if [ $? -eq 1 ]; then
         return
     fi
@@ -143,18 +145,18 @@ function remove_neighbors() {
     ADDRESS=$(echo "$TO_REMOVE"|cut -d'/' -f1)
     if (whiptail --title "Confirm removal" \
                  --yesno "Are you sure you want to remove: ${SCHEME}://${ADDRESS}" \
-                 8 78)
+                 8 $WIDTH)
     then
         REMOVAL_OUTPUT=$(nbctl -r -n "${SCHEME}://${ADDRESS}" 2>&1)
         if [ $? -eq 0 ];then
             whiptail --title "Removed successfully" \
                      --msgbox "$REMOVAL_OUTPUT" \
-                     12 78
+                     12 $WIDTH
         else
             HEIGHT=$(expr $(echo "$REMOVAL_OUTPUT"|wc -l) + 7)
             whiptail --title "Remove failed!" \
                      --msgbox "${REMOVAL_OUTPUT}" \
-                     $HEIGHT 78
+                     $HEIGHT $WIDTH
         fi
     fi
 }
@@ -168,7 +170,7 @@ function list_neighbors() {
         HEIGHT=$(expr $(echo "$NEIGHBORS_QUERY"|wc -l) + 7)
         whiptail --title "List neighbors failed" \
                  --msgbox "$NEIGHBORS_QUERY" \
-                 $HEIGHT 78
+                 $HEIGHT $WIDTH
         return 1
     else
         NEIGHBORS=$( echo "$NEIGHBORS_QUERY" | jq -r '.neighbors[] | "\(.address)/\(.connectionType)"' )
@@ -185,7 +187,7 @@ function list_neighbors() {
         local HEIGHT=$(expr $LENGTH + 8)
         whiptail --title "List Neighbors" \
                  --msgbox "Total: ${LENGTH} neighbor(s)\n\n${NEIGHBORS}" \
-                 $HEIGHT 78
+                 $HEIGHT $WIDTH
     fi
 }
 
@@ -193,7 +195,7 @@ function show_lsmi() {
     if [ ! -f $HOME/.nbctl ]; then
         whiptail --title "Missing .nbctl" \
                  --msgbox "Error: cannot find $HOME/.nbctl" \
-                 8 78
+                 8 $WIDTH
         return
     fi
     IRI_HOST=$(grep ^host $HOME/.nbctl | cut -d: -f2-)
@@ -202,7 +204,7 @@ function show_lsmi() {
     if [ $? -ne 0 ]; then
         whiptail --title "Query failed" \
                  --msgbox "Error: failed query $LSMI_LOCAL" \
-                 12 78
+                 12 $WIDTH
         return
     fi
 
@@ -215,14 +217,14 @@ function show_lsmi() {
     OUTPUT="${OUTPUT}Local:\n\n${LSMI_LOCAL}"
     whiptail --title "LatestMilestoneIndex" \
              --msgbox "$OUTPUT" \
-             12 78
+             12 $WIDTH
 }
 
 function get_node_info() {
     if [ ! -f $HOME/.nbctl ]; then
         whiptail --title "Missing .nbctl" \
                  --msgbox "Error: cannot find $HOME/.nbctl" \
-                 8 78
+                 8 $WIDTH
         return
     fi
     IRI_HOST=$(grep ^host $HOME/.nbctl | cut -d: -f2-)
@@ -231,35 +233,199 @@ function get_node_info() {
     if [ $? -ne 0 ]; then
         whiptail --title "Query failed" \
                  --msgbox "Error: failed query $NODE_INFO" \
-                 12 78
+                 12 $WIDTH
         return
     fi
 
     HEIGHT=$(expr $(echo "$NODE_INFO"|wc -l) + 7)
     whiptail --title "Node Info" \
              --msgbox "$NODE_INFO" \
-             $HEIGHT 78
+             $HEIGHT $WIDTH
+}
+
+function service_status() {
+    local SERVICE
+    SERVICE=$1
+    # Pipe to less as some distros don't use pager
+    systemctl status $SERVICE|less
+}
+
+function service_cmd() {
+    local SERVICE
+    local COMMAND
+    local OUTPUT
+    SERVICE=$1
+    COMMAND=$2
+    OUTPUT=$(systemctl $COMMAND $SERVICE 2>&1)
+    HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 7)
+    if [ $? -ne 0 ]; then
+        whiptail --title "Failed" \
+                 --msgbox "$COMMAND $SERVICE failed: $OUTPUT" \
+                 $HEIGHT $WIDTH
+    else
+        whiptail --title "Success" \
+                 --msgbox "$COMMAND $SERVICE OK" \
+                 $HEIGHT $WIDTH
+    fi
+}
+
+function service_log() {
+    local SERVICE
+    local ARGS
+    SERVICE=$1
+    # Pipe to less in the case too few lines.
+    # This will prevent immediately exiting the view
+    journalctl -u $SERVICE|less
+}
+
+function service_menu() {
+    local SERVICE
+    SERVICE=$1
+    whiptail --title "$SERVICE Service" \
+             --menu "Choose an option. For logs use SHIFT-g to skip to end of log, or q to exit." \
+             --cancel-button "Back" \
+             25 $WIDTH 16 \
+    "a)" "Status" \
+    "b)" "Start" \
+    "c)" "Stop" \
+    "d)" "Restart" \
+    "e)" "View log" \
+    3>&1 1>&2 2>&3
+}
+
+function service() {
+    local SERVICE
+    local CHOICE
+    SERVICE=$1
+    CHOICE=$(service_menu $SERVICE)
+    RC=$?
+    if [[ $RC -eq 1 ]]; then
+        return
+    fi
+    case "$CHOICE" in
+
+        "a)")
+            service_status $SERVICE
+            service $SERVICE
+            ;;
+
+        "b)")
+            service_cmd $SERVICE start
+            service $SERVICE
+            ;;
+
+        "c)")
+            service_cmd $SERVICE stop
+            service $SERVICE
+            ;;
+
+        "d)")
+            service_cmd $SERVICE restart
+            service $SERVICE
+            ;;
+
+        "e)")
+            service_log $SERVICE
+            service $SERVICE
+            ;;
+
+        *)
+            service $SERVICE
+            ;;
+    esac
+}
+
+function services_menu() {
+    whiptail --title "Node Services" \
+             --menu "Choose an option" \
+             --cancel-button "Back" \
+             25 $WIDTH 16 \
+    "a)" "IRI" \
+    "b)" "IOTA Peer Manager" \
+    "c)" "Prometheus" \
+    "d)" "Alert Manager" \
+    "e)" "Grafana" \
+    "f)" "IOTA Prometheus Exporter" \
+    "g)" "Nginx" \
+    "h)" "HAProxy" \
+    3>&1 1>&2 2>&3
+}
+
+function services() {
+    local CHOICE
+    CHOICE=$(services_menu)
+    RC=$?
+    if [[ $RC -eq 1 ]]; then
+        return
+    fi
+    case "$CHOICE" in
+
+        "a)")
+            service iri
+            services
+            ;;
+
+        "b)")
+            service iota-pm
+            services
+            ;;
+
+        "c)")
+            service prometheus
+            services
+            ;;
+
+        "d)")
+            service alertmanager
+            services
+            ;;
+
+        "e)")
+            service grafana-server
+            services
+            ;;
+
+        "f)")
+            service iota-prom-exporter
+            services
+            ;;
+
+        "g)")
+            service nginx
+            services
+            ;;
+
+        "h)")
+            service haproxy
+            services
+            ;;
+
+        *)
+            services
+            ;;
+    esac
 }
 
 function main_menu() {
     whiptail --title "IRI Fullnode Menu" \
              --menu "Choose an option" \
              --cancel-button "Exit" \
-              25 78 16 \
-    "1)" "Upgrade IRI software." \
-    "2)" "Upgrade Nelson" \
-    "3)" "Upgrade Monitoring" \
-    "4)" "Add neighbors" \
-    "5)" "Remove neighbors" \
-    "6)" "List neighbors" \
-    "7)" "Show LatestMilestoneIndex" \
-    "8)" "Get node info" \
-    "0)" "Configure this script" \
+              25 $WIDTH 16 \
+    "a)" "Upgrade IRI software." \
+    "b)" "Upgrade Nelson" \
+    "c)" "Upgrade Monitoring" \
+    "d)" "Add neighbors" \
+    "e)" "Remove neighbors" \
+    "f)" "List neighbors" \
+    "g)" "Show LatestMilestoneIndex" \
+    "h)" "Get node info" \
+    "i)" "Manage services" \
+    "Z)" "Configure this script" \
     3>&1 1>&2 2>&3
 }
 
-run_installer_menus() {
-
+function run_installer_menus() {
+    local CHOICE
     CHOICE=$(main_menu)
     RC=$?
     if [[ $RC -eq 1 ]]; then
@@ -268,48 +434,53 @@ run_installer_menus() {
 
     case "$CHOICE" in
 
-        "0)")
+        "Z)")
             how_to_setup
             run_installer_menus
             ;;
 
-        "1)")
+        "a)")
             upgrade_iri
             run_installer_menus
             ;;
 
-        "2)")
+        "b)")
             upgrade_nelson
             run_installer_menus
             ;;
 
-        "3)")
+        "c)")
             upgrade_monitoring
             run_installer_menus
             ;;
 
-        "4)")
+        "d)")
             add_neighbors
             run_installer_menus
             ;;
 
-        "5)")
+        "e)")
             remove_neighbors
             run_installer_menus
             ;;
 
-        "6)")
+        "f)")
             list_neighbors
             run_installer_menus
             ;;
 
-        "7)")
+        "g)")
             show_lsmi
             run_installer_menus
             ;;
 
-        "8)")
+        "h)")
             get_node_info
+            run_installer_menus
+            ;;
+
+        "i)")
+            services
             run_installer_menus
             ;;
 
