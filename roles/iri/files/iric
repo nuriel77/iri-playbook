@@ -11,6 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
+VERSION=0.1.0
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -305,6 +306,9 @@ function add_neighbors() {
                      --msgbox "$NBCTL_OUTPUT" \
                     $HEIGHT $WIDTH
         else
+            if echo "$NBCTL_OUTPUT" | grep -q "urllib2.URLError" ; then
+               NBCTL_OUTPUT="Failed to communicate with IRI API port. Check if IRI is active and if $HOME/.nbctl is configured correctly."
+            fi
             HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 10)
             whiptail --title "Adding Neighbors Failed" \
                      --msgbox "Failure: $NBCTL_OUTPUT" \
@@ -369,6 +373,9 @@ function list_neighbors() {
     local HEIGHT
     NEIGHBORS_QUERY=$(nbctl -l 2>&1)
     if [ $? -ne 0 ]; then
+        if echo "$NEIGHBORS_QUERY" | grep -q "urllib2.URLError" ; then
+            NEIGHBORS_QUERY="Failed to communicate with IRI API port. Check if IRI is active and if $HOME/.nbctl is configured correctly."
+        fi
         HEIGHT=$(expr $(echo "$NEIGHBORS_QUERY"|wc -l) + 7)
         whiptail --title "List neighbors failed" \
                  --msgbox "$NEIGHBORS_QUERY" \
@@ -412,6 +419,42 @@ function get_db() {
             rm -f /tmp/iota.db.tgz
             return 1
         fi
+    fi
+}
+
+## IRIC
+function get_latest_iric_version() {
+    curl -s -f -m 5 https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric|grep ^VERSION|cut -d= -f2
+}
+
+function update_iric() {
+    IRIC_VERSION=$(get_latest_iric_version 2>&1)
+    if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
+        whiptail --title "IRIC Update Failed" \
+                 --msgbox "Failed to get IRIC version from github." \
+                 8 $WIDTH
+        return 1
+    fi
+
+    if [[ "$IRIC_VERSION" == "$VERSION" ]]; then
+        whiptail --title "No Updates" \
+                 --msgbox "You are already have the latest version: $VERSION." \
+                 8 $WIDTH
+        return
+    fi
+        
+    if (whiptail --title "Confirm Update" \
+                 --yesno "Are you sure you want to update IRIC from '$VERSION' to '$IRIC_VERSION'?" \
+                 8 $WIDTH) then
+        verify_playbook
+        if [[ $RC -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: playbook task failed." \
+                      8 $WIDTH
+             return 1
+        fi
+        cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
+        pause "Task finished successfully if 'failed=0'. Press any key to return to menu."
     fi
 }
 
@@ -640,7 +683,7 @@ function services() {
 }
 
 function main_menu() {
-    whiptail --title "IRI Fullnode Menu" \
+    whiptail --title "IRIC - IRI Configuration Menu" \
              --menu "Choose an option" \
              --cancel-button "Exit" \
               25 $WIDTH 16 \
@@ -657,6 +700,7 @@ function main_menu() {
     "k)" "Get node info" \
     "l)" "Manage services" \
     "m)" "Get Fully Synced DB" \
+    "n)" "Update this utility" \
     "Z)" "Configure this script" \
     3>&1 1>&2 2>&3
 }
@@ -738,6 +782,11 @@ function run_installer_menus() {
 
         "m)")
             get_db
+            run_installer_menus
+            ;;
+
+        "n)")
+            update_iric
             run_installer_menus
             ;;
 
