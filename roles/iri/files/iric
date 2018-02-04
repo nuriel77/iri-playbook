@@ -5,6 +5,9 @@ set -o pipefail
 # Only use if you installed your node using iri-playbook
 
 WIDTH=78
+export NEWT_COLORS='
+window=,
+'
 
 function set_admin_user() {
     USER_CHOICE=$(whiptail --inputbox "Pick a name for the administrator account:" 8 $WIDTH ${ADMIN_USER} --title "Username (allowed regex: a-zA-Z0-9_)" 3>&1 1>&2 2>&3)
