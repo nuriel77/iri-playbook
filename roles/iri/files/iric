@@ -195,7 +195,14 @@ function upgrade_iri() {
              return 1
         fi
         echo "Downloading new version..."
-        export IRIVER=${IRI_LATEST} ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
+        IRIVER=${IRI_LATEST}
+        wget "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" -O "/var/lib/iri/target/iri-${IRIVER}.jar"
+        if [[ $? -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: Failed upgrading IRI." \
+                      8 $WIDTH
+             return 1
+        fi
         echo "Update iri configuration files"
         IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
         sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST/" $IRI_CONFIG
@@ -208,9 +215,25 @@ function upgrade_iri() {
 
 ### Monitoring ###
 function upgrade_monitoring() {
-    whiptail --title "Upgrade Monitoring" \
-             --msgbox "This will upgrade monitoring" \
-             8 $WIDTH
+    local RC
+    if (whiptail --title "Upgrade Monitoring" \
+                 --yesno "Are you sure you want to upgrade monitoring services?" \
+                 8 $WIDTH) then
+        verify_playbook
+        if [[ $RC -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: Cannot upgrade monitoring." \
+                      8 $WIDTH
+             return 1
+        fi
+
+        # Enable ZMQ
+        grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri    
+
+        # Upgrade iota-prom-exporter and dashboards
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
+        pause "Update finished successfully if 'failed=0'. Press any key to return to menu."
+    fi
 }
 
 
