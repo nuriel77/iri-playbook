@@ -393,6 +393,27 @@ function list_neighbors() {
     fi
 }
 
+### Get DB ###
+function get_db() {
+    XVPS_SOURCE="https://x-vps.com/iota.db.tgz"
+    DB_SOURCE=$(whiptail --inputbox "This action will download and boostrap a fully synced database.\nChoose a source where to download the database from:" 8 $WIDTH  $XVPS_SOURCE --title "Download Database" 3>&1 1>&2 2>&3)
+
+    if [ "$DB_SOURCE" == "$XVPS_SOURCE" ]; then
+        LAST_UPDATED=$(curl -m 4 -f -s https://x-vps.com/index.php | sed 's/^.*\(iota.db.tgz was last updated at: .*\)\..*$/\1/' 2>/dev/null)
+    fi
+    if (whiptail --title "Confirm DB" \
+                 --yesno "Download new database from '$DB_SOURCE'?\n\n${LAST_UPDATED}" \
+                 12 $WIDTH) then
+        cd /tmp && wget -O iota.db.tgz "$DB_SOURCE" && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb/ && pv iota.db.tgz | tar xzf - -C /var/lib/iri/target/mainnetdb/ && chown iri.iri /var/lib/iri -R && rm -f /tmp/iota.db.tgz && systemctl start iri
+        if [[ $? -ne 0 ]]; then
+            whiptail --title "New DB Failed!" \
+                     --msgbox "Well this is embarrassing. Downloading the new DB failed..." \
+                     8 $WIDTH
+            rm -f /tmp/iota.db.tgz
+            return 1
+        fi
+    fi
+}
 
 ### Node info ###
 function show_lsmi() {
@@ -635,6 +656,7 @@ function main_menu() {
     "j)" "Show LatestMilestoneIndex" \
     "k)" "Get node info" \
     "l)" "Manage services" \
+    "m)" "Get Fully Synced DB" \
     "Z)" "Configure this script" \
     3>&1 1>&2 2>&3
 }
@@ -711,6 +733,11 @@ function run_installer_menus() {
 
         "l)")
             services
+            run_installer_menus
+            ;;
+
+        "m)")
+            get_db
             run_installer_menus
             ;;
 
