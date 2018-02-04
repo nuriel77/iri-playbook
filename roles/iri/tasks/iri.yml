@@ -7,12 +7,16 @@
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  tags:
+    - nbctl_config
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  tags:
+    - nbctl_config
 
 - name: auto memory settings block
   block:
@@ -101,7 +105,7 @@
 - name: config default ~/.nbctl
   copy:
     dest: "{{ ansible_env.HOME }}/.nbctl"
-    content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_api_port }}\n"
+    content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_api_port }}\nfile: {{ config_dir }}/iri\n"
   tags:
     - nbctl_config
 
