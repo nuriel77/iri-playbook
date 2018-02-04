@@ -1,0 +1,304 @@
+#!/bin/bash
+set -o pipefail
+
+# This is just a proof-of-concept
+# Only use if you installed your node using iri-playbook
+
+function set_admin_user() {
+    USER_CHOICE=$(whiptail --inputbox "Pick a name for the administrator account:" 8 78 ${ADMIN_USER} --title "Username (allowed regex: a-zA-Z0-9_)" 3>&1 1>&2 2>&3)
+    RC=$?
+    if [[ $RC -eq 0 ]]; then
+        echo -n "${USER_CHOICE}"
+    else
+        echo -n "${ADMIN_USER}"
+    fi
+}
+
+function get_admin_user() {
+    ADMIN_USER=$(set_admin_user)
+    if [[ "$ADMIN_USER" =~ [^a-zA-Z0-9_] ]]; then
+        whiptail --title "Invalid Username!" \
+                 --msgbox "Username can only contain alphanumeric characters and underscores." \
+                 8 78
+        get_admin_user
+    fi
+}
+
+function set_admin_password_a() {
+    whiptail --passwordbox "please enter your secret password" 8 78 --title "password dialog" 3>&1 1>&2 2>&3
+}
+
+function set_admin_password_b() {
+    whiptail --passwordbox "please repeat" 8 78 --title "password dialog" 3>&1 1>&2 2>&3
+}
+
+function get_admin_password() {
+    PASSWORD_A=$(set_admin_password_a)
+    PASSWORD_B=$(set_admin_password_b)
+
+    if [ "$PASSWORD_A" != "$PASSWORD_B" ]; then
+        whiptail --title "Passwords Mismatch!" \
+                 --msgbox "Passwords do not match, please try again." \
+                 8 78
+        get_admin_password
+    fi
+
+    PASSWD_CHECK=$(echo -n "$PASSWORD_A" | cracklib-check)
+    if [[ $(echo "$PASSWD_CHECK" | awk {'print $2'}) != "OK" ]]; then
+        whiptail --title "Weak Password!" \
+                 --msgbox "Please choose a better password:$(echo ${PASSWD_CHECK}|cut -d: -f2-)" \
+                 8 78
+        get_admin_password
+    fi
+    ADMIN_PASSWORD="${PASSWORD_A}"
+}
+
+function upgrade_nelson() {
+    whiptail --title "Upgrade Nelson" \
+             --msgbox "This will upgrade nelson" \
+             8 78
+}
+
+function upgrade_iri() {
+    whiptail --title "Upgrade IRI" \
+             --msgbox "This will upgrade IRI" \
+             8 78
+}
+
+function upgrade_monitoring() {
+    whiptail --title "Upgrade Monitoring" \
+             --msgbox "This will upgrade monitoring" \
+             8 78
+}
+
+function how_to_setup() {
+    whiptail --title "Instructions" \
+             --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.1\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
+             15 78
+}
+
+function add_neighbors() {
+    local NEIGHBORS
+    local HEIGHT
+    local NBCTL_OUTPUT
+    local RC
+    NEIGHBORS=$(whiptail --inputbox "Enter a list of neighbors separated by space:" 8 78 --title "Add Neighbors" 3>&1 1>&2 2>&3)
+    RC=$?
+    if [[ $RC -ne 0 ]]; then
+        return
+    fi
+
+    HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 8)
+    if (whiptail --title "Add Neighbors" \
+                 --yesno "This will the following add neighbors:\n\n $NEIGHBORS" \
+                 $HEIGHT 78) then
+        ADD_LIST=$(echo "$NEIGHBORS" | sed 's/ / -n /g' | sed 's/^\(.*\)/-n \1/')
+        NBCTL_OUTPUT=$(/bin/nbctl -a $ADD_LIST 2>&1)
+        RC=$?
+        if [[ $RC -eq 0 ]]; then
+            HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 7)
+            whiptail --title "Added Neighbors" \
+                     --msgbox "$NBCTL_OUTPUT" \
+                    $HEIGHT 78
+        else
+            HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 10)
+            whiptail --title "Adding Neighbors Failed" \
+                     --msgbox "Failure: $NBCTL_OUTPUT" \
+                     $HEIGHT 78
+        fi
+    fi
+}
+
+function remove_neighbors() {
+    local NEIGHBORS_ARRAY
+    local NEIGHBORS
+    local NEIGHBOR
+    local HEIGHT
+    NEIGHBORS=$(list_neighbors get)
+    HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 5)
+    read -ra NEIGHBORS_ARRAY <<<$(echo "$NEIGHBORS")
+    read -ra NEIGHBORS_ARRAY_INDEXED <<<$(echo "$NEIGHBORS"| awk '!/^ / && NF { print NR")"; print $1}')
+    NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 78 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
+    if [ $? -eq 1 ]; then
+        return
+    fi
+
+    NEIGHBOR_INX=$(echo "$NEIGHBOR_INDEX" | cut -d')' -f1)
+    NEIGHBOR_INX=$(expr $NEIGHBOR_INX - 1)
+    TO_REMOVE="${NEIGHBORS_ARRAY[$NEIGHBOR_INX]}"
+    SCHEME=$(echo "$TO_REMOVE"|cut -d'/' -f2)
+    ADDRESS=$(echo "$TO_REMOVE"|cut -d'/' -f1)
+    if (whiptail --title "Confirm removal" \
+                 --yesno "Are you sure you want to remove: ${SCHEME}://${ADDRESS}" \
+                 8 78)
+    then
+        REMOVAL_OUTPUT=$(/bin/nbctl -r -n "${SCHEME}://${ADDRESS}" 2>&1)
+        if [ $? -eq 0 ];then
+            whiptail --title "Removed successfully" \
+                     --msgbox "$REMOVAL_OUTPUT" \
+                     12 78
+        else
+            HEIGHT=$(expr $(echo "$REMOVAL_OUTPUT"|wc -l) + 7)
+            whiptail --title "Remove failed!" \
+                     --msgbox "${REMOVAL_OUTPUT}" \
+                     $HEIGHT 78
+        fi
+    fi
+}
+
+function list_neighbors() {
+    local NEIGHBORS_QUERY
+    local NEIGHBORS
+    local HEIGHT
+    NEIGHBORS_QUERY=$(nbctl -l 2>&1)
+    if [ $? -ne 0 ]; then
+        HEIGHT=$(expr $(echo "$NEIGHBORS_QUERY"|wc -l) + 7)
+        whiptail --title "List neighbors failed" \
+                 --msgbox "$NEIGHBORS_QUERY" \
+                 $HEIGHT 78
+    else
+        NEIGHBORS=$( echo "$NEIGHBORS_QUERY" | jq -r '.neighbors[] | "\(.address)/\(.connectionType)"' )
+        if [ -n "$1" ]; then
+            echo "$NEIGHBORS"
+            return 0
+        fi
+
+        LENGTH=$(echo "$NEIGHBORS"|wc -l)
+        local HEIGHT=$(expr $LENGTH + 8)
+        whiptail --title "List Neighbors" \
+                 --msgbox "Total: ${LENGTH} neighbors\n\n${NEIGHBORS}" \
+                 $HEIGHT 78
+    fi
+}
+
+function show_lsmi() {
+    if [ ! -f $HOME/.nbctl ]; then
+        whiptail --title "Missing .nbctl" \
+                 --msgbox "Error: cannot find $HOME/.nbctl" \
+                 8 78
+        return
+    fi
+    IRI_HOST=$(grep ^host $HOME/.nbctl | cut -d: -f2-)
+    IRI_API_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2-)
+    LSMI_LOCAL=$(curl -f -m 5 -s $IRI_HOST -X POST -H "X-IOTA-API-Version: $IRI_API_VERSION" -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'| python -m json.tool|egrep "latestSolidSubtangleMilestoneIndex|latestMilestoneIndex"| sed 's/,//'|sed -e 's/^[ \t]*//'|sed 's/"//g')
+    if [ $? -ne 0 ]; then
+        whiptail --title "Query failed" \
+                 --msgbox "Error: failed query $LSMI_LOCAL" \
+                 12 78
+        return
+    fi
+
+    LSMI_QUERY=$(curl -s -f -m 5 https://x-vps.com/lsmi|jq -r .latestMilestoneIndex 2>/dev/null)
+    if [ $? -eq 0 ]; then
+        OUTPUT="Latest milestone index: ${LSMI_QUERY}\n\n"
+    else
+        OUTPUT=""
+    fi
+    OUTPUT="${OUTPUT}Local:\n\n${LSMI_LOCAL}"
+    whiptail --title "LatestMilestoneIndex" \
+             --msgbox "$OUTPUT" \
+             12 78
+}
+
+function get_node_info() {
+    if [ ! -f $HOME/.nbctl ]; then
+        whiptail --title "Missing .nbctl" \
+                 --msgbox "Error: cannot find $HOME/.nbctl" \
+                 8 78
+        return
+    fi
+    IRI_HOST=$(grep ^host $HOME/.nbctl | cut -d: -f2-)
+    IRI_API_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2-)
+    NODE_INFO=$(curl -f -m 5 -s $IRI_HOST -X POST -H "X-IOTA-API-Version: $IRI_API_VERSION" -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'| jq -r 'to_entries[] | "\(.key): \(.value )"' | column -t | sort)
+    if [ $? -ne 0 ]; then
+        whiptail --title "Query failed" \
+                 --msgbox "Error: failed query $NODE_INFO" \
+                 12 78
+        return
+    fi
+
+    HEIGHT=$(expr $(echo "$NODE_INFO"|wc -l) + 7)
+    whiptail --title "Node Info" \
+             --msgbox "$NODE_INFO" \
+             $HEIGHT 78
+}
+
+function main_menu() {
+    whiptail --title "IRI Fullnode Menu" \
+             --menu "Choose an option" \
+             --cancel-button "Exit" \
+              25 78 16 \
+    "1)" "Upgrade IRI software." \
+    "2)" "Upgrade Nelson" \
+    "3)" "Upgrade Monitoring" \
+    "4)" "Add neighbors" \
+    "5)" "Remove neighbors" \
+    "6)" "List neighbors" \
+    "7)" "Show LatestMilestoneIndex" \
+    "8)" "Get node info" \
+    "0)" "Configure this script" \
+    3>&1 1>&2 2>&3
+}
+
+run_installer_menus() {
+
+    CHOICE=$(main_menu)
+    RC=$?
+    if [[ $RC -eq 1 ]]; then
+        exit
+    fi
+
+    case "$CHOICE" in
+
+        "0)")
+            how_to_setup
+            run_installer_menus
+            ;;
+
+        "1)")
+            upgrade_iri
+            run_installer_menus
+            ;;
+
+        "2)")
+            upgrade_nelson
+            run_installer_menus
+            ;;
+
+        "3)")
+            upgrade_monitoring
+            run_installer_menus
+            ;;
+
+        "4)")
+            add_neighbors
+            run_installer_menus
+            ;;
+
+        "5)")
+            remove_neighbors
+            run_installer_menus
+            ;;
+
+        "6)")
+            list_neighbors
+            run_installer_menus
+            ;;
+
+        "7)")
+            show_lsmi
+            run_installer_menus
+            ;;
+
+        "8)")
+            get_node_info
+            run_installer_menus
+            ;;
+
+        *)
+            run_installer_menus
+            ;;
+    esac
+}
+
+run_installer_menus

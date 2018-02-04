@@ -90,6 +90,7 @@
   with_items:
     - nbctl
     - reattach
+    - iric
   tags:
     - scripts
 
