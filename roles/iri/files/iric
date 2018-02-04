@@ -115,6 +115,19 @@ function remove_neighbors() {
     local NEIGHBOR
     local HEIGHT
     NEIGHBORS=$(list_neighbors get)
+    RC=$?
+    if [[ $RC -ne 0 ]]; then
+        whiptail --title "Neighbors Failed" \
+                 --msgbox "Failed to get list of neighbors" \
+                 8 78
+        return
+    fi
+    if [ "$NEIGHBORS" == "" ]; then
+        whiptail --title "No Neighbors" \
+                 --msgbox "There are no neighbors configured" \
+                 8 78
+        return
+    fi
     HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 5)
     read -ra NEIGHBORS_ARRAY <<<$(echo "$NEIGHBORS")
     read -ra NEIGHBORS_ARRAY_INDEXED <<<$(echo "$NEIGHBORS"| awk '!/^ / && NF { print NR")"; print $1}')
@@ -156,6 +169,7 @@ function list_neighbors() {
         whiptail --title "List neighbors failed" \
                  --msgbox "$NEIGHBORS_QUERY" \
                  $HEIGHT 78
+        return 1
     else
         NEIGHBORS=$( echo "$NEIGHBORS_QUERY" | jq -r '.neighbors[] | "\(.address)/\(.connectionType)"' )
         if [ -n "$1" ]; then
@@ -163,10 +177,14 @@ function list_neighbors() {
             return 0
         fi
 
-        LENGTH=$(echo "$NEIGHBORS"|wc -l)
+        if [ "$NEIGHBORS" == "" ]; then
+            LENGTH=0
+        else
+            LENGTH=$(echo "$NEIGHBORS"|wc -l)
+        fi
         local HEIGHT=$(expr $LENGTH + 8)
         whiptail --title "List Neighbors" \
-                 --msgbox "Total: ${LENGTH} neighbors\n\n${NEIGHBORS}" \
+                 --msgbox "Total: ${LENGTH} neighbor(s)\n\n${NEIGHBORS}" \
                  $HEIGHT 78
     fi
 }
