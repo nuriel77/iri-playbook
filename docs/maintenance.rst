@@ -70,10 +70,7 @@ Upgrade IOTA Monitoring
 
 IOTA Prometheus Monitoring is used by Grafana which are the awesome graphs about the full node.
 
-
-New update for installations done before January 16th 2018
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-A new feature has been added to read extra metrics from IRI using ZeroMQ. ZMQ has to be enabled in IRI first::
+A new feature has been added to read extra metrics from IRI using ZeroMQ. ZMQ has to be enabled in IRI first if you haven't done it yet::
 
   grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri
 
