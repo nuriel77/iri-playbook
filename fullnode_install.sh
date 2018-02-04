@@ -173,58 +173,35 @@ bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fulln
 EOF
 }
 
-function get_password() {
-    unset PASSWORD
-    unset CHARCOUNT
-    stty -echo
-
-    CHARCOUNT=0
-    while IFS= read -p "$PROMPT" -r -e -s -n 1 CHAR; do
-        # Enter - accept password
-        if [[ $CHAR == $'\0' ]]; then
-            break
-        fi
-        # Backspace (BUG: Doesn't work, no big deal)
-        # If user had a mistake he will have to re-enter
-        if [[ $CHAR == $'\177' ]] ; then
-            if [ $CHARCOUNT -gt 0 ] ; then
-                CHARCOUNT=$((CHARCOUNT-1))
-                PROMPT=$'\b \b'
-                PASSWORD="${PASSWORD%?}"
-            else
-                PROMPT=''
-            fi
-        else
-            CHARCOUNT=$((CHARCOUNT+1))
-            PROMPT='*'
-            PASSWORD+="$CHAR"
-        fi
-    done
-
-    stty echo
-    echo $PASSWORD
+function set_admin_password_a() {
+    whiptail --title "Admin Password" \
+             --passwordbox "Please enter the password with which you will connect to services (IOTA Peer manager, Grafana, etc). Use a stong password!!! Not 'hello123' or 'iota8181', you get the point ;)" \
+             10 78 3>&1 1>&2 2>&3
 }
 
-function set_password() {
-    echo "--------------"
-    echo "Please enter the password with which you will connect to IOTA Peer Mananger"
-    echo "Use a stong password!!! Not 'hello123' or 'iota8181', you get the point ;)"
-    echo -n "Password: "
-    PASSWORD_A=$(get_password)
-    echo
-    echo -n "Please repeat: "
-    PASSWORD_B=$(get_password)
+function set_admin_password_b() {
+    whiptail --passwordbox "please repeat" 8 78 --title "Admin Password" 3>&1 1>&2 2>&3
+}
+
+function get_admin_password() {
+    PASSWORD_A=$(set_admin_password_a)
+    PASSWORD_B=$(set_admin_password_b)
+
     if [ "$PASSWORD_A" != "$PASSWORD_B" ]; then
-        echo -e "\n\nPasswords do not match!\n"
-        set_password
+        whiptail --title "Passwords Mismatch!" \
+                 --msgbox "Passwords do not match, please try again." \
+                 8 78
+        get_admin_password
     fi
+
     PASSWD_CHECK=$(echo -n "$PASSWORD_A" | cracklib-check)
     if [[ $(echo "$PASSWD_CHECK" | awk {'print $2'}) != "OK" ]]; then
-        echo;echo
-        echo -n "Please choose a better password:"
-        echo ${PASSWD_CHECK}|cut -d: -f2-
-        set_password
+        whiptail --title "Weak Password!" \
+                 --msgbox "Please choose a better password:$(echo ${PASSWD_CHECK}|cut -d: -f2-)" \
+                 8 78
+        get_admin_password
     fi
+
     echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
 }
 
@@ -304,8 +281,8 @@ fi
 git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
 cd iri-playbook
 
-# Set password for web access (ipm and grafana)
-set_password
+# web access (ipm, haproxy and grafana)
+get_admin_password
 echo -e "\nRunning playbook..."
 
 # Ansible output log file
@@ -324,7 +301,7 @@ set -e
 # Calling set_primary_ip
 set_primary_ip
 
-cat <<EOF
+OUTPUT=$(cat <<EOF
 *** Installation done! ***
 
 A log of this installation has been saved to: $LOGFILE
@@ -348,3 +325,9 @@ Please refer to the tutorial for post-installation information:
 http://iri-playbook.readthedocs.io/en/master/post-installation.html
 
 EOF
+)
+
+HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
+whiptail --title "Installation Done" \
+         --msgbox "$OUTPUT" \
+         $HEIGHT 78
