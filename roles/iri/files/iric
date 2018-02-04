@@ -163,6 +163,10 @@ function get_latest_iri_release {
     curl -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest  | awk '/tag_name/{print $2}' | tr -d '"v,'
 }
 
+function to_digits {
+    tr -cd 0-9 <<<"$@"
+}
+
 function upgrade_iri() {
     local RC
     echo "Checking for updates..."
@@ -178,7 +182,7 @@ function upgrade_iri() {
         return 1
     fi
 
-    if [ "$IRI_VERSION" == "$IRI_LATEST" ]; then
+    if [ $(to_digits $IRI_VERSION) -eq $(to_digits $IRI_LATEST) ]; then
         whiptail --title "No Updates" \
                  --msgbox "You are already running the latest version: $IRI_VERSION" \
                  8 $WIDTH
@@ -457,6 +461,7 @@ function service_cmd() {
     local OUTPUT
     SERVICE=$1
     COMMAND=$2
+    echo "Running 'systemctl $COMMAND $SERVICE' ..."
     OUTPUT=$(systemctl $COMMAND $SERVICE 2>&1)
     HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 7)
     if [ $? -ne 0 ]; then
@@ -549,6 +554,7 @@ function services_menu() {
     "f)" "IOTA Prometheus Exporter" \
     "g)" "Nginx" \
     "h)" "HAProxy" \
+    "i)" "Nelson" \
     3>&1 1>&2 2>&3
 }
 
@@ -600,6 +606,11 @@ function services() {
             service haproxy
             services
             ;;
+
+        "i)")
+           service nelson
+           services
+           ;;
 
         *)
             services
