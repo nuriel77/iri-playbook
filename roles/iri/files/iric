@@ -10,6 +10,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+clear
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -235,6 +236,29 @@ function upgrade_monitoring() {
         pause "Update finished successfully if 'failed=0'. Press any key to return to menu."
     fi
 }
+
+
+### Haproxy ###
+function enable_haproxy() {
+    local RC
+    local DEFAULT_MSG="Are you sure you want to enable wallet access only via HAProxy?\nThis will disable port 14265 externally and make 14267 accessible.\nIn addition, all the REMOTE_LIMIT_API commands will be under control of HAProxy and no longer via IRI configuration files."
+    [ -n "$1" ] && { DEFAULT_MSG=$1; }
+    if (whiptail --title "HAProxy" \
+                 --yesno "$DEFAULT_MSG" \
+                 8 $WIDTH) then
+        verify_playbook
+        if [[ $RC -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: haproxy task failed." \
+                      8 $WIDTH
+             return 1
+        fi
+
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
+        pause "Task finished successfully if 'failed=0'. Press any key to return to menu."
+    fi
+}
+
 
 
 ### Notice ###
@@ -645,7 +669,7 @@ function run_installer_menus() {
             ;;
 
         "f)")
-            upgrade_haproxy
+            enable_haproxy "This will update the haproxy.cfg file to the latest version. Continue?"
             run_installer_menus
             ;;
 
