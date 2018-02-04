@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.1.2
+VERSION=0.1.3
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -99,7 +99,8 @@ function verify_playbook() {
     if [[ $RC -ne 0 ]]; then
         whiptail --title "Git Errors" \
                  --msgbox "Errors when trying to update the playbook repository: $OUTPUT" \
-                 8 $WIDTH
+                 $HEIGHT $WIDTH
+        return 1
     fi
 }
 
@@ -457,6 +458,7 @@ function update_iric() {
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
         pause "Task finished successfully if 'failed=0'. Press any key to return to menu."
+        exec "$0"
     fi
 }
 
@@ -685,7 +687,7 @@ function services() {
 }
 
 function main_menu() {
-    whiptail --title "IRIC - IRI Configuration Menu" \
+    whiptail --title "IRIC v${VERSION} - IRI Configuration Menu" \
              --menu "Choose an option" \
              --cancel-button "Exit" \
               25 $WIDTH 16 \
