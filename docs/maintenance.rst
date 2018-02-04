@@ -93,14 +93,6 @@ Now you should be able to open Grafana and see the new row of metrics (ZMQ).
 
 If you encounter errors when running the command, depending on the error, please refer to :ref:`httpErrorUnauthorized` or :ref:`gitConflicts`.
 
-
-Updates for installations done after January 16th 2018
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In any other case, if any updates, the following command will perform an update::
-
-  cd /opt/iri-playbook/ && ansible-playbook -i inventory site.yml --tags=iota_prom_exporter -v
-
-
 .. checkDatabaseSize:: 
 
 Check Database Size
