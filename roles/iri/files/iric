@@ -93,7 +93,7 @@ function add_neighbors() {
                  --yesno "This will the following add neighbors:\n\n $NEIGHBORS" \
                  $HEIGHT 78) then
         ADD_LIST=$(echo "$NEIGHBORS" | sed 's/ / -n /g' | sed 's/^\(.*\)/-n \1/')
-        NBCTL_OUTPUT=$(/bin/nbctl -a $ADD_LIST 2>&1)
+        NBCTL_OUTPUT=$(nbctl -a $ADD_LIST 2>&1)
         RC=$?
         if [[ $RC -eq 0 ]]; then
             HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 7)
@@ -132,7 +132,7 @@ function remove_neighbors() {
                  --yesno "Are you sure you want to remove: ${SCHEME}://${ADDRESS}" \
                  8 78)
     then
-        REMOVAL_OUTPUT=$(/bin/nbctl -r -n "${SCHEME}://${ADDRESS}" 2>&1)
+        REMOVAL_OUTPUT=$(nbctl -r -n "${SCHEME}://${ADDRESS}" 2>&1)
         if [ $? -eq 0 ];then
             whiptail --title "Removed successfully" \
                      --msgbox "$REMOVAL_OUTPUT" \
