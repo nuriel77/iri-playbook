@@ -83,21 +83,28 @@ function how_to_setup() {
 }
 
 function add_neighbors() {
-    local NEIGHBORS
-    local HEIGHT
-    local NBCTL_OUTPUT
-    local RC
+    local NEIGHBORS=
+    local HEIGHT=
+    local NBCTL_OUTPUT=
+    local RC=
     NEIGHBORS=$(whiptail --inputbox "Enter a list of neighbors separated by space:" 8 $WIDTH --title "Add Neighbors" 3>&1 1>&2 2>&3)
     RC=$?
     if [[ $RC -ne 0 ]]; then
         return
     fi
 
+    ADD_LIST=$(echo "$NEIGHBORS" | sed 's/  */ /g' | sed 's/ / -n /g' | sed 's/^\(.*\)/-n \1/')
+    if ! (echo "$ADD_LIST" | egrep -q "tcp|udp"); then
+        whiptail --title "Invalid Input" \
+                 --msgbox "Invalid input provided. Please check the syntax you provided is valid." \
+                  8 $WIDTH
+        return
+    fi
+
     HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 8)
     if (whiptail --title "Add Neighbors" \
-                 --yesno "This will the following add neighbors:\n\n $NEIGHBORS" \
+                 --yesno "The following neighbor(s) will be added:\n\n $NEIGHBORS" \
                  $HEIGHT $WIDTH) then
-        ADD_LIST=$(echo "$NEIGHBORS" | sed 's/ / -n /g' | sed 's/^\(.*\)/-n \1/')
         NBCTL_OUTPUT=$(nbctl -a $ADD_LIST 2>&1)
         RC=$?
         if [[ $RC -eq 0 ]]; then
