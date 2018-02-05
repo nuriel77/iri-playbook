@@ -283,7 +283,7 @@ function enable_haproxy() {
 
 ### Notice ###
 function how_to_setup() {
-    whiptail --title "Instructions" \
+    whiptail --title "IRIC v${VERSION} - Instructions" \
              --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.1\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
              15 $WIDTH
 }
@@ -427,7 +427,7 @@ function list_neighbors() {
 ### Get DB ###
 function get_db() {
     XVPS_SOURCE="https://x-vps.com/iota.db.tgz"
-    DB_SOURCE=$(whiptail --inputbox "This action will download and boostrap a fully synced database.\nChoose a source where to download the database from:" 8 $WIDTH  $XVPS_SOURCE --title "Download Database" 3>&1 1>&2 2>&3)
+    DB_SOURCE=$(whiptail --inputbox "This action will download and boostrap a fully synced database.\nChoose a source where to download the database from:" 8 $WIDTH  $XVPS_SOURCE --title "IRIC v${VERSION} - Download Database" 3>&1 1>&2 2>&3)
 
     if [ "$DB_SOURCE" == "$XVPS_SOURCE" ]; then
         LAST_UPDATED=$(curl -m 4 -f -s https://x-vps.com/index.php | sed 's/^.*\(iota.db.tgz was last updated at: .*\)\..*$/\1/' 2>/dev/null)
@@ -596,7 +596,7 @@ function service_log() {
 function service_menu() {
     local SERVICE
     SERVICE=$1
-    whiptail --title "$SERVICE Service" \
+    whiptail --title "IRIC v${VERSION} - $SERVICE Service" \
              --menu "For logs use SHIFT-g to skip to end of log, or q to exit." \
              --cancel-button "Back" \
              25 $WIDTH 16 \
@@ -663,7 +663,7 @@ function service() {
 }
 
 function services_menu() {
-    whiptail --title "Node Services" \
+    whiptail --title "IRIC v${VERSION} - Node Services" \
              --menu "Choose an option" \
              --cancel-button "Back" \
              25 $WIDTH 16 \
