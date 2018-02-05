@@ -451,8 +451,6 @@ function get_db() {
 
 ## IRIC
 function get_latest_iric_version() {
-    echo HEREHER
-    sleep 10
     curl -s -f -m 5 -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric|grep ^VERSION|cut -d= -f2
 }
 
