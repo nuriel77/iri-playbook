@@ -61,6 +61,7 @@ Work in progress
    files
    maintenance
    securityhardening
+   iric
    troubleshooting
    faq
    glossary
