@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.1.3
+VERSION=0.1.4
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -187,39 +187,50 @@ function upgrade_iri() {
     fi
 
     if [ $(to_digits $IRI_VERSION) -eq $(to_digits $IRI_LATEST) ]; then
-        whiptail --title "No Updates" \
-                 --msgbox "You are already running the latest version: $IRI_VERSION" \
-                 8 $WIDTH
-        return
+        if ! (whiptail --title "No Updates" \
+                 --yesno "You are already running the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
+                 10 $WIDTH) then
+            return
+        else
+            local NO_CONFIRM=1
+        fi
     fi
 
-    if (whiptail --title "Upgrade IRI" \
-                 --yesno "Are you sure you want to upgrade IRI from ${IRI_VERSION} to ${IRI_LATEST}?\nWARNING: only do this if you know what your are doing!" \
-                 8 $WIDTH) then
-        verify_playbook
-        if [[ $RC -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: Cannot upgrade IRI." \
-                      8 $WIDTH
-             return 1
+    if [ -z "$NO_CONFIRM" ]; then
+        if ! (whiptail --title "Upgrade IRI" \
+                     --yesno "Are you sure you want to upgrade IRI from ${IRI_VERSION} to ${IRI_LATEST}?\nWARNING: only do this if you know what your are doing!" \
+                     8 $WIDTH) then
+            return
         fi
-        echo "Downloading new version..."
-        IRIVER=${IRI_LATEST}
-        wget "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" -O "/var/lib/iri/target/iri-${IRIVER}.jar"
-        if [[ $? -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: Failed upgrading IRI." \
-                      8 $WIDTH
-             return 1
-        fi
-        echo "Update iri configuration files"
-        IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
-        sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST/" $IRI_CONFIG
-        sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
-        echo "Restart IRI, this can take a few moments..."
-        systemctl restart iri
-        pause "Update finished successfully, however it is recommended to check the status of IRI. Press any key to return to menu."
     fi
+
+    verify_playbook
+    if [[ $RC -ne 0 ]]; then
+        whiptail --title "Error!" \
+                 --msgbox "ERROR: Cannot upgrade IRI." \
+                 8 $WIDTH
+        return 1
+    fi
+    echo "Downloading new version..."
+    IRIVER=${IRI_LATEST}
+    TFILE=$(mktemp /tmp/iri-${IRIVER}.XXXXXXXXX)
+    wget "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" -O "$TFILE"
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Error!" \
+                  --msgbox "ERROR: Failed upgrading IRI." \
+                  8 $WIDTH
+         rm -f "$TFILE"
+         return 1
+    fi
+    echo "Move '$TFILE' to '/var/lib/iri/target/iri-${IRIVER}.jar' ..."
+    mv "$TFILE" "/var/lib/iri/target/iri-${IRIVER}.jar" && chmod 644 "/var/lib/iri/target/iri-${IRIVER}.jar"
+    echo "Update iri configuration files..."
+    IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
+    sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST/" $IRI_CONFIG
+    sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
+    echo "Restart IRI, this can take a few moments..."
+    systemctl restart iri
+    pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press any key to return to menu."
 }
 
 ### Monitoring ###
@@ -414,13 +425,16 @@ function get_db() {
     if (whiptail --title "Confirm DB" \
                  --yesno "Download new database from '$DB_SOURCE'?\n\n${LAST_UPDATED}" \
                  12 $WIDTH) then
-        cd /tmp && wget -O iota.db.tgz "$DB_SOURCE" && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb/ && pv iota.db.tgz | tar xzf - -C /var/lib/iri/target/mainnetdb/ && chown iri.iri /var/lib/iri -R && rm -f /tmp/iota.db.tgz && systemctl start iri
+        TFILE=$(mktemp /tmp/iota.db.tgz.XXXXXXXXX)
+        cd /tmp && wget -O $TFILE "$DB_SOURCE" && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb/ && echo "Extracting DB files..." && pv $TFILE | tar xzf - -C /var/lib/iri/target/mainnetdb/ && chown iri.iri /var/lib/iri -R && rm -f $TFILE && systemctl start iri
         if [[ $? -ne 0 ]]; then
             whiptail --title "New DB Failed!" \
                      --msgbox "Well this is embarrassing. Downloading the new DB failed..." \
                      8 $WIDTH
-            rm -f /tmp/iota.db.tgz
+            rm -f $TFILE
             return 1
+        else
+            pause "Done! Please check IRI's status and logs to verify it is error free."
         fi
     fi
 }
