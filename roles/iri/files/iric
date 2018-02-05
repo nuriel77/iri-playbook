@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.1.5
+VERSION=0.1.6
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -128,6 +128,7 @@ function get_latest_nelson_release {
 
 function upgrade_nelson() {
     local RC
+    echo "Checking for updates..."
     NELSON_LATEST=$(get_latest_nelson_release)
     if [[ $? -ne 0 ]]; then
         NELSON_LATEST=unknown
@@ -142,7 +143,7 @@ function upgrade_nelson() {
 
     if [ "$NELSON_VERSION" == "$NELSON_LATEST" ]; then
         whiptail --title "No Updates" \
-                 --msgbox "You are already running the latest version: $NELSON_VERSION" \
+                 --msgbox "You already have the latest version: $NELSON_VERSION" \
                  8 $WIDTH
         return
     fi
@@ -159,7 +160,7 @@ function upgrade_nelson() {
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "upgrade_nelson=true" -e "nelson_enabled=true"
         pause "Update finished successfully if 'failed=0'. Press any key to return to menu."
-    fi    
+    fi
 }
 
 ### IRI ###
@@ -188,7 +189,7 @@ function upgrade_iri() {
 
     if [ $(to_digits $IRI_VERSION) -eq $(to_digits $IRI_LATEST) ]; then
         if ! (whiptail --title "No Updates" \
-                 --yesno "You are already running the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
+                 --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
                  10 $WIDTH) then
             return
         else
@@ -248,7 +249,7 @@ function upgrade_monitoring() {
         fi
 
         # Enable ZMQ
-        grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri    
+        grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri
 
         # Upgrade iota-prom-exporter and dashboards
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
@@ -336,11 +337,12 @@ function remove_neighbors() {
     local NEIGHBORS
     local NEIGHBOR
     local HEIGHT
+    echo "Getting neighbors list..."
     NEIGHBORS=$(list_neighbors get)
     RC=$?
     if [[ $RC -ne 0 ]]; then
         whiptail --title "Neighbors Failed" \
-                 --msgbox "Failed to get list of neighbors" \
+                 --msgbox "Failed to get list of neighbors: $NEIGHBORS" \
                  8 $WIDTH
         return
     fi
@@ -385,10 +387,18 @@ function list_neighbors() {
     local NEIGHBORS_QUERY
     local NEIGHBORS
     local HEIGHT
+    local RETURN_RES=$1
     NEIGHBORS_QUERY=$(nbctl -l 2>&1)
-    if [ $? -ne 0 ]; then
-        if echo "$NEIGHBORS_QUERY" | grep -q "urllib2.URLError" ; then
+    RC=$?
+    if [[ $RC -ne 0 ]]; then
+        if echo "$NEIGHBORS_QUERY" | egrep -q "urllib2.URLError|timeout|refused" ; then
             NEIGHBORS_QUERY="Failed to communicate with IRI API port. Check if IRI is active and if $HOME/.nbctl is configured correctly."
+        else
+            NEIGHBORS_QUERY="Unknown error"
+        fi
+        if [ -n "$RETURN_RES" ]; then
+            echo "$NEIGHBORS_QUERY"
+            return 1
         fi
         HEIGHT=$(expr $(echo "$NEIGHBORS_QUERY"|wc -l) + 7)
         whiptail --title "List neighbors failed" \
@@ -397,7 +407,7 @@ function list_neighbors() {
         return 1
     else
         NEIGHBORS=$( echo "$NEIGHBORS_QUERY" | jq -r '.neighbors[] | "\(.address)/\(.connectionType)"' )
-        if [ -n "$1" ]; then
+        if [ -n "$RETURN_RES" ]; then
             echo "$NEIGHBORS"
             return 0
         fi
@@ -455,11 +465,11 @@ function update_iric() {
 
     if [[ "$IRIC_VERSION" == "$VERSION" ]]; then
         whiptail --title "No Updates" \
-                 --msgbox "You are already have the latest version: $VERSION." \
+                 --msgbox "You already have the latest version: $VERSION." \
                  8 $WIDTH
         return
     fi
-        
+
     if (whiptail --title "Confirm Update" \
                  --yesno "Are you sure you want to update IRIC from '$VERSION' to '$IRIC_VERSION'?" \
                  8 $WIDTH) then
@@ -489,7 +499,7 @@ function show_lsmi() {
     LSMI_LOCAL=$(curl -f -m 5 -s $IRI_HOST -X POST -H "X-IOTA-API-Version: $IRI_API_VERSION" -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'| python -m json.tool|egrep "latestSolidSubtangleMilestoneIndex|latestMilestoneIndex"| sed 's/,//'|sed -e 's/^[ \t]*//'|sed 's/"//g')
     if [ $? -ne 0 ]; then
         whiptail --title "Query failed" \
-                 --msgbox "Error: failed query $LSMI_LOCAL" \
+                 --msgbox "Error: failed query ${LSMI_LOCAL}. Check if IRI is active and if $HOME/.nbctl is configured properly." \
                  12 $WIDTH
         return
     fi
@@ -518,7 +528,7 @@ function get_node_info() {
     NODE_INFO=$(curl -f -m 5 -s $IRI_HOST -X POST -H "X-IOTA-API-Version: $IRI_API_VERSION" -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'| jq -r 'to_entries[] | "\(.key): \(.value )"' | column -t | sort)
     if [ $? -ne 0 ]; then
         whiptail --title "Query failed" \
-                 --msgbox "Error: failed query $NODE_INFO" \
+                 --msgbox "Error: failed query ${NODE_INFO}. Check if IRI is active and if $HOME/.nbctl is configured properly." \
                  12 $WIDTH
         return
     fi
@@ -543,6 +553,7 @@ function service_cmd() {
     local OUTPUT
     local EXTRA_CMD
     local DISABLE
+    local STATE
     SERVICE=$1
     COMMAND=$2
     EXTRA_CMD=$3
@@ -550,18 +561,26 @@ function service_cmd() {
     echo "Running 'systemctl $COMMAND $SERVICE' ..."
     if [ "$EXTRA_CMD" == "disable" ]; then
         systemctl disable $SERVICE
-        DISABLE="and disabled"
+        STATE="and disable"
+    elif [ "$EXTRA_CMD" == "enable" ]; then
+        systemctl enable $SERVICE
+        STATE="enabled"
     fi
-    OUTPUT=$(systemctl $COMMAND $SERVICE 2>&1)
+
+    if [ "$EXTRA_CMD" != "enable" ]; then
+        OUTPUT=$(systemctl $COMMAND $SERVICE 2>&1)
+    else
+        OUTPUT=""
+    fi
     HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 7)
     if [ $? -ne 0 ]; then
         whiptail --title "Failed" \
                  --msgbox "$COMMAND $SERVICE failed: $OUTPUT" \
-                 $HEIGHT $WIDTH
+                 $HEIGHT 48
     else
         whiptail --title "Success" \
-                 --msgbox "$COMMAND $SERVICE OK $DISABLE" \
-                 $HEIGHT $WIDTH
+                 --msgbox "$COMMAND $SERVICE $STATE OK" \
+                 $HEIGHT 48
     fi
 }
 
@@ -578,15 +597,16 @@ function service_menu() {
     local SERVICE
     SERVICE=$1
     whiptail --title "$SERVICE Service" \
-             --menu "Choose an option. For logs use SHIFT-g to skip to end of log, or q to exit." \
+             --menu "For logs use SHIFT-g to skip to end of log, or q to exit." \
              --cancel-button "Back" \
              25 $WIDTH 16 \
     "a)" "Status" \
     "b)" "Start" \
     "c)" "Stop" \
     "d)" "Restart" \
-    "e)" "Disable" \
-    "f)" "View log" \
+    "e)" "Disable start on reboot" \
+    "f)" "Enable start on reboot" \
+    "g)" "View log" \
     3>&1 1>&2 2>&3
 }
 
@@ -627,6 +647,11 @@ function service() {
             ;;
 
         "f)")
+            service_cmd $SERVICE "" enable
+            service $SERVICE
+            ;;
+
+        "g)")
             service_log $SERVICE
             service $SERVICE
             ;;
@@ -714,6 +739,49 @@ function services() {
     esac
 }
 
+### Neighbors ###
+function neighbors_menu(){
+    whiptail --title "IRIC v${VERSION} - Neighbors" \
+             --menu "Choose an option" \
+             --cancel-button "Back" \
+              12 48 4 \
+    "a)" "Add Neighbors" \
+    "b)" "Remove neighbors" \
+    "c)" "List neighbors" \
+    3>&1 1>&2 2>&3
+}
+
+function neighbors(){
+    local CHOICE
+    CHOICE=$(neighbors_menu)
+    RC=$?
+    if [[ $RC -eq 1 ]]; then
+        return
+    fi
+
+    case "$CHOICE" in
+        "a)")
+            add_neighbors
+            neighbors
+            ;;
+
+        "b)")
+            remove_neighbors
+            neighbors
+            ;;
+
+        "c)")
+            list_neighbors
+            neighbors
+            ;;
+
+        *)
+            neighbors
+            ;;
+    esac
+}
+
+
 function main_menu() {
     whiptail --title "IRIC v${VERSION} - IRI Configuration Menu" \
              --menu "Choose an option" \
@@ -725,14 +793,12 @@ function main_menu() {
     "d)" "Update Monitoring" \
     "e)" "Enable HAProxy" \
     "f)" "Update HAProxy" \
-    "g)" "Add Neighbors" \
-    "h)" "Remove neighbors" \
-    "i)" "List neighbors" \
-    "j)" "Show LatestMilestoneIndex" \
-    "k)" "Get node info" \
-    "l)" "Manage services" \
-    "m)" "Get Fully Synced DB" \
-    "n)" "Update this utility" \
+    "g)" "Neighbors" \
+    "h)" "Show LatestMilestoneIndex" \
+    "i)" "Get node info" \
+    "j)" "Manage services" \
+    "k)" "Get Fully Synced DB" \
+    "l)" "Update this utility" \
     "Z)" "Configure this script" \
     3>&1 1>&2 2>&3
 }
@@ -783,41 +849,31 @@ function run_installer_menus() {
             ;;
 
         "g)")
-            add_neighbors
+            neighbors
             run_installer_menus
             ;;
 
         "h)")
-            remove_neighbors
-            run_installer_menus
-            ;;
-
-        "i)")
-            list_neighbors
-            run_installer_menus
-            ;;
-
-        "j)")
             show_lsmi
             run_installer_menus
             ;;
 
-        "k)")
+        "i)")
             get_node_info
             run_installer_menus
             ;;
 
-        "l)")
+        "j)")
             services
             run_installer_menus
             ;;
 
-        "m)")
+        "k)")
             get_db
             run_installer_menus
             ;;
 
-        "n)")
+        "l)")
             update_iric
             run_installer_menus
             ;;
