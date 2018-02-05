@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.1.4
+VERSION=0.1.5
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -541,9 +541,17 @@ function service_cmd() {
     local SERVICE
     local COMMAND
     local OUTPUT
+    local EXTRA_CMD
+    local DISABLE
     SERVICE=$1
     COMMAND=$2
+    EXTRA_CMD=$3
+
     echo "Running 'systemctl $COMMAND $SERVICE' ..."
+    if [ "$EXTRA_CMD" == "disable" ]; then
+        systemctl disable $SERVICE
+        DISABLE="and disabled"
+    fi
     OUTPUT=$(systemctl $COMMAND $SERVICE 2>&1)
     HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 7)
     if [ $? -ne 0 ]; then
@@ -552,7 +560,7 @@ function service_cmd() {
                  $HEIGHT $WIDTH
     else
         whiptail --title "Success" \
-                 --msgbox "$COMMAND $SERVICE OK" \
+                 --msgbox "$COMMAND $SERVICE OK $DISABLE" \
                  $HEIGHT $WIDTH
     fi
 }
@@ -577,7 +585,8 @@ function service_menu() {
     "b)" "Start" \
     "c)" "Stop" \
     "d)" "Restart" \
-    "e)" "View log" \
+    "e)" "Disable" \
+    "f)" "View log" \
     3>&1 1>&2 2>&3
 }
 
@@ -613,6 +622,11 @@ function service() {
             ;;
 
         "e)")
+            service_cmd $SERVICE stop disable
+            service $SERVICE
+            ;;
+
+        "f)")
             service_log $SERVICE
             service $SERVICE
             ;;
