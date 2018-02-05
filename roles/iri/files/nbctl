@@ -3,6 +3,7 @@ import argparse
 import tempfile
 import urllib2
 import hashlib
+import socket
 import yaml
 import json
 import sys
@@ -55,6 +56,10 @@ def parse_args():
     parser.add_argument('--host', '-i',
                         help='IRI API endpoint. Default: %s' %
                         DEFAULT_HOST)
+
+    parser.add_argument('--timeout', '-t',
+                        help='Timeout. Default: %(default)s',
+                        type=int, default=5)
 
     parser.add_argument('--api-version', '-x',
                         help='IRI API Version. Default: %s' %
@@ -120,13 +125,22 @@ def run():
 
     # Send to IRI API
     try:
-        return_data = urllib2.urlopen(request)
+        return_data = urllib2.urlopen(request, timeout=args.timeout)
     except urllib2.HTTPError as e:
         msg = e.read()
         sys.stderr.write('Request failed with code: %d, response: %s\n' % 
                          (e.code, msg))
         if 'hostname can\u0027t be null' in msg:
             sys.stderr.write('Probably invalid hostname/ip\n')
+        sys.exit(1)
+    except urllib2.URLError as e:
+        sys.stderr.write('Request failed: %s\n' % e)
+        sys.exit(1)
+    except socket.timeout as e:
+        sys.stderr.write('Socket timeout: %s\n' % e)
+        sys.exit(1)
+    except Exception as e:
+        sys.stderr.write('Unknown failure: %s\n' % e)
         sys.exit(1)
 
     json_data = json.loads(return_data.read())
