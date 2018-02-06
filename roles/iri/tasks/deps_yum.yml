@@ -57,3 +57,7 @@
     - htop
     - fpaste
     - openssl
+    - util-linux
+  tags:
+    - scripts
+    - deps

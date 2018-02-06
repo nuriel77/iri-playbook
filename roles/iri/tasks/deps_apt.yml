@@ -74,6 +74,10 @@
     - htop
     - pastebinit
     - openssl
+    - bsdmainutils
+  tags:
+    - deps
+    - scripts
 
 - name: set java home environment
   lineinfile:
