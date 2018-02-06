@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.2.6
+VERSION=0.2.7
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -128,13 +128,16 @@ function get_latest_nelson_release {
 
 function upgrade_nelson() {
     local RC
+    local NELSON_VERSION
+
     echo "Checking for updates..."
     local NELSON_LATEST=$(get_latest_nelson_release)
     if [[ $? -ne 0 ]]; then
         NELSON_LATEST=unknown
     fi
     clear
-    local NELSON_VERSION=$(nelson --version 2>&1)
+
+    NELSON_VERSION=$(nelson --version 2>&1)
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
                  --msgbox "ERROR: Is Nelson installed?\n$NELSON_VERSION" \
