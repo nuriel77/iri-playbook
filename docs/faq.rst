@@ -3,17 +3,6 @@
 FAQ
 ***
 
-* `UDP bad length`_
-* `How to tell if my node is synced`_
-* `How do I tell if I am syncing with my neighbors`_
-* `Where to get the latest milestone index from`_
-* `Why is latestSolidSubtangleMilestoneIndex always behind latestMilestoneIndex`_
-* `How to get my node swap less`_
-* `What are the revalidate and rescan options for`_
-* `Where can I get a fully synced database to help kick start my node`_
-* `I try to connect the light wallet to my node but get connection refused`_
-
-
 .. _whyAmISeeingUDPBadLength:
 
 UDP bad length
@@ -50,7 +39,7 @@ If you don't have tcpdump installed you can install it:
    On CentOS: yum install tcpdump -y
 
 
-.. howToTellNodeSynced::
+.. _howToTellNodeSynced:
 
 How to tell if my node is synced
 ================================
@@ -87,7 +76,7 @@ If you have problems getting in sync after a very long time, consider downloadin
 If the issue still persists, perhaps difficulties syncing are related to this: :ref:`whyAmISeeingUDPBadLength`
 
 
-.. howDoITellIfIamSyncing::
+.. _howDoITellIfIamSyncing:
 
 How do I tell if I am syncing with my neighbors
 ===============================================
@@ -99,7 +88,7 @@ Here's an example of a healthy neighbor, you can see it is also sending new tran
 
 |
 
-.. whereToGetLSMI::
+.. _whereToGetLSMI:
 
 Where to get the latest milestone index from
 ============================================
@@ -114,7 +103,7 @@ This is a value which is based on querying approximately 100 full nodes.
 At time of writing, we are still waiting for the official ``botbox`` to be added to IOTA's Discord chat application.
 
 
-.. whyIsLSMAlwaysBehind::
+.. _whyIsLSMAlwaysBehind:
 
 Why is latestSolidSubtangleMilestoneIndex always behind latestMilestoneIndex
 ============================================================================
@@ -131,7 +120,7 @@ What helped my node to sync was:
 * Finding "healthier" neighbors. This one is actually often hard to ascertain -- who is "healthy", probably other fully synced nodes.
 
 
-.. nodeSwapLess::
+.. _nodeSwapLess:
 
 How to get my node swap less
 ============================
@@ -160,7 +149,7 @@ You'll see that in this example nothing is being used.
 If a large "used" value appears for Swap, it might be a good idea to lower the value and restart IRI.
 
 
-.. revalidateExplain::
+.. _revalidateExplain:
 
 What are the revalidate and rescan options for
 ==============================================
@@ -227,7 +216,7 @@ This has been added recently (21 December 2017) so please contact me on `github 
 
 To shed some light on what these options actually do, you can read about it in `What are the revalidate and rescan options for`_
 
-.. lightWalletConnectionRefused::
+.. _lightWalletConnectionRefused:
 
 I try to connect the light wallet to my node but get connection refused
 =======================================================================

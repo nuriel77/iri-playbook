@@ -210,7 +210,7 @@ The IOTA Peer Manager can be accessed if you point your browser to: ``http://you
 
    The port 8811 will be configured by default unless you changed this before the installation in the variables file.
 
-.. limitingRemoteCommands::
+.. _limitingRemoteCommands:
 
 Limiting Remote Commands
 ========================

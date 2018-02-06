@@ -33,7 +33,7 @@ See examples in the chapters below:
   All web pages served by this installer will be served on HTTPS with self-signed certificates. The browser will issue a warning when you connect for the first time. You can proceed and accept the certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and look for the Let's encrypt
 link.
 
-.. controlingIRI::
+.. _controlingIRI:
 
 Controlling IRI
 ===============
@@ -65,7 +65,7 @@ Restart:
    systemctl restart iri
 
 
-.. controlingPM::
+.. _controlingPM:
 
 Controlling IOTA Peer Manager
 =============================
@@ -98,7 +98,7 @@ Restart:
    systemctl restart iota-pm
 
 
-.. checkPorts::
+.. _checkPorts:
 
 Checking Ports
 ==============
@@ -161,7 +161,7 @@ Note that the playbook installation automatically configured the firewall to all
 allow the new ports in the firewall (if you choose to do so, check google for iptables or firewalld commands).
 
 
-.. checkFullNode::
+.. _checkFullNode:
 
 Checking IRI Full Node Status
 =============================
@@ -177,6 +177,7 @@ The output you will see is JSON format.
 Using ``jq`` we can, for example, extract the fields of interest:
 
 .. code:: bash
+
    curl -s http://localhost:14265 -X POST -H 'X-IOTA-API-Version: someval' -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}' | jq '.latestSolidSubtangleMilestoneIndex, .latestMilestoneIndex'
 
 
@@ -186,7 +187,7 @@ Using ``jq`` we can, for example, extract the fields of interest:
   This is expected, and after a while (10-15 minutes) your node should start syncing (given that you have neighbors).
 
 
-.. connectPeerManager::
+.. _connectPeerManager:
 
 Connecting to IOTA Peer Manager
 ===============================
@@ -194,7 +195,7 @@ Connecting to IOTA Peer Manager
 For IOTA Peer Manager, this installation has already configured it to be accessible via a webserver. See :ref:`peerManagerBehindWebServerWithPassword`.
 
 
-.. addRemoveNeighbors::
+.. _addRemoveNeighbors:
 
 Adding or Removing Neighbors
 ============================
@@ -329,7 +330,7 @@ Edit the ``IRI_NEIGHBORS=""`` value as shown in the comment in the file.
   See :ref:`usingNano` for instructions on how to use ``nano`` for editing files.
 
 
-.. installPyota::
+.. _installPyota:
 
 Install IOTA Python libs
 ========================

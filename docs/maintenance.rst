@@ -10,7 +10,7 @@ Maintenance
 * `Replace Database`_
 
 
-.. upgradeIri::
+.. _upgradeIri:
 
 Upgrade IRI
 ===========
@@ -31,9 +31,11 @@ In the following example we assume that the new version is **1.4.2.1**.
 
 Make sure you are running all the commands as 'root' (run ``sudo su`` first). Then, download new IRI to the directory:
 
+
 .. code:: bash
 
    export IRIVER=1.4.2.1 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
+
 
 Then update the IRI configuration file in place using ``sed``:
 
@@ -63,7 +65,7 @@ Of course, replace the version with the one you expect to see.
 This should output ``found`` if okay.
 
 
-.. upgradeIotaMonitoring::
+.. _upgradeIotaMonitoring:
 
 Upgrade IOTA Monitoring
 =======================
@@ -90,7 +92,7 @@ Now you should be able to open Grafana and see the new row of metrics (ZMQ).
 
 If you encounter errors when running the command, depending on the error, please refer to :ref:`httpErrorUnauthorized` or :ref:`gitConflicts`.
 
-.. checkDatabaseSize:: 
+.. _checkDatabaseSize:
 
 Check Database Size
 ===================
@@ -106,7 +108,7 @@ You can check the size of the database using ``du -hs /var/lib/iri/target/mainne
    Don't worry about the /boot paritition though.
 
 
-.. checkLogs::
+.. _checkLogs:
 
 Check Logs
 ==========
@@ -127,7 +129,7 @@ Click 'Ctrl-C' to stop following and return to the prompt.
 Alternatively, omit the ``-f`` and use ``--no-pager`` to view the logs.
 
 
-.. replaceDatabase::
+.. _replaceDatabase:
 
 Replace Database
 ================

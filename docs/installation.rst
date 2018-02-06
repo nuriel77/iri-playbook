@@ -260,7 +260,7 @@ Fully Synchronized Database Download
 In order to get up to speed quickly you can download a fully sycned database. Please check :ref:`getFullySyncedDB`
 
 
-.. installComponents::
+.. _installComponents:
 
 Installing Only IOTA Peer Manager or Monitoring
 ===============================================

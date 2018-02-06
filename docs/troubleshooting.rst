@@ -237,9 +237,10 @@ Status::
 Error Starting or Restarting IRI
 ================================
 
+Examples of errors:
 
 Hostname can't be null
-^^^^^^^^^^^^^^^^^^^^^^
+----------------------
 
 If you get this message in the logs:
 
