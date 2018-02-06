@@ -295,10 +295,12 @@ function how_to_setup() {
 
 ### Neighbors ###
 function add_neighbors() {
-    local NEIGHBORS=
-    local HEIGHT=
-    local NBCTL_OUTPUT=
-    local RC=
+    local NEIGHBORS
+    local HEIGHT
+    local NBCTL_OUTPUT
+    local RC
+    local IRI_CONFIG
+
     NEIGHBORS=$(whiptail --inputbox "Enter a list of neighbors separated by space:" 8 $WIDTH --title "Add Neighbors" 3>&1 1>&2 2>&3)
     RC=$?
     if [[ $RC -ne 0 ]]; then
@@ -317,7 +319,9 @@ function add_neighbors() {
     if (whiptail --title "Add Neighbors" \
                  --yesno "The following neighbor(s) will be added:\n\n $NEIGHBORS" \
                  $HEIGHT $WIDTH) then
-        NBCTL_OUTPUT=$(nbctl -a $ADD_LIST 2>&1)
+        IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
+        [ -n "$IRI_CONFIG" ] && IRI_CONFIG="-f $IRI_CONFIG"
+        NBCTL_OUTPUT=$(nbctl -a $ADD_LIST $IRI_CONFIG 2>&1)
         RC=$?
         if [[ $RC -eq 0 ]]; then
             HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 7)
@@ -341,6 +345,8 @@ function remove_neighbors() {
     local NEIGHBORS
     local NEIGHBOR
     local HEIGHT
+    local IRI_CONFIG
+
     echo "Getting neighbors list..."
     NEIGHBORS=$(list_neighbors get)
     RC=$?
@@ -374,7 +380,9 @@ function remove_neighbors() {
                  --yesno "Are you sure you want to remove: ${SCHEME}://${ADDRESS}" \
                  8 $WIDTH)
     then
-        REMOVAL_OUTPUT=$(nbctl -r -n "${SCHEME}://${ADDRESS}" 2>&1)
+        IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
+        [ -n "$IRI_CONFIG" ] && IRI_CONFIG="-f $IRI_CONFIG"
+        REMOVAL_OUTPUT=$(nbctl -r -n "${SCHEME}://${ADDRESS}" $IRI_CONFIG 2>&1)
         if [ $? -eq 0 ];then
             whiptail --title "Removed successfully" \
                      --msgbox "$REMOVAL_OUTPUT" \
