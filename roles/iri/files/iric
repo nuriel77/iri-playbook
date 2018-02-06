@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.2.0
+VERSION=0.2.1
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -457,8 +457,24 @@ function get_latest_iric_version() {
     curl -s -f -m 5 -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric|grep ^VERSION|cut -d= -f2
 }
 
+function check_new_iri() {
+    local CURR_VERSION=$VERSION
+    local IRIC_VERSION=$(get_latest_iric_version 2>&1)
+    if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
+        return 1
+    fi
+    IRIC_VERSION=$(to_digits $IRIC_VERSION)
+    CURR_VERSION=$(to_digits $CURR_VERSION)
+    if [[ $IRIC_VERSION -gt $CURR_VERSION ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function update_iric() {
     local IRIC_VERSION=$(get_latest_iric_version 2>&1)
+    local CURR_VERSION=$VERSION
     if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
         whiptail --title "IRIC Update Failed" \
                  --msgbox "Failed to get IRIC version from github." \
@@ -466,7 +482,9 @@ function update_iric() {
         return 1
     fi
 
-    if [[ "$IRIC_VERSION" == "$VERSION" ]]; then
+    IRIC_VERSION=$(to_digits $IRIC_VERSION)
+    CURR_VERSION=$(to_digits $CURR_VERSION)
+    if [[ $IRIC_VERSION -gt $CURR_VERSION ]]; then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $VERSION." \
                  8 $WIDTH
@@ -786,8 +804,13 @@ function neighbors(){
 
 
 function main_menu() {
+    local MENU="Choose an option"
+    if check_new_iri; then
+        MENU="${MENU}\n(*IRIC update available)"
+    fi
+
     whiptail --title "IRIC v${VERSION} - IRI Configuration Menu" \
-             --menu "Choose an option" \
+             --menu "$MENU" \
              --cancel-button "Exit" \
               25 $WIDTH 16 \
     "a)" "Enable Nelson" \
