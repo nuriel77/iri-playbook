@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.2.2
+VERSION=0.2.3
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -454,7 +454,8 @@ function get_db() {
 
 ## IRIC
 function get_latest_iric_version() {
-    curl -s -f -m 5 -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric|grep ^VERSION|cut -d= -f2
+    local RAND=$(echo -n $(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 7 | head -n 1))
+    curl -s -f -m 5 -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric?nocache=$RAND"|grep ^VERSION|cut -d= -f2
 }
 
 function check_new_iri() {
