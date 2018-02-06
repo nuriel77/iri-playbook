@@ -133,6 +133,7 @@ function upgrade_nelson() {
     if [[ $? -ne 0 ]]; then
         NELSON_LATEST=unknown
     fi
+    clear
     local NELSON_VERSION=$(nelson --version 2>&1)
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
@@ -179,6 +180,7 @@ function upgrade_iri() {
     if [[ $? -ne 0 ]]; then
         IRI_LATEST=unknown
     fi
+    clear
     local IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
@@ -232,6 +234,7 @@ function upgrade_iri() {
     echo "Restart IRI, this can take a few moments..."
     systemctl restart iri
     pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press any key to return to menu."
+    clear
 }
 
 ### Monitoring ###
@@ -254,6 +257,7 @@ function upgrade_monitoring() {
         # Upgrade iota-prom-exporter and dashboards
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
         pause "Update finished successfully if 'failed=0'. Press any key to return to menu."
+        clear
     fi
 }
 
@@ -340,6 +344,7 @@ function remove_neighbors() {
     echo "Getting neighbors list..."
     NEIGHBORS=$(list_neighbors get)
     RC=$?
+    clear
     if [[ $RC -ne 0 ]]; then
         whiptail --title "Neighbors Failed" \
                  --msgbox "Failed to get list of neighbors: $NEIGHBORS" \
@@ -448,6 +453,7 @@ function get_db() {
             return 1
         else
             pause "Done! Please check IRI's status and logs to verify it is error free."
+            clear
         fi
     fi
 }
@@ -504,6 +510,7 @@ function update_iric() {
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
         pause "Task finished successfully if 'failed=0'. Press any key to return to menu."
+        clear
         exec "$0"
     fi
 }
