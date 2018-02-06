@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.2.4
+VERSION=0.2.5
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -489,9 +489,9 @@ function update_iric() {
         return 1
     fi
 
-    IRIC_VERSION=$(to_digits $IRIC_VERSION)
-    CURR_VERSION=$(to_digits $CURR_VERSION)
-    if [[ $IRIC_VERSION -gt $CURR_VERSION ]]; then
+    IRIC_VERSION_DIGITS=$(to_digits $IRIC_VERSION)
+    local CURR_VERSION_DIGITS=$(to_digits $CURR_VERSION)
+    if [[ $IRIC_VERSION_DIGITS -le $CURR_VERSION_DIGITS ]]; then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $VERSION." \
                  8 $WIDTH
