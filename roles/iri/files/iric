@@ -353,8 +353,8 @@ function remove_neighbors() {
         return
     fi
     HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 5)
-    read -ra NEIGHBORS_ARRAY <<<$(echo "$NEIGHBORS")
-    read -ra NEIGHBORS_ARRAY_INDEXED <<<$(echo "$NEIGHBORS"| awk '!/^ / && NF { print NR")"; print $1}')
+    NEIGHBORS_ARRAY=($(echo "$NEIGHBORS"))
+    NEIGHBORS_ARRAY_INDEXED=($(echo "$NEIGHBORS"| awk '!/^ / && NF { print NR")"; print $1}'))
     NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 $WIDTH 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
     if [ $? -eq 1 ]; then
         return
