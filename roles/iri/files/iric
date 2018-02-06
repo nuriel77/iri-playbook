@@ -11,7 +11,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
-VERSION=0.2.5
+VERSION=0.2.6
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
