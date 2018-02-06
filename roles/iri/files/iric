@@ -428,6 +428,9 @@ function list_neighbors() {
 function get_db() {
     XVPS_SOURCE="https://x-vps.com/iota.db.tgz"
     DB_SOURCE=$(whiptail --inputbox "This action will download and boostrap a fully synced database.\nChoose a source where to download the database from:" 8 $WIDTH  $XVPS_SOURCE --title "IRIC v${VERSION} - Download Database" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]]; then
+        return
+    fi
 
     if [ "$DB_SOURCE" == "$XVPS_SOURCE" ]; then
         LAST_UPDATED=$(curl -m 4 -f -s https://x-vps.com/index.php | sed 's/^.*\(iota.db.tgz was last updated at: .*\)\..*$/\1/' 2>/dev/null)
