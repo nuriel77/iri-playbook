@@ -7,6 +7,14 @@ Due to the exponential growth of the community and users who want to run their o
 
 Not only a tutorial: the iri-playbook is a full fledged IOTA node installer including a comprehensive installer.
 
+.. note::
+
+  Checkout the new addition to the playbook: a handy tool to help manage the full node's services:
+
+.. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/iric_01.png
+         :alt: iric01
+
+
 Why Another Tutorial?
 =====================
 
