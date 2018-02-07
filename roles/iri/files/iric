@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.2.9
+VERSION=0.2.91
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -32,6 +32,43 @@ function cleanup() {
 
 trap cleanup INT TERM EXIT
 
+
+# Version Compare
+
+vercomp () {
+    if [[ $1 == $2 ]]; then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++)); do
+        if [[ -z ${ver2[i]} ]];  then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]})); then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]})); then
+            return 2
+        fi
+    done
+    return 0
+}
+
+testvercomp () {
+    vercomp $1 $2
+    case $? in
+        0) op='=';;
+        1) op='>';;
+        2) op='<';;
+    esac
+    [[ $op != $3 ]] && return 1 || return 0
+}
 
 # Experimental Admin settings
 function set_admin_user() {
@@ -147,7 +184,7 @@ function upgrade_nelson() {
         return 1
     fi
 
-    if [ "$NELSON_VERSION" == "$NELSON_LATEST" ]; then
+    if (testvercomp "$NELSON_VERSION" "$NELSON_LATEST" "=") || (testvercomp "$NELSON_VERSION" "$NELSON_LATEST" ">" ); then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $NELSON_VERSION" \
                  8 $WIDTH
@@ -174,16 +211,15 @@ function get_latest_iri_release {
     curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest  | awk '/tag_name/{print $2}' | tr -d '"v,'
 }
 
-function to_digits {
-    tr -cd 0-9 <<<"$@"
-}
-
 function upgrade_iri() {
     local RC
     echo "Checking for updates..."
     local IRI_LATEST=$(get_latest_iri_release)
     if [[ $? -ne 0 ]]; then
-        IRI_LATEST=unknown
+        whiptail --title "Error!" \
+                 --msgbox "ERROR: Failed to get IRI latest version\n${IRI_LATEST}" \
+                 8 $WIDTH
+        return 1
     fi
     clear
     local IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
@@ -193,8 +229,8 @@ function upgrade_iri() {
                  8 $WIDTH
         return 1
     fi
-
-    if [ $(to_digits $IRI_VERSION) -eq $(to_digits $IRI_LATEST) ]; then
+    
+    if (testvercomp "$IRI_VERSION" "$IRI_LATEST" "=") || (testvercomp "$IRI_VERSION" "$IRI_LATEST" ">" ); then
         if ! (whiptail --title "No Updates" \
                  --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
                  10 $WIDTH) then
@@ -483,12 +519,11 @@ function check_new_iri() {
     if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
         return 1
     fi
-    IRIC_VERSION=$(to_digits $IRIC_VERSION)
-    CURR_VERSION=$(to_digits $CURR_VERSION)
-    if [[ $((10#$IRIC_VERSION)) -gt $((10#$CURR_VERSION)) ]]; then
-        return 0
-    else
+
+    if (testvercomp "$CURR_VERSION" "$IRIC_VERSION" "=") || (testvercomp "$CURR_VERSION" "$IRIC_VERSION" ">" ); then
         return 1
+    else
+        return 0
     fi
 }
 
@@ -502,9 +537,7 @@ function update_iric() {
         return 1
     fi
 
-    IRIC_VERSION_DIGITS=$(to_digits $IRIC_VERSION)
-    local CURR_VERSION_DIGITS=$(to_digits $CURR_VERSION)
-    if [[ $((10#$IRIC_VERSION_DIGITS)) -le $((10#$CURR_VERSION_DIGITS)) ]]; then
+    if (testvercomp "$CURR_VERSION" "$IRIC_VERSION" "=") || (testvercomp "$CURR_VERSION" "$IRIC_VERSION" ">" ); then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $VERSION." \
                  8 $WIDTH
