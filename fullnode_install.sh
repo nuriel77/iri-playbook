@@ -15,9 +15,14 @@ if [[ $EUID -ne 0 ]]; then
    echo "Please change to root: 'sudo su -' and re-run"
    exit 1
 fi
+export NEWT_COLORS='
+window=,
+'
 
 clear
 cat <<'EOF'
+
+
                                                                    .odNMMmy:                       
                                                                    /MMMMMMMMMy                      
                                                                   `NMMMMMMMMMM:                     
