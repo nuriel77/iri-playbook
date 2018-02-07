@@ -504,7 +504,7 @@ function update_iric() {
 
     IRIC_VERSION_DIGITS=$(to_digits $IRIC_VERSION)
     local CURR_VERSION_DIGITS=$(to_digits $CURR_VERSION)
-    if [[ $IRIC_VERSION_DIGITS -le $CURR_VERSION_DIGITS ]]; then
+    if [[ $((10#$IRIC_VERSION_DIGITS)) -le $((10#$CURR_VERSION_DIGITS)) ]]; then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $VERSION." \
                  8 $WIDTH
