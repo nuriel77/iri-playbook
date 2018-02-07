@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.2.8
+VERSION=0.2.9
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -485,7 +485,7 @@ function check_new_iri() {
     fi
     IRIC_VERSION=$(to_digits $IRIC_VERSION)
     CURR_VERSION=$(to_digits $CURR_VERSION)
-    if [[ $IRIC_VERSION -gt $CURR_VERSION ]]; then
+    if [[ $((10#$IRIC_VERSION)) -gt $((10#$CURR_VERSION)) ]]; then
         return 0
     else
         return 1
