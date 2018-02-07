@@ -11,6 +11,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
+[ -f "$HOME/.iric" ] && . "$HOME/.iric"
+EDITOR="${EDITOR:-nano}"
 VERSION=0.2.7
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -526,6 +528,68 @@ function update_iric() {
     fi
 }
 
+### Configs ###
+function choose_editor() {
+    USER_CHOICE=$(whiptail --inputbox "Choose a default text editor:" 8 $WIDTH ${EDITOR} --title "Choose Editor" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]]; then
+        return
+    fi
+
+    which $USER_CHOICE >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+        whiptail --title "Error!" \
+                 --msgbox "ERROR: Invalid editor or editor not found on system." \
+                 8 $WIDTH
+        return 1
+    fi
+
+    EDITOR=$USER_CHOICE
+    if ! grep -q "^export EDITOR" $HOME/.iric; then
+        echo "export EDITOR=${EDITOR}" >> $HOME/.iric
+    else
+        sed -i "s/^export EDITOR=.*/export EDITOR=${EDITOR}/g" $HOME/.iric
+    fi
+}
+
+function edit_config_file() {
+    local CONFIG=$1
+    local SERVICE=$2
+
+    BEFORE_EDIT=$(md5sum $CONFIG | awk {'print $1'})
+    $EDITOR ${CONFIG}
+    AFTER_EDIT=$(md5sum $CONFIG | awk {'print $1'})
+
+    if [[ "$AFTER_EDIT" != "$BEFORE_EDIT" ]]; then
+        if (whiptail --title "File Modified" \
+                     --yesno "${CONFIG} file was modified.\n${SERVICE} requires a restart to pick up the new changes.\nDo you want to restart it now?" \
+                     8 $WIDTH) then
+            service_cmd $SERVICE restart
+        fi
+    fi
+}
+
+function edit_config() {
+    local CONFIG_FILE=$1
+    local SERVICE=$2
+    if [ ! -f $CONFIG_FILE ]; then
+        whiptail --title "Missing File" \
+                 --msgbox "Error: cannot find '$CONFIG_FILE'" \
+                 8 $WIDTH
+        return 1
+    fi
+
+    # Make backup for restores
+    if [ ! -f ${CONFIG_FILE}.original ]; then
+        cp ${CONFIG_FILE} ${CONFIG_FILE}.original
+    fi
+
+    if edit_config_file ${CONFIG_FILE} ${SERVICE}; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 ### Node info ###
 function show_lsmi() {
     if [ ! -f $HOME/.nbctl ]; then
@@ -622,6 +686,7 @@ function service_cmd() {
                  --msgbox "$COMMAND $SERVICE $STATE OK" \
                  $HEIGHT 48
     fi
+    clear
 }
 
 function service_log() {
@@ -779,6 +844,86 @@ function services() {
     esac
 }
 
+### Configure files ###
+function configure_files_menu() {
+    whiptail --title "IRIC v${VERSION} - Configure Files" \
+             --menu "Choose an option" \
+             --cancel-button "Back" \
+              18 48 8 \
+    "a)" "IRI System Config" \
+    "b)" "IRI INI Config" \
+    "c)" "IOTA Prom Expoter Config" \
+    "d)" "AlertManager Config" \
+    "e)" "Prometheus Config" \
+    "f)" "Prometheus Alerts" \
+    "g)" "Nelson Config" \
+    "Z)" "Choose Editor" \
+    3>&1 1>&2 2>&3
+}
+
+function configure_files() {
+    local CHOICE
+    CHOICE=$(configure_files_menu)
+    RC=$?
+    if [[ $RC -eq 1 ]]; then
+        return
+    fi
+
+    case "$CHOICE" in
+        "a)")
+            local IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2 | sed 's/ //g')
+            if [[ $? -ne 0 ]] || [ -z "$IRI_CONFIG" ]; then
+                whiptail --title "Missing .nbctl data" \
+                         --msgbox "Error: cannot find file value in $HOME/.nbctl" \
+                         8 $WIDTH
+                return 1
+            fi
+            edit_config "$IRI_CONFIG" "iri"
+            configure_files
+            ;;
+
+        "b)")
+            edit_config "/var/lib/iri/iri.ini" "iri"
+            configure_files
+            ;;
+
+        "c)")
+            edit_config "/opt/prometheus/iota-prom-exporter/config.js" "iota-prom-exporter"
+            configure_files
+            ;;
+
+        "d)")
+            edit_config "/opt/prometheus/alertmanager/config.yml" "alertmanager"
+            configure_files
+            ;;
+
+        "e)")
+            edit_config "/etc/prometheus/prometheus.yml" "prometheus"
+            configure_files
+            ;;
+
+        "f)")
+            edit_config "/etc/prometheus/alert.rules.yml" "prometheus"
+            configure_files
+            ;;
+
+        "g)")
+            edit_config "/etc/nelson/nelson.ini" "nelson"
+            configure_files
+            ;;
+
+        "Z)")
+            choose_editor
+            configure_files
+            ;;
+
+        *)
+            configure_files
+            ;;
+    esac
+
+}
+
 ### Neighbors ###
 function neighbors_menu(){
     whiptail --title "IRIC v${VERSION} - Neighbors" \
@@ -840,11 +985,12 @@ function main_menu() {
     "f)" "Update HAProxy" \
     "g)" "Neighbors" \
     "h)" "Show LatestMilestoneIndex" \
-    "i)" "Get node info" \
-    "j)" "Manage services" \
+    "i)" "Get Node Info" \
+    "j)" "Manage Services" \
     "k)" "Get Fully Synced DB" \
-    "l)" "Update this utility" \
-    "Z)" "Configure this script" \
+    "l)" "Configure Files" \
+    "m)" "Update IRIC" \
+    "Z)" "Configure this Script" \
     3>&1 1>&2 2>&3
 }
 
@@ -919,6 +1065,11 @@ function run_installer_menus() {
             ;;
 
         "l)")
+            configure_files
+            run_installer_menus
+            ;;
+
+        "m)")
             update_iric
             run_installer_menus
             ;;
