@@ -145,6 +145,9 @@ http_port = {{ grafana_port }}
 admin_user = {{ iotapm_nginx_user }}
 
 # default admin password, can be changed before first start of grafana,  or in profile settings
+# ### NOTE: If the admin password has already been set, changing it here will not change it in the database.
+# ### You will HAVE to stop grafana, remove the database file, set a new password here and restart grafana.
+# ### See http://iri-playbook.readthedocs.io/en/master/troubleshooting.html#solution-b
 admin_password = {% if iotapm_nginx_password | regex_search('#|;') %}"""{% endif %}{{ iotapm_nginx_password }}{% if iotapm_nginx_password | regex_search('#|;') %}"""{% endif %}
 
 # used for signing
@@ -292,9 +295,9 @@ host = localhost:25
 ;password =
 ;cert_file =
 ;key_file =
-;skip_verify = false
-;from_address = admin@grafana.localhost
-;from_name = Grafana
+skip_verify = true
+from_address = {{ grafana_from_email }}
+from_name = Grafana
 # EHLO identity in SMTP dialog (defaults to instance_name)
 ;ehlo_identity = dashboard.example.com
 
