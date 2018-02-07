@@ -296,7 +296,7 @@ host = localhost:25
 ;cert_file =
 ;key_file =
 skip_verify = true
-from_address = {{ grafana_from_email }}
+from_address = admin@{{ ansible_hostname }}
 from_name = Grafana
 # EHLO identity in SMTP dialog (defaults to instance_name)
 ;ehlo_identity = dashboard.example.com

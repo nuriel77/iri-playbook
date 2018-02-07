@@ -32,5 +32,3 @@ smtp_host: localhost
 smtp_port: 25
 
 prom_am_executor_port: 9158
-
-grafana_from_email: admin@grafana.fullnode.io
