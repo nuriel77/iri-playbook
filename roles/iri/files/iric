@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.2.92
+VERSION=0.2.93
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -157,7 +157,8 @@ function enable_nelson() {
              return 1
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
-        pause "Installation finished successfully if 'failed=0'. Press any key to return to menu."
+        [[ $? -ne 0 ]] && MSG="Enabling Nelson failed!!! Check output above for errors." || MSG="Installation finished successfully!"
+        pause "$MSG Press any key to return to menu."
     fi
 }
 
@@ -202,7 +203,8 @@ function upgrade_nelson() {
              return 1
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "upgrade_nelson=true" -e "nelson_enabled=true"
-        pause "Update finished successfully if 'failed=0'. Press any key to return to menu."
+        [[ $? -ne 0 ]] && MSG="Updating Nelson failed!!! Check output above for errors." || MSG="Update finished successfully!"
+        pause "$MSG Press any key to return to menu."
     fi
 }
 
@@ -297,7 +299,8 @@ function upgrade_monitoring() {
 
         # Upgrade iota-prom-exporter and dashboards
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
-        pause "Update finished successfully if 'failed=0'. Press any key to return to menu."
+        [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
+        pause "$MSG Press any key to return to menu."
         clear
     fi
 }
@@ -320,7 +323,8 @@ function enable_haproxy() {
         fi
 
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
-        pause "Task finished successfully if 'failed=0'. Press any key to return to menu."
+        [[ $? -ne 0 ]] && MSG="Enabling HAProxy failed!!! Check output above for errors." || MSG="Installation finished successfully!"
+        pause "$MSG Press any key to return to menu."
     fi
 }
 
@@ -555,7 +559,8 @@ function update_iric() {
              return 1
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
-        pause "Task finished successfully if 'failed=0'. Press any key to return to menu."
+        [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully!"
+        pause "$MSG Press any key to return to menu."
         clear
         exec "$0"
     fi
