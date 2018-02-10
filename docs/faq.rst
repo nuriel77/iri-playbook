@@ -3,44 +3,6 @@
 FAQ
 ***
 
-.. _whyAmISeeingUDPBadLength:
-
-UDP bad length
-==============
-
-If you happen to run tcpdump on the udp port and see lots of ``UDP, bad length 1650 > 1472`` messages, consider switching these neighbors to TCP.
-
-1. run `ip a`.
-2. This should output a list of your interfaces.
-3. In most cases you will see one interface called eth0, which is normally the main interface.
-4. Find the number next to `mtu`, e.g.:
-
-.. code:: bash
-
-   2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-
-5. If the value is 1500 and most of your neighbors are connected using UDP you are going to experience packet fragmentation. It is better to switch to TCP connections in this case.
-6. If your interface supports jumbo-frames (mtu 9000) you have no problem with packets fragmentation.
-
-If your neighbor supports larger frames (jumbo frames) you can still connect to him using his UDP port. Your neighbor better switch to your TCP port ad.
-
-
-To run tcp dump (use the UDP IRI port here and your main interface):
-
-.. code:: bash
-
-   tcpdump -nn -i eth0 udp port 14600
-
-If you don't have tcpdump installed you can install it:
-
-.. code:: bash
-
-   On Ubuntu: apt-get install tcpdump -y
-   On CentOS: yum install tcpdump -y
-
-
-.. _howToTellNodeSynced:
-
 How to tell if my node is synced
 ================================
 
@@ -96,7 +58,7 @@ It used to be possible via the botbox on Slack. And since Slack is no longer in 
 
 .. code:: bash
 
-  curl https://x-vps.com/lsmi | jq
+  curl https://x-vps.com/lsmi | jq .
 
 This is a value which is based on querying approximately 100 full nodes.
 
