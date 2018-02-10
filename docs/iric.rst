@@ -18,6 +18,14 @@ Instead of having to copy & paste long commands from the documentation, one can 
 Feel free to use it. Feedback is most welcome.
 
 
+If you don't have ``iric`` installed (older playbook installations) you can add it by running:
+
+.. code:: bash
+
+  cd /opt/iri-playbook/ && git pull && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
+
+
+
 To run the utility, type: ``iric``. This will open it up:
 
 .. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/iric_01.png
