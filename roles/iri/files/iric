@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.2.93
+VERSION=0.2.94
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -491,10 +491,12 @@ function get_db() {
     fi
 
     if [ "$DB_SOURCE" == "$XVPS_SOURCE" ]; then
-        LAST_UPDATED=$(curl -m 4 -f -s https://x-vps.com/index.php | sed 's/^.*\(iota.db.tgz was last updated at: .*\)\..*$/\1/' 2>/dev/null)
+        local JSON_OUTPUT=$(curl -H "Content-Type: application/json" -m 4 -f -s https://x-vps.com/index.php 2>/dev/null)
+        local FILE_SIZE=$(echo "$JSON_OUTPUT" | jq -r .file_size)
+        local LAST_UPDATED=$(echo "$JSON_OUTPUT" | jq -r .last_updated)
     fi
     if (whiptail --title "Confirm DB" \
-                 --yesno "Download new database from '$DB_SOURCE'?\n\n${LAST_UPDATED}" \
+                 --yesno "Download new database from '$DB_SOURCE'?\n\nupdated: ${LAST_UPDATED}, size: ${FILE_SIZE}" \
                  12 $WIDTH) then
         TFILE=$(mktemp /tmp/iota.db.tgz.XXXXXXXXX)
         cd /tmp && wget -O $TFILE "$DB_SOURCE" && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb/ && echo "Extracting DB files..." && pv $TFILE | tar xzf - -C /var/lib/iri/target/mainnetdb/ && chown iri.iri /var/lib/iri -R && rm -f $TFILE && systemctl start iri
