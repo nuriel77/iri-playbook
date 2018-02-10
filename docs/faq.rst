@@ -75,8 +75,10 @@ At time of writing, and to the best of my knowledge, there is not one definitive
 
 I have noticed that this problem exacerbates when the database is relatively large (5GB+). This is mostly never a problem right after a snapshot, when things run much smoother. This might also be related to ongoing "bad" spam attacks directed against the network.
 
-What helped my node to sync was:
+Some things to try:
 
+* Check your IRI logs. Some case in the past have shown a component failing (e.g. ZMQ) which caused milestone to get stuck. The logs might help identify errors. You can use ``iric`` to view logs (Manage Service->IRI->View log). If you don't have ``iric`` you can install it :ref:`iric`.
+* If there's nothing seen in IRI logs (no errors), check other services.
 * `How to get my node swap less`_
 * `Where can I get a fully synced database to help kick start my node`_
 * Finding "healthier" neighbors. This one is actually often hard to ascertain -- who is "healthy", probably other fully synced nodes.
