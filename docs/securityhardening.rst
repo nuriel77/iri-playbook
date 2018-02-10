@@ -43,11 +43,11 @@ If you already have a user with sudo privileges you can skip this part.
 
 
 
-1. Create the user, you can choose a name:
+1. Create the user, you can choose a name, and a home directory:
 
 .. code:: bash
 
-  useradd myuser
+  useradd -m -d /home/myusername myusername
 
 2. Set a password for the new user:
 
