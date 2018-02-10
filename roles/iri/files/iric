@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.2.94
+VERSION=0.2.95
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -683,6 +683,22 @@ function get_node_info() {
              $HEIGHT $WIDTH
 }
 
+### PS MEM ###
+function view_ps_mem() {
+    which ps_mem >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Missing ps_mem" \
+         --msgbox "Error: cannot find 'ps_mem' utility!" \
+         8 $WIDTH
+         return 1
+    fi
+
+    whiptail --title "ps_mem utility" \
+             --msgbox "This utility shows a per-process total memory usage.\nUse arrows or page up/down to scroll and q to exit." \
+             8 $WIDTH
+    ps_mem|less
+}
+
 ### Services ###
 function service_status() {
     local SERVICE
@@ -1029,12 +1045,13 @@ function main_menu() {
     "j)" "Manage Services" \
     "k)" "Get Fully Synced DB" \
     "l)" "Configure Files" \
-    "m)" "Update IRIC" \
+    "m)" "View Per Processes Memory Usage" \
+    "n)" "Update IRIC" \
     "Z)" "Configure this Script" \
     3>&1 1>&2 2>&3
 }
 
-function run_installer_menus() {
+function run_main_menu() {
     local CHOICE
     CHOICE=$(main_menu)
     RC=$?
@@ -1046,78 +1063,83 @@ function run_installer_menus() {
 
         "Z)")
             how_to_setup
-            run_installer_menus
+            run_main_menu
             ;;
 
         "a)")
             enable_nelson
-            run_installer_menus
+            run_main_menu
             ;;
 
         "b)")
             upgrade_nelson
-            run_installer_menus
+            run_main_menu
             ;;
 
         "c)")
             upgrade_iri
-            run_installer_menus
+            run_main_menu
             ;;
 
         "d)")
             upgrade_monitoring
-            run_installer_menus
+            run_main_menu
             ;;
 
         "e)")
             enable_haproxy
-            run_installer_menus
+            run_main_menu
             ;;
 
         "f)")
             enable_haproxy "This will update the haproxy.cfg file to the latest version. Continue?"
-            run_installer_menus
+            run_main_menu
             ;;
 
         "g)")
             neighbors
-            run_installer_menus
+            run_main_menu
             ;;
 
         "h)")
             show_lsmi
-            run_installer_menus
+            run_main_menu
             ;;
 
         "i)")
             get_node_info
-            run_installer_menus
+            run_main_menu
             ;;
 
         "j)")
             services
-            run_installer_menus
+            run_main_menu
             ;;
 
         "k)")
             get_db
-            run_installer_menus
+            run_main_menu
             ;;
 
         "l)")
             configure_files
-            run_installer_menus
+            run_main_menu
             ;;
 
         "m)")
+            view_ps_mem
+            run_main_menu
+            ;;
+
+        "n)")
             update_iric
-            run_installer_menus
+            run_main_menu
             ;;
 
         *)
-            run_installer_menus
+            run_main_menu
             ;;
     esac
 }
 
-run_installer_menus
+run_main_menu
