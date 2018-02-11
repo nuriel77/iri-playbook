@@ -43,7 +43,7 @@ and Peer Manager via::
 
 * You can use the user ``iotapm`` and the password you've configured during the installation.
 
-* You should be redirected to a HTTPS URL (this has been added recently). This is a currenrly a self-signed certificate, so you will get a warning from the browser. You can add the certificate as an exception.
+* You should be redirected to a HTTPS URL (this has been added recently). This is a self-signed certificate: you will get a warning from the browser. You can add the certificate as an exception and proceed. In the 'appendix' chapter there's some information how to install valid certificates (certbot).
 
 * Please consider hardening the security of your node. Any server is a target for attacks/brute forcing. Even more so if you are going to list your node publicly. See :ref:`securityHardening`.
 
