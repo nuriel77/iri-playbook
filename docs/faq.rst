@@ -58,7 +58,7 @@ It used to be possible via the botbox on Slack. And since Slack is no longer in 
 
 .. code:: bash
 
-  curl https://x-vps.com/lsmi | jq .
+  curl https://x-vps.com/lmsi | jq .
 
 This is a value which is based on querying approximately 100 full nodes.
 

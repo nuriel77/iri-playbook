@@ -631,7 +631,7 @@ function edit_config() {
 }
 
 ### Node info ###
-function show_lsmi() {
+function show_lmsi() {
     if [ ! -f $HOME/.nbctl ]; then
         whiptail --title "Missing .nbctl" \
                  --msgbox "Error: cannot find $HOME/.nbctl" \
@@ -648,7 +648,7 @@ function show_lsmi() {
         return
     fi
 
-    local LSMI_QUERY=$(curl -H 'Cache-Control: no-cache' -s -f -m 5 https://x-vps.com/lsmi|jq -r .latestMilestoneIndex 2>/dev/null)
+    local LSMI_QUERY=$(curl -H 'Cache-Control: no-cache' -s -f -m 5 https://x-vps.com/lmsi|jq -r .latestMilestoneIndex 2>/dev/null)
     if [ $? -eq 0 ]; then
         OUTPUT="Latest milestone index: ${LSMI_QUERY}\n\n"
     else
@@ -1102,7 +1102,7 @@ function run_main_menu() {
             ;;
 
         "h)")
-            show_lsmi
+            show_lmsi
             run_main_menu
             ;;
 
