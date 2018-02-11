@@ -173,7 +173,7 @@ and allow the node installer to proceed with the installation.
 >>> To reboot run: 'shutdown -r now', when back online:
 bash <(curl https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
-!! Remember to re-run this script inside a "screen" session: 'screen -S iota' !!
+!! Remember to re-run this script as root !!
 
 
 EOF
