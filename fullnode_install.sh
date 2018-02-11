@@ -11,10 +11,11 @@ set -o pipefail
 set -e
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root"
-   echo "Please change to root: 'sudo su -' and re-run"
+   echo "This script must be run as user root"
+   echo "Please change to root using: 'sudo su -' and re-run the script"
    exit 1
 fi
+
 export NEWT_COLORS='
 window=,
 '
@@ -23,54 +24,54 @@ clear
 cat <<'EOF'
 
 
-                                                                   .odNMMmy:                       
-                                                                   /MMMMMMMMMy                      
-                                                                  `NMMMMMMMMMM:                     
-                                                                   mMMMMMMMMMM-                     
-                                `::-                               -dMMMMMMMN/                      
-                    `+sys/`    sNMMMm/   /ydho`                      :oyhhs/`                       
-                   :NMMMMMm-  -MMMMMMm  :MMMMMy  .+o/`                                              
-                   hMMMMMMMs   sNMMMm:  `dMMMN/ .NMMMm                                              
-                   -mMMMMMd.    `-:-`     .:-`  `hMMNs -syo`          .odNNmy/        `.            
-                    `:oso:`                       `.`  mMMM+         -NMMMMMMMy    :yNNNNh/         
-                       `--.      :ydmh/    `:/:`       -os+`/s+`     sMMMMMMMMM`  +MMMMMMMMs        
-                     .hNNNNd/   /MMMMMM+  :mMMMm-   ``     -MMM+     -NMMMMMMMy   hMMMMMMMMN        
-            ``       mMMMMMMM-  :MMMMMM/  oMMMMM/ .hNNd:    -/:`      .odmmdy/`   :NMMMMMMN+        
-         -sdmmmh/    dMMMMMMN.   -shhs:   `/yhy/  /MMMMs `--`           ````       .ohddhs-         
-        :NMMMMMMMy   `odmNmy-                      /ss+``dNNm.         .-.`           ``            
-        yMMMMMMMMM`    ``.`                             `hNNh.       /dNNNms`      `-:-`            
-        :NMMMMMMMs          .--.      /yddy:    .::-`    `..`       /MMMMMMMh    `smNNNms`          
-         .ohdmdy:         -hmNNmh:   +MMMMMM/  /mMMNd.   ``         :MMMMMMMy    oMMMMMMMs   `-::.  
+                                                                   .odNMMmy:
+                                                                   /MMMMMMMMMy
+                                                                  `NMMMMMMMMMM:
+                                                                   mMMMMMMMMMM-
+                                `::-                               -dMMMMMMMN/
+                    `+sys/`    sNMMMm/   /ydho`                      :oyhhs/`
+                   :NMMMMMm-  -MMMMMMm  :MMMMMy  .+o/`
+                   hMMMMMMMs   sNMMMm:  `dMMMN/ .NMMMm
+                   -mMMMMMd.    `-:-`     .:-`  `hMMNs -syo`          .odNNmy/        `.
+                    `:oso:`                       `.`  mMMM+         -NMMMMMMMy    :yNNNNh/
+                       `--.      :ydmh/    `:/:`       -os+`/s+`     sMMMMMMMMM`  +MMMMMMMMs
+                     .hNNNNd/   /MMMMMM+  :mMMMm-   ``     -MMM+     -NMMMMMMMy   hMMMMMMMMN
+            ``       mMMMMMMM-  :MMMMMM/  oMMMMM/ .hNNd:    -/:`      .odmmdy/`   :NMMMMMMN+
+         -sdmmmh/    dMMMMMMN.   -shhs:   `/yhy/  /MMMMs `--`           ````       .ohddhs-
+        :NMMMMMMMy   `odmNmy-                      /ss+``dNNm.         .-.`           ``
+        yMMMMMMMMM`    ``.`                             `hNNh.       /dNNNms`      `-:-`
+        :NMMMMMMMs          .--.      /yddy:    .::-`    `..`       /MMMMMMMh    `smNNNms`
+         .ohdmdy:         -hmNNmh:   +MMMMMM/  /mMMNd.   ``         :MMMMMMMy    oMMMMMMMs   `-::.
             ```  ``      `NMMMMMMN.  +MMMMMN:  yMMMMM- -hmmh-        /hmNNdo`    +MMMMMMM+  +mNMNNh-
               -sdmmdy:   `mMMMMMMN`   :yhhs-   `+hhy:  oMMMMo          ...`       /hmmmh/  :MMMMMMMm
              /NMMMMMMNo   .sdmmmy-                     `+yy/`     -+ss+.            `.`    .NMMMMMMh
              dMMMMMMMMN     `..`                                 /NMMMMm-      :shyo.       -sdmmh+`
-     `       /NMMMMMMMo                 .-.                      oMMMMMM/     sMMMMMm.        ```   
- `/ydddho-    -sdmmdy:                `hNNms                     `odmmd+      yMMMMMN-   -shhs:     
--mMMMMMMMNo     ````           `--.   `mMMMm                 `-//- `..        `odddy:   :NMMMMN/    
-mMMMMMMMMMM:            .//.   yNMN/   .+o/.                `dMMMNo       ./o+-  ``     /MMMMMM+    
-mMMMMMMMMMM:            dMMd   ommd:     -+o/.              .NMMMMy      -mMMMN+         /hddh/     
-:mMMMMMMMNs             -oo-    .:.     +NMMMm-         .//- -shy+`      -NMMMMo    `/oo:`  `       
- `+ydmmdo-            `ohy/    smmdo    oMMMMN:        /NMMN+       `:++- -oso:    `dMMMMh          
-     ``               /MMMm   `NMMMN`    :oso-         :mMMN/       oMMMM/         `mMMMMh          
-                       :o+-    -oyo-         -+oo:`     .::.   -oo: /mNNm-     -+o/``/ss/`          
-                      `:oo:      .:/-`      oMMMMMh`          `NMMM- `--`     :MMMMy                
-                      oMMMM/    :mMMMm-     mMMMMMM.           +hho`     .+s+`.dNNm+                
-                      :mNNd-    oMMMMM/     -hmNNd/                 -o+. hMMMo  .-`                 
-                       `..``    `/yhy/        `.`  `:oss+.          mMMh -shs.                      
-                        :ydds.       .://.        `hMMMMMN+         -+/.                            
-                       .MMMMMm      +NMMMMy       /MMMMMMMm                                         
-                        yNNNN+      mMMMMMM-      `dMMMMMN+    ````                                 
-                         .--` ``    :dNNNmo         :oss+.   -ydNNmh/                               
-                            /hmmh+`   .--`  ./++:`          /MMMMMMMMy                              
-                           :MMMMMMs        yMMMMMm/         hMMMMMMMMM      `-::-`                  
-                           -NMMMMM+       /MMMMMMMN         :NMMMMMMMo    -yNMMMMMh:                
-                            .oyys-   ``   `mMMMMMMs          .ohmmds-    -NMMMMMMMMM+               
-                                  `+dNNmy- `+yhhs:   `ohmmds-            sMMMMMMMMMMd               
-                                  hMMMMMMM-         -NMMMMMMMs           :MMMMMMMMMMo               
-                                  dMMMMMMM:         yMMMMMMMMM`           :dMMMMMMm+                
-                                  .hMMMMm+          :MMMMMMMMy              .:++/.                  
-                                    `--.             -ymMMNh/                         
+     `       /NMMMMMMMo                 .-.                      oMMMMMM/     sMMMMMm.        ```
+ `/ydddho-    -sdmmdy:                `hNNms                     `odmmd+      yMMMMMN-   -shhs:
+-mMMMMMMMNo     ````           `--.   `mMMMm                 `-//- `..        `odddy:   :NMMMMN/
+mMMMMMMMMMM:            .//.   yNMN/   .+o/.                `dMMMNo       ./o+-  ``     /MMMMMM+
+mMMMMMMMMMM:            dMMd   ommd:     -+o/.              .NMMMMy      -mMMMN+         /hddh/
+:mMMMMMMMNs             -oo-    .:.     +NMMMm-         .//- -shy+`      -NMMMMo    `/oo:`  `
+ `+ydmmdo-            `ohy/    smmdo    oMMMMN:        /NMMN+       `:++- -oso:    `dMMMMh
+     ``               /MMMm   `NMMMN`    :oso-         :mMMN/       oMMMM/         `mMMMMh
+                       :o+-    -oyo-         -+oo:`     .::.   -oo: /mNNm-     -+o/``/ss/`
+                      `:oo:      .:/-`      oMMMMMh`          `NMMM- `--`     :MMMMy
+                      oMMMM/    :mMMMm-     mMMMMMM.           +hho`     .+s+`.dNNm+
+                      :mNNd-    oMMMMM/     -hmNNd/                 -o+. hMMMo  .-`
+                       `..``    `/yhy/        `.`  `:oss+.          mMMh -shs.
+                        :ydds.       .://.        `hMMMMMN+         -+/.
+                       .MMMMMm      +NMMMMy       /MMMMMMMm
+                        yNNNN+      mMMMMMM-      `dMMMMMN+    ````
+                         .--` ``    :dNNNmo         :oss+.   -ydNNmh/
+                            /hmmh+`   .--`  ./++:`          /MMMMMMMMy
+                           :MMMMMMs        yMMMMMm/         hMMMMMMMMM      `-::-`
+                           -NMMMMM+       /MMMMMMMN         :NMMMMMMMo    -yNMMMMMh:
+                            .oyys-   ``   `mMMMMMMs          .ohmmds-    -NMMMMMMMMM+
+                                  `+dNNmy- `+yhhs:   `ohmmds-            sMMMMMMMMMMd
+                                  hMMMMMMM-         -NMMMMMMMs           :MMMMMMMMMMo
+                                  dMMMMMMM:         yMMMMMMMMM`           :dMMMMMMm+
+                                  .hMMMMm+          :MMMMMMMMy              .:++/.
+                                    `--.             -ymMMNh/
 
 EOF
 
@@ -336,3 +337,4 @@ HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
 whiptail --title "Installation Done" \
          --msgbox "$OUTPUT" \
          $HEIGHT 78
+

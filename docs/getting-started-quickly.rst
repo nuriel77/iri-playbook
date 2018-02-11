@@ -9,50 +9,17 @@ You can skip most of the information in this tutorial should you wish to do so a
 If you haven't already, just make sure your server matches the :ref:`requirements`.
 
 
-A few setup steps are required before you can run the click'n'go installation command:
-
-When you are logged in to your server, make sure you are root (run ``whoami``).
-If that is not the case run ``sudo su -`` to become root and enter the password if you are required to do so.
-
-
-For **CentOS** you might need to install ``curl`` and ``screen`` before you can proceed:
-
-.. code:: bash
-
-   yum install curl screen -y
-
-
-If you are missing these utilities on **Ubuntu** you can install them:
-
-
-.. code:: bash
-
-  apt-get install curl screen -y
-
-
 .. note::
 
-   your server's installation of Ubuntu or CentOS must be a "clean" one -- no pre-installed cpanel, whcms, plesk and so on.
+   Your server's installation of Ubuntu or CentOS must be a clean one, i.e. no pre-installed cpanel, whcms, plesk and so on.
 
 
 Run the Installer!
 ==================
 
-1. This installation requires to be run as user ``root``. Make sure you are already root by running ``whoami``. If that is not the case, you can become root using:
+For **CentOS** users: you may need to install ``curl``. You can do that by running: ``sudo yum install curl -y``.
 
-.. code:: bash
-
-   sudo su
-
-
-2. Let's ensure the installation is running within a "screen" session. This ensures that the installer stays running in the background if the connection to the server breaks:
-
-.. code:: bash
-
-   screen -S iota
-
-
-3. Finally, we can run the installer:
+This command will pull the installer script and kick off the installer:
 
 .. code:: bash
 
