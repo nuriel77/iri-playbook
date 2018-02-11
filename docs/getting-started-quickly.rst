@@ -19,7 +19,7 @@ Run the Installer!
 
 For **CentOS** users: you may need to install ``curl``. You can do that by running: ``sudo yum install curl -y``.
 
-This command will pull the installer script and kick off the installer:
+**This command will pull the installer script and kick off the installer:**
 
 .. code:: bash
 
@@ -33,7 +33,7 @@ This command will pull the installer script and kick off the installer:
 
 * A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
 
-By default you can access the grpahs at::
+By default you can access the graphs at::
 
   http://your-ip:5555/dashboard/db/iota?refresh=30s&orgId=1
 
@@ -41,7 +41,9 @@ and Peer Manager via::
 
   http://your-ip:8811
 
-You can use the user ``iotapm`` and the password you've configured during the installation.
+* You can use the user ``iotapm`` and the password you've configured during the installation.
+
+* You should be redirected to a HTTPS URL (this has been added recently). This is a currenrly a self-signed certificate, so you will get a warning from the browser. You can add the certificate as an exception.
 
 * Please consider hardening the security of your node. Any server is a target for attacks/brute forcing. Even more so if you are going to list your node publicly. See :ref:`securityHardening`.
 
