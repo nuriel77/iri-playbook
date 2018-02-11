@@ -19,7 +19,7 @@ Run the Installer!
 
 For **CentOS** users: you may need to install ``curl``. You can do that by running: ``sudo yum install curl -y``.
 
-**This command will pull the installer script and kick off the installer:**
+**This command will pull the installer script and kick off the installation:**
 
 .. code:: bash
 
