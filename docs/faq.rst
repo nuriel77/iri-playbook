@@ -56,6 +56,7 @@ Where to get the latest milestone index from
 ============================================
 It used to be possible via the botbox on Slack. And since Slack is no longer in use, you can get it by running:
 
+
 .. code:: bash
 
   curl -s https://x-vps.com/lmsi | jq .
