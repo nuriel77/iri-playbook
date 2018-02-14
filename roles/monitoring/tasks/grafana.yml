@@ -89,18 +89,31 @@
   tags:
     - grafana_api
 
-- name: create iota exporter dashboard in grafana
-  uri:
-    url: "http://localhost:{{ grafana_port }}/api/dashboards/db"
-    method: POST
-    user: "{{ iotapm_nginx_user }}"
-    password: "{{ iotapm_nginx_password }}"
-    body: "{{ lookup('file','files/iota_exporter_dashboard.json') }}"
-    force_basic_auth: yes
-    status_code: 200,412
-    body_format: json
-  register: dashboard
-  changed_when: dashboard.status == 200
+- name: handle iota exporter dashboard
+  block:
+
+    - name: slurp iota dashboard json
+      set_fact:
+        parent_dict: {'dashboard': {}}
+        tmpdata: "{{ lookup('file','files/iota_exporter_dashboard.json')|from_json }}"
+
+    - name: combine dashboard object to parent dict
+      set_fact:
+        iota_exporter_object: "{{ parent_dict | combine({'dashboard': tmpdata}) }}"
+
+    - name: create iota exporter dashboard in grafana
+      uri:
+        url: "http://localhost:{{ grafana_port }}/api/dashboards/db"
+        method: POST
+        user: "{{ iotapm_nginx_user }}"
+        password: "{{ iotapm_nginx_password }}"
+        body: "{{ iota_exporter_object | to_json }}"
+        force_basic_auth: yes
+        status_code: 200,412
+        body_format: json
+      register: dashboard
+      changed_when: dashboard.status == 200
+
   tags:
     - grafana_api
 
