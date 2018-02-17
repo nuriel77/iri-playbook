@@ -72,7 +72,7 @@
       notify:
         - restart nelson
 
-  when: upgrade_nelson is defined and upgrade_nelson
+  when: upgrade_nelson is defined and upgrade_nelson|bool == true
   ignore_errors: yes
   tags:
     - nelson_npm
