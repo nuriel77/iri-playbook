@@ -1,0 +1,6 @@
+field_tcp_port: 21310
+field_pow: false
+field_custom_id: true
+field_username: field
+field_dir: /var/lib/field
+field_configdir: /etc/field

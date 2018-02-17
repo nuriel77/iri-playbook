@@ -1,0 +1,27 @@
+[Unit]
+Description=IOTA Field
+
+[Service]
+WorkingDirectory={{ field_dir }}
+ExecStart={{ nodejs_bin }} {{ field_bin }} --config {{ field_configdir }}/field.ini
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+Restart=on-failure
+RestartSec=30
+Type=simple
+TimeoutStopSec=60
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=field
+User={{ field_username }}
+Group={{ field_username }}
+# Restrict process
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target

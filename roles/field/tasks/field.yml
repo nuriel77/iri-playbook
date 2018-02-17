@@ -1,0 +1,63 @@
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+    nodejs_bin: /usr/bin/node
+    field_bin: /bin/field
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /etc/systemd/system
+    config_dir: /etc/default
+    nodejs_bin: /usr/bin/nodejs
+    field_bin: /usr/bin/field
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: add user to run field as
+  user:
+    name: "{{ field_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ field_dir }}"
+  tags:
+    - nelson_user
+
+- name: create field home directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ field_username }}"
+    group: "{{ field_username }}"
+    mode: 0700
+  with_items:
+    - "{{ field_dir }}"
+    - "{{ field_configdir }}"
+
+- name: copy field config
+  template:
+    src: "templates/field.ini.j2"
+    dest: "{{ field_configdir }}/field.ini"
+    owner: "{{ field_username }}"
+    group: "{{ field_username }}"
+    mode: 0600
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+  notify:
+    - restart field
+
+- name: copy systemd service file
+  template:
+    src: templates/field.service.j2
+    dest: "{{ systemd_dir }}/field.service"
+  notify:
+    - reload systemd
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure field started and enabled
+  systemd:
+    name: field.service
+    state: started
+    enabled: yes

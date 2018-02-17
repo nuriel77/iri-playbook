@@ -1,0 +1,11 @@
+- import_tasks: deps.yml
+  tags:
+    - field_deps
+
+- import_tasks: firewall.yml
+  tags:
+    - field_firewall
+
+- import_tasks: field.yml
+  tags:
+    - field_config

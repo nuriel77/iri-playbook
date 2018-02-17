@@ -1,0 +1,6 @@
+- import_tasks: role.yml
+  tags:
+    - field_role
+  when: >
+        field_enabled is defined and
+        field_enabled|bool == true
