@@ -34,6 +34,13 @@
     - "{{ field_dir }}"
     - "{{ field_configdir }}"
 
+# can be override with "-e my_field_name=my-unique-name"
+- name: generate my_field_name
+  set_fact:
+    my_field_name: "playbook_{{ ansible_fqdn | to_uuid |  truncate(8, True, '') }}"
+  tags:
+    - field_name
+
 - name: copy field config
   template:
     src: "templates/field.ini.j2"
