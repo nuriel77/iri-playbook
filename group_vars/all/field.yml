@@ -4,3 +4,5 @@ field_custom_id: true
 field_username: field
 field_dir: /var/lib/field
 field_configdir: /etc/field
+field_address: CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
+field_iri_host: 127.0.0.1
