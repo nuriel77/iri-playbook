@@ -1,0 +1,27 @@
+# The TCP port used for field
+field_tcp_port: 21310
+
+# Enable PoW via field (overrides REMOTE_LIMIT_API
+# iri config if `field_iri_host` is set to localhost/127.0.0.1).
+field_pow: false
+
+# Let field generate a unique ID
+field_custom_id: true
+
+# User name under which to run field
+field_username: field
+
+# Field work directory
+field_dir: /var/lib/field
+
+# Field configuration directory
+field_configdir: /etc/field
+
+# Address to publish for payouts.
+# Check the resulting /etc/field/field.iri
+# config file on how to supply a seed
+# from which addresses will be generated for you.
+field_address: CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
+
+# Where to find IRI
+field_iri_host: 127.0.0.1

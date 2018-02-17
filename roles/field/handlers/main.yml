@@ -1,0 +1,5 @@
+- name: restart field
+  systemd:
+    name: field.service
+    enabled: true
+    state: restarted
