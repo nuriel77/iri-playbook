@@ -3,4 +3,4 @@
     - nelson_role
   when: >
         nelson_enabled is defined and
-        nelson_enabled
+        nelson_enabled|bool == true
