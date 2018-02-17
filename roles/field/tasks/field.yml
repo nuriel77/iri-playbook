@@ -21,7 +21,7 @@
     createhome: no
     home: "{{ field_dir }}"
   tags:
-    - nelson_user
+    - field_user
 
 - name: create field home directory
   file:
