@@ -7,7 +7,7 @@ address = {{ field_address }}
 ; In this case, the Field cient will be generating new, unused addresses dynamically.
 ; seed = XYZ
 port = {{ field_tcp_port }}
-pow = {{ field_pow }}
+pow = {{ field_pow|string|lower }}
 disableIRI = false
 ; If you want Field to generate a custom id, instead of using machine-id
-customFieldId = {{ field_custom_id }}
+customFieldId = {{ field_custom_id|string|lower }}
