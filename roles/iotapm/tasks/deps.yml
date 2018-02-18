@@ -65,10 +65,11 @@
     - lsof
     - curl
     - nodejs
+    - python-pip
     - python3-pip
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: install pip requirements
+- name: install pip requirements, to support remote installations
   pip:
     name: passlib
 
