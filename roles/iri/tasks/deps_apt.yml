@@ -18,7 +18,7 @@
       tags:
         - oracle_java_tar
 
-    - name: Download java jdk rpm
+    - name: Download java jdk tar
       get_url:
         url: "{{ oracle_java_tar }}"
         dest: /tmp/jdk.x86_64.tgz
