@@ -42,6 +42,7 @@
       unarchive:
         src: /tmp/jdk.x86_64.tgz
         dest: "/opt/jdk"
+        copy: no
       when: >
             not oracle_java_dir_stat.stat.exists or
             (jdk_downloaded and jdk_downloaded.changed)
