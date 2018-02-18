@@ -44,6 +44,7 @@
     - firewalld
     - curl
     - lsof
+    - python-pip
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install nginx packages
@@ -64,7 +65,12 @@
     - lsof
     - curl
     - nodejs
+    - python3-pip
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: install pip requirements
+  pip:
+    name: passlib
 
 - name: Install nginx packages
   apt: state=latest name={{ item }} update_cache=yes
