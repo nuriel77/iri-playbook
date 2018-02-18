@@ -29,6 +29,10 @@ In the following example we assume that the new version is **1.4.2.1**.
   If required, additional options can be specified under the ``OPTIONS=""`` value in the configuration file (``/etc/default/iri`` for Ubuntu or ``/etc/sysconfig/iri`` for CentOS). The database folder is in ``/var/lib/iri/target/mainnetdb`` and can be removed using ``systemctl stop iri && rm -rf /var/lib/iri/target/mainnet*``.
 
 
+You can update IRI using the ``iric`` tool: :ref:`iric`. Make sure that there are no additional manual steps to be taken if any are announced by the Foundation.
+
+To update manually:
+
 Make sure you are running all the commands as 'root' (run ``sudo su`` first). Then, download new IRI to the directory:
 
 
@@ -71,6 +75,8 @@ Upgrade IOTA Monitoring
 =======================
 
 IOTA Prometheus Monitoring is used by Grafana which are the awesome graphs about the full node.
+
+You can update the monitoring using the ``iric`` tool: :ref:`iric`, or update manually using the following instructions:
 
 A new feature has been added to read extra metrics from IRI using ZeroMQ. ZMQ has to be enabled in IRI first **if you haven't done it already**::
 

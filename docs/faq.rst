@@ -153,10 +153,9 @@ and restart IRI to take effect: ``systemctl restart iri``
 Where can I get a fully synced database to help kick start my node
 ==================================================================
 
-For the sake of the community, I regularly create a copy of a fully synced database.
+For the sake of the community, I regularly create a copy of a fully synced database. 
 
-This has been added recently (21 December 2017) so please contact me on `github <https://github.com/nuriel77/iri-playbook/issues>`_ or iota slack @nuriel77 if any issues.
-
+You can use the ``iric`` tool to download and install the database :ref:`iric`, or update manually using the following instructions:
 
 **NOTE** I am providing this database copy to help the community. Making this possible involves increasing costs due to the frequent downloads/bandwidth usage. Please consider donating to help keep this possible::
 
