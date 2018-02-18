@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.0
+VERSION=0.3.1
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -817,7 +817,7 @@ function view_ps_mem() {
     whiptail --title "ps_mem utility" \
              --msgbox "This utility shows a per-process total memory usage.\nUse arrows or page up/down to scroll and q to exit." \
              8 $WIDTH
-    ps_mem|less
+    ps_mem 2>/dev/null|less
 }
 
 ### Services ###
