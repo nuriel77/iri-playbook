@@ -49,7 +49,7 @@
     state: absent
   when: >
         remove_iota_prom_exporter_basedir is defined and
-        remove_iota_prom_exporter_basedir
+        remove_iota_prom_exporter_basedir|bool
 
 # Check if needs (re)downloading
 - name: stat iota-prom-exporter basedir
