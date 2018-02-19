@@ -3,6 +3,36 @@
 FAQ
 ***
 
+How to override playbook variables
+==================================
+
+You might have noticed that many Ansible commands in the documentation use ``-e somevar=value`` to specify variables.
+
+This variable declaration takes precedence over any other pre-defined variables.
+
+An easy approach to override variables in the files found in ``group_vars/all/`` path is to override them.
+
+The reason is that if you edit any of these files you risk a conflict when updates are pulled from the iri-playbook repository.
+
+Overriding file variables
+-------------------------
+The files in ``group_vars/all/`` are read in alphabetic order.
+
+For example: you have a file called ``aaa.yaml`` with the variable ``test_var``::
+
+  test_var: 1234
+
+and you have a file called ``bbb.yaml``, also with the variable ``test_var``::
+
+  test_var: abcd
+
+When the playbook runs, it first reads the file ``aaa.yaml`` and then ``bbb.yaml``. ``test_var`` ends up with the value ``abcd``.
+
+Best practice is to create a file starting with the letter ``z``, for example ``zzz-myenvironment.yaml`` and in it define all the variables you want.
+
+
+
+
 How to tell if my node is synced
 ================================
 
@@ -14,7 +44,7 @@ Check if ``Latest Mile Stone Index`` and ``Latest Solid Mile Stone Index`` are e
 
 Another option is to run the following command on the server's command line (make sure the port matches your IRI API port)::
 
-  curl -s http://localhost:14265   -X POST  -H 'X-IOTA-API-Version: 1' -H 'Content-Type: application/json'   -d '{"command": "getNodeInfo"}'| jq '.latestSolidSubtangleMilestoneIndex, .latestMilestoneIndex'
+  curl -s http://localhost:14265 -X POST  -H 'X-IOTA-API-Version: 1' -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'| jq '.latestSolidSubtangleMilestoneIndex, .latestMilestoneIndex'
 
 This will output 2 numbers which should be equal.
 
@@ -30,7 +60,7 @@ You can install ``jq``:
 
 Alternatively, use python::
 
-  curl -s http://localhost:14265   -X POST  -H 'X-IOTA-API-Version: 1' -H 'Content-Type: application/json'   -d '{"command": "getNodeInfo"}'|python -m json.tool|egrep "latestSolidSubtangleMilestoneIndex|latestMilestoneIndex"
+  curl -s http://localhost:14265 -X POST  -H 'X-IOTA-API-Version: 1' -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'|python -m json.tool|egrep "latestSolidSubtangleMilestoneIndex|latestMilestoneIndex"
 
 
 If you have problems getting in sync after a very long time, consider downloading a fully synced database as described here: :ref:`getFullySyncedDB`
