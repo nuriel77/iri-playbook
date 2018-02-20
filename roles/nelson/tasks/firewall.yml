@@ -7,10 +7,13 @@
 
 - name: allow nelson tcp port in firewall
   firewalld:
-    port: "{{ nelson_tcp_port }}/tcp"
+    port: "{{ item }}/tcp"
     permanent: true
     state: enabled
     immediate: yes
+  with_items:
+    - "{{ nelson_tcp_port }}"
+    - "{{ nelson_gui_port }}"
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: allow nelson tcp port in firewall
@@ -18,5 +21,8 @@
     rule: allow
     direction: in
     proto: tcp
-    port: "{{ nelson_tcp_port }}"
+    port: "{{ item }}"
+  with_items:
+    - "{{ nelson_tcp_port }}"
+    - "{{ nelson_gui_port }}"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

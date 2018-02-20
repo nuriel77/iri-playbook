@@ -1,0 +1,28 @@
+[Unit]
+Description=IOTA Nelson GUI
+
+[Service]
+EnvironmentFile=-{{ config_dir }}/nelson-gui
+WorkingDirectory={{ nelson_datadir }}
+ExecStart={{ nodejs_bin }} {{ nelson_gui_bin }} --port $GUI_PORT --apiHostname $NELSON_BIND_ADDRESS --apiPort $NELSON_API_PORT
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+Restart=on-failure
+RestartSec=30
+Type=simple
+TimeoutStopSec=60
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=nelson
+User={{ nelson_username }}
+Group={{ nelson_username }}
+# Restrict process
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target

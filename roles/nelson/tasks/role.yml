@@ -9,3 +9,7 @@
 - import_tasks: nelson.yml
   tags:
     - nelson_config
+
+- import_tasks: proxy-gui.yml
+  tags:
+    - proxy_gui

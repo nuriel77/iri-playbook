@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.11
+VERSION=0.3.12
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -958,7 +958,8 @@ function services_menu() {
     "g)" "Nginx" \
     "h)" "HAProxy" \
     "i)" "Nelson" \
-    "j)" "Field" \
+    "j)" "Nelson GUI" \
+    "k)" "Field" \
     3>&1 1>&2 2>&3
 }
 
@@ -1017,6 +1018,11 @@ function services() {
            ;;
 
         "j)")
+           service nelson-gui
+           services
+           ;;
+
+        "k)")
            service field
            services
            ;;

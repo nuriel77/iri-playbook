@@ -4,6 +4,7 @@
     config_dir: /etc/sysconfig
     nodejs_bin: /usr/bin/node
     nelson_bin: /bin/nelson
+    nelson_gui_bin: /usr/bin/nelson.gui
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: set variables debian/ubuntu
@@ -12,6 +13,7 @@
     config_dir: /etc/default
     nodejs_bin: /usr/bin/nodejs
     nelson_bin: /usr/bin/nelson
+    nelson_gui_bin: /usr/bin/nelson.gui
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: add user to run nelson as
@@ -46,10 +48,22 @@
   notify:
     - restart nelson
 
+- name: copy nelson gui config
+  template:
+    src: "templates/nelson-gui.sysconfig.j2"
+    dest: "{{ config_dir }}/nelson-gui"
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+  notify:
+    - restart nelson-gui
+
 - name: copy systemd service file
   template:
-    src: templates/nelson.service.j2
-    dest: "{{ systemd_dir }}/nelson.service"
+    src: "templates/{{ item }}.j2"
+    dest: "{{ systemd_dir }}/{{ item }}"
+  with_items:
+    - nelson.service
+    - nelson-gui.service
   notify:
     - reload systemd
 
@@ -59,5 +73,11 @@
 - name: ensure nelson started and enabled
   systemd:
     name: nelson.service
+    state: started
+    enabled: yes
+
+- name: ensure nelson-gui started and enabled
+  systemd:
+    name: nelson-gui.service
     state: started
     enabled: yes
