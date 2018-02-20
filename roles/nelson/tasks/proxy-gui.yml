@@ -37,4 +37,3 @@
     validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/nelson-gui.conf -r"
   notify:
     - reload nginx
-
