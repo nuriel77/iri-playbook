@@ -91,9 +91,14 @@
     state: latest
     global: yes
   with_items:
-    - node-gyp
     - serve
     - nelson.cli
-    - nelson.gui
   tags:
     - nelson_npm
+
+# Using Ansible's npm module hangs when installing nelsong.gui
+- name: install nelson-gui via shell command
+  shell: "npm install --unsafe-perm -g nelson.gui"
+  tags:
+    - nelson_npm
+    - nelson_gui
