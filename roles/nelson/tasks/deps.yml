@@ -91,6 +91,7 @@
     state: latest
     global: yes
   with_items:
+    - node-gyp
     - serve
     - nelson.cli
     - nelson.gui
