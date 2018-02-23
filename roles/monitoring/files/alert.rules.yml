@@ -128,7 +128,7 @@ groups:
 
   # Latest Milestone Alerts
   - alert: LatestMileStoneWarning
-    expr: iota_node_info_latest_milestone == 243000
+    expr: iota_node_info_latest_milestone == 338000
     for: 2h
     labels:
       severity: warning
@@ -138,7 +138,7 @@ groups:
       SUMMARY: '{{$labels.instance}}: Latest Milestone reset and stuck'
 
   - alert: LatestMileStoneCritical
-    expr: iota_node_info_latest_milestone == 243000
+    expr: iota_node_info_latest_milestone == 338000
     for: 4h
     labels:
       severity: critical
