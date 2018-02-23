@@ -1,0 +1,39 @@
+- name: check nginx installed dpkg
+  shell: "dpkg -l nginx >/dev/null 2>&1"
+  changed_when: false
+  failed_when: false
+  register: nginx_installed_dpkg
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: check nginx installed rpm
+  shell: "rpm -q nginx >/dev/null 2>&1"
+  changed_when: false
+  failed_when: false
+  register: nginx_installed_rpm
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: stat iotapm config file to check if nginx installation from playbook
+  stat:
+    path: '/etc/nginx/conf.d/iotapm.conf'
+  register: iotapm_file
+
+- name: stat nginx validation script exists
+  stat:
+    path: '/usr/local/bin/validate_nginx_config.sh'
+  register: validation_script
+
+- set_fact:
+    nginx_installed: True
+  when:
+    - ('rc' in nginx_installed_dpkg and nginx_installed_dpkg.rc == 0) or
+      ('rc' in nginx_installed_rpm and nginx_installed_rpm == 0)
+    - iotapm_file.stat.exists == True
+    - validation_script.stat.exists == True
+
+- name: copy nelson-gui nginx conf file
+  template:
+    src: templates/nelson-gui.conf.j2
+    dest: /etc/nginx/conf.d/nelson-gui.conf
+    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/nelson-gui.conf -r"
+  notify:
+    - reload nginx
