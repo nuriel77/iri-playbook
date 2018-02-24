@@ -3,3 +3,9 @@
     name: nelson.service
     enabled: true
     state: restarted
+
+- name: restart nelson-gui
+  systemd:
+    name: nelson-gui.service
+    enabled: true
+    state: restarted

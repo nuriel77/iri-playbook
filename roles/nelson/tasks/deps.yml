@@ -59,28 +59,46 @@
 # Fix for ansible npm bug not upgrading package to latest
 - name: upgrade nelson
   block:
+
     - name: Stop any active nelson service
       systemd:
-        name: nelson
+        name: "{{ item }}"
         state: stopped
+      with_items:
+        - nelson
+        - nelson-gui
 
-    - name: Remove current nelson package
+    - name: Remove current nelson packages
       npm:
-        name: nelson.cli
+        name: "{{ item }}"
         global: yes
         state: absent
+      with_items:
+        - nelson.cli
+        - nelson.gui
       notify:
         - restart nelson
+        - restart nelson-gui
 
   when: upgrade_nelson is defined and upgrade_nelson|bool == true
   ignore_errors: yes
   tags:
     - nelson_npm
 
-- name: Install nelson package
+- name: Install nelson packages, this can take a while...
   npm:
-    name: nelson.cli
+    name: "{{ item }}"
     state: latest
     global: yes
+  with_items:
+    - serve
+    - nelson.cli
   tags:
     - nelson_npm
+
+# Using Ansible's npm module hangs when installing nelsong.gui
+- name: install nelson-gui via shell command
+  shell: "npm install --unsafe-perm -g nelson.gui"
+  tags:
+    - nelson_npm
+    - nelson_gui
