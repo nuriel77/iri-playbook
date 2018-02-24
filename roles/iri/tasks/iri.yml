@@ -107,6 +107,8 @@
   copy:
     dest: "{{ ansible_env.HOME }}/.nbctl"
     content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_api_port }}\nfile: {{ config_dir }}/iri\n"
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
   tags:
     - nbctl_config
 
