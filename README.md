@@ -9,8 +9,10 @@ This playbook will install and configure the IOTA full node. In addition:
 - Run all services as systemd controlled processes (unprivileged users)
 - Alerting and notifications
 - Configure firewalls
+- `iric` configuration tool
 - HAProxy for Wallet/API connections
-- NEW: Monitoring for IRI + Graphs amazing work of Chirs Holliday https://github.com/crholliday/iota-prom-exporter
+- Optional: [Nelson](https://github.com/SemkoDev/nelson.cli) and [CarrIOTA Field](https://github.com/SemkoDev/field.cli)
+- Monitoring for IRI + Graphs amazing work of [Chris Holliday](https://github.com/crholliday/iota-prom-exporter)
 
 For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/master/getting-started-quickly.html#getting-started-quickly)
 
@@ -107,8 +109,15 @@ ansible-playbook -i inventory -v site.yml -e "remove_iri_workdir=1"
 ```
 
 ### Overwrite/Update Configuration Files
-By default the playbook will not overwrite essential configuration files which have been deployed, as this might throw away values configured by the users.
+
+#### Configuration Files
+By default the playbook will not overwrite essential configuration files which have already been deployed, as this might discard values configured by the user.
 
 In order to overwrite or update configuration files, the extra environment variable "overwrite=true" can be set i.e. `-e overwrite=true` when running the playbook.
 
 This will backup existing configuration files with a timestamp.
+
+#### Variable Files
+The playbook has a directory `group_vars/all/` with a collection of variable files. These are used by the playbook. Variables can be overriden using the `-e somevar=someval` argument when running the playbook.
+
+Another way to override the variables declared in `group_vars/all/` files is to create a new "override" file. Since the variable files are processed alphabetically, you can create a file called `group_vars/all/zzz-override.yml` and any variable declared in it will override any previously declared variable.
