@@ -134,6 +134,9 @@ Your connection will still be encrypted if you opt for a self-signed certificate
 
 Here is a great tutorial on how to add HTTPS to your **nginx**, choose nginx and the OS version you are using (Ubuntu/CentOS):
 
+If you installed using the iri-playbook, make sure you DON'T use the automatic configuration command. Use the ``sudo certbot --nginx certonly`` command and configure the certificates manually.
+
+
 https://certbot.eff.org/
 
 
