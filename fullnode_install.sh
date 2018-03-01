@@ -135,8 +135,7 @@ function init_centos(){
     set -e
 
     echo "Installing Ansible and git..."
-    yum install ansible git expect-devel cracklib -y
-
+    yum install ansible git expect-devel cracklib newt -y
 }
 
 function init_ubuntu(){
@@ -155,7 +154,7 @@ function init_ubuntu(){
     apt-get install software-properties-common -y
     apt-add-repository ppa:ansible/ansible -y
     apt-get update -y
-    apt-get install ansible git expect-dev libcrack2 -y
+    apt-get install ansible git expect-dev libcrack2 whiptail -y
 }
 
 function inform_reboot() {
