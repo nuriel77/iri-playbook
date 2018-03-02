@@ -154,7 +154,7 @@ function init_ubuntu(){
     apt-get install software-properties-common -y
     apt-add-repository ppa:ansible/ansible -y
     apt-get update -y
-    apt-get install ansible git expect-dev libcrack2 whiptail -y
+    apt-get install ansible git expect-dev tcl libcrack2 whiptail -y
 }
 
 function inform_reboot() {
