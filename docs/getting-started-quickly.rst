@@ -9,9 +9,10 @@ You can skip most of the information in this tutorial should you wish to do so a
 If you haven't already, just make sure your server matches the :ref:`requirements`.
 
 
-.. note::
+.. warning::
 
    Your server's installation of Ubuntu or CentOS must be a clean one, i.e. no pre-installed cpanel, whcms, plesk and so on.
+   **Let it be clear**: this installer WILL BREAK any previously installed web-server. It is meant to be installed on a clean system!
 
 
 Run the Installer!
