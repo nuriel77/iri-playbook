@@ -12,7 +12,7 @@ If you haven't already, just make sure your server matches the :ref:`requirement
 .. warning::
 
    Your server's installation of Ubuntu or CentOS must be a clean one, i.e. no pre-installed cpanel, whcms, plesk and so on.
-   **Let it be clear**: this installer WILL BREAK any previously installed web-server. It is meant to be installed on a clean system!
+   This installer might BREAK any previously installed web-server. It is meant to be installed on a clean system!
 
 
 Run the Installer!
