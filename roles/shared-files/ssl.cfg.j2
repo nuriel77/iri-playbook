@@ -1,13 +1,11 @@
 ssl_certificate {{ ssl_cert_file }};
 ssl_certificate_key {{ ssl_key_file }};
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
 
 # If you choose to add dhparam, run this command and
 # remove # from the line beginning with `ssl_dhparam`:
 # `cd /etc/ssl/private && openssl dhparam -out dhparam.pem 4096`
 #ssl_dhparam /etc/ssl/private/dhparam.pem;
 
-ssl_prefer_server_ciphers on;
 ssl_ciphers 'AES256+EECDH:AES256+EDH:!aNULL';
 ssl_session_timeout 1d;
 ssl_session_cache shared:SSL:10m;
