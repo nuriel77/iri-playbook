@@ -109,12 +109,9 @@
         password: "{{ iotapm_nginx_password }}"
         body: "{{ iota_exporter_object | to_json }}"
         force_basic_auth: yes
-        status_code: 200,412
+        # Status 500 temporarily ignore failed json import due to grafana v5 upgrade
+        status_code: 200,412,500
         body_format: json
-
-        # Temporary due to new grafana version 5:
-        ignore_errors: yes
-
       register: dashboard
       changed_when: dashboard.status == 200
 
