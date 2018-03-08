@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.12
+VERSION=0.3.13
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -419,7 +419,7 @@ function upgrade_monitoring() {
         grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri
 
         # Upgrade iota-prom-exporter and dashboards
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=monitoring_deps,iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press any key to return to menu."
         clear
