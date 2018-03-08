@@ -85,10 +85,6 @@
     status_code: 200,412
     body_format: json
   register: dashboard
-
-  # Temporary due to new grafana version 5:
-  ignore_errors: yes
-
   changed_when: dashboard.status == 200
   tags:
     - grafana_api
@@ -115,6 +111,10 @@
         force_basic_auth: yes
         status_code: 200,412
         body_format: json
+
+        # Temporary due to new grafana version 5:
+        ignore_errors: yes
+
       register: dashboard
       changed_when: dashboard.status == 200
 
