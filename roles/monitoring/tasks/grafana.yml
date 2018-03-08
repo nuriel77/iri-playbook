@@ -85,6 +85,10 @@
     status_code: 200,412
     body_format: json
   register: dashboard
+
+  # Temporary due to new grafana version 5:
+  ignore_errors: yes
+
   changed_when: dashboard.status == 200
   tags:
     - grafana_api
