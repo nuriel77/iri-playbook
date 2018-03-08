@@ -7,6 +7,12 @@ import argparse
 import threading
 from iota import *
 
+ 
+"""Script to reattach a transaction to tangle
+   source: https://github.com/nuriel77/iri-playbook
+   Copyright (c) 2018 Nuriel Shem-Tov
+"""
+
 spinner = None
 
 
