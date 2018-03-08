@@ -640,7 +640,7 @@ function get_latest_iric_version() {
     curl -s -f -m 5 -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric?nocache=$RAND"|grep ^VERSION|cut -d= -f2
 }
 
-function check_new_iri() {
+function check_new_iric() {
     local CURR_VERSION=$VERSION
     local IRIC_VERSION=$(get_latest_iric_version 2>&1)
     if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
@@ -1164,14 +1164,14 @@ function neighbors(){
 
 function main_menu() {
     local MENU="Choose an option"
-    if check_new_iri; then
+    if check_new_iric; then
         MENU="${MENU}\n(*IRIC update available)"
     fi
 
     whiptail --title "IRIC v${VERSION} - IRI Configuration Menu" \
              --menu "$MENU" \
              --cancel-button "Exit" \
-              30 $WIDTH 22 \
+              32 $WIDTH 22 \
     "a)" "Enable Nelson" \
     "b)" "Update Nelson" \
     "c)" "Enable Field" \
