@@ -36,30 +36,6 @@
     timeout: 90
     port: "{{ grafana_port }}"
 
-# Will be removed in the future:
-- name: remove existing dashboards from previous grafana version
-  block:
-
-    - name: deleting dashboards
-      uri:
-        url: "http://localhost:{{ grafana_port }}/api/dashboards/db/{{ item }}"
-        method: DELETE
-        user: "{{ iotapm_nginx_user }}"
-        password: "{{ iotapm_nginx_password }}"
-        force_basic_auth: yes
-        status_code: 200,404
-        body_format: json
-      register: dashboard
-      changed_when: dashboard.status == 200
-      with_items:
-        - "iota"
-        - "node-exporter-single-server"
-        - "prometheus-system"
-
-  when: update_dashboards is defined and update_dashboards|bool
-  tags:
-    - grafana_api
-
 - name: create provisioning, datasources and dashboards directories
   file:
     path: "{{ item }}"
@@ -89,6 +65,10 @@
     src: "files/{{ item }}"
     dest: "{{ grafana_dashboards_path }}/{{ item }}"
   with_items:
-    - "iota_exporter_dashboard.json"
     - "prometheus_dashboard.json"
     - "node_exporter_dashboard.json"
+
+- name: copy iota exporter dashboard
+  copy:
+    src: "{{ iota_prom_fulldir }}/dashboard/iota_dashboard_grafana5.json"
+    dest: "{{ grafana_dashboards_path }}/iota_exporter_dashboard.json"
