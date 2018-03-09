@@ -24,6 +24,11 @@
 ;plugins = /var/lib/grafana/plugins
 
 #
+# Directory where provisioning files are located (since version 5)
+#
+provisioning = {{ grafana_provisioning_path }}
+
+#
 #################################### Server ####################################
 [server]
 # Protocol (http, https, socket)
