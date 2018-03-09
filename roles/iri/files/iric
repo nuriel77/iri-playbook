@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.17
+VERSION=0.3.18
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
