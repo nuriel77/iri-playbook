@@ -92,7 +92,7 @@ Output should look similar to::
 
 Next we can update iota-prom-exporter and the respective Grafana dashboard::
 
-  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iota_prom_exporter,grafana_api -e overwrite=yes -e update_dashboards=true
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,prometheus_config,monitoring_deps,iota_prom_exporter,grafana_config -e overwrite=yes -e update_dashboards=true
 
 Now you should be able to open Grafana and see the new row of metrics (ZMQ).
 

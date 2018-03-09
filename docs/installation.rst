@@ -161,7 +161,7 @@ Set Access Password
 
 This user name and password are used for all web-based authentications (e.g. Peer Manager, Monitoring Graphs).
 
-Edit the **group_vars/all/iotapm.yml** file and set a user and (strong!) a password of your choice:
+Create a new variable file called **group_vars/all/z-override.yml** and set a user and a (strong!) password of your choice:
 
 .. code:: bash
 
@@ -247,7 +247,7 @@ If you installed `monitoring` and `IOTA Peer Manager` you should be able to acce
   Peer Manager: http://your-external-ip:8811
   Grafana: http://your-external-ip:5555
 
-Use the username and password from ``group_vars/all/iotapm.yml``.
+Use the username and password from ``group_vars/all/z-override.yml`` if you set it there previously.
 
 If you followed the Getting Started Quickly guide, you configured a password during the installation, and you can use user ``iotapm``.
 
