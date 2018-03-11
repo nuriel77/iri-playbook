@@ -3,9 +3,8 @@
 Disclaimer
 **********
 
-* This tutorial is based on the repository's Ansible-playbook I provided. It has been tested on CentOS 7.4 and Ubuntu 16.04.
+* This wiki is based on the `Ansible-playbook repository <https://github.com/nuriel77/iri-playbook>`_. Please review :ref:`requirements` before installing.
 * Installar is meant to be installed on a clean OS. I do not take any responsibility for having installed this on a system with already existing software and/or mission critical services.
-* This tutorial does not include information on how to harden security on your server.
-* For some details I will leave it to you to google (for example, how to SSH access your server). Otherwise the tutorial becomes too lofty.
-* I recommend that you use SSH key authentication to your server, disable root SSH access and disable password authentication. In addition, do not expose firewall ports if not necessary.
+* You are responsible for the security of your server. This includes using strong passwords and storing them safely. This wiki includes information on security hardening. Please make sure you follow the steps in ref:`securityHardening` to improve your full node's security.
+* Refer to :ref:`appendix` for extra configuration options for your full node.
 * I am not associated with the IOTA foundation. I am simply an enthusiastic community member.

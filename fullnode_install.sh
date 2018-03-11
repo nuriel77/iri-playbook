@@ -76,8 +76,13 @@ mMMMMMMMMMM:            dMMd   ommd:     -+o/.              .NMMMMy      -mMMMN+
 EOF
 
 
-echo "Welcome to IOTA FullNode Installer!"
-echo "This script is going to install IOTA full node."
+cat <<EOF
+Welcome to IOTA FullNode Installer!
+This script is going to install IOTA full node.
+Please review http://iri-playbook.readthedocs.io/en/master/disclaimer.html before proceeding.
+
+EOF
+
 read -p "Do you wish to proceed? [y/N] " yn
 if echo "$yn" | grep -v -iq "^y"; then
     echo Cancelled
