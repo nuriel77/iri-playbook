@@ -45,6 +45,13 @@ For Peer Manager, edit the file ``/etc/nginx/conf.d/iotapm.conf``::
     server_name pm.example.com;
     server_tokens off;
 
+    # Redirect same port from http to https
+    # The two lines here under are included in newer
+    # versions of the playbook. Omit those if they were
+    # not present in your configuration file.
+    error_page 497 https://$host:$server_port$request_uri;
+    include /etc/nginx/conf.d/ssl.cfg;
+
     auth_basic "Restricted";
     auth_basic_user_file /etc/nginx/.htpasswd;
 
@@ -124,6 +131,8 @@ Configuring my server with HTTPS
 ================================
 
 There are amazing tutorials out there explaining how to achieve this. What is important to realize is that you can either create your own "self-signed" certificates (you become the Certificate Authority which isn't recognized by anyone else), or use valid certificate authorities.
+
+Since a while the IRI Playbook uses own generated self-signed certificate by default. You can replace the certificate and key with your own certificate+key. This can be done here ``/etc/nginx/conf.d/ssl.cfg`` (this file is included in most configurations).
 
 `Let's Encrypt <https://letsencrypt.org/getting-started/>`_ is a free service which allows you to create a certificate per domain name. Other solution would be to purchase a certificates.
 
