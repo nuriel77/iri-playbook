@@ -8,12 +8,6 @@
     etc_config_dir: sysconfig
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-- name: convert password to sha512
-  set_fact:
-    lb_password: "{{ iotapm_nginx_password | password_hash('sha512') }}"
-  tags:
-    - lb_passwd
-
 - name: ensure chroot dir
   file:
     path: /var/lib/haproxy
