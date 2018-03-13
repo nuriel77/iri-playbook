@@ -9,9 +9,8 @@
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: convert password to sha512
-  shell: "python -c \"import crypt, getpass, pwd; print crypt.crypt('{{ iotapm_nginx_password }}', '\\$6\\$saltsalt\\$')\""
-  register: lb_password
-  changed_when: false
+  set_fact:
+    lb_password: "{{ iotapm_nginx_password | password_hash('sha512') }}"
   tags:
     - lb_passwd
 
