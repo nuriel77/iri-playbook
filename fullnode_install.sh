@@ -78,8 +78,9 @@ EOF
 
 cat <<EOF
 Welcome to IOTA FullNode Installer!
-This script is going to install IOTA full node.
-Please review http://iri-playbook.readthedocs.io/en/master/disclaimer.html before proceeding.
+By pressing 'y' you agree to install the IRI fullnode on your system.
+In addition you agree to:
+http://iri-playbook.readthedocs.io/en/master/disclaimer.html
 
 EOF
 
