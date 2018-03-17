@@ -20,6 +20,8 @@ export NEWT_COLORS='
 window=,
 '
 
+declare -g INSTALL_OPTIONS
+
 clear
 cat <<'EOF'
 
@@ -79,8 +81,7 @@ EOF
 cat <<EOF
 Welcome to IOTA FullNode Installer!
 By pressing 'y' you agree to install the IRI fullnode on your system.
-In addition you agree to:
-http://iri-playbook.readthedocs.io/en/master/disclaimer.html
+In addition, you read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
 
 EOF
 
@@ -216,6 +217,67 @@ function get_admin_password() {
     echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
 }
 
+# Installation selection menu
+function set_selections()
+{
+    local RC RESULTS RESULTS_ARRAY CHOICE SKIP_TAGS
+    SKIP_TAGS="--skip-tags=_"
+
+    RESULTS=$(whiptail --title "Installation Options" --checklist \
+        --cancel-button "Exit" \
+        "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
+For more information about these options visit this link:\n
+http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
+Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
+        "ENABLE_NELSON"       "Enable Nelson auto-peering" OFF \
+        "ENABLE_FIELD"        "Enable CarrIOTA Field"      OFF \
+        "ENABLE_HAPROXY"      "Enable HAProxy"             OFF \
+        "DISABLE_MONITORING"  "Disable node monitoring"    OFF \
+        "DISABLE_ZMQ_METRICS" "Disable ZMQ metrics"        OFF \
+        3>&1 1>&2 2>&3)
+
+    RC=$?
+    if [[ $RC -ne 0 ]]; then
+        echo "Installation cancelled"
+        exit 1
+    fi
+
+    read -a RESULTS_ARRAY <<< "$RESULTS"
+    for CHOICE in "${RESULTS_ARRAY[@]}"
+    do
+        case $CHOICE in
+            '"DISABLE_MONITORING"')
+                SKIP_TAGS+=",monitoring_role"
+                ;;
+            '"DISABLE_ZMQ_METRICS"')
+                INSTALL_OPTIONS+=" -e iri_zmq_enabled=false"
+                ;;
+            '"ENABLE_NELSON"')
+                INSTALL_OPTIONS+=" -e nelson_enabled=true"
+                ;;
+            '"ENABLE_FIELD"')
+                INSTALL_OPTIONS+=" -e field_enabled=true"
+                ;;
+            '"ENABLE_HAPROXY"')
+                INSTALL_OPTIONS+=" -e lb_bind_address=0.0.0.0"
+                ;;
+            *)
+                ;;
+        esac
+    done
+
+    if [[ -n "$RESULTS" ]]; then
+        RESULTS_MSG=$(echo "$RESULTS"|sed 's/ /\n/g')
+        if ! (whiptail --title "Confirmation" \
+                 --yesno "You chose:\n\n$RESULTS_MSG\n\nPlease confirm you want to proceed with the installation?" \
+                 --defaultno \
+                 16 78); then
+            exit 1
+        fi
+    fi
+    INSTALL_OPTIONS+=" $SKIP_TAGS"
+}
+
 # Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
 function set_primary_ip()
 {
@@ -284,13 +346,19 @@ fi
 echo "Git cloning iri-playbook repository..."
 cd /opt
 
+# Backup any existing iri-playbook directory
 if [ -d iri-playbook ]; then
-    rm -rf iri-playbook
+    echo "Backing up older iri-playbook directory..."
+    rm -rf iri-playbook.backup
+    mv iri-playbook iri-playbook.backup
 fi
 
 # Clone the repository (optional branch)
 git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
 cd iri-playbook
+
+# Let user choose installation add-ons
+set_selections
 
 # web access (ipm, haproxy and grafana)
 get_admin_password
@@ -300,8 +368,9 @@ echo -e "\nRunning playbook..."
 LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Run the playbook
+echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
 set +e
-unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" | tee "$LOGFILE"
+unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
 RC=$?
 if [ $RC -ne 0 ]; then
     echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
@@ -312,25 +381,27 @@ set -e
 # Calling set_primary_ip
 set_primary_ip
 
+# Add notice to set payout address for Field
+if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]]; then
+    FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/field.ini'"
+fi
+
 OUTPUT=$(cat <<EOF
-*** Installation done! ***
+* A log of this installation has been saved to: $LOGFILE
 
-A log of this installation has been saved to: $LOGFILE
-
-
-You should be able to connect to IOTA Peer Manager pointing your browser to:
+* You should be able to connect to IOTA Peer Manager pointing your browser to:
 
 http://${PRIMARY_IP}:8811
 
-
-You can reach the monitoring (grafana) graphs at:
+* You can reach the monitoring (grafana) graphs at:
 
 http://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
 
+* Note that your IP might be different as this one has been auto-detected in best-effort.
 
-Note that your IP might be different as this one has been auto-detected in best-effort.
-You can use the username 'iotapm' and the password you entered during the installation.
+* You can use the username 'iotapm' and the password you entered during the installation.
 
+${FIELD_NOTICE}
 
 Please refer to the tutorial for post-installation information:
 http://iri-playbook.readthedocs.io/en/master/post-installation.html
