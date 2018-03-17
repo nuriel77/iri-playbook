@@ -568,9 +568,7 @@ After having saved the file, you can run ``nano /tmp/test.txt`` again in order t
 Running IRI API Port Behind HAProxy
 ===================================
 
-This is still work in progress but feel free to test this functionality.
-
-We can configure IRI API port to be accessible via HAProxy. The benefits in doing so is:
+The IRI API port can be configured to be accessible via HAProxy. The benefits in doing so are:
 
 - Logging
 - Whitelist/blacklisting
@@ -578,7 +576,7 @@ We can configure IRI API port to be accessible via HAProxy. The benefits in doin
 - Rate limiting per IP, or per command
 - Denying invalid requests
 
-To get it configured and installed run::
+To get it configured and installed you can use ``iric`` or run::
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
 
@@ -595,3 +593,36 @@ To see the configured denied/limited commands see ``group_vars/all/lb.yml``. The
 
 If you need help with this, please find help on Discord #fullnodes channel.
 
+
+
+.. _options:
+
+Installation Options
+====================
+
+This is an explanation about the select-options provided by the fully automated installer.
+
+Nelson
+------
+Nelson is a software which enabled auto-peering for IRI (finding neighbors automatically).
+
+If Nelson is not used, neighbors have to be manually maintained (default).
+
+You can read more about it `here <https://github.com/SemkoDev/nelson.cli>`_.
+
+Field
+-----
+Field is a proxy for your IRI node that sends regular statistics to the `Field server <http://field.carriota.com>`_.
+
+You can read more about it `here <https://github.com/SemkoDev/field.cli>`_.
+
+
+HAproxy
+-------
+HAProxy is a proxy/load-balancer. In the context of this installation it can be enabled to serve the IRI API port.
+
+You can read more about it here: :ref:`haproxyEnable`.
+
+ZMQ Metrics
+-----------
+IRI can provide internal metrics and data by exposing ZeroMQ port (locally by default). If enabled, this will allow the iota-prom-exporter to read this data and create additional graphs in Grafana (e.g. transactions confirmation rate etc).
