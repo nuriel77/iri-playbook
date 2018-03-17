@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.19
+VERSION=0.3.20
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -196,7 +196,7 @@ function enable_field() {
     fi
 
     if (whiptail --title "Enable Field" \
-                 --yesno "Please verify the details:\n\nYou chose the node name '${NODE_NAME}'.\n${ADDRESS_CHOISE}\n${ID_CHOICE}\nAre you sure you want to enable Field?" \
+                 --yesno "Please verify the details:\n\nYou chose the node name '${NODE_NAME}'.\n${ADDRESS_CHOICE}\n${ID_CHOICE}\nAre you sure you want to enable Field?" \
                  15 $WIDTH) then
 
         verify_playbook
