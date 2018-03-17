@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.18
+VERSION=0.3.19
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -269,6 +269,7 @@ function enable_nelson() {
     local RC
     if (whiptail --title "Enable Nelson" \
                  --yesno "Are you sure you want to enable Nelson automatic peering?" \
+                 --defaultno \
                  8 $WIDTH) then
         verify_playbook
         if [[ $? -ne 0 ]]; then
@@ -315,6 +316,7 @@ function upgrade_nelson() {
 
     if (whiptail --title "Upgrade Nelson" \
                  --yesno "Are you sure you want to upgrade Nelson from ${NELSON_VERSION} to ${NELSON_LATEST}?" \
+                 --defaultno \
                  8 $WIDTH) then
         verify_playbook
         if [[ $? -ne 0 ]]; then
@@ -356,6 +358,7 @@ function upgrade_iri() {
     if (testvercomp "$IRI_VERSION" "$IRI_LATEST" "=") || (testvercomp "$IRI_VERSION" "$IRI_LATEST" ">" ); then
         if ! (whiptail --title "No Updates" \
                  --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
+                 --defaultno \
                  10 $WIDTH) then
             return
         else
@@ -366,6 +369,7 @@ function upgrade_iri() {
     if [ -z "$NO_CONFIRM" ]; then
         if ! (whiptail --title "Upgrade IRI" \
                      --yesno "Are you sure you want to upgrade IRI from ${IRI_VERSION} to ${IRI_LATEST}?\nWARNING: only do this if you know what your are doing!" \
+                     --defaultno \
                      8 $WIDTH) then
             return
         fi
@@ -406,6 +410,7 @@ function upgrade_monitoring() {
     local RC
     if (whiptail --title "Upgrade Monitoring" \
                  --yesno "Are you sure you want to upgrade monitoring services?" \
+                 --defaultno \
                  8 $WIDTH) then
         verify_playbook
         if [[ $? -ne 0 ]]; then
@@ -434,6 +439,7 @@ function enable_haproxy() {
     [ -n "$1" ] && { DEFAULT_MSG=$1; }
     if (whiptail --title "HAProxy" \
                  --yesno "$DEFAULT_MSG" \
+                 --defaultno \
                  8 $WIDTH) then
         verify_playbook
         if [[ $? -ne 0 ]]; then
@@ -544,6 +550,7 @@ function remove_neighbors() {
     ADDRESS=$(echo "$TO_REMOVE"|cut -d'/' -f1)
     if (whiptail --title "Confirm removal" \
                  --yesno "Are you sure you want to remove: ${SCHEME}://${ADDRESS}" \
+                 --defaultno \
                  8 $WIDTH)
     then
         IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
