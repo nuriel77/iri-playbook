@@ -220,15 +220,21 @@ function get_admin_password() {
 # Installation selection menu
 function set_selections()
 {
-    local RC RESULTS CHOICE
+    local RC RESULTS RESULTS_ARRAY CHOICE SKIP_TAGS
+    SKIP_TAGS="--skip-tags=_"
 
     RESULTS=$(whiptail --title "Installation Options" --checklist \
         --cancel-button "Exit" \
-        "\nPlease choose optional installation add-ons.\n\
-Select/unselect options using space and click Enter to proceed.\n" 20 78 3 \
-        "ENABLE_NELSON"  "Enable Nelson auto-peering" OFF \
-        "ENABLE_FIELD"   "Enable CarrIOTA Field"      OFF \
-        "ENABLE_HAPROXY" "Enable HAProxy"             OFF 3>&1 1>&2 2>&3)
+        "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
+For more information about these options visit this link:\n
+http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
+Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
+        "ENABLE_NELSON"       "Enable Nelson auto-peering" OFF \
+        "ENABLE_FIELD"        "Enable CarrIOTA Field"      OFF \
+        "ENABLE_HAPROXY"      "Enable HAProxy"             OFF \
+        "DISABLE_MONITORING"  "Disable node monitoring"    OFF \
+        "DISABLE_ZMQ_METRICS" "Disable ZMQ metrics"        OFF \
+        3>&1 1>&2 2>&3)
 
     RC=$?
     if [[ $RC -ne 0 ]]; then
@@ -240,6 +246,12 @@ Select/unselect options using space and click Enter to proceed.\n" 20 78 3 \
     for CHOICE in "${RESULTS_ARRAY[@]}"
     do
         case $CHOICE in
+            '"DISABLE_MONITORING"')
+                SKIP_TAGS+=",monitoring_role"
+                ;;
+            '"DISABLE_ZMQ_METRICS"')
+                INSTALL_OPTIONS+=" -e iri_zmq_enabled=false"
+                ;;
             '"ENABLE_NELSON"')
                 INSTALL_OPTIONS+=" -e nelson_enabled=true"
                 ;;
@@ -263,6 +275,7 @@ Select/unselect options using space and click Enter to proceed.\n" 20 78 3 \
             exit 1
         fi
     fi
+    INSTALL_OPTIONS+=" $SKIP_TAGS"
 }
 
 # Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
@@ -355,7 +368,7 @@ echo -e "\nRunning playbook..."
 LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Run the playbook
-echo "*** Running playbook command: unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
+echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
 set +e
 unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
 RC=$?
