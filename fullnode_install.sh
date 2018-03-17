@@ -387,15 +387,11 @@ if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]]; then
 fi
 
 OUTPUT=$(cat <<EOF
-*** Installation done! ***
-
-A log of this installation has been saved to: $LOGFILE
-
+* A log of this installation has been saved to: $LOGFILE
 
 * You should be able to connect to IOTA Peer Manager pointing your browser to:
 
 http://${PRIMARY_IP}:8811
-
 
 * You can reach the monitoring (grafana) graphs at:
 
