@@ -623,6 +623,17 @@ HAProxy is a proxy/load-balancer. In the context of this installation it can be 
 
 You can read more about it here: :ref:`haproxyEnable`.
 
+Monitoring
+----------
+The monitoring refers to installation of:
+
+- Prometheus (metrics collector)
+- Alertmanager (trigger alerts based on certain rules)
+- Grafana (Metrics dashboard)
+- Iota-prom-exporter (IRI full node metrics exporter for Prometheus)
+
+It is recommended to install those to have a full overview of your node's performance.
+
 ZMQ Metrics
 -----------
 IRI can provide internal metrics and data by exposing ZeroMQ port (locally by default). If enabled, this will allow the iota-prom-exporter to read this data and create additional graphs in Grafana (e.g. transactions confirmation rate etc).
