@@ -59,8 +59,8 @@ groups:
 
   # Low Disk Space Alerts
   - alert: NodeLowRootDiskWarning
-    expr: ((node_filesystem_size{mountpoint="/root-disk"} - node_filesystem_free{mountpoint="/root-disk"})
-      / node_filesystem_size{mountpoint="/root-disk"} * 100) > 80
+    expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"})
+      / node_filesystem_size{mountpoint="/"} * 100) > 80
     for: 2m
     labels:
       severity: warning
@@ -70,8 +70,8 @@ groups:
       SUMMARY: '{{$labels.instance}}: Low root disk space'
 
   - alert: NodeLowRootDiskCritical
-    expr: ((node_filesystem_size{mountpoint="/root-disk"} - node_filesystem_free{mountpoint="/root-disk"})
-      / node_filesystem_size{mountpoint="/root-disk"} * 100) > 95
+    expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"})
+      / node_filesystem_size{mountpoint="/"} * 100) > 95
     for: 2m
     labels:
       severity: critical
