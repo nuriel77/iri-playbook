@@ -25,6 +25,7 @@
         headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
         validate_certs: no
         force: yes
+        timeout: 20
       when: not oracle_java_dir_stat.stat.exists
       register: jdk_downloaded
       tags:
