@@ -78,6 +78,7 @@
     owner: root
     group: "{{ iri_username }}"
     mode: 0640
+    timeout: 20
   register: iri_downloaded
   notify:
     - restart iri
