@@ -47,3 +47,7 @@ Alert Manager configuration file::
 HAProxy configuration file::
 
   /etc/haproxy/haproxy.cfg
+
+Field configuration file::
+
+  /etc/field/field.ini
