@@ -60,6 +60,9 @@
       register: javac_env
       changed_when: "javac_env.stdout != ''"
 
+  tags:
+    - oracle_java
+
 - name: Install some packages
   apt: state=latest name={{ item }} update_cache=yes
   with_items:
@@ -87,3 +90,5 @@
     regexp: '^JAVA_HOME'
     line: 'JAVA_HOME="/opt/jdk/{{ oracle_java_dir }}"'
   when: jdk_downloaded is defined and jdk_downloaded.changed
+  tags:
+    - oracle_java

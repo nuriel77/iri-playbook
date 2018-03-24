@@ -6,6 +6,7 @@
   changed_when: false
   tags:
     - oracle_java_rpm
+    - oracle_java
 
 - name: Download java jdk rpm
   get_url:
@@ -20,6 +21,7 @@
   tags:
     - download_jdk_rpm
     - oracle_java_rpm
+    - oracle_java
 
 - name: yum install oracle java rpm
   yum:
@@ -28,6 +30,7 @@
   when: dl_oracle_java.changed
   tags:
     - oracle_java_rpm
+    - oracle_java
 
 - name: remove local jdk rpm
   file:
@@ -35,6 +38,7 @@
     state: absent
   tags:
     - oracle_java_rpm
+    - oracle_java
 
 # Required
 - name: Install epel-release
