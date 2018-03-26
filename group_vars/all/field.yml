@@ -1,6 +1,10 @@
 # The TCP port used for field
 field_tcp_port: 21310
 
+# The IP address Field binds to
+# Use 0.0.0.0 for all interfaces/IPs
+field_bind_address: 0.0.0.0
+
 # Enable PoW via field (overrides REMOTE_LIMIT_API
 # iri config if `field_iri_host` is set to localhost/127.0.0.1).
 field_pow: false
