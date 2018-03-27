@@ -80,6 +80,7 @@
     - pastebinit
     - openssl
     - bsdmainutils
+    - whiptail
   tags:
     - deps
     - scripts
