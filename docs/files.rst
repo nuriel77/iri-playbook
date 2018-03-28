@@ -48,6 +48,10 @@ HAProxy configuration file::
 
   /etc/haproxy/haproxy.cfg
 
+Nelson configuration file::
+
+  /etc/nelson/nelson.ini
+
 Field configuration file::
 
   /etc/field/field.ini
