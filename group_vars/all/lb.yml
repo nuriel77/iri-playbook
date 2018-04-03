@@ -24,6 +24,14 @@ haproxy_username: haproxy
 haproxy_base_version: 1.8
 haproxy_min_version: 3
 
+# A list of IPs to whitelist on haproxy
+# This will allow those IPs to bypass command 
+# regex limitations. The format is a yaml list
+# thus ['value', 'value'] or `- value` on each
+# new line.
+haproxy_whitelist:
+  - 127.0.0.1
+
 # Commands to deny access to
 haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'
 

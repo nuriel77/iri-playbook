@@ -42,6 +42,9 @@ frontend iri_front
     option log-separate-errors
     option http-buffer-request
 
+    # Define source whitelist
+    acl whitelist src {{ haproxy_whitelist | join(" ") }}
+
     # id=0 to store body for logging
     declare capture request len 40000
     http-request capture req.body id 0
@@ -85,7 +88,7 @@ frontend iri_front
     acl bad_command req.body -m reg {{ haproxy_bad_command }}
     http-request deny if bad_command
     http-request deny unless command_exists
-    http-request deny if invalid_command
+    http-request deny if invalid_command !whitelist
 
     # Enable these two lines for SSL to IRI
     #reqadd X-Forwarded-Proto:\ https
