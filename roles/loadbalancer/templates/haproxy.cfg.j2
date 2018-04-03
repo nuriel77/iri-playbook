@@ -88,7 +88,7 @@ frontend iri_front
     acl bad_command req.body -m reg {{ haproxy_bad_command }}
     http-request deny if bad_command
     http-request deny unless command_exists
-    http-request deny if invalid_command
+    http-request deny if invalid_command !whitelist
 
     # Enable these two lines for SSL to IRI
     #reqadd X-Forwarded-Proto:\ https
