@@ -99,6 +99,8 @@
     validate: '/usr/local/sbin/haproxy -c -f %s'
   notify:
     - restart haproxy
+  tags:
+    - haproxy_cfg
 
 - name: start and enable haproxy
   systemd:
