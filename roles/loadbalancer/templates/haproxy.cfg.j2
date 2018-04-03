@@ -42,6 +42,9 @@ frontend iri_front
     option log-separate-errors
     option http-buffer-request
 
+    # Define source whitelist
+    acl whitelist src {{ haproxy_whitelist | join(" ") }}
+
     # id=0 to store body for logging
     declare capture request len 40000
     http-request capture req.body id 0
