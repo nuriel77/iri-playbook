@@ -55,3 +55,7 @@ Nelson configuration file::
 Field configuration file::
 
   /etc/field/field.ini
+
+Field Exporter configuration file::
+
+  /opt/prometheus/field_exporter/config.js
