@@ -161,13 +161,13 @@ function enable_field() {
                  --yesno "Please verify the details:\n\nYou chose the node name '${NODE_NAME}'.\n${ADDRESS_CHOICE}\n${ID_CHOICE}\nAre you sure you want to enable Field?" \
                  15 $WIDTH) then
 
-        #verify_playbook
-        #if [[ $? -ne 0 ]]; then
-        #     whiptail --title "Error!" \
-        #              --msgbox "ERROR: Cannot enable Field." \
-        #              8 $WIDTH
-        #     return 1
-        #fi
+        verify_playbook
+        if [[ $? -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: Cannot enable Field." \
+                      8 $WIDTH
+             return 1
+        fi
 
         # backup old ID file
         [[ -n "$ID_MOVE" ]] && mv "/var/lib/field/.carriota-field.id" "/var/lib/field/.carriota-field.id.${ID_MOVE}"
@@ -213,13 +213,13 @@ function upgrade_field() {
     if (whiptail --title "Upgrade Field" \
                  --yesno "Are you sure you want to upgrade Field from ${FIELD_VERSION} to ${FIELD_LATEST}?" \
                  8 $WIDTH) then
-        #verify_playbook
-        #if [[ $? -ne 0 ]]; then
-        #     whiptail --title "Error!" \
-        #              --msgbox "ERROR: Cannot update Field." \
-        #              8 $WIDTH
-        #     return 1
-        #fi
+        verify_playbook
+        if [[ $? -ne 0 ]]; then
+             whiptail --title "Error!" \
+                      --msgbox "ERROR: Cannot update Field." \
+                      8 $WIDTH
+             return 1
+        fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "upgrade_field=true" -e "field_enabled=true"
         [[ $? -ne 0 ]] && MSG="Updating Field failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press any key to return to menu."
