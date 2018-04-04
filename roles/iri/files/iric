@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.20
+VERSION=0.3.3
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -211,7 +211,7 @@ function enable_field() {
         [[ -n "$ID_MOVE" ]] && mv "/var/lib/field/.carriota-field.id" "/var/lib/field/.carriota-field.id.${ID_MOVE}"
 
         # run playbook enabling field
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=field_role -e "field_enabled=true" -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "field_enabled=true" -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
 
         [[ $? -ne 0 ]] && MSG="Enabling Field failed!!! Check output above for errors." || MSG="Installation finished successfully!"
         pause "$MSG Press any key to return to menu."
@@ -258,7 +258,7 @@ function upgrade_field() {
                       8 $WIDTH
              return 1
         fi
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=field_role -e "upgrade_field=true" -e "field_enabled=true"
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "upgrade_field=true" -e "field_enabled=true"
         [[ $? -ne 0 ]] && MSG="Updating Field failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press any key to return to menu."
     fi

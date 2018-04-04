@@ -29,3 +29,6 @@ field_address: CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGC
 
 # Where to find IRI
 field_iri_host: 127.0.0.1
+
+# Used for config.js from field_exporter
+field_nodes_public_ids_array: []

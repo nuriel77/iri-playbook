@@ -14,12 +14,19 @@ exporter_port: 9100
 exporter_bind_address: 127.0.0.1
 
 nodesource_version: 8
+# Here path provided and full path constructed in task
 iota_prom_exporter_basedir: iota-prom-exporter
 iota_prom_exporter_port: 9311
 iota_prom_exporter_bind: 127.0.0.1
 iota_prom_exporter_market_data: true
 iota_prom_exporter_db_days_retention: 14
 
+field_exporter_bind_port: 9337
+field_exporter_bind_address: 127.0.0.1
+# Here path provided and full path constructed in task
+field_exporter_basedir: field_exporter 
+
+# Here (legacy) has been provided the full path
 alertmanager_basedir: /opt/prometheus/alertmanager
 alertmanager_version: 0.12.0
 alertmanager_port: 9093

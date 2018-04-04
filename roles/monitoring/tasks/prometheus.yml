@@ -36,6 +36,8 @@
     mode: 0600
   notify:
     - restart prometheus
+  tags:
+    - prometheus_config_file
 
 - name: copy alerting rules
   copy:
