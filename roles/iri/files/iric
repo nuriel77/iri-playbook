@@ -32,44 +32,6 @@ function cleanup() {
 
 trap cleanup INT TERM EXIT
 
-
-# Version Compare
-
-vercomp () {
-    if [[ $1 == $2 ]]; then
-        return 0
-    fi
-    local IFS=.
-    local i ver1=($1) ver2=($2)
-    # fill empty fields in ver1 with zeros
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++)); do
-        ver1[i]=0
-    done
-    for ((i=0; i<${#ver1[@]}; i++)); do
-        if [[ -z ${ver2[i]} ]];  then
-            # fill empty fields in ver2 with zeros
-            ver2[i]=0
-        fi
-        if ((10#${ver1[i]} > 10#${ver2[i]})); then
-            return 1
-        fi
-        if ((10#${ver1[i]} < 10#${ver2[i]})); then
-            return 2
-        fi
-    done
-    return 0
-}
-
-testvercomp () {
-    vercomp $1 $2
-    case $? in
-        0) op='=';;
-        1) op='>';;
-        2) op='<';;
-    esac
-    [[ $op != $3 ]] && return 1 || return 0
-}
-
 # Experimental Admin settings
 function set_admin_user() {
     USER_CHOICE=$(whiptail --inputbox "Pick a name for the administrator account:" 8 $WIDTH ${ADMIN_USER} --title "Username (allowed regex: a-zA-Z0-9_)" 3>&1 1>&2 2>&3)
@@ -199,13 +161,13 @@ function enable_field() {
                  --yesno "Please verify the details:\n\nYou chose the node name '${NODE_NAME}'.\n${ADDRESS_CHOICE}\n${ID_CHOICE}\nAre you sure you want to enable Field?" \
                  15 $WIDTH) then
 
-        verify_playbook
-        if [[ $? -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: Cannot enable Field." \
-                      8 $WIDTH
-             return 1
-        fi
+        #verify_playbook
+        #if [[ $? -ne 0 ]]; then
+        #     whiptail --title "Error!" \
+        #              --msgbox "ERROR: Cannot enable Field." \
+        #              8 $WIDTH
+        #     return 1
+        #fi
 
         # backup old ID file
         [[ -n "$ID_MOVE" ]] && mv "/var/lib/field/.carriota-field.id" "/var/lib/field/.carriota-field.id.${ID_MOVE}"
@@ -241,7 +203,7 @@ function upgrade_field() {
         return 1
     fi
 
-    if (testvercomp "$FIELD_VERSION" "$FIELD_LATEST" "=") || (testvercomp "$FIELD_VERSION" "$FIELD_LATEST" ">" ); then
+    if (( $(awk 'BEGIN {print ("'$FIELD_VERSION'" >= "'$FIELD_LATEST'")}') )); then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $FIELD_VERSION" \
                  8 $WIDTH
@@ -251,13 +213,13 @@ function upgrade_field() {
     if (whiptail --title "Upgrade Field" \
                  --yesno "Are you sure you want to upgrade Field from ${FIELD_VERSION} to ${FIELD_LATEST}?" \
                  8 $WIDTH) then
-        verify_playbook
-        if [[ $? -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: Cannot update Field." \
-                      8 $WIDTH
-             return 1
-        fi
+        #verify_playbook
+        #if [[ $? -ne 0 ]]; then
+        #     whiptail --title "Error!" \
+        #              --msgbox "ERROR: Cannot update Field." \
+        #              8 $WIDTH
+        #     return 1
+        #fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "upgrade_field=true" -e "field_enabled=true"
         [[ $? -ne 0 ]] && MSG="Updating Field failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press any key to return to menu."
@@ -307,7 +269,7 @@ function upgrade_nelson() {
         return 1
     fi
 
-    if (testvercomp "$NELSON_VERSION" "$NELSON_LATEST" "=") || (testvercomp "$NELSON_VERSION" "$NELSON_LATEST" ">" ); then
+    if (( $(awk 'BEGIN {print ("'$NELSON_VERSION'" >= "'$NELSON_LATEST'")}') )); then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $NELSON_VERSION" \
                  8 $WIDTH
@@ -355,7 +317,7 @@ function upgrade_iri() {
         return 1
     fi
     
-    if (testvercomp "$IRI_VERSION" "$IRI_LATEST" "=") || (testvercomp "$IRI_VERSION" "$IRI_LATEST" ">" ); then
+    if (( $(awk 'BEGIN {print ("'$IRI_VERSION'" >= "'$IRI_LATEST'")}') )); then
         if ! (whiptail --title "No Updates" \
                  --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
                  --defaultno \
@@ -654,7 +616,7 @@ function check_new_iric() {
         return 1
     fi
 
-    if (testvercomp "$CURR_VERSION" "$IRIC_VERSION" "=") || (testvercomp "$CURR_VERSION" "$IRIC_VERSION" ">" ); then
+    if (( $(awk 'BEGIN {print ("'$CURR_VERSION'" >= "'$IRIC_VERSION'")}') )); then
         return 1
     else
         return 0
@@ -671,7 +633,7 @@ function update_iric() {
         return 1
     fi
 
-    if (testvercomp "$CURR_VERSION" "$IRIC_VERSION" "=") || (testvercomp "$CURR_VERSION" "$IRIC_VERSION" ">" ); then
+    if (( $(awk 'BEGIN {print ("'$CURR_VERSION'" >= "'$IRIC_VERSION'")}') )); then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: $VERSION." \
                  8 $WIDTH
