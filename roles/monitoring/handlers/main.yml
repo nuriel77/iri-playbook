@@ -22,6 +22,13 @@
     state: restarted
     enabled: yes
 
+- name: restart field-exporter
+  systemd:
+    name: field-exporter.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
 - name: restart prom-am-executor
   systemd:
     name: prom-am-executor.service

@@ -3,3 +3,10 @@
     name: field.service
     enabled: true
     state: restarted
+
+- name: restart field-exporter
+  systemd:
+    name: field-exporter.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes

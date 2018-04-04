@@ -449,10 +449,10 @@ The manual procedure to install Field:
 
 .. code:: bash
 
-  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=field_role -e field_enabled=yes
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e field_enabled=yes
 
 
-This will result in Field installed and configured. You should check the configuration file at ``/etc/field/field.ini`` to configure your payout address.
+This will result in Field installed and configured. You should check the configuration file at ``/etc/field/field.ini`` to configure your payout address and node's name.
 
 
 Control Field

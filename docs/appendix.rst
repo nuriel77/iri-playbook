@@ -616,6 +616,9 @@ Field is a proxy for your IRI node that sends regular statistics to the `Field s
 
 You can read more about it `here <https://github.com/SemkoDev/field.cli>`_.
 
+In addition to field, field-exporter is installed which provides metrics about the node's performance in the Field and other stats from the Field server.
+
+You can read more about it `here <https://github.com/DaveRingelnatz/field_exporter>`_.
 
 HAproxy
 -------
