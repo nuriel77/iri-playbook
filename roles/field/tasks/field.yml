@@ -100,6 +100,7 @@
         dest: "{{ field_exporter_fulldir }}/config.js"
         owner: "{{ prom_username }}"
         group: "{{ prom_username }}"
+        backup: yes
       notify:
         - restart field-exporter
 

@@ -71,7 +71,7 @@
 
 - name: copy field-exporter dashboard
   copy:
-    src: "files/field_exporter_dashboard.json"
+    src: "{{ field_exporter_fulldir }}/dashboards/field_exporter_dashboard_grafana.json"
     dest: "{{ grafana_dashboards_path }}/field_exporter_dashboard.json"
   when: >
         field_enabled is defined and
