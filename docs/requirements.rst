@@ -22,7 +22,7 @@ The basic recommendation is to have one with at least 4GB RAM, 2 cores and minim
 
 .. note::
 
-   At time of writing (December 2018) many users are experiencing out-of-memory errors with 4GB RAM. This should be remedied by next snapshot.
+   At time of writing (December 2017) many users are experiencing out-of-memory errors with 4GB RAM. This should be remedied by next snapshot.
 
 
 .. _operatingSystem:
