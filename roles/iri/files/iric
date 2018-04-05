@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.3.31
+VERSION=0.3.40
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -173,7 +173,7 @@ function enable_field() {
         [[ -n "$ID_MOVE" ]] && mv "/var/lib/field/.carriota-field.id" "/var/lib/field/.carriota-field.id.${ID_MOVE}"
 
         # run playbook enabling field
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "field_enabled=true" -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "field_enabled=true" -e overwrite=yes -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
 
         [[ $? -ne 0 ]] && MSG="Enabling Field failed!!! Check output above for errors." || MSG="Installation finished successfully!"
         pause "$MSG Press any key to return to menu."
@@ -204,26 +204,35 @@ function upgrade_field() {
     fi
 
     if (( $(awk 'BEGIN {print ("'$FIELD_VERSION'" >= "'$FIELD_LATEST'")}') )); then
-        whiptail --title "No Updates" \
-                 --msgbox "You already have the latest version: $FIELD_VERSION" \
-                 8 $WIDTH
-        return
+        if ! (whiptail --title "No Updates" \
+                     --yesno "You already have the latest version: ${FIELD_LATEST}.\nDo you want to proceed anyway?" \
+                     --defaultno \
+                     10 $WIDTH) then
+            return
+        else
+            local NO_CONFIRM=1
+        fi
     fi
 
-    if (whiptail --title "Upgrade Field" \
-                 --yesno "Are you sure you want to upgrade Field from ${FIELD_VERSION} to ${FIELD_LATEST}?" \
-                 8 $WIDTH) then
-        verify_playbook
-        if [[ $? -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: Cannot update Field." \
-                      8 $WIDTH
-             return 1
+    if [ -z "$NO_CONFIRM" ]; then
+        if ! (whiptail --title "Upgrade Field" \
+                     --yesno "Are you sure you want to upgrade Field from ${FIELD_VERSION} to ${FIELD_LATEST}?" \
+                     8 $WIDTH) then
+            return
         fi
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "upgrade_field=true" -e "field_enabled=true"
-        [[ $? -ne 0 ]] && MSG="Updating Field failed!!! Check output above for errors." || MSG="Update finished successfully!"
-        pause "$MSG Press any key to return to menu."
     fi
+
+    verify_playbook
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Error!" \
+                  --msgbox "ERROR: Cannot update Field." \
+                  8 $WIDTH
+         return 1
+    fi
+    cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "upgrade_field=true" -e "field_enabled=true"
+    [[ $? -ne 0 ]] && MSG="Updating Field failed!!! Check output above for errors." || MSG="Update finished successfully!"
+    pause "$MSG Press any key to return to menu."
+
 }
 
 ### Nelson ###
@@ -634,28 +643,36 @@ function update_iric() {
     fi
 
     if (( $(awk 'BEGIN {print ("'$CURR_VERSION'" >= "'$IRIC_VERSION'")}') )); then
-        whiptail --title "No Updates" \
-                 --msgbox "You already have the latest version: $VERSION." \
-                 8 $WIDTH
-        return
+        if ! (whiptail --title "No Updates" \
+                     --yesno "You already have the latest version: ${CURR_VERSION}.\nDo you want to proceed anyway?" \
+                     --defaultno \
+                     10 $WIDTH) then
+            return
+        else
+            local NO_CONFIRM=1
+        fi
     fi
 
-    if (whiptail --title "Confirm Update" \
-                 --yesno "Are you sure you want to update IRIC from '$VERSION' to '$IRIC_VERSION'?" \
-                 8 $WIDTH) then
-        verify_playbook
-        if [[ $? -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: playbook task failed." \
-                      8 $WIDTH
-             return 1
+    if [ -z "$NO_CONFIRM" ]; then
+        if ! (whiptail --title "Confirm Update" \
+                     --yesno "Are you sure you want to update IRIC from '$VERSION' to '$IRIC_VERSION'?" \
+                     8 $WIDTH) then
+            return
         fi
-        cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
-        [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully!"
-        pause "$MSG Press any key to return to menu."
-        clear
-        exec "$0"
     fi
+
+    verify_playbook
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Error!" \
+                  --msgbox "ERROR: playbook task failed." \
+                  8 $WIDTH
+         return 1
+    fi
+    cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
+    [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully!"
+    pause "$MSG Press any key to return to menu."
+    clear
+    exec "$0"
 }
 
 ### Configs ###
