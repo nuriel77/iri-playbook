@@ -437,6 +437,10 @@ Field has been added to the playbook as an optional add-on. The recommended way 
 
 You might want to upgrade the ``iric`` tool (there's an option for that in the menu) if you are missing the option to enable Field.
 
+.. note::
+
+  If you already have Field installed and don't have the field_exporter installed yet: make sure you have the latest ``iric``. Then choose to update field (proceed with the update when asked).
+
 
 Manual Installation
 -------------------
