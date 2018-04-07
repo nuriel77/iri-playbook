@@ -439,7 +439,7 @@ You might want to upgrade the ``iric`` tool (there's an option for that in the m
 
 .. note::
 
-  If you already have Field installed and don't have the field_exporter installed yet: make sure you have the latest ``iric``. Then choose to update field (proceed with the update when asked).
+  The playbook also installs field_exporter to show stats on Grafana. If you already have Field installed and don't have the field_exporter installed yet: make sure you have the latest ``iric`` and then choose to update field (proceed with the update when asked).
 
 
 Manual Installation
