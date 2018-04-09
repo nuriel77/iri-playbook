@@ -81,7 +81,9 @@ EOF
 cat <<EOF
 Welcome to IOTA FullNode Installer!
 By pressing 'y' you agree to install the IRI fullnode on your system.
-In addition, you read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
+By pressing 'y' you aknowledge that this installer requires a CLEAN operating system
+and may otherwise break existing software on your server (see link below).
+You read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
 
 EOF
 
