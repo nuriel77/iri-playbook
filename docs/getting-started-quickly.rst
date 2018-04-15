@@ -22,11 +22,7 @@ For **CentOS** users: you may need to install ``curl``. You can do that by runni
 
 |
 
-**This command will pull the installer script and kick off the installation:**
-
-``WARNING!!! THIS COMMAND SHOULD NEVER BE RUN ON A PRODUCTION SERVER WITH EXISTING SOFTWARE``
-``AS IT MIGHT BREAK YOUR SEVER'S FUNCTIONALITY. Only run this after having read the warnings``
-``above and being absolutely certain your server has a clean OS installed!``
+**This command will pull the installer script and kick off the installation. Make sure you read the warning above!**
 
 .. code:: bash
 
