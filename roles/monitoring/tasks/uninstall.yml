@@ -17,6 +17,7 @@
     name: grafana-server
     state: stopped
     enabled: false
+  ignore_errors: yes
 
 - name: remove yum grafana
   block:
