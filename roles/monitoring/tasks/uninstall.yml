@@ -122,6 +122,14 @@
     - '/etc/nginx/conf.d/prometheus.conf'
     - '/etc/nginx/conf.d/grafana.conf'
 
+- name: remove provisioning, datasources and dashboards directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ grafana_provisioning_path }}"
+    - "{{ grafana_dashboards_path }}"
+
 - name: remove prometheus user
   user:
     name: "{{ prom_username }}"
