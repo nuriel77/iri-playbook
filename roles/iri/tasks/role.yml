@@ -29,3 +29,9 @@
 - import_tasks: ssl.yml
   tags:
     - iri_ssl
+
+- import_tasks: uninstall.yml
+  tags:
+    - uninstall
+    - uninstall_iri
+  when: uninstall_playbook is defined and uninstall_playbook|bool == True

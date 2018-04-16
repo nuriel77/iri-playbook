@@ -2,5 +2,7 @@
   tags:
     - field_role
   when: >
-        field_enabled is defined and
-        field_enabled|bool == true
+        (field_enabled is defined and
+        field_enabled|bool == true) or
+        (uninstall_playbook is defined and
+         uninstall_playbook|bool == True)

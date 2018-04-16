@@ -25,3 +25,9 @@
 - import_tasks: lb.yml
   tags:
     - lb_config
+
+- import_tasks: uninstall.yml
+  tags:
+    - uninstall
+    - uninstall_loadbalancer
+  when: uninstall_playbook is defined and uninstall_playbook|bool == True

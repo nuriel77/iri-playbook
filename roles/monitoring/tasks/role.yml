@@ -36,3 +36,9 @@
 - import_tasks: prom-am-executor.yml
   tags:
     - prom_am_executor
+
+- import_tasks: uninstall.yml
+  tags:
+    - uninstall
+    - uninstall_monitoring
+  when: uninstall_playbook is defined and uninstall_playbook|bool == True

@@ -1,0 +1,86 @@
+- name: remove iri api port remote in firewall
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    state: disabled
+    immediate: yes
+  with_items:
+    - "{{ haproxy_stats_port }}"
+    - "{{ iri_api_port_remote }}"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+- name: remove in lb rules from ufw
+  block:
+
+    - name: remove rate limit iri api port rule from firewall
+      ufw:
+        rule: limit
+        direction: in
+        proto: tcp
+        port: "{{ iri_api_port_remote }}"
+        log: yes
+        delete: yes
+
+    - name: remove remote lb ports in firewall
+      ufw:
+        rule: allow
+        direction: in
+        proto: tcp
+        port: "{{ item }}"
+        delete: yes
+      with_items:
+        - "{{ iri_api_port_remote }}"
+        - "{{ haproxy_stats_port }}"
+
+  ignore_errors: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: set etc config dir ubuntu
+  set_fact:
+    etc_config_dir: default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: set etc config dir centos
+  set_fact:
+    etc_config_dir: sysconfig
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: stop haproxy
+  systemd:
+    name: haproxy
+    state: stopped
+    enabled: false
+  ignore_errors: yes
+
+- name: remove haproxy systemd file
+  file:
+    path: '/etc/systemd/system/haproxy.service'
+    state: absent
+  notify:
+    - reload systemd
+
+- name: remove haproxy related files and paths
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/var/lib/haproxy"
+    - "/etc/rsyslog.d/haproxy.conf"
+    - "/etc/{{ etc_config_dir }}/haproxy"
+    - "/etc/haproxy"
+    - "/etc/logrotate.d/haproxy"
+  notify:
+    - restart rsyslog
+
+- name: remove existing haproxy dir
+  file:
+    path: "{{ haproxy_dir }}"
+    state: absent
+
+- name: remove user to run haproxy as
+  user:
+    name: "{{ haproxy_username }}"
+    state: absent
+
+

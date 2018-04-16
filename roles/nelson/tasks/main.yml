@@ -2,5 +2,7 @@
   tags:
     - nelson_role
   when: >
-        nelson_enabled is defined and
-        nelson_enabled|bool == true
+        (nelson_enabled is defined and
+        nelson_enabled|bool == true) or
+        (uninstall_playbook is defined and
+         uninstall_playbook|bool == True)
