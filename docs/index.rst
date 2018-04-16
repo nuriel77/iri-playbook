@@ -64,6 +64,7 @@ Work in progress
    iric
    troubleshooting
    faq
+   uninstall
    glossary
    appendix
    disclaimer
