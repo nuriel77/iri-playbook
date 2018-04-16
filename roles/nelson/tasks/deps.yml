@@ -96,7 +96,7 @@
   tags:
     - nelson_npm
 
-# Using Ansible's npm module hangs when installing nelsong.gui
+# Using Ansible's npm module hangs when installing nelson.gui
 - name: install nelson-gui via shell command
   shell: "npm install --unsafe-perm -g nelson.gui"
   tags:
