@@ -114,8 +114,6 @@
     - "{{ systemd_dir }}/field-exporter.service"
     - '/etc/systemd/system/prom-am-executor.service'
     - '/etc/systemd/system/iota-prom-exporter.service'
-    - '/usr/lib/systemd/system/grafana-server.service'
-    - '/etc/init.d/grafana-server'
 
 - name: remove monitoring related files and paths
   file:
