@@ -12,6 +12,12 @@
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+- name: stop grafana
+  systemd:
+    name: grafana-server
+    state: stopped
+    enabled: false
+
 - name: remove yum grafana
   block:
 
@@ -108,6 +114,8 @@
     - "{{ systemd_dir }}/field-exporter.service"
     - '/etc/systemd/system/prom-am-executor.service'
     - '/etc/systemd/system/iota-prom-exporter.service'
+    - '/usr/lib/systemd/system/grafana-server.service'
+    - '/etc/init.d/grafana-server'
 
 - name: remove monitoring related files and paths
   file:
