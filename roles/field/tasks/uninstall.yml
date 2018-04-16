@@ -1,0 +1,60 @@
+- name: remove field
+  block:
+
+    - name: Stop field service
+      systemd:
+        name: field
+        state: stopped
+        enabled: false
+      ignore_errors: yes
+
+    - name: Remove current field package
+      npm:
+        name: field.cli
+        global: yes
+        state: absent
+
+- name: remove field tcp port in firewall
+  firewalld:
+    port: "{{ field_tcp_port }}/tcp"
+    permanent: true
+    state: absent
+    immediate: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: remove field tcp port in firewall
+  ufw:
+    rule: allow
+    direction: in
+    proto: tcp
+    port: "{{ field_tcp_port }}"
+    delete: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+    nodejs_bin: /usr/bin/node
+    field_bin: /bin/field
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /etc/systemd/system
+    config_dir: /etc/default
+    nodejs_bin: /usr/bin/nodejs
+    field_bin: /usr/bin/field
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: remove field files
+  file:
+    path: "{{ systemd_dir }}/field.service"
+    state: absent
+  notify:
+    - reload systemd
+
+- name: remove field user
+  user:
+    name: "{{ field_username }}"
+    state: absent

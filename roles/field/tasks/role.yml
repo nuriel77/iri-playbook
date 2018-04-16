@@ -9,3 +9,9 @@
 - import_tasks: field.yml
   tags:
     - field_config
+
+- import_tasks: uninstall.yml
+  tags:
+    - uninstall
+    - uninstall_field
+  when: uninstall_playbook is defined and uninstall_playbook|bool == True

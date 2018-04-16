@@ -9,3 +9,9 @@
 - import_tasks: iotapm.yml
   tags:
     - iotapm_config
+
+- import_tasks: uninstall.yml
+  tags:
+    - uninstall
+    - uninstall_iotapm
+  when: uninstall_playbook is defined and uninstall_playbook|bool == True

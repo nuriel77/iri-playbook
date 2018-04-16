@@ -15,6 +15,7 @@
     name: iri.service
     state: stopped
     enabled: false
+  ignore_errors: yes
 
 - name: remove iri service file
   file:
@@ -110,3 +111,9 @@
         delete: yes
 
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: remove the user for iri
+  user:
+    name: "{{ iri_username }}"
+    state: absent
+    remove: yes
