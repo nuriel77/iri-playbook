@@ -2,7 +2,7 @@
   firewalld:
     port: "{{ item }}/tcp"
     permanent: true
-    state: absent
+    state: disabled
     immediate: yes
   with_items:
     - "{{ haproxy_stats_port }}"

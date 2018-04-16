@@ -18,7 +18,7 @@
   firewalld:
     port: "{{ field_tcp_port }}/tcp"
     permanent: true
-    state: absent
+    state: disabled
     immediate: yes
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 

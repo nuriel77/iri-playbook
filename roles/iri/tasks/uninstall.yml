@@ -47,28 +47,28 @@
       firewalld:
         port: "{{ iri_tcp_port }}/tcp"
         permanent: true
-        state: absent
+        state: disabled
         immediate: yes
 
     - name: remove iri udp port in firewall
       firewalld:
         port: "{{ iri_udp_port }}/udp"
         permanent: true
-        state: absent
+        state: disabled
         immediate: yes
 
     - name: remove rate limit api port in firewall
       firewalld:
         rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="24/m" accept'
         permanent: true
-        state: absent
+        state: disabled
         immediate: yes
 
     - name: remove log api port access in firewall
       firewalld:
         rich_rule: 'rule port port="{{ iri_api_port }}" protocol="tcp" log prefix="iri_api" level="info" limit value="120/m"'
         permanent: true
-        state: absent
+        state: disabled
         immediate: yes
 
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'

@@ -9,7 +9,7 @@
   firewalld:
     port: "{{ item }}"
     permanent: true
-    state: absent
+    state: disabled
     immediate: yes
   with_items:
     - "{{ iotapm_port }}/tcp"
