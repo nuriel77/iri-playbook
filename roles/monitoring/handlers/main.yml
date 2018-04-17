@@ -1,24 +1,28 @@
 - name: restart grafana
   systemd:
     name: grafana-server.service
+    daemon_reload: yes
     state: restarted
     enabled: yes
 
 - name: restart prometheus
   systemd:
     name: prometheus.service
+    daemon_reload: yes
     state: restarted
     enabled: yes
 
 - name: restart alertmanager
   systemd:
     name: alertmanager.service
+    daemon_reload: yes
     state: restarted
     enabled: yes
 
 - name: restart iota-prom-exporter
   systemd:
     name: iota-prom-exporter.service
+    daemon_reload: yes
     state: restarted
     enabled: yes
 
@@ -32,5 +36,6 @@
 - name: restart prom-am-executor
   systemd:
     name: prom-am-executor.service
+    daemon_reload: yes
     state: restarted
     enabled: yes

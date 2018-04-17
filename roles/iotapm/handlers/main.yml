@@ -2,6 +2,7 @@
   systemd:
     name: iota-pm.service
     state: restarted
+    daemon_reload: yes
     enabled: yes
 
 - name: reload nginx

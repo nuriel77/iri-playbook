@@ -1,6 +1,7 @@
 - name: restart field
   systemd:
     name: field.service
+    daemon_reload: yes
     enabled: true
     state: restarted
 
