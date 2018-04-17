@@ -48,7 +48,6 @@
   yum: state=latest name={{ item }}
   with_items:
     - policycoreutils-python
-    - maven
     - libappindicator
     - firewalld
     - curl
