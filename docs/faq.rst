@@ -185,6 +185,11 @@ and restart IRI to take effect: ``systemctl restart iri``
 Where can I get a fully synced database to help kick start my node
 ==================================================================
 
+.. note::
+
+   April 27th 2018: As of today I need to disable the database download. My traffic usage has already exceeded my permitted quota.
+   Database downloads will be enabled again on Sunday the 29th after the snapshot. I apologize for the inconvenience.
+
 For the sake of the community, I regularly create a copy of a fully synced database. 
 
 You can use the ``iric`` tool to download and install the database :ref:`iric`, or update manually using the following instructions:
