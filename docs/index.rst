@@ -34,18 +34,6 @@ In this installation
 
 Feel free to star this repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
 
-.. note::
-
-   If you want to test out the new IRI+Nelson auto-installer in Docker containers (does not include the monitoring graphs and peer manager):
-   I am looking for testers: https://github.com/SemkoDev/nelson.cli/tree/master/contrib/ansible-playbook
-
-
-Work in progress
-================
-
-* Security hardening guide
-
-
 |
 
 .. toctree::
