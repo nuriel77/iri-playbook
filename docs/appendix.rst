@@ -647,17 +647,21 @@ IRI can provide internal metrics and data by exposing ZeroMQ port (locally by de
 Upgrade IRI and Remove Existing Database
 ========================================
 
-A snapshot of the database normally involves a new version of IRI. This is the case in the upcoming snapshot of April 29th, 2018.
+A snapshot of the database normally involves a new version of IRI. This is also the case in the upcoming snapshot of April 29th, 2018.
 
 Here are the steps you should follow in order to get a new version of IRI and remove the old database:
 
 Run the following commands as user ``root`` (you can run ``sudo su`` to become user root).
 
-1. Stop IRI::
+1. Stop IRI:
+
+.. code:: bash
 
   systemctl stop iri
 
-2. Remove the existing database::
+2. Remove the existing database:
+
+.. code:: bash
 
   rm -rf /var/lib/iri/target/mainnet*
 
