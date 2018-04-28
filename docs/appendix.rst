@@ -640,3 +640,27 @@ It is recommended to install those to have a full overview of your node's perfor
 ZMQ Metrics
 -----------
 IRI can provide internal metrics and data by exposing ZeroMQ port (locally by default). If enabled, this will allow the iota-prom-exporter to read this data and create additional graphs in Grafana (e.g. transactions confirmation rate etc).
+
+
+.. _upgradeIri:
+
+Upgrade IRI and Remove Existing Database
+========================================
+
+A snapshot of the database normally involves a new version of IRI. This is the case in the upcoming snapshot of April 29th, 2018.
+
+Here are the steps you should follow in order to get a new version of IRI and remove the old database:
+
+Run the following commands as user ``root`` (you can run ``sudo su`` to become user root).
+
+1. Stop IRI::
+
+  systemctl stop iri
+
+2. Remove the existing database::
+
+  rm -rf /var/lib/iri/target/mainnet*
+
+3. Run ``iric`` the command-line utility. Choose "Update IRI Software". This will download the latest version and restart IRI.
+
+If you don't have ``iric`` installed, you can refer to this chapter on how to upgrade IRI manually :ref:`upgradeIri`.
