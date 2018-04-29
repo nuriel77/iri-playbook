@@ -647,6 +647,8 @@ IRI can provide internal metrics and data by exposing ZeroMQ port (locally by de
 Upgrade IRI and Remove Existing Database
 ========================================
 
+(option #3 from the `IOTA Snapshot Blog <https://blog.iota.org/the-april-29-2018-iota-snapshot-and-iri-1-4-2-4-behind-the-scenes-7e034babcd44>`_)
+
 A snapshot of the database normally involves a new version of IRI. This is also the case in the upcoming snapshot of April 29th, 2018.
 
 Here are the steps you should follow in order to get a new version of IRI and remove the old database:
@@ -674,6 +676,8 @@ If you don't have ``iric`` installed, you can refer to this chapter on how to up
 
 Upgrade IRI and Keep Existing Database
 ======================================
+
+(option #2 from the `IOTA Snapshot Blog <https://blog.iota.org/the-april-29-2018-iota-snapshot-and-iri-1-4-2-4-behind-the-scenes-7e034babcd44>`_)
 
 If you want to keep the existing database, the instructions provided by the IF include steps to compile the RC version (v1.4.2.4_RC).
 
