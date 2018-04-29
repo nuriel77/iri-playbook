@@ -684,7 +684,7 @@ To make this process easy, I included a script that will automate this process. 
 You will be asked if you want to download a pre-compiled IRI from my server, or compile it on your server should you choose to do so.
 
 
-Please run the following command (as root) in order to upgrade to 1.4.2.4_RC and keep the existing database:
+Please read the warning below and use the following command (as root) in order to upgrade to 1.4.2.4_RC and keep the existing database:
 
 .. code:: bash
 
@@ -696,3 +696,5 @@ Please run the following command (as root) in order to upgrade to 1.4.2.4_RC and
   I provide this script to assist, but I do not take any responsibility for any damages, loss of data or breakage.
   By running this command you agree to the above and you take full responsibility.
 
+
+**NOTE** The rescan process can take quite a while. If for any reason IRI terminates unexpectedly, you will have to set the ``RESCAN_DB = true`` manually in the iri configuration file and restart IRI. In addition, try to find help on IOTA's #fullnodes channel (discord).
