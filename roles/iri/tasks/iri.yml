@@ -118,7 +118,7 @@
     src: templates/iri.service.j2
     dest: "{{ systemd_dir }}/iri.service"
   notify:
-    - reload systemd
+    - restart iri
 
 - name: flush handlers
   meta: flush_handlers
