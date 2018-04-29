@@ -5,7 +5,7 @@ iri_username: iri
 iri_basedir: /var/lib/iri
 
 # The iri version to install
-iri_version: 1.4.2.2
+iri_version: 1.4.2.4
 
 # This is the sha256sum of the iri version noted above. Checksum has to change to match the
 # version of the file https://github.com/iotaledger/iri/releases/download/v{version}/iri-{version}.jar
@@ -25,6 +25,9 @@ iri_zmq_port: 5556
 
 # IRI ZMQ enabled (extra metrics from IRI)
 iri_zmq_enabled: true
+
+# Set openfiles limit
+iri_open_files_limit: 65535
 
 # Limit IRI memory usage
 iri_java_mem: 4096m

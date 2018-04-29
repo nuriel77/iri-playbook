@@ -23,5 +23,7 @@ PrivateTmp=yes
 ProtectSystem=full
 ProtectHome=yes
 
+LimitNOFILE={{ iri_open_files_limit }}
+
 [Install]
 WantedBy=multi-user.target
