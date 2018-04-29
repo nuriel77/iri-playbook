@@ -679,9 +679,8 @@ Upgrade IRI and Keep Existing Database
 
 (option #2 from the `IOTA Snapshot Blog <https://blog.iota.org/the-april-29-2018-iota-snapshot-and-iri-1-4-2-4-behind-the-scenes-7e034babcd44>`_)
 
-If you want to keep the existing database, the instructions provided by the IF include steps to compile the RC version (v1.4.2.4_RC).
+If you want to keep the existing database, the instructions provided by the IF include steps to compile the RC version (v1.4.2.4_RC) and apply a database migration tool.
 
-In addition, the first run (**only**) with IRI one should use the ``--rescan`` flag (or ``RESCAN_DB = true`` in the configuration file).
 
 To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu (but only for ``iri-playbook`` installations).
 
@@ -700,7 +699,5 @@ Please read the warning below and use the following command (as root) in order t
   I provide this script to assist, but I do not take any responsibility for any damages, loss of data or breakage.
   By running this command you agree to the above and you take full responsibility.
 
-
-**NOTE** The rescan process can take quite a while. If for any reason IRI terminates unexpectedly, you will have to set the ``RESCAN_DB = true`` manually in the iri configuration file and restart IRI. Don't forget to remove it right after IRI started.
 
 For assistance and questions you can find help on IOTA's #fullnodes channel (discord).
