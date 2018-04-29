@@ -5,7 +5,7 @@ iri_username: iri
 iri_basedir: /var/lib/iri
 
 # The iri version to install
-iri_version: 1.4.2.4
+iri_version: 1.4.2.2
 
 # This is the sha256sum of the iri version noted above. Checksum has to change to match the
 # version of the file https://github.com/iotaledger/iri/releases/download/v{version}/iri-{version}.jar
