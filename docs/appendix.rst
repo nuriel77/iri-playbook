@@ -683,7 +683,7 @@ If you want to keep the existing database, the instructions provided by the IF i
 
 In addition, the first run (**only**) with IRI one should use the ``--rescan`` flag (or ``RESCAN_DB = true`` in the configuration file).
 
-To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu.
+To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu (but only for ``iri-playbook`` installations).
 
 You will be asked if you want to download a pre-compiled IRI from my server, or compile it on your server should you choose to do so.
 
