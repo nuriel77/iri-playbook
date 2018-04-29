@@ -668,3 +668,31 @@ Run the following commands as user ``root`` (you can run ``sudo su`` to become u
 3. Run ``iric`` the command-line utility. Choose "Update IRI Software". This will download the latest version and restart IRI.
 
 If you don't have ``iric`` installed, you can refer to this chapter on how to upgrade IRI manually :ref:`upgradeIri`.
+
+
+.. _upgradeIriKeepDB:
+
+Upgrade IRI and Keep Existing Database
+======================================
+
+If you want to keep the existing database, the instructions provided by the IF include steps to compile the RC version (v1.4.2.4_RC).
+
+In addition, for the first run with IRI one should use the ``--rescan`` flag (or ``RESCAN_DB = true`` in the configuration file).
+
+To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu.
+
+You will be asked if you want to download a pre-compiled IRI from my server, or compile it on your server should you choose to do so.
+
+
+Please run the following command (as root) in order to upgrade to 1.4.2.4_RC and keep the existing database:
+
+.. code:: bash
+
+  bash <(curl -s https://x-vps.com/get_iri_rc.sh)
+
+
+.. warning::
+
+  I provide this script to assist, but I do not take any responsibility for any damages, loss of data or breakage.
+  By running this command you agree to the above and you take full responsibility.
+
