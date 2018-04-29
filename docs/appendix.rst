@@ -682,7 +682,7 @@ Upgrade IRI and Keep Existing Database
 If you want to keep the existing database, the instructions provided by the IF include steps to compile the RC version (v1.4.2.4_RC) and apply a database migration tool.
 
 
-To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu (but only for ``iri-playbook`` installations).
+To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu (but **only** for ``iri-playbook`` installations).
 
 You will be asked if you want to download a pre-compiled IRI from my server, or compile it on your server should you choose to do so.
 
@@ -696,6 +696,7 @@ Please read the warning below and use the following command (as root) in order t
 
 .. warning::
 
+  This script will only work with installations of the iri-playbook.
   I provide this script to assist, but I do not take any responsibility for any damages, loss of data or breakage.
   By running this command you agree to the above and you take full responsibility.
 
