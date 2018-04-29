@@ -33,7 +33,7 @@ def parse_args():
                ' udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321'
                ' -f /etc/default/iri\n'
                '--host and --api-version can be placed in a file in the home directory ~/.nbctl:\n'
-               'api_version: 1.4.2.2\n'
+               'api_version: 1.4.2.4\n'
                'host: http://127.0.0.1:12345')
 
     parser.add_argument('--neighbors', '-n',

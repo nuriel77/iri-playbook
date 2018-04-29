@@ -431,7 +431,7 @@ function enable_haproxy() {
 ### Notice ###
 function how_to_setup() {
     whiptail --title "IRIC v${VERSION} - Instructions" \
-             --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.2\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
+             --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.4\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
              15 $WIDTH
 }
 
