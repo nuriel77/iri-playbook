@@ -107,7 +107,17 @@ If you run a ``git pull`` and receive a message about conflicts, e.g.::
 
 This means you've applied changes in files which have already been updated upstream.
 
-You can identify those files::
+The fastest answer is to use ``git stash`` to stash all the changes you've made::
+
+  git stash
+
+This should allow you to run ``git pull`` without any errors. After that you can use ``git stash apply`` to get your changes back.
+
+It is recommended not to edit the variable files in order to avoid such conflicts. You can better create "override" files :ref:`overrideFile`
+
+|
+
+A longer route would be to identify those files which are in conflict::
 
   git status
 
