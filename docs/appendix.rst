@@ -355,7 +355,7 @@ What will happen next is that the service called ``prom-am-executor`` will be ca
 
 .. note::
 
-  This alert-trigger is set to only execute if the Latest Subtangle Milestone is stuck and not equal to 243000 (which is the case when starting up or restarting IRI).
+  This alert-trigger is set to only execute if the Latest Subtangle Milestone is stuck and not equal to the initial database milestone.
 
 
 Disabling the Feature
