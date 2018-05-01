@@ -322,7 +322,7 @@ if [[ "$OS" =~ ^(CentOS|Red) ]]; then
     check_arch
     init_centos
 elif [[ "$OS" =~ ^Ubuntu ]]; then
-    if [[ ! "$VER" =~ ^(16|17) ]]; then
+    if [[ ! "$VER" =~ ^(16|17|18) ]]; then
         echo "ERROR: $OS version $VER not supported"
         display_requirements_url
         exit 1

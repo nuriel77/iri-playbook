@@ -102,3 +102,13 @@
   tags:
     - nelson_npm
     - nelson_gui
+  ignore_errors: yes
+  register: nelson_gui_install
+
+- name: install nelson-gui via shell command (retry)
+  shell: "npm install --unsafe-perm -g nelson.gui"
+  when: nelson_gui_install.rc != 0
+  tags:
+    - nelson_npm
+    - nelson_gui
+  ignore_errors: yes

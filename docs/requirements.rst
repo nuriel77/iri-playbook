@@ -35,9 +35,9 @@ This tutorial/installer was tested on:
 
 * `Ubuntu 16.04 (amd64) Server Cloud Image (Xenial) <https://cloud-images.ubuntu.com/xenial/current/>`_
 * `Ubuntu 17.04 (amd64) Server Cloud Image (Zesty) <https://cloud-images.ubuntu.com/zesty/current/>`_
-* `Ubuntu 16.04 and 17.10 (amd64) Server image ISO <https://www.ubuntu.com/download/server>`_
+* `Ubuntu 18.04 (amd64) Server Cloud Image (Bionic) <https://cloud-images.ubuntu.com/bionic/current/>`_
+* `Ubuntu 16.04, 17.10 and 18.04 (amd64) Server image ISO <https://www.ubuntu.com/download/server>`_
 * `CentOS 7.4 x86_64 Generic Cloud Image <http://cloud.centos.org/centos/7/images/>`_ or `CentOS Minimal ISO <http://isoredirect.centos.org/centos/7/isos/x86_64/>`_
-
 
 
 .. note::
