@@ -84,6 +84,7 @@ Welcome to IOTA FullNode Installer!
 2. By pressing 'y' you aknowledge that this installer requires a CLEAN operating system
    and may otherwise !!!BREAK!!! existing software on your server (visit link below).
 3. You read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
+4. This installation ensures firewall is enabled.
 
 EOF
 
@@ -377,14 +378,6 @@ if [ -d iri-playbook ]; then
     mv iri-playbook iri-playbook.backup
 fi
 
-# Get default SSH port
-#SSH_PORT=$(grep ^Port /etc/ssh/sshd_config | awk {'print $2'})
-#if [[ "$SSH_PORT" != "" ]] && [[ "$SSH_PORT" != "22" ]]; then
-#    set_ssh_port
-#else
-#    SSH_PORT=22
-#fi
-
 # Clone the repository (optional branch)
 git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
 cd iri-playbook
@@ -399,10 +392,13 @@ echo -e "\nRunning playbook..."
 # Ansible output log file
 LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
+# Override ssh_port
+echo "ssh_port=${SSH_PORT}" > group_vars/all/z-ssh-port.yml
+
 # Run the playbook
-echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" -e "ssh_port=${SSH_PORT}" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
+echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
 set +e
-unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" -e "ssh_port=${SSH_PORT}" $INSTALL_OPTIONS | tee -a "$LOGFILE"
+unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
 RC=$?
 if [ $RC -ne 0 ]; then
     echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
