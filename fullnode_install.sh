@@ -354,7 +354,7 @@ if [[ "$SSH_PORT" != "" ]] && [[ "$SSH_PORT" != "22" ]]; then
 else
     SSH_PORT=22
 fi
-echo PORT: $SSH_PORT
+echo "Default SSH port used: $SSH_PORT"
 
 echo "Verifying Ansible version..."
 ANSIBLE_VERSION=$(ansible --version|head -1|awk {'print $2'}|cut -d. -f1-2)
