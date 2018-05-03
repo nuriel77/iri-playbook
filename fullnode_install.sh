@@ -308,6 +308,17 @@ function check_arch() {
     fi
 }
 
+function set_ssh_port() {
+    SSH_PORT=$(whiptail --inputbox "Please verify this is your active SSH port:" 8 78 "$SSH_PORT" --title "Verify SSH Port" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]] || [[ "$SSH_PORT" == "" ]]; then
+        set_ssh_port
+    elif [[ "$SSH_PORT" =~ [^0-9] ]] || [[ $SSH_PORT -gt 65535 ]] || [[ $SSH_PORT -lt 1 ]]; then
+        whiptail --title "Invalid Input" \
+                 --msgbox "Invalid input provided. Only numbers are allowed (1-65535)." \
+                  8 78
+        set_ssh_port
+    fi
+}
 
 # Get OS and version
 set_dist
@@ -334,6 +345,17 @@ else
     exit 1
 fi
 
+set +o pipefail
+# Get default SSH port
+SSH_PORT=$(grep ^Port /etc/ssh/sshd_config | awk {'print $2'})
+set -o pipefail
+if [[ "$SSH_PORT" != "" ]] && [[ "$SSH_PORT" != "22" ]]; then
+    set_ssh_port
+else
+    SSH_PORT=22
+fi
+echo PORT: $SSH_PORT
+
 echo "Verifying Ansible version..."
 ANSIBLE_VERSION=$(ansible --version|head -1|awk {'print $2'}|cut -d. -f1-2)
 if (( $(awk 'BEGIN {print ("'2.4'" > "'$ANSIBLE_VERSION'")}') )); then
@@ -355,6 +377,14 @@ if [ -d iri-playbook ]; then
     mv iri-playbook iri-playbook.backup
 fi
 
+# Get default SSH port
+#SSH_PORT=$(grep ^Port /etc/ssh/sshd_config | awk {'print $2'})
+#if [[ "$SSH_PORT" != "" ]] && [[ "$SSH_PORT" != "22" ]]; then
+#    set_ssh_port
+#else
+#    SSH_PORT=22
+#fi
+
 # Clone the repository (optional branch)
 git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
 cd iri-playbook
@@ -370,9 +400,9 @@ echo -e "\nRunning playbook..."
 LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Run the playbook
-echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
+echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" -e "ssh_port=${SSH_PORT}" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
 set +e
-unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
+unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" -e "ssh_port=${SSH_PORT}" $INSTALL_OPTIONS | tee -a "$LOGFILE"
 RC=$?
 if [ $RC -ne 0 ]; then
     echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
