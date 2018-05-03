@@ -393,7 +393,7 @@ echo -e "\nRunning playbook..."
 LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Override ssh_port
-echo "ssh_port=${SSH_PORT}" > group_vars/all/z-ssh-port.yml
+[[ $SSH_PORT -ne 22 ]] && echo "ssh_port=${SSH_PORT}" > group_vars/all/z-ssh-port.yml
 
 # Run the playbook
 echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
