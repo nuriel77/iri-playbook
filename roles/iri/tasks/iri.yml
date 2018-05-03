@@ -1,16 +1,3 @@
-- name: testing
-  set_fact:
-    something: false
-  tags:
-    - testing
-
-- name: template
-  template:
-    src: templates/testing.j2
-    dest: /tmp/test.j2
-  tags:
-    - testing
-
 - name: set iri variables
   set_fact:
     iri_workdir: "{{ iri_basedir }}/target"
