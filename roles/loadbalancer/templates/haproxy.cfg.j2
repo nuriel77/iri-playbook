@@ -68,12 +68,11 @@ frontend iri_front
     tcp-request content reject if source_is_hacker
 
     # limit OPTIONS method because this is only used on browsers
-    acl slowdown_method method OPTIONS
-    http-request deny if slowdown_method
+    acl options_method method OPTIONS
 
     # check IRI/IOTA header if present all is fine else redirect or kick
     acl api_header req.hdr(X-IOTA-API-Version) -m found
-    http-request deny if !api_header
+    http-request deny if !api_header !options_method
 
 {% if iri_remote_auth is defined and iri_remote_auth %}
     # Lock with password
@@ -87,7 +86,7 @@ frontend iri_front
     acl invalid_command req.body -m reg {{ haproxy_deny_regex }}
     acl bad_command req.body -m reg {{ haproxy_bad_command }}
     http-request deny if bad_command
-    http-request deny unless command_exists
+    http-request deny if !command_exists !options_method
     http-request deny if invalid_command !whitelist
 
     # Enable these two lines for SSL to IRI
