@@ -84,6 +84,7 @@ Welcome to IOTA FullNode Installer!
 2. By pressing 'y' you aknowledge that this installer requires a CLEAN operating system
    and may otherwise !!!BREAK!!! existing software on your server (visit link below).
 3. You read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
+4. This installation ensures firewall is enabled.
 
 EOF
 
@@ -308,6 +309,17 @@ function check_arch() {
     fi
 }
 
+function set_ssh_port() {
+    SSH_PORT=$(whiptail --inputbox "Please verify this is your active SSH port:" 8 78 "$SSH_PORT" --title "Verify SSH Port" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]] || [[ "$SSH_PORT" == "" ]]; then
+        set_ssh_port
+    elif [[ "$SSH_PORT" =~ [^0-9] ]] || [[ $SSH_PORT -gt 65535 ]] || [[ $SSH_PORT -lt 1 ]]; then
+        whiptail --title "Invalid Input" \
+                 --msgbox "Invalid input provided. Only numbers are allowed (1-65535)." \
+                  8 78
+        set_ssh_port
+    fi
+}
 
 # Get OS and version
 set_dist
@@ -333,6 +345,17 @@ else
     echo "$OS not supported"
     exit 1
 fi
+
+set +o pipefail
+# Get default SSH port
+SSH_PORT=$(grep ^Port /etc/ssh/sshd_config | awk {'print $2'})
+set -o pipefail
+if [[ "$SSH_PORT" != "" ]] && [[ "$SSH_PORT" != "22" ]]; then
+    set_ssh_port
+else
+    SSH_PORT=22
+fi
+echo "SSH port to use: $SSH_PORT"
 
 echo "Verifying Ansible version..."
 ANSIBLE_VERSION=$(ansible --version|head -1|awk {'print $2'}|cut -d. -f1-2)
@@ -368,6 +391,9 @@ echo -e "\nRunning playbook..."
 
 # Ansible output log file
 LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
+
+# Override ssh_port
+[[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
 
 # Run the playbook
 echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
