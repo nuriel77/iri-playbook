@@ -42,6 +42,9 @@ frontend iri_front
     option log-separate-errors
     option http-buffer-request
 
+    # Define source whitelist
+    acl whitelist src 127.0.0.1
+
     # id=0 to store body for logging
     declare capture request len 40000
     http-request capture req.body id 0
@@ -64,14 +67,12 @@ frontend iri_front
     acl source_is_hacker src_http_req_cnt(iri_front) gt 500
     tcp-request content reject if source_is_hacker
 
-    # limit OPTIONS method because this is only used on browsers
-    acl slowdown_method method OPTIONS
-    http-request deny if slowdown_method
+    # Register OPTIONS method, used by Trinity Desktop
+    acl options_method method OPTIONS
 
-    # check IRI/IOTA header if present all is fine else redirect or kick
+    # IOTA Header must exist unless OPTIONS method
     acl api_header req.hdr(X-IOTA-API-Version) -m found
-    http-request deny if !api_header
-
+    http-request deny if !api_header !options_method
 
     # Check denied commands
     acl command_exists req.body -m sub -i command
@@ -79,8 +80,12 @@ frontend iri_front
     acl invalid_command req.body -m reg (get|remove|add)Neighbors
     acl bad_command req.body -m reg \"getTransactionsToApprove\"(.*)GFCCGTGSUEVBZYFK9QNAHOVHXUMEATUFLGBZLDKMOGWCXVUZDVEJVCLLCJJ9NQOIMOLMUMFMGZSI99999
     http-request deny if bad_command
-    http-request deny unless command_exists
-    http-request deny if invalid_command
+
+    # Check if "command" exists in request body unless OPTIONS method
+    http-request deny if !command_exists !options_method
+
+    # Reject invalid allowed unless source IP in whitelist
+    http-request deny if invalid_command !whitelist
 
     acl wants_pow req.body -m reg attachToTangle
 
