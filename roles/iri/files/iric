@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.4.2
+VERSION=0.4.3
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -1138,7 +1138,7 @@ function neighbors(){
 
     case "$CHOICE" in
         "a)")
-            :add_neighbors
+            add_neighbors
             neighbors
             ;;
 
