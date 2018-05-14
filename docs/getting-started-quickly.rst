@@ -29,6 +29,9 @@ For **CentOS** users: you may need to install ``curl``. You can do that by runni
    bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
 
+When you are done installating, please take a couple of minutes to fill in the `node operators survey <https://goo.gl/forms/EBRhsGLho1o39bEb2>`_.
+
+
 .. note::
 
    If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
