@@ -591,6 +591,13 @@ In addition, the **REMOTE_LIMIT_API** in the configuration files are no longer p
 
 To see the configured denied/limited commands see ``group_vars/all/lb.yml``. The regex is different from what you have been used to.
 
+To enable HTTPS for haproxy run (warning: this will override any manual changes you might have applied to `/etc/haproxy/haproxy.cfg`):
+
+.. code:: bash
+
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=haproxy_cfg -e haproxy_https=true -e overwrite=yes
+
+
 If you need help with this, please find help on Discord #fullnodes channel.
 
 

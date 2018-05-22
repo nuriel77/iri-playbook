@@ -90,11 +90,11 @@ frontend iri_front
     http-request deny if invalid_command !whitelist
 
     # Enable these two lines for SSL to IRI
-    #reqadd X-Forwarded-Proto:\ https
-    #bind {{ lb_bind_address }}:{{ iri_api_port_remote }} ssl crt {{ ssl_certkey_file }}
+    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}reqadd X-Forwarded-Proto:\ https
+    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} ssl crt {{ ssl_certkey_file }}
 
     # Disable this line and use line above for SSL
-    bind {{ lb_bind_address }}:{{ iri_api_port_remote }}
+    {% if haproxy_https is defined and haproxy_https|bool == True %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }}
 
     use_backend iri_back
 
