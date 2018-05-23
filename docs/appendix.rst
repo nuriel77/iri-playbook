@@ -597,13 +597,13 @@ To see the configured denied/limited commands see ``group_vars/all/lb.yml``. The
 Enabling HTTPS for HAProxy
 --------------------------
 
-To enable HTTPS for haproxy run the following command. It will enable HAProxy to server the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to `/etc/haproxy/haproxy.cfg` previously):
+To enable HTTPS for haproxy run the following command. It will enable HAProxy to serve the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to `/etc/haproxy/haproxy.cfg` previously):
 
 .. code:: bash
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e haproxy_https=yes -e overwrite=yes
 
-Note that this will apply a default self-signed certificate. If you want to use a valid certificate from a trusted certificate authority you will have to provide your own certificate + key manually. Alternatively check the section below for installing a Let's Encrypt certificate which is free:
+Note that this will apply a default self-signed certificate. If you want to use a valid certificate from a trusted certificate authority you will have to provide your own certificate + key manually. Alternatively, check the section below for installing a Let's Encrypt certificate which is free:
 
 **Let's Encrypt Free Certificate** You can install a ``letsencrypt`` certificate: one prerequisite is that you have a fully qualified domain name pointing to the IP of your node.
 
@@ -615,7 +615,7 @@ The script will ask you for your email address which is used as an account at Le
 
 The script will install the required utilities and request the certificate for you. It will proceed to install the certificate with HAProxy and add a cron job to automatically renew the certificate before it expires.
 
-Once the script is done you can point your browser to ``https://your-domain-name:14267`` and you should get a 403 forbidden page. You will be able to see the green lock icon/pad on the left of the URL which means the certificate is valid.
+Once the script is finished you can point your browser to ``https://your-domain-name:14267``: you should get a 403 forbidden page. You will be able to see the green lock icon/pad on the left of the URL which means the certificate is valid.
 
 
 If you need help with this, please find help on Discord #fullnodes channel.
