@@ -15,6 +15,7 @@
     mode: 0700
     owner: "{{ haproxy_username }}"
     group: "{{ haproxy_username }}"
+  tags: chroot
 
 - name: ensure dev log in chroot dir
   file:
@@ -23,6 +24,7 @@
     mode: 0700
     owner: "{{ haproxy_username }}"
     group: "{{ haproxy_username }}"
+  tags: chroot
 
 - name: selinux specific block
   block:
@@ -50,7 +52,7 @@
       notify:
         - restart rsyslog
         - restart haproxy
-
+  tags: chroot
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: rsyslog haproxy jail path config
@@ -59,6 +61,7 @@
     dest: /etc/rsyslog.d/haproxy.conf
   notify:
     - restart rsyslog
+  tags: chroot
 
 - name: ensure etc haproxy dir
   file:

@@ -5,3 +5,5 @@
     - libssl-dev
     - zlib1g-dev
     - libpcre3-dev
+    - build-essential
+    - libreadline-dev
