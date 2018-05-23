@@ -607,7 +607,7 @@ Note that this will apply a default self-signed certificate. If you want to use 
 
 **Let's Encrypt Free Certificate** You can install a ``letsencrypt`` certificate: one prerequisite is that you have a fully qualified domain name pointing to the IP of your node.
 
-Once you have your domain name, you can run the following script::
+If you already have a domain name, you can run the following script::
 
   /usr/local/bin/certbot-haproxy.sh
 
