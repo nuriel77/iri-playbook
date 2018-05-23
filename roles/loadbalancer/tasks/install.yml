@@ -85,7 +85,7 @@
         group: "{{ haproxy_username }}"
 
     - name: make haproxy compile and install
-      shell: "cd {{ haproxy_dir }} && make clean && make TARGET=custom CPU=native USE_PCRE=1 USE_LIBCRYPT=1 USE_LINUX_SPLICE=1 USE_LINUX_TPROXY=1 USE_OPENSSL=1 USE_ZLIB=1 USE_LUA=1 LUA_LIB=/usr/local/lib LUA_INC=/usr/local/include LDFLAGS=-ldl && make install"
+      shell: "cd {{ haproxy_dir }} && make clean && make TARGET=linux2628 CPU=native USE_PCRE=1 USE_LIBCRYPT=1 USE_LINUX_SPLICE=1 USE_LINUX_TPROXY=1 USE_OPENSSL=1 USE_ZLIB=1 USE_LUA=1 LUA_LIB=/usr/local/lib LUA_INC=/usr/local/include LDFLAGS=-ldl && make install"
       when: haproxy_downloaded is defined and haproxy_downloaded.changed
 
   tags:
