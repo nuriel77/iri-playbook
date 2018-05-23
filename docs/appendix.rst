@@ -603,7 +603,7 @@ To enable HTTPS for haproxy run the following command. It will enable HAProxy to
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e haproxy_https=yes -e overwrite=yes
 
-Note that this will apply a default self-signed certificate. If you want to use a valid certificate from a trusted certificate authority you will have to provide your own certificate + key manually.
+Note that this will apply a default self-signed certificate. If you want to use a valid certificate from a trusted certificate authority you will have to provide your own certificate + key manually. Alternatively check the section below for installing a Let's Encrypt certificate which is free:
 
 **Let's Encrypt Free Certificate** You can install a ``letsencrypt`` certificate: one prerequisite is that you have a fully qualified domain name pointing to the IP of your node.
 
