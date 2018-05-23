@@ -4,3 +4,8 @@
     - openssl-devel
     - zlib-devel
     - pcre-devel
+    - gcc
+    - gcc-c++
+    - kernel-devel
+    - readline-devel
+    - ncurses-devel

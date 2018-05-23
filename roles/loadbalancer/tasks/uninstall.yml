@@ -70,6 +70,7 @@
     - "/etc/{{ etc_config_dir }}/haproxy"
     - "/etc/haproxy"
     - "/etc/logrotate.d/haproxy"
+    - "{{ lua_dir }}"
   notify:
     - restart rsyslog
 
