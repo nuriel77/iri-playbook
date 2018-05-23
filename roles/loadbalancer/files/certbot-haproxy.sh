@@ -24,22 +24,20 @@
 # will be renewed.
 # If you provide both email and domain, a new certificate will be installed.
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as user root"
+   echo "Please change to root using: 'sudo su -' and re-run the script"
+   exit 1
+fi
+
 ###################
 ## configuration ##
 ###################
 
-if [ -z "$1" ]
-then
-    echo "Missing letencrypt email address as first argument to this script."
-    exit 1
-fi
-EMAIL=$1
-DOMAIN=$2
-
 # To override 14267 you can specify HAPROXY_PORT environment variable
 # before running this script (or set on the same command-line)
 HAPROXY_PORT=${HAPROXY_PORT:-14267}
-
+HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
 HAPROXY_RELOAD_CMD="systemctl restart haproxy"
 WEBROOT="/var/lib/haproxy"
 
@@ -49,6 +47,32 @@ LOGFILE="/var/log/certrenewal.log"
 ######################
 ## utility function ##
 ######################
+
+function get_email() {
+    echo -n "Enter your email address to register as an account with Let's Encrypt and click [ENTER]: "
+    read EMAIL
+    echo -n "Please repeat and click [ENTER]: "
+    read EMAIL_CHECK
+    if [ "$EMAIL" != "$EMAIL_CHECK" ]
+    then
+        echo
+        echo "Email addresses do not match!"
+        get_email
+    fi
+}
+
+function get_domain() {
+    echo -n "Enter the domain name that points to this server and click [ENTER]: "
+    read DOMAIN
+    echo -n "Please repeat and click [ENTER]: "
+    read DOMAIN_CHECK
+    if [ "$DOMAIN" != "$DOMAIN_CHECK" ]
+    then
+        echo
+        echo "Domain names do not match!"
+        get_domain
+    fi
+}
 
 function set_dist() {
     if [ -f /etc/os-release ]; then
@@ -136,13 +160,30 @@ function disable_firewall {
 ## main routine ##
 ##################
 
+if [ -z "$1" ]
+then
+    clear
+    get_email
+    echo
+    get_domain
+else
+    EMAIL=$1
+    DOMAIN=$2
+fi
+
+if [ ! -f "$HAPROXY_CONFIG" ]
+then
+    logger_error "Cannot find haproxy config at '$HAPROXY_CONFIG'"
+    exit 1
+fi
+
 # Set OS distribution
 set_dist
 
-logger_info "Start installation of certbot ..."
 if [[ "$OS" =~ ^(CentOS|Red) ]]; then
     if [ -n "$DOMAIN" ]
     then
+        logger_info "Start installation of certbot ..."
         yum install epel-release -y
         yum install certbot -y
     fi
@@ -150,6 +191,7 @@ if [[ "$OS" =~ ^(CentOS|Red) ]]; then
 elif [[ "$OS" =~ ^Ubuntu ]]; then
     if [ -n "$DOMAIN" ]
     then
+        logger_info "Start installation of certbot ..."
         add-apt-repository ppa:certbot/certbot -y
         apt-get update -y
         apt-get install certbot -y
@@ -162,7 +204,7 @@ check_firewall
 if [ $? -ne 0 ]
 then
     logger_info "Port 80 not open in firewall. Opening..."
-    CLOSE_HTTPS_AFTER=1
+    CLOSE_HTTP_AFTER=1
     enable_firewall
     if [ $? -ne 0 ]
     then
@@ -179,7 +221,7 @@ if [ -n "$DOMAIN" ]
 then
     newCert
     RC=$?
-    if [ "$CLOSE_HTTPS_AFTER" == "1" ]
+    if [ "$CLOSE_HTTP_AFTER" == "1" ]
     then
         disable_firewall
     fi
@@ -239,7 +281,7 @@ then
     DOMAIN=${subjectaltnames}
 fi
 # Match certificate name for haproxy
-sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${le_cert_root}/${DOMAIN}/haproxy.pem|" /etc/haproxy/haproxy.cfg
+sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${le_cert_root}/${DOMAIN}/haproxy.pem|" $HAPROXY_CONFIG
 
 # restart haproxy
 if [ "${#renewed_certs[@]}" -gt 0 ]; then
