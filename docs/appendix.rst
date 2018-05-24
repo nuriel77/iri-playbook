@@ -620,6 +620,10 @@ Once the script is finished you can point your browser to ``https://your-domain-
 
 If you need help with this, please find help on Discord #fullnodes channel.
 
+.. note::
+
+  If you previously used a script to configure Let's Encrypt with Nginx and your Nginx is no longer working, please follow the instructions at :ref:`fixNginx`
+
 
 
 .. _options:

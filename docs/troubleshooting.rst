@@ -268,3 +268,30 @@ Make sure all neighbors adhere to the format examples:
   udp://10.20.30.40:14600
   tcp://[2xxx:7xx:aaaf:111:2222:ff:ffff:xxxx]:12345
 
+
+.. _fixNginx:
+
+Fix Nginx
+=========
+
+If you've tried to enable HTTPS (Let's Encrypt) via an automated script supporting Nginx and your Nginx is no longer working, follow these instructions on how to restore it:
+
+
+.. code:: bash
+
+  wget -O /etc/nginx/sites-enabled/default https://gist.githubusercontent.com/nuriel77/e847aa6dbb360d277a0313c983e35721/raw/a68e4528fe07a429284cc19b923d72d62a25d2c9/default
+
+And then restart nginx:
+
+.. code:: bash
+
+  systemctl restart nginx
+
+You can verify it is working via:
+
+.. code:: bash
+
+  systemctl status nginx
+
+It should be active.
+
