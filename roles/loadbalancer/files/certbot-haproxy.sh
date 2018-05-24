@@ -38,7 +38,7 @@ fi
 # before running this script (or set on the same command-line)
 HAPROXY_PORT=${HAPROXY_PORT:-14267}
 HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
-HAPROXY_RELOAD_CMD="systemctl restart haproxy"
+HAPROXY_RELOAD_CMD="systemctl reload haproxy"
 WEBROOT="/var/lib/haproxy"
 
 # Enable to redirect output to logfile (for silent cron jobs)

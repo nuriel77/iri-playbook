@@ -2,3 +2,4 @@
 # specifying multiple configuration files with multiple -f options.
 # See haproxy(1) for a complete list of options.
 OPTIONS=""
+RELOADOPTS="-x /run/haproxy-admin.sock"
