@@ -1,4 +1,5 @@
 #!/bin/bash
+# Based on https://github.com/janeczku/haproxy-acme-validation-plugin/blob/master/cert-renewal-haproxy.sh
 
 #### prerequisites
 # - Fully qualified domain name registered and poiting to the IP of your node
