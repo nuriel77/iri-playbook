@@ -115,8 +115,7 @@ function newCert {
 }
 
 function issueCert {
-    echo $LE_CLIENT certonly --standalone --renew-by-default --preferred-challenges http --agree-tos --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --email ${EMAIL} -d "$1"
-        $LE_CLIENT certonly --standalone --renew-by-default --preferred-challenges http --agree-tos --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --email ${EMAIL} $1
+    $LE_CLIENT certonly --standalone --renew-by-default --preferred-challenges http --agree-tos --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --email ${EMAIL} $1
     return $?
 }
 

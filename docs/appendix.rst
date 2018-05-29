@@ -622,6 +622,10 @@ If you need help with this, please find help on Discord #fullnodes channel.
 
 .. note::
 
+  This setup is not fully automated yet via ``iric``. For that reason, please avoid running the HAProxy enable commands as that will overwrite the certificate configuration in haproxy configuration file. If you did that accidentally you can always run the ``/usr/local/bin/certbot-haproxy.sh`` once more and it will set the correct configuration file for haproxy.
+
+.. note::
+
   If you previously used a script to configure Let's Encrypt with Nginx and your Nginx is no longer working, please follow the instructions at :ref:`fixNginx`
 
 
