@@ -3,11 +3,7 @@
 Full Node Remote Access
 ***********************
 
-There are basically two ways you can connect to the full node remotely:
-
-1. Letting IRI port to be exposed externally
-2. Tunneling IRI port via SSH (see :ref:`tunnelingIriApiForWalletConnections`)
-
+Update: the recommended way to enable remote access to IRI API port (e.g. for wallets) is via HAProxy. Please refer to :ref:`haproxyEnable`.
 
 1. Exposing IRI Port Externally
 ===============================
