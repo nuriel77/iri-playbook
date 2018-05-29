@@ -118,11 +118,7 @@ Now you should be able to point your browser to ``http://grafana.my-fqdn.com``.
 
 .. note::
 
-  It is recommended to run your server using HTTPS. This could not be configured by default on the installer because of self-signed certificates.
-  Browsers are not so keen on opening pages with self-signed certificates. While this should not be a problem when you know it is your server,
-  I chose to skip this and keep this for advanced users.
-
-  Using SSL/HTTPS makes it virtually impossible for someone to "sniff" passwords or sensitive information your browser passes to a server.
+  Using SSL/HTTPS for accessing your panels ensures all traffic and passwords are impossible to "sniff". The iri-playbook enables HTTPS by default but uses a self-signed certificate.
 
 
 .. _serverHTTPS:
@@ -138,7 +134,7 @@ Since a while the IRI Playbook uses own generated self-signed certificate by def
 
 By having a "valid" certificate for your server (signed by a trusted authority), you will get the green lock next to the URL in the browser, indicating that your connection is secure.
 
-Your connection will still be encrypted if you opt for a self-signed certificate. It is just so that the browser cannot verify who signed it.
+Your connection will also be encrypted if you opt for a self-signed certificate. However, the browser cannot verify who signed the certificate and will report a certificate error (in most cases you can just accept it as an exception and proceed).
 
 
 Here is a great tutorial on how to add HTTPS to your **nginx**, choose nginx and the OS version you are using (Ubuntu/CentOS):
@@ -173,14 +169,9 @@ Reverse Proxy for IRI API (wallet)
 
 If you read the two chapters above about configuring nginx to support FQDN or HTTPS you might be wondering whether you should reverse proxy from the web server to IRI API port (for wallet connections etc).
 
-Here are my thoughts about it:
+``iri-playbook`` installs HAProxy with which you can reverse proxy to IRI API port and benefit from logging and security policies. In addition, you can add a HTTPS certificate. IOTA's Trinity wallet requires nodes to have a valid SSL certificate.
 
-1. HTTPS servers two main purposes in this context: sending data encrypted and verifying the identity of the server. Is sending encrypted data important for a wallet? Well, not really, considering all the data is public. Unless you use ``--remote-auth`` or lock the API port with password (``htpasswd?``) there's no benefit in HTTPS. In my opinion, its just a nice-to-have. But maybe in the future as the network grows we will learn that using HTTPS is helpful for certificate/server validation.
- 
-2. Serving IRI API port via nginx, haproxy or other web-servers with proxy capabilities adds a few benefits. For example, better logging. IP blacklisting or whitelisting, inspecting headers and body/contents of the data.
-
-
-See :ref:`haproxyEnable` on how to enable HAproxy for wallet via reverse proxy (added 24 January 2018).
+See :ref:`haproxyEnable` on how to enable HAproxy for wallet via reverse proxy and how to enable HTTPS(SSL) for it.
 
 
 
@@ -597,13 +588,13 @@ To see the configured denied/limited commands see ``group_vars/all/lb.yml``. The
 Enabling HTTPS for HAProxy
 --------------------------
 
-To enable HTTPS for haproxy run the following command. It will enable HAProxy to serve the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to `/etc/haproxy/haproxy.cfg` previously):
+To enable HTTPS for haproxy run the following command. It will enable HAProxy to serve the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to ``/etc/haproxy/haproxy.cfg`` previously):
 
 .. code:: bash
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e haproxy_https=yes -e overwrite=yes
 
-Note that this will apply a default self-signed certificate, but the command is required to enable HTTPS in the first place. If you want to use a valid certificate from a trusted certificate authority you can provide your own certificate + key manually after running the above command. Alternatively, check the section below for installing a Let's Encrypt certificate which is free:
+Note that this will apply a default self-signed certificate, but the command is required to enable HTTPS in the first place. If you want to use a valid certificate from a trusted certificate authority you can provide your own certificate + key file manually after running the above command. Alternatively, check the section below for installing a Let's Encrypt certificate which is free:
 
 **Let's Encrypt Free Certificate** You can install a ``letsencrypt`` certificate: one prerequisite is that you have a fully qualified domain name pointing to the IP of your node.
 
