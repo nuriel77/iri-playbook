@@ -586,7 +586,7 @@ To see the configured denied/limited commands see ``group_vars/all/lb.yml`` or e
 .. _rateLimits:
 
 Rate Limits
-^^^^^^^^^^^
+-----------
 
 HAProxy enables rate limiting. In some cases, if you are loading a seed which has a lot of transactions on it, HAProxy might block too many requests.
 
