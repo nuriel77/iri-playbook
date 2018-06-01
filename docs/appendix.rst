@@ -580,7 +580,29 @@ The API port will be accessible on **14267** by default.
 
 In addition, the **REMOTE_LIMIT_API** in the configuration files are no longer playing any role. HAProxy has taken control over the limited commands.
 
-To see the configured denied/limited commands see ``group_vars/all/lb.yml``. The regex is different from what you have been used to.
+To see the configured denied/limited commands see ``group_vars/all/lb.yml`` or edit ``/etc/haproxy/haroxy.cfg`` after installation. The regex is different from what you have been used to.
+
+
+.. _rateLimits:
+
+Rate Limits
+^^^^^^^^^^^
+
+HAProxy enables rate limiting. In some cases, if you are loading a seed which has a lot of transactions on it, HAProxy might block too many requests.
+
+One solution is to increase the rate limiting values in ``/etc/haproxy/haproxy.cfg``. Find those lines and set the number accordingly:
+
+.. code:: bash
+
+  # dynamic stuff for frontend + raise gpc0 counter
+  tcp-request content  track-sc2 src
+  acl conn_rate_abuse  sc2_conn_rate gt 250
+  acl http_rate_abuse  sc2_http_req_rate gt 400
+  acl conn_cur_abuse  sc2_conn_cur gt 21
+
+
+Don't forget to restart HAProxy afterwards: ``systemctl restart haproxy``.
+
 
 
 .. _enableHTTPSHaproxy:
