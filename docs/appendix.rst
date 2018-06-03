@@ -610,7 +610,7 @@ Don't forget to restart HAProxy afterwards: ``systemctl restart haproxy``.
 Enabling HTTPS for HAProxy
 --------------------------
 
-To enable HTTPS for haproxy run the following command. It will enable HAProxy to serve the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to ``/etc/haproxy/haproxy.cfg`` previously):
+To enable HTTPS for haproxy run the following command or find the option in the main menu of ``iric``. It will enable HAProxy to serve the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to ``/etc/haproxy/haproxy.cfg`` previously):
 
 .. code:: bash
 
