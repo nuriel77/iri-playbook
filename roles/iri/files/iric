@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.4.3
+VERSION=0.4.4
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -404,6 +404,89 @@ function upgrade_monitoring() {
 
 
 ### Haproxy ###
+function enable_https() {
+    local POW
+    local SSL_EMAIL
+    local SSL_DOMAIN
+
+    if ! (whiptail --title "Enable HTTPS" \
+	    --yesno "This option will enable HTTPS on IRI API port via HAProxy (port 14267 by default).\nAny previous configuration to HAProxy configuration will be overwritten.\nDo you want to proceed?" \
+                 --defaultno \
+                 12 $WIDTH) then
+        return 1
+    fi
+
+    if (whiptail --title "Enable PoW" \
+                 --yesno "Do you want to enable PoW (attachToTangle) on your node?" \
+                 --defaultno \
+                 12 $WIDTH) then
+            POW=enabled
+    else
+            POW=disabled
+    fi
+
+    verify_playbook
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Error!" \
+                  --msgbox "ERROR: Cannot enable HTTPS." \
+                  8 $WIDTH
+         return 1
+    fi
+
+    if [[ "$POW" == "enabled" ]]; then
+        echo "haproxy_deny_regex: '(get|remove|add)Neighbors'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
+    else
+	echo "haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
+    fi
+
+    echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
+    cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
+    if [[ $? -ne 0 ]]; then
+        pause "Enabling HTTPS failed!!! Check output above for errors."
+        clear
+        return 1
+    else
+        clear
+        if ! (whiptail --title "Request SSL Certificate" \
+		--yesno "HTTPS/SSL was enabled successfully. If you haven't done so yet, you can proceed in the next step to request a valid certificate for your domain. You must have a fully qualified domain name pointing to the IP address of your server.\n\nDo you want to proceed?" \
+                 --defaultno \
+                 18 $WIDTH) then
+            return
+        fi
+    fi
+
+    SSL_EMAIL=$(whiptail --inputbox "Enter your email address to register your SSL vertificate with:" 8 $WIDTH --title "Enter Email" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]]; then
+        return
+    fi
+
+    SSL_DOMAIN=$(whiptail --inputbox "Enter the domain name to register the SSL certificate with:" 8 $WIDTH --title "Enter FQDN" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]]; then
+        return
+    fi
+
+    if ! (whiptail --title "Verify Details" \
+            --yesno "You entered email '${SSL_EMAIL}' and domain '${SSL_DOMAIN}'\n\nIs this correct?" \
+            --defaultno \
+                 18 $WIDTH) then
+        return
+    fi
+
+    /usr/local/bin/certbot-haproxy.sh ${SSL_EMAIL} ${SSL_DOMAIN}
+    if [[ $? -ne 0 ]]; then
+        pause "SSL Certificate request failed. See output above for more details."
+        clear
+        return 1
+    fi
+
+    if [ -f "/etc/letsencrypt/live/${SSL_DOMAIN}/haproxy.pem" ]; then
+        echo "ssl_certkey_file: /etc/letsencrypt/live/${SSL_DOMAIN}/haproxy.pem" > /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+    fi
+
+    pause "Done. Check above output to see the status of the request."
+    clear
+}
+
 function enable_haproxy() {
     local RC
     local DEFAULT_MSG="Are you sure you want to enable wallet access only via HAProxy?\nThis will disable port 14265 externally and make 14267 accessible.\nIn addition, all the REMOTE_LIMIT_API commands will be under control of HAProxy and no longer via IRI configuration files."
@@ -701,6 +784,7 @@ function choose_editor() {
 function edit_config_file() {
     local CONFIG=$1
     local SERVICE=$2
+    local RELOAD=$3
 
     BEFORE_EDIT=$(md5sum $CONFIG | awk {'print $1'})
     $EDITOR ${CONFIG}
@@ -710,7 +794,11 @@ function edit_config_file() {
         if (whiptail --title "File Modified" \
                      --yesno "${CONFIG} file was modified.\n${SERVICE} requires a restart to pick up the new changes.\nDo you want to restart it now?" \
                      8 $WIDTH) then
-            service_cmd $SERVICE restart
+            if [[ -z ${RELOAD} ]]; then
+                service_cmd $SERVICE restart
+            else
+                service_cmd $SERVICE reload
+            fi
         fi
     fi
 }
@@ -718,6 +806,7 @@ function edit_config_file() {
 function edit_config() {
     local CONFIG_FILE=$1
     local SERVICE=$2
+    local RELOAD=$3
     if [ ! -f $CONFIG_FILE ]; then
         whiptail --title "Missing File" \
                  --msgbox "Error: cannot find '$CONFIG_FILE'" \
@@ -730,7 +819,7 @@ function edit_config() {
         cp ${CONFIG_FILE} ${CONFIG_FILE}.original
     fi
 
-    if edit_config_file ${CONFIG_FILE} ${SERVICE}; then
+    if edit_config_file ${CONFIG_FILE} ${SERVICE} ${RELOAD}; then
         return 0
     else
         return 1
@@ -1040,6 +1129,7 @@ function configure_files_menu() {
     "g)" "Nelson Config" \
     "h)" "Field Config" \
     "i)" "Field Exporter Config" \
+    "j)" "HAProxy Config" \
     "Z)" "Choose Editor" \
     3>&1 1>&2 2>&3
 }
@@ -1103,7 +1193,10 @@ function configure_files() {
             edit_config "/opt/prometheus/field_exporter/config.js" "field-exporter"
             configure_files
             ;;
-
+        "j)")
+            edit_config "/etc/haproxy/haproxy.cfg" "haproxy" "reload"
+            configure_files
+            ;;
         "Z)")
             choose_editor
             configure_files
@@ -1189,7 +1282,8 @@ function main_menu() {
     "m)" "Get Fully Synced DB" \
     "n)" "Configure Files" \
     "o)" "View Per Processes Memory Usage" \
-    "p)" "Update IRIC" \
+    "p)" "Enable HTTPS for IRI/HAProxy" \
+    "q)" "Update IRIC" \
     "Z)" "Configure this Script" \
     "X)" "Fill in survey!" \
     3>&1 1>&2 2>&3
@@ -1290,6 +1384,11 @@ function run_main_menu() {
             ;;
 
         "p)")
+            enable_https
+            run_main_menu
+	    ;;
+
+        "q)")
             update_iric
             run_main_menu
             ;;
