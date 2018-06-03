@@ -85,6 +85,7 @@ Welcome to IOTA FullNode Installer!
    and may otherwise !!!BREAK!!! existing software on your server (visit link below).
 3. You read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
 4. This installation ensures firewall is enabled.
+5. If you already have a configured server, re-running this script might overwrite previous configuration.
 
 EOF
 
