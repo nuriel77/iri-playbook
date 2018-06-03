@@ -190,18 +190,47 @@ EOF
 
 function set_admin_password_a() {
     whiptail --title "Admin Password" \
-             --passwordbox "Please enter the password with which you will connect to services (IOTA Peer manager, Grafana, etc). Use a stong password!!! Not 'hello123' or 'iota8181', you get the point ;)" \
+             --passwordbox "Please enter the password with which you will connect to services (IOTA Peer manager, Grafana, etc). Use a stong password!!! Not 'hello123' or 'iota8181', you get the point ;). Only valid ASCII characters are allowed." \
              10 78 3>&1 1>&2 2>&3
+
+    if [[ $? -ne 0 ]]; then
+        echo "Installation cancelled"
+    fi
 }
 
 function set_admin_password_b() {
     whiptail --passwordbox "please repeat" 8 78 --title "Admin Password" 3>&1 1>&2 2>&3
+    if [[ $? -ne 0 ]]; then
+        echo "Installation cancelled"
+    fi
 }
 
 function get_admin_password() {
-    PASSWORD_A=$(set_admin_password_a)
-    PASSWORD_B=$(set_admin_password_b)
 
+    # Get first password and validate ascii characters only
+    local PASSWORD_A=$(set_admin_password_a)
+    if [[ "$PASSWORD_A" == "Installation cancelled" ]]; then
+        echo "$PASSWORD_A"
+        exit 1
+    fi
+
+    local LC_CTYPE=C
+    case "${PASSWORD_A}" in
+        *[![:cntrl:][:print:]]*)
+            whiptail --title "Invalid characters!!" \
+                     --msgbox "Only ASCII characters are allowed:\n\n!\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_\`abcdefghijklmnopqrstuvwxyz{|}~" \
+                     12 78
+            get_admin_password
+            return
+            ;;
+    esac
+
+    # Get password again and check passwords match
+    local PASSWORD_B=$(set_admin_password_b)
+    if [[ "$PASSWORD_B" == "Installation cancelled" ]]; then
+        echo "$PASSWORD_B"
+        exit 1
+    fi
     if [ "$PASSWORD_A" != "$PASSWORD_B" ]; then
         whiptail --title "Passwords Mismatch!" \
                  --msgbox "Passwords do not match, please try again." \
@@ -217,6 +246,9 @@ function get_admin_password() {
         get_admin_password
     fi
 
+    # Ensure we escape single quotes (using single quotes) because we need to
+    # encapsulate the password with single quotes for the Ansible variable file
+    PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
     echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
 }
 
