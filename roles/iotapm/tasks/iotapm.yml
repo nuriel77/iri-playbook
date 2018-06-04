@@ -66,6 +66,8 @@
   when: install_nginx is defined and install_nginx
   notify:
     - reload nginx
+  tags:
+    - configure_nginx_ssl
 
 - name: copy iotapm nginx config
   template:

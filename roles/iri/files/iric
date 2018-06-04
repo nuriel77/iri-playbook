@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.4.4
+VERSION=0.4.5
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -408,6 +408,7 @@ function enable_https() {
     local POW
     local SSL_EMAIL
     local SSL_DOMAIN
+    local ENABLE_NGINX_CERT
 
     if ! (whiptail --title "Enable HTTPS" \
 	    --yesno "This option will enable HTTPS on IRI API port via HAProxy (port 14267 by default).\nAny previous configuration to HAProxy configuration will be overwritten.\nDo you want to proceed?" \
@@ -433,12 +434,14 @@ function enable_https() {
          return 1
     fi
 
+    # Enable or disable PoW on this node via variable override file
     if [[ "$POW" == "enabled" ]]; then
         echo "haproxy_deny_regex: '(get|remove|add)Neighbors'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
     else
 	echo "haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
     fi
 
+    # Enable haproxy https via variable override file
     echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
     cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
     if [[ $? -ne 0 ]]; then
@@ -465,13 +468,23 @@ function enable_https() {
         return
     fi
 
+    if (whiptail --title "Configure Nginx" \
+        --yesno "Do you also want to configure this certificate for nginx (IOTA Peer Manager, Grafana etc.) ?" \
+	--defaultno \
+	12 $WIDTH) then
+        ENABLE_NGINX_CERT=yes
+    else
+        ENABLE_NGINX_CERT=false
+    fi
+
     if ! (whiptail --title "Verify Details" \
-            --yesno "You entered email '${SSL_EMAIL}' and domain '${SSL_DOMAIN}'\n\nIs this correct?" \
-            --defaultno \
-                 18 $WIDTH) then
+          --yesno "You entered email '${SSL_EMAIL}' with domain '${SSL_DOMAIN}' and configure nginx with the certificate: '${ENABLE_NGINX_CERT}'\n\nIs this correct?" \
+          --defaultno \
+          12 $WIDTH) then
         return
     fi
 
+    # Run the script to request a certificate
     /usr/local/bin/certbot-haproxy.sh ${SSL_EMAIL} ${SSL_DOMAIN}
     if [[ $? -ne 0 ]]; then
         pause "SSL Certificate request failed. See output above for more details."
@@ -479,8 +492,21 @@ function enable_https() {
         return 1
     fi
 
+    # Will ensure subsequent playbook runs will use haproxy.pem
     if [ -f "/etc/letsencrypt/live/${SSL_DOMAIN}/haproxy.pem" ]; then
         echo "ssl_certkey_file: /etc/letsencrypt/live/${SSL_DOMAIN}/haproxy.pem" > /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+    fi
+
+    # Will configure nginx to use the let's encrypt certificates
+    if [[ $ENABLE_NGINX_CERT == "yes" ]]; then
+        cat <<EOF >> /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+ssl_cert_file: /etc/letsencrypt/live/${SSL_DOMAIN}/privkey.pem
+ssl_key_file: /etc/letsencrypt/live/${SSL_DOMAIN}/cert.pem
+ssl_bundle_cert: /etc/letsencrypt/live/${SSL_DOMAIN}/fullchain.pem
+letsencrypt: True
+EOF
+
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=configure_nginx_ssl
     fi
 
     pause "Done. Check above output to see the status of the request."
@@ -1282,7 +1308,7 @@ function main_menu() {
     "m)" "Get Fully Synced DB" \
     "n)" "Configure Files" \
     "o)" "View Per Processes Memory Usage" \
-    "p)" "Enable HTTPS for IRI/HAProxy" \
+    "p)" "Enable HTTPS / Certificate" \
     "q)" "Update IRIC" \
     "Z)" "Configure this Script" \
     "X)" "Fill in survey!" \

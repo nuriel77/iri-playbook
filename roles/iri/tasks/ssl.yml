@@ -24,8 +24,9 @@
 - name: Create self-signed SSL key and certificate
   shell: 'openssl req -x509 -nodes -days {{ ssl_default_days }} -newkey rsa:{{ ssl_rsa_bits }} -keyout {{ ssl_key_file }} -out {{ ssl_cert_file }} -subj "{{ ssl_subject }}"'
   when: >
-        not cert_file.stat.exists or
-        not key_file.stat.exists
+        create_selfsigned_cert|bool == True and
+        (not cert_file.stat.exists or
+         not key_file.stat.exists)
 
 - name: create combined cert key file
   shell: "cat {{ ssl_cert_file }} {{ ssl_key_file }} > {{ ssl_certkey_file }}"
@@ -39,4 +40,4 @@
     mode: 0400 
   with_items:
     - "{{ ssl_key_file }}"
-    - "{{ ssl_certkey_file}}"
+    - "{{ ssl_certkey_file }}"

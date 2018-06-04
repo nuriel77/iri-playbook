@@ -16,10 +16,9 @@ ssl_session_cache shared:SSL:10m;
 ssl_ecdh_curve secp384r1;
 resolver 8.8.8.8 8.8.4.4 valid=300s;
 resolver_timeout 10s;
-ssl_stapling off;
-ssl_stapling_verify off;
-# Replace when valid certificates
-#ssl_trusted_certificate /etc/ssl/certs/bundle-cert.crt;
+ssl_stapling {% if letsencrypt is defined and letsencrypt %}on{% else %}off{% endif %};
+ssl_stapling_verify {% if letsencrypt is defined and letsencrypt %}on{% else %}off{% endif %};
+{% if letsencrypt is not defined or letsencrypt|bool == False %}#{% endif %}ssl_trusted_certificate {{ ssl_bundle_cert|default('dummy_ssl_bundle.crt') }};
 add_header Strict-Transport-Security max-age=15768000;
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;

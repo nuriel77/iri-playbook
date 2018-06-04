@@ -1,5 +1,6 @@
 ssl_default_days: 3650
 ssl_rsa_bits: 2048
+create_selfsigned_cert: True
 ssl_key_file: /etc/ssl/private/fullnode.key
 ssl_cert_file: /etc/ssl/certs/fullnode.crt
 ssl_certkey_file: /etc/ssl/private/fullnode.crt.key
