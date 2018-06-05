@@ -41,3 +41,4 @@
   with_items:
     - "{{ ssl_key_file }}"
     - "{{ ssl_certkey_file }}"
+  when: letsencrypt is not defined or letsencrypt|bool == False
