@@ -27,12 +27,24 @@ haproxy_base_version: 1.8
 haproxy_min_version: 3
 
 # A list of IPs to whitelist on haproxy
+# The IPs in this list will override command
+# limitations and rate limiting rules.
+haproxy_whitelist_file: /etc/haproxy/whitelist.lst
+
+# If set to `false`, the list of IPs below will be
+# written to the haproxy config and managed in
+# the haroxy config file only. If set to `true`,
+# the above file will be used to whitelist IPs.
+haproxy_use_whitelist_file: false
+
+# A list of IPs to whitelist on haproxy
 # This will allow those IPs to bypass command 
 # regex limitations. The format is a yaml list
 # thus ['value', 'value'] or `- value` on each
 # new line.
 haproxy_whitelist:
   - 127.0.0.1
+#   - 10.20.30.40/22 # -> example IP with cidr notation
 
 # Commands to deny access to
 haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'
