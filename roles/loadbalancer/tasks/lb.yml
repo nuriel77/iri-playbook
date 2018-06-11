@@ -98,7 +98,9 @@
     - restart haproxy
   tags:
     - haproxy_cfg
-  when: haproxy_whitelist_file is defined
+  when:
+    - haproxy_whitelist_file is defined
+    - haproxy_whitelist_file|bool != False
    
 - name: copy haproxy config
   template:
