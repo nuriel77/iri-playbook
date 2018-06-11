@@ -29,9 +29,9 @@ haproxy_min_version: 3
 # A list of IPs to whitelist on haproxy
 # The IPs in this list will override command
 # limitations and rate limiting rules.
-# If you comment this line, the list of IPs below
-# will be written to the haproxy config and managed
-# in the haroxy config file only.
+# If you comment this line, or set the value to `False`,
+# the list of IPs below will be written to the haproxy
+# config and managed in the haroxy config file only.
 haproxy_whitelist_file: /etc/haproxy/whitelist.lst
 
 # A list of IPs to whitelist on haproxy
