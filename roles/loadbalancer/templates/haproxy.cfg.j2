@@ -43,7 +43,11 @@ frontend iri_front
     option http-buffer-request
 
     # Define source whitelist
+{% if haproxy_whitelist_file is defined %} 
+    acl whitelist src -f {{ haproxy_whitelist_file }}
+{% else %}
     acl whitelist src {{ haproxy_whitelist | join(" ") }}
+{% endif %}
 
     # id=0 to store body for logging
     declare capture request len 40000
@@ -116,11 +120,11 @@ backend iri_back
 
     # abuser marking
     acl mark_as_abuser   sc1_inc_gpc0 gt 0
-    tcp-request content  reject if conn_rate_abuse mark_as_abuser
-    tcp-request content  reject if http_rate_abuse mark_as_abuser
-    tcp-request content  reject if conn_cur_abuse mark_as_abuser
+    tcp-request content  reject if conn_rate_abuse mark_as_abuser !whitelist
+    tcp-request content  reject if http_rate_abuse mark_as_abuser !whitelist
+    tcp-request content  reject if conn_cur_abuse mark_as_abuser !whitelist
 
-    #acl is_bad lua.check_post -m str nichthabenwollen
+    #acl is_bad lua.check_post -m str somebadstring
     #http-request deny if is_bad
 
     balance source
