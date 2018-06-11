@@ -101,7 +101,7 @@
     - haproxy_cfg
   when:
     - haproxy_use_whitelist_file is defined
-    - haproxy_use_whitelist
+    - haproxy_use_whitelist_file
     - haproxy_whitelist_file is defined
    
 - name: copy haproxy config

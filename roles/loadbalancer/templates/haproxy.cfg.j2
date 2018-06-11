@@ -42,7 +42,7 @@ frontend iri_front
     option log-separate-errors
     option http-buffer-request
 
-{% if haproxy_use_whitelist_file is defined and haproxy_use_whitelist and haproxy_whitelist_file is defined  %}
+{% if haproxy_use_whitelist_file is defined and haproxy_use_whitelist_file and haproxy_whitelist_file is defined  %}
     acl whitelist src -f {{ haproxy_whitelist_file }}
 {% else %}
     acl whitelist src {{ haproxy_whitelist | join(" ") }}
@@ -109,7 +109,7 @@ backend iri_back
     timeout server-fin 5m
     filter compression
 
-{% if haproxy_use_whitelist_file is defined and haproxy_use_whitelist and haproxy_whitelist_file is defined  %}
+{% if haproxy_use_whitelist_file is defined and haproxy_use_whitelist_file and haproxy_whitelist_file is defined  %}
     acl whitelist src -f {{ haproxy_whitelist_file }}
 {% else %}
     acl whitelist src {{ haproxy_whitelist | join(" ") }}
