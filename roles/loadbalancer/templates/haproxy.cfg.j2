@@ -42,8 +42,7 @@ frontend iri_front
     option log-separate-errors
     option http-buffer-request
 
-    # Define source whitelist
-{% if haproxy_whitelist_file is defined %} 
+    # Define source whitelist{% if haproxy_whitelist_file is defined %} 
     acl whitelist src -f {{ haproxy_whitelist_file }}
 {% else %}
     acl whitelist src {{ haproxy_whitelist | join(" ") }}
@@ -109,6 +108,12 @@ backend iri_back
     timeout server 5m
     timeout server-fin 5m
     filter compression
+
+# Define source whitelist{% if haproxy_whitelist_file is defined %}
+    acl whitelist src -f {{ haproxy_whitelist_file }}
+{% else %}
+    acl whitelist src {{ haproxy_whitelist | join(" ") }}
+{% endif %}
 
     stick-table type ip size 200k expire 30s store conn_rate(3s),http_req_rate(10s),conn_cur,sess_rate(3s)
 
