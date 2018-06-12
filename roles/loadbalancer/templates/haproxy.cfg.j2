@@ -66,8 +66,8 @@ frontend iri_front
     tcp-request connection reject if source_is_abuser
     tcp-request connection track-sc1 src if !source_is_abuser
 
-    # drop connections from user with more then 500 requests in 5m
-    acl source_is_hacker src_http_req_cnt(iri_front) gt 500
+    # drop connections from user with more then 1000 requests in 5m
+    acl source_is_hacker src_http_req_cnt(iri_front) gt 1000
     tcp-request content reject if source_is_hacker
 
     # limit OPTIONS method because this is only used on browsers
@@ -119,9 +119,9 @@ backend iri_back
 
     # dynamic stuff for frontend + raise gpc0 counter
     tcp-request content  track-sc2 src
-    acl conn_rate_abuse  sc2_conn_rate gt 50
-    acl http_rate_abuse  sc2_http_req_rate gt 200
-    acl conn_cur_abuse  sc2_conn_cur gt 7
+    acl conn_rate_abuse  sc2_conn_rate gt 250
+    acl http_rate_abuse  sc2_http_req_rate gt 400
+    acl conn_cur_abuse  sc2_conn_cur gt 20
 
     # abuser marking
     acl mark_as_abuser   sc1_inc_gpc0 gt 0
