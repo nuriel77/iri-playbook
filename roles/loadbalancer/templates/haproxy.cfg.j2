@@ -68,7 +68,7 @@ frontend iri_front
 
     # drop connections from user with more then 1000 requests in 5m
     acl source_is_hacker src_http_req_cnt(iri_front) gt 1000
-    tcp-request content reject if source_is_hacker
+    tcp-request content reject if source_is_hacker !whitelist
 
     # limit OPTIONS method because this is only used on browsers
     acl options_method method OPTIONS
