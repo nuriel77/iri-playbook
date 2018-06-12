@@ -198,7 +198,7 @@ You can use the ``iric`` tool to download and install the database :ref:`iric`, 
 
 .. code:: bash
 
-  systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - https://x-vps.com/iota.db.tgz | tar zxv && chown iri.iri /var/lib/iri -R systemctl start iri
+  systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - https://x-vps.com/iota.db.tgz | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
 
 .. raw:: html
 

@@ -706,7 +706,7 @@ function get_db() {
     if (whiptail --title "Confirm DB" \
                  --yesno "Download new database from '$DB_SOURCE'?\n\nupdated: ${LAST_UPDATED}, size: ${FILE_SIZE}" \
                  12 $WIDTH) then
-        systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -R systemctl start iri
+        systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
         if [[ $? -ne 0 ]]; then
             whiptail --title "New DB Failed!" \
                      --msgbox "Well this is embarrassing. Downloading the new DB failed..." \
