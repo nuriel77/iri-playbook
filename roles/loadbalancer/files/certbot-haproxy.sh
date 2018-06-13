@@ -236,6 +236,7 @@ then
         exitcode=1
     fi
     renewed_certs+=("$DOMAIN")
+    DOMAIN_DIR="${le_cert_root}/${DOMAIN}"
 else
     if [ ! -d ${le_cert_root} ]; then
         logger_error "${le_cert_root} does not exist!"
