@@ -20,10 +20,8 @@
 # The script takes one or two arguments:
 # - argument 1: email address (becomes your acme/letsencrypt account)
 # - argument 2: domain name to issue a new certificate for
-#
-# If you only provide argument 1 to the script, any existing certificate
-# will be renewed.
-# If you provide both email and domain, a new certificate will be installed.
+# If you only specify the email address, certificates will be renewed.
+# If you specify both email and domain, a new certificate will be requested.
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as user root"
@@ -40,6 +38,7 @@ fi
 HAPROXY_PORT=${HAPROXY_PORT:-14267}
 HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
 HAPROXY_RELOAD_CMD="systemctl reload haproxy"
+HAPROXY_START_CMD="systemctl start haproxy"
 WEBROOT="/var/lib/haproxy"
 
 # Enable to redirect output to logfile (for silent cron jobs)
@@ -52,6 +51,11 @@ LOGFILE="/var/log/certrenewal.log"
 function get_email() {
     echo -n "Enter your email address to register as an account with Let's Encrypt and click [ENTER]: "
     read EMAIL
+    if [[ "$EMAIL" == "" ]]; then
+        echo "You must provide an email address"
+        get_email
+        return
+    fi
     echo -n "Please repeat and click [ENTER]: "
     read EMAIL_CHECK
     if [ "$EMAIL" != "$EMAIL_CHECK" ]
@@ -217,6 +221,7 @@ fi
 
 le_cert_root="/etc/letsencrypt/live"
 renewed_certs=()
+exitcode=0
 if [ -n "$DOMAIN" ]
 then
     newCert
@@ -228,7 +233,7 @@ then
     if [ $RC -ne 0 ]
     then
         logger_error "Error requesting a new certificate for $DOMAIN"
-        exit 1
+        exitcode=1
     fi
     renewed_certs+=("$DOMAIN")
 else
@@ -237,8 +242,8 @@ else
         exit 1
     fi
 
-    exitcode=0
     while IFS= read -r -d '' cert; do
+        DOMAIN_DIR=$(dirname "${cert}")
         if ! openssl x509 -noout -checkend $((4*7*86400)) -in "${cert}"; then
             subject="$(openssl x509 -noout -subject -in "${cert}" | grep -o -E 'CN=[^ ,]+' | tr -d 'CN=')"
             subjectaltnames="$(openssl x509 -noout -text -in "${cert}" | sed -n '/X509v3 Subject Alternative Name/{n;p}' | sed 's/\s//g' | tr -d 'DNS:' | sed 's/,/ /g')"
@@ -266,29 +271,39 @@ else
     done < <(find /etc/letsencrypt/live -name cert.pem -print0)
 fi
 
-# create haproxy.pem file(s)
-for domain in ${renewed_certs[@]}; do
-    cat ${le_cert_root}/${domain}/fullchain.pem ${le_cert_root}/${domain}/privkey.pem | tee ${le_cert_root}/${domain}/haproxy.pem >/dev/null
-    if [ $? -ne 0 ]; then
-        logger_error "failed to create haproxy.pem file!"
-        exit 1
+if [[ $exitcode -eq 0 ]]; then
+    # create haproxy.pem file(s)
+    for domain in ${renewed_certs[@]}; do
+        cat ${le_cert_root}/${domain}/fullchain.pem ${le_cert_root}/${domain}/privkey.pem | tee ${le_cert_root}/${domain}/haproxy.pem >/dev/null
+        if [ $? -ne 0 ]; then
+            logger_error "failed to create haproxy.pem file!"
+            exit 1
+        fi
+        chmod 400 ${le_cert_root}/${domain}/haproxy.pem
+    done
+
+    grep -q $DOMAIN_DIR/haproxy.pem /etc/haproxy/haproxy.cfg
+    HAPROXY_RELOAD=$?
+
+    if [[ $HAPROXY_RELOAD -eq 1 ]]; then
+        # Match certificate name for haproxy
+        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" $HAPROXY_CONFIG
     fi
-    chmod 400 ${le_cert_root}/${domain}/haproxy.pem
-done
 
-if [ -z "$DOMAIN" ]
-then
-    DOMAIN=${subjectaltnames}
-fi
-# Match certificate name for haproxy
-sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${le_cert_root}/${DOMAIN}/haproxy.pem|" $HAPROXY_CONFIG
+    # restart haproxy
+    if [ "${#renewed_certs[@]}" -gt 0 ] || [[ $HAPROXY_RELOAD -eq 1 ]]; then
+        systemctl status haproxy >/dev/null
+        if [[ $? -eq 3 ]]; then
+            $HAPROXY_START_CMD
+            RC=$?
+	elif [[ $? -eq 0 ]]; then
+            $HAPROXY_RELOAD_CMD
+            RC=$?
+        fi
 
-# restart haproxy
-if [ "${#renewed_certs[@]}" -gt 0 ]; then
-    $HAPROXY_RELOAD_CMD
-    if [ $? -ne 0 ]; then
-        logger_error "failed to reload haproxy!"
-        exit 1
+        if [[ $RC -ne 0 ]]; then
+            logger_error "failed to reload haproxy!"
+        fi
     fi
 fi
 
