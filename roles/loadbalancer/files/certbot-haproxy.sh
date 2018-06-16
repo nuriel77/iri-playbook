@@ -196,6 +196,8 @@ elif [[ "$OS" =~ ^Ubuntu ]]; then
     if [ -n "$DOMAIN" ]
     then
         logger_info "Start installation of certbot ..."
+        apt-get update -y
+        apt-get install software-properties-common -y
         add-apt-repository ppa:certbot/certbot -y
         apt-get update -y
         apt-get install certbot -y
