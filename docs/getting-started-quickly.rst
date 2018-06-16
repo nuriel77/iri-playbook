@@ -33,6 +33,8 @@ For **CentOS** users: you may need to install ``curl``. You can do that by runni
 
    If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
 
+* Like the project at the `IOTA Ecosystem <https://ecosystem.iota.org/projects/iri-fullnode-installer>`_
+
 
 * A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
 

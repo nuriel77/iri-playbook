@@ -2,7 +2,6 @@
 
 Introduction
 ************
-My first `tutorial <https://x-vps.com/blog/?p=111>`_ I wrote around August 2017.
 Due to the exponential growth of the community and users who want to run their own full node, I thought it is a good time to write a new, more comprehensive tutorial.
 
 Not only a tutorial: the iri-playbook is a full fledged IOTA node installer including a comprehensive installer.
