@@ -283,7 +283,7 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
     do
         case $CHOICE in
             '"DISABLE_MONITORING"')
-                SKIP_TAGS+=",monitoring_role"
+                SKIP_TAGS+=",monitoring_role,field_exporter"
                 echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_ZMQ_METRICS"')
