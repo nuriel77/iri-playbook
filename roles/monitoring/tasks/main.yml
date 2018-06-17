@@ -1,3 +1,4 @@
 - import_tasks: role.yml
+  when: disable_monitoring is not defined or disable_monitoring|bool != True
   tags:
     - monitoring_role

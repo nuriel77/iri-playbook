@@ -278,24 +278,31 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
         exit 1
     fi
 
+    rm /opt/iri-playbook/group_vars/all/z-installer-override.yml
+
     read -a RESULTS_ARRAY <<< "$RESULTS"
     for CHOICE in "${RESULTS_ARRAY[@]}"
     do
         case $CHOICE in
             '"DISABLE_MONITORING"')
                 SKIP_TAGS+=",monitoring_role"
+                echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_ZMQ_METRICS"')
                 INSTALL_OPTIONS+=" -e iri_zmq_enabled=false"
+                echo "iri_zmq_enabled: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_NELSON"')
                 INSTALL_OPTIONS+=" -e nelson_enabled=true"
+                echo "nelson_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_FIELD"')
                 INSTALL_OPTIONS+=" -e field_enabled=true"
+                echo "field_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_HAPROXY"')
                 INSTALL_OPTIONS+=" -e lb_bind_address=0.0.0.0"
+                echo "lb_bind_address: 0.0.0.0" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             *)
                 ;;
