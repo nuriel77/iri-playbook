@@ -5,6 +5,17 @@ global
     log /dev/log local0 debug
     tune.ssl.default-dh-param 2048
     ssl-server-verify none
+{% if haproxy_https is defined and haproxy_https|bool == True %}
+    ssl-default-bind-options {{ haproxy_default_bind_options }}
+    ssl-default-bind-ciphers {{ haproxy_default_bind_ciphers }}
+{% endif %}
+{% if haproxy_admin_socket is defined %}
+    stats socket {{ haproxy_admin_socket }} mode 666 level admin
+{% endif %}
+{% if haproxy_admin_address is defined %}
+    stats socket ipv4@{{ haproxy_admin_address }} level admin
+{% endif %}
+    stats timeout 2m
 
 defaults
     http-reuse safe
@@ -41,6 +52,11 @@ frontend iri_front
     timeout http-request 10s
     option log-separate-errors
     option http-buffer-request
+{% if haproxy_https is defined and haproxy_https|bool == True %}
+{% for header in haproxy_https_response_headers %}
+    http-response set-header {{ header }}
+{% endfor %}
+{% endif %}
 
 {% if haproxy_use_whitelist_file is defined and haproxy_use_whitelist_file|bool == True and haproxy_whitelist_file is defined  %}
     acl whitelist src -f {{ haproxy_whitelist_file }}
