@@ -423,7 +423,7 @@ get_admin_password
 echo -e "\nRunning playbook..."
 
 # Ansible output log file
-LOGFILE=/tmp/iri-playbook-$(date +%Y%m%d%H%M).log
+LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Override ssh_port
 [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
