@@ -278,8 +278,6 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
         exit 1
     fi
 
-    [ -f /opt/iri-playbook/group_vars/all/z-installer-override.yml ] && rm -f /opt/iri-playbook/group_vars/all/z-installer-override.yml
-
     read -a RESULTS_ARRAY <<< "$RESULTS"
     for CHOICE in "${RESULTS_ARRAY[@]}"
     do
