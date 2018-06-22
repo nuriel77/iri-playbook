@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.4.8
+VERSION=0.4.9
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -503,6 +503,7 @@ function enable_https() {
 ssl_cert_file: /etc/letsencrypt/live/${SSL_DOMAIN}/cert.pem
 ssl_key_file: /etc/letsencrypt/live/${SSL_DOMAIN}/privkey.pem
 ssl_bundle_cert: /etc/letsencrypt/live/${SSL_DOMAIN}/fullchain.pem
+create_selfsigned_cert: False
 letsencrypt: True
 EOF
 
