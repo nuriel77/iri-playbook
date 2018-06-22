@@ -37,7 +37,7 @@ fi
 # before running this script (or set on the same command-line)
 HAPROXY_PORT=${HAPROXY_PORT:-14267}
 HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
-HAPROXY_RELOAD_CMD="systemctl reload haproxy"
+HAPROXY_RESTART_CMD="systemctl restart haproxy"
 HAPROXY_START_CMD="systemctl start haproxy"
 WEBROOT="/var/lib/haproxy"
 
@@ -286,26 +286,26 @@ if [[ $exitcode -eq 0 ]]; then
     done
 
     grep -q $DOMAIN_DIR/haproxy.pem /etc/haproxy/haproxy.cfg
-    HAPROXY_RELOAD=$?
+    HAPROXY_RESTART=$?
 
-    if [[ $HAPROXY_RELOAD -eq 1 ]]; then
+    if [[ $HAPROXY_RESTART -eq 1 ]]; then
         # Match certificate name for haproxy
         sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" $HAPROXY_CONFIG
     fi
 
     # restart haproxy
-    if [ "${#renewed_certs[@]}" -gt 0 ] || [[ $HAPROXY_RELOAD -eq 1 ]]; then
+    if [ "${#renewed_certs[@]}" -gt 0 ] || [[ $HAPROXY_RESTART -eq 1 ]]; then
         systemctl status haproxy >/dev/null
         if [[ $? -eq 3 ]]; then
             $HAPROXY_START_CMD
             RC=$?
 	elif [[ $? -eq 0 ]]; then
-            $HAPROXY_RELOAD_CMD
+            $HAPROXY_RESTART_CMD
             RC=$?
         fi
 
         if [[ $RC -ne 0 ]]; then
-            logger_error "failed to reload haproxy!"
+            logger_error "failed to restart haproxy!"
         fi
     fi
 fi

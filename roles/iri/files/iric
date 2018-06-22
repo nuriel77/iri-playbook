@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.4.9
+VERSION=0.5.0
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -185,7 +185,6 @@ function get_latest_field_release {
 }
 
 function upgrade_field() {
-    local RC
     local FIELD_VERSION
 
     echo "Checking for updates..."
@@ -237,7 +236,6 @@ function upgrade_field() {
 
 ### Nelson ###
 function enable_nelson() {
-    local RC
     if (whiptail --title "Enable Nelson" \
                  --yesno "Are you sure you want to enable Nelson automatic peering?" \
                  --defaultno \
@@ -260,7 +258,6 @@ function get_latest_nelson_release {
 }
 
 function upgrade_nelson() {
-    local RC
     local NELSON_VERSION
 
     echo "Checking for updates..."
@@ -308,7 +305,6 @@ function get_latest_iri_release {
 }
 
 function upgrade_iri() {
-    local RC
     echo "Checking for updates..."
     local IRI_LATEST=$(get_latest_iri_release)
     if [[ $? -ne 0 ]]; then
@@ -347,7 +343,7 @@ function upgrade_iri() {
     fi
 
     verify_playbook
-    if [[ $RC -ne 0 ]]; then
+    if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
                  --msgbox "ERROR: Cannot upgrade IRI." \
                  8 $WIDTH
@@ -378,7 +374,6 @@ function upgrade_iri() {
 
 ### Monitoring ###
 function upgrade_monitoring() {
-    local RC
     if (whiptail --title "Upgrade Monitoring" \
                  --yesno "Are you sure you want to upgrade monitoring services?" \
                  --defaultno \
@@ -443,7 +438,7 @@ function enable_https() {
 
     # Enable haproxy https via variable override file
     echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
-    cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
+    cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role,certbot -e lb_bind_address=0.0.0.0 -e overwrite=yes
     if [[ $? -ne 0 ]]; then
         pause "Enabling HTTPS failed!!! Check output above for errors."
         clear
@@ -515,7 +510,6 @@ EOF
 }
 
 function enable_haproxy() {
-    local RC
     local DEFAULT_MSG="Are you sure you want to enable wallet access only via HAProxy?\nThis will disable port 14265 externally and make 14267 accessible.\nIn addition, all the REMOTE_LIMIT_API commands will be under control of HAProxy and no longer via IRI configuration files."
     [ -n "$1" ] && { DEFAULT_MSG=$1; }
     if (whiptail --title "HAProxy" \
