@@ -355,7 +355,7 @@ A quick way to disable this feature:
 
 .. code:: bash
 
-   systemctl stop prom-am-executor && systemctl disable && prom-am-executor
+   systemctl stop prom-am-executor && systemctl disable prom-am-executor
 
 To re-enable:
 
