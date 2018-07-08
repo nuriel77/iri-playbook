@@ -1,35 +1,30 @@
-IRI_VERSION={{ iri_version }}
-
-# Port used for API calls (and/or lightwallet connection)
-IRI_API_PORT={{ iri_api_port }}
-
-# UDP neighbor peering port
-IRI_UDP_PORT={{ iri_udp_port }}
-
-# TCP neighbor peering port
-IRI_TCP_PORT={{ iri_tcp_port }}
+# Java initial mem usage
+JAVA_MIN_MEMORY={{ iri_init_java_mem }}
 
 # Java max mem usage for iri
-JAVA_MEM={{ iri_java_mem }}
+JAVA_MAX_MEMORY={{ iri_java_mem }}
 
-# Java initial mem usage
-JAVA_INIT_MEM={{ iri_init_java_mem }}
+# Enables port 14266 for other containers to interact with
+# IRI bypassing command limitations (for instance Nelson
+# requires access to manage neighbors)
+# This port will also bind to localhost on the host.
+DOCKER_IRI_MONITORING_API_PORT_ENABLE=1
 
-# Java heap mem
-JAVA_HEAP_MEM={{ iri_java_heap_mem }}
+# Remote connections cannot access those command for security.
+# To enable PoW on your node, remove attachToTangle and interruptAttachingToTangle
+DOCKER_IRI_REMOTE_LIMIT_API="{{ iri_remote_limit_api }}"
 
-# Limit commands to API
-REMOTE_LIMIT_API="{{ iri_remote_limit_api }}"
+# TCP peering port
+TCP_RECEIVER_PORT={{ iri_tcp_port }}
 
-# Optional OPTIONS can contain multiple values e.g.
-#OPTIONS="--rescan --debug --remote"
-OPTIONS="{% if api_port_remote is defined and api_port_remote %}--remote{% endif %}"
-
-# IRI Configuration file. Basically, most options can either
-# be provided as commandline arguments to iri or via this file.
-# We make use of this file for additional options, e.g. REMOTE_AUTH etc.
-IRI_CONFIG_FILE={{ iri_basedir }}/iri.ini
+# UDP peering port
+UDP_RECEIVER_PORT={{ iri_udp_port }}
+API_PORT={{ iri_api_port }}
 
 # Fill in neighbor addresses separated by space, e.g.
-# IRI_NEIGHBORS="udp://cfb.is.ai:14600 tcp://iota.rules.io:15600"
-IRI_NEIGHBORS=""
+# NEIGHBORS="udp://cfb.is.ai:14600 tcp://iota.rules.io:15600"
+NEIGHBORS=""
+
+# Optional OPTIONS can contain multiple values e.g.
+#OPTIONS="--rescan --revalidate"
+OPTIONS=""
