@@ -10,10 +10,10 @@
   copy:
     src: files/rsyslog.ubuntu
     dest: /etc/logrotate.d/rsyslog
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
 
 - name: copy logrotate override system logs centos
   copy:
     src: files/syslog.centos
     dest: /etc/logrotate.d/syslog
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'

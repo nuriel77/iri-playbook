@@ -4,8 +4,17 @@ iri_username: iri
 # Base directory where iri is installed and runs from
 iri_basedir: /var/lib/iri
 
+# IRI configuration dir
+iri_configdir: /etc/iri
+
+# IRI docker image
+iri_image: iotaledger/iri
+
 # The iri version to install
 iri_version: 1.5.1
+
+# IRI Docker image tag/version
+iri_tag: "v{{ iri_version }}"
 
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
 iri_api_port: 14265
@@ -42,12 +51,3 @@ iri_remote_limit_api: "removeNeighbors, addNeighbors, interruptAttachingToTangle
 # `true` is necessary in order to allow external wallets/APIs to connect without tunneling.
 # If set to `false` it will only bind to localhost (127.0.0.1)
 api_port_remote: false
-
-# The RPM version to download, check http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-oracle_java_rpm: 'http://download.oracle.com/otn-pub/java/jdk/8u172-b11/a58eab1ec242421181065cdc37240b08/jdk-8u172-linux-x64.rpm'
-
-# The version to download for Ubuntu
-oracle_java_tar: 'http://download.oracle.com/otn-pub/java/jdk/8u172-b11/a58eab1ec242421181065cdc37240b08/jdk-8u172-linux-x64.tar.gz'
-
-# Java oracle directory
-oracle_java_dir: jdk1.8.0_172

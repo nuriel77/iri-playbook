@@ -2,19 +2,19 @@
   set_fact:
     iri_workdir: "{{ iri_basedir }}/target"
 
-- name: set variables centos/redhat
+- name: set variables centos
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
   tags:
     - nbctl_config
 
-- name: set variables debian/ubuntu
+- name: set variables ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
   tags:
     - nbctl_config
 
@@ -48,11 +48,26 @@
   tags:
     - iri_user
 
-- name: remove workdir
-  file:
-    path: "{{ iri_workdir }}"
-    state: absent
-  when: remove_iri_workdir is defined and remove_iri_workdir
+- name: get iri user uid
+  shell: "echo -n $(id -u {{ iri_username }})"
+  changed_when: false
+  register: iri_uid
+  tags:
+    - iri_create_container
+
+- name: delete iri data basedir
+  block:
+    - name: stop iri
+      systemd:
+        name: iri.service
+        state: stopped
+      ignore_errors: yes
+
+    - name: remove basedir
+      file:
+        path: "{{ iri_basedir }}"
+        state: absent
+  when: remove_iri_basedir is defined and remove_iri_basedir
 
 - name: ensure iri basedir ownership and permissions
   file:
@@ -69,18 +84,14 @@
     mode: 0700
     owner: "{{ iri_username }}"
     group: "{{ iri_username }}"
-                               
-- name: "Downloading iri jar from github. This can take a while ..."
-  get_url:
-    url: "https://github.com/iotaledger/iri/releases/download/v{{ iri_version }}/iri-{{ iri_version }}.jar"
-    dest: "{{ iri_workdir }}/iri-{{ iri_version }}.jar"
-    owner: root
+
+- name: ensure iri config dir exists
+  file:
+    path: "{{ iri_configdir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ iri_username }}"
     group: "{{ iri_username }}"
-    mode: 0640
-    timeout: 20
-  register: iri_downloaded
-  notify:
-    - restart iri
 
 - name: copy utility scripts
   copy:
@@ -119,29 +130,30 @@
   notify:
     - restart iri
 
+- name: copy iri.ini config file
+  template:
+    src: templates/iri.ini.j2
+    dest: "{{ iri_configdir }}/iri.ini"
+    owner: "{{ iri_username }}"
+    group: "{{ iri_username }}"
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+  notify:
+    - restart iri
+
+- name: Create a network for iri
+  docker_network:
+    name: "{{ iri_net_name }}"
+    driver: bridge
+  tags:
+    - iri_network
+       
 - name: flush handlers
   meta: flush_handlers
 
-- name: copy iri config file
-  template:
-    src: templates/iri.ini.j2
-    dest: "{{ iri_basedir }}/iri.ini"
-    force: "{{ overwrite | default('no') }}"
-    backup: yes
-  notify:
-    - restart iri
-
-- name: copy iri environment file
-  template:
-    src: templates/iri.sysconfig.j2
-    dest: "{{ config_dir }}/iri"
-    force: "{{ overwrite | default('no') }}"
-    backup: yes
-  notify:
-    - restart iri
-
 - name: ensure iri started and enabled
   systemd:
+    daemon_reload: true
     name: iri.service
     state: started
     enabled: true
