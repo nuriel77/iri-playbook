@@ -5,6 +5,7 @@
 - import_tasks: firewall.yml
   tags:
     - monitoring_firewall
+  when: configure_firewall is defined and configure_firewall|bool == True
 
 - import_tasks: prometheus.yml
   tags:
