@@ -4,6 +4,7 @@
   become: true
   become_method: sudo
   roles:
+    - docker
     - iri
     - iotapm
     - monitoring
