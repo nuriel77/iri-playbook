@@ -5,6 +5,7 @@
 - import_tasks: firewall.yml
   tags:
     - iotapm_firewall
+  when: configure_firewall is defined and configure_firewall|bool == True
 
 - import_tasks: iotapm.yml
   tags:
