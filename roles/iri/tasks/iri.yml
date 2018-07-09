@@ -74,7 +74,6 @@
   get_url:
     url: "https://github.com/iotaledger/iri/releases/download/v{{ iri_version }}/iri-{{ iri_version }}.jar"
     dest: "{{ iri_workdir }}/iri-{{ iri_version }}.jar"
-    checksum: "{{ iri_jar_checksum }}"
     owner: root
     group: "{{ iri_username }}"
     mode: 0640
