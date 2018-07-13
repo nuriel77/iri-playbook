@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.5.1
+VERSION=0.5.2
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -567,8 +567,20 @@ function add_neighbors() {
     if (whiptail --title "Add Neighbors" \
                  --yesno "The following neighbor(s) will be added:\n\n$NEIGHBORS_TO_ADD" \
                  $HEIGHT $WIDTH) then
+
+        # Set iri config file if any configured
         IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
         [ -n "$IRI_CONFIG" ] && IRI_CONFIG="-f $IRI_CONFIG"
+
+        # Stop nelson (will return 0 if it exists)
+        local STARTUP_NELSON=0
+        systemctl status nelson >/dev/null 2>&1
+        if [[ $? -eq 0 ]]; then
+            systemctl stop nelson
+            STARTUP_NELSON=1
+        fi
+
+        # Run nbctl command
         NBCTL_OUTPUT=$(nbctl -a $ADD_LIST $IRI_CONFIG 2>&1)
         RC=$?
         if [[ $RC -eq 0 ]]; then
@@ -584,6 +596,9 @@ function add_neighbors() {
             whiptail --title "Adding Neighbors Failed" \
                      --msgbox "Failure: $NBCTL_OUTPUT" \
                      $HEIGHT $WIDTH
+        fi
+        if [[ $STARTUP_NELSON -eq 1 ]]; then
+            systemctl start nelson
         fi
     fi
 }
