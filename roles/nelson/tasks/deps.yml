@@ -106,7 +106,7 @@
   register: nelson_gui_install
 
 - name: install nelson-gui via shell command (retry)
-  shell: "npm install --unsafe-perm -g nelson.gui"
+  shell: "npm install --unsafe-perm -g nelson.gui@{{ nelson_gui_version }}"
   when: nelson_gui_install.rc != 0
   tags:
     - nelson_npm

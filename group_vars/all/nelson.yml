@@ -28,3 +28,8 @@ nelson_gui_port_internal: 6611
 
 # Nelson gui port
 nelson_gui_port: 6600
+
+# Nelson gui fallback version to install
+# If latest version fails, this is the latest
+# known version to install without breaking
+nelson_gui_version: 0.2.2
