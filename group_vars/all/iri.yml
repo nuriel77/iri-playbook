@@ -16,6 +16,9 @@ iri_version: 1.5.1
 # IRI Docker image tag/version
 iri_tag: "v{{ iri_version }}"
 
+# Set to true for testnet, false for mainnet.
+iri_testnet: false
+
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
 iri_api_port: 14265
 
@@ -43,6 +46,9 @@ iri_init_java_mem: 1024m
 # IRI memory heap size Xmn
 iri_java_heap_mem: 1024m
 
+# A network will be created in docker for iri
+iri_net_name: iri_net
+ 
 # Exclude the commands below from the API.
 # Applied only to connections other than localhost/127.0.0.1
 iri_remote_limit_api: "removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors"

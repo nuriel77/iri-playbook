@@ -1,12 +1,20 @@
 - import_tasks: deps_apt.yml
   tags:
     - iri_deps_apt
-  when: ansible_distribution == 'Ubuntu'
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - install_system_deps is defined and install_system_deps|bool == True
 
 - import_tasks: deps_yum.yml
   tags:
     - iri_deps_yum
-  when: ansible_distribution == 'CentOS'
+  when:
+    - ansible_distribution == 'CentOS'
+    - install_system_deps is defined and install_system_deps|bool == True
+
+- import_tasks: pip.yml
+  tags:
+    - py_docker
 
 - import_tasks: logging.yml
   tags:

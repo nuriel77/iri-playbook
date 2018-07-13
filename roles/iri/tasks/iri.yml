@@ -117,11 +117,20 @@
 - name: config default ~/.nbctl
   copy:
     dest: "{{ ansible_env.HOME }}/.nbctl"
-    content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_api_port }}\nfile: {{ config_dir }}/iri\n"
+    content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_mgmt_api_port|default('14266') }}\nfile: {{ config_dir }}/iri\n"
     force: "{{ overwrite | default('no') }}"
     backup: yes
   tags:
     - nbctl_config
+
+- name: copy iri environment config file
+  template:
+    src: templates/iri.sysconfig.j2
+    dest: "{{ config_dir }}/iri"
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+  notify:
+    - restart iri
 
 - name: copy iri systemd file
   template:
@@ -141,12 +150,25 @@
   notify:
     - restart iri
 
+- name: create a link for iri ini configuration file
+  file:
+    src: "{{ iri_configdir }}/iri.ini"
+    dest: "{{ iri_basedir }}/iri.ini"
+    state: link
+
 - name: Create a network for iri
   docker_network:
     name: "{{ iri_net_name }}"
     driver: bridge
   tags:
     - iri_network
+
+- name: 'download iri docker image, this can take a moment...'
+  docker_image:
+    name: "{{ iri_image }}"
+    tag: "{{ iri_tag }}"
+  tags:
+    - iri_image
        
 - name: flush handlers
   meta: flush_handlers
