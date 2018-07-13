@@ -1216,7 +1216,7 @@ function configure_files() {
             ;;
 
         "g)")
-            edit_config "/etc/nelson/nelson.ini" "nelson"
+            edit_config "/etc/nelson/config.ini" "nelson"
             configure_files
             ;;
 

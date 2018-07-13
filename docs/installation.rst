@@ -423,7 +423,7 @@ View Status/Logs and configuration
 Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's log.
 
 
-* Nelson's configuration file can be found here: ``/etc/nelson/nelson.ini``.
+* Nelson's configuration file can be found here: ``/etc/nelson/config.ini``.
 
 * Nelson's data directory can be found here: ``/var/lib/nelson/data``.
 

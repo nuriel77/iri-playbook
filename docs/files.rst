@@ -50,7 +50,7 @@ HAProxy configuration file::
 
 Nelson configuration file::
 
-  /etc/nelson/nelson.ini
+  /etc/nelson/config.ini
 
 Field configuration file::
 

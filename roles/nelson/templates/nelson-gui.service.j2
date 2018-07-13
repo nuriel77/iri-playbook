@@ -1,28 +1,28 @@
 [Unit]
-Description=IOTA Nelson GUI
+Description=Nelson GUI
+After=docker.service nelson.service
+Requires=docker.service
 
 [Service]
+TimeoutStartSec=0
+Restart=always
 EnvironmentFile=-{{ config_dir }}/nelson-gui
-WorkingDirectory={{ nelson_datadir }}
-ExecStart={{ nodejs_bin }} {{ nelson_gui_bin }} --port $GUI_PORT --apiHostname $NELSON_BIND_ADDRESS --apiPort $NELSON_API_PORT
-ExecReload=/bin/kill -HUP $MAINPID
-KillMode=mixed
-KillSignal=SIGTERM
-Restart=on-failure
-RestartSec=30
-Type=simple
-TimeoutStopSec=60
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname nelsongui \
+  --user {{ nelson_uid.stdout }} \
+  --net={{ iri_net_name }} \
+  --cap-drop=ALL \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -p ${GUI_BIND_ADDRESS}:${GUI_PORT}:${GUI_PORT} \
+  {{ nelsongui_image }}:{{ nelsongui_tag }} \
+  --port $GUI_PORT \
+  --apiHostname nelson \
+  --apiPort $NELSON_API_PORT
 
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=nelson
-User={{ nelson_username }}
-Group={{ nelson_username }}
-# Restrict process
-PrivateDevices=yes
-PrivateTmp=yes
-ProtectSystem=full
-ProtectHome=yes
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

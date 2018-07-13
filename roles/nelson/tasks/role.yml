@@ -1,7 +1,3 @@
-- import_tasks: deps.yml
-  tags:
-    - nelson_deps
-
 - import_tasks: firewall.yml
   tags:
     - nelson_firewall
