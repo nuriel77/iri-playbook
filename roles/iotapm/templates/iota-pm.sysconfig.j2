@@ -1,9 +1,7 @@
 # Refresh data in seconds
 REFRESH=5
 
-# IP and port to listen on
-BIND="{{ iotapm_bind_address }}:{{ iotapm_port }}"
-
-# The IP address and port where to reach IRI API full node
-# Edit if necessary.
-IRI="http://127.0.0.1:{{ iri_api_port }}"
+# IRI network access values
+BIND_ADDRESS={{ iotapm_bind_address }}
+BIND_PORT={{ iotapm_port }}
+IRI_ADDRESS="http://iri:{{ iri_mgmt_api_port|default('14266') }}"

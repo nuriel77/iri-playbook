@@ -20,6 +20,7 @@
     - fpaste
     - openssl
     - util-linux
+    - python-pip
   tags:
     - scripts
     - deps

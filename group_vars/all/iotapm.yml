@@ -1,8 +1,11 @@
-# iota-pm version to install
-iotapm_version: 1.2.0
-
 # The tcp port on which iota-pm will be served
 iotapm_port: 8011
+
+# IOTA-pm image
+iotapm_image: nuriel77/iota-pm
+
+# IOTA-pm tag
+iotapm_tag: latest
 
 # The address on which iota-pm will served
 # Use 0.0.0.0 for all interfaces
@@ -28,7 +31,3 @@ iotapm_allow_firewall: false
 # Unprivileged username with which to run iota-pm.
 # Will be created if doesn't exist
 iotapm_username: iotapm
-
-# Install and configure nginx for iota PM
-# can be `true` or `false`
-install_nginx: true

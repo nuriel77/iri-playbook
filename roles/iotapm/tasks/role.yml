@@ -1,6 +1,7 @@
 - import_tasks: deps.yml
   tags:
     - iotapm_deps
+  when: install_system_deps is defined and install_system_deps|bool == True
 
 - import_tasks: firewall.yml
   tags:
