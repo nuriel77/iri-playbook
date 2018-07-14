@@ -60,3 +60,11 @@
   with_items:
     - "/var/spool/iotapm"
     - "{{ config_dir }}/iota-pm"
+
+- name: remove iotapm image
+  docker_image:
+    state: absent
+    force: yes
+    name: "{{ iotapm_image }}"
+    tag: "{{ iotapm_tag }}"
+  ignore_errors: yes

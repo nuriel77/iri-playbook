@@ -48,3 +48,10 @@
   user:
     name: "{{ field_username }}"
     state: absent
+
+- name: remove field image
+  docker_image:
+    state: absent
+    name: "{{ field_image }}"
+    tag: "{{ field_tag }}"
+  ignore_errors: yes

@@ -116,3 +116,17 @@
   with_items:
     - "{{ grafana_username }}"
     - "{{ prom_username }}"
+
+- name: 'remove monitoring images...'
+  docker_image:
+    name: "{{ item.image }}"
+    tag: "{{ item.tag }}"
+    state: absent
+    force: yes
+  with_items:
+    - { "image": "{{ prometheus_image }}", "tag": "{{ prometheus_tag }}" }
+    - { "image": "{{ alertmanager_image }}", "tag": "{{ alertmanager_tag }}" }
+    - { "image": "{{ grafana_image }}", "tag": "{{ grafana_tag }}" }
+    - { "image": "{{ exporter_image }}", "tag": "{{ exporter_tag }}" }
+    - { "image": "{{ iota_prom_exporter_image }}", "tag": "{{ iota_prom_exporter_tag }}" }
+    - { "image": "{{ field_exporter_image }}", "tag": "{{ field_exporter_tag }}" }

@@ -21,7 +21,6 @@
     - "{{ iri_api_port_remote }}"
   when: ansible_distribution == 'CentOS'
 
-
 - name: remove in lb rules from ufw
   block:
 
@@ -94,3 +93,11 @@
   user:
     name: "{{ haproxy_username }}"
     state: absent
+
+- name: remove haproxy image
+  docker_image:
+    state: absent
+    force: yes
+    name: "{{ haproxy_image }}"
+    tag: "{{ haproxy_tag }}"
+  ignore_errors: yes

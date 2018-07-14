@@ -88,8 +88,8 @@
     name: "{{ item.image }}"
     tag: "{{ item.tag }}"
   with_items:
-    - {"image": "{{ nelson_image }}", "tag": "{{ nelson_tag}}" }
-    - {"image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag}}" }
+    - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
+    - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }
   tags:
     - nelson_images
   notify:
@@ -106,4 +106,4 @@
     enabled: yes
   with_items:
     - nelson.service
-#    - nelson-gui.service
+    - nelson-gui.service
