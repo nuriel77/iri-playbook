@@ -250,7 +250,7 @@ function get_admin_password() {
     # Ensure we escape single quotes (using single quotes) because we need to
     # encapsulate the password with single quotes for the Ansible variable file
     PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
-    echo "fullnode_user_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
+    echo "fullnode_user_password: '${PASSWORD_A}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
 }
 
 # Installation selection menu
