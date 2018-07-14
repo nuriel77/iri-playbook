@@ -19,6 +19,7 @@ ExecStart=/usr/bin/docker run \
   -e HTTP_PORT=${BIND_PORT} \
   -e HOME=/opt/iota-pm \
   -e REFRESH=${REFRESH} \
+  $DOCKER_OPTS \
   {{ iotapm_image }}:${TAG}
 
 ExecStop=/usr/bin/docker stop %p

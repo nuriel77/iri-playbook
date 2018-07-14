@@ -16,6 +16,7 @@ ExecStart=/usr/bin/docker run \
   -v ${FIELD_CONFIG}:/usr/src/field/config.ini:ro,Z \
   -v ${FIELD_WORKDIR}:/home:rw,Z \
   -e HOME=/home \
+  $DOCKER_OPTS \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
   {{ field_image }}:${TAG} \
   --config /usr/src/field/config.ini

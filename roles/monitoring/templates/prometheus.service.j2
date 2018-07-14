@@ -18,6 +18,7 @@ ExecStart=/usr/bin/docker run \
   -v ${CONFIG_FILE}:/etc/prometheus/prometheus.yml:ro,Z \
   -v ${DATA_DIR}:/data:Z \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+  $DOCKER_OPTS \
   {{ prom_image }}:${TAG} \
   --config.file=/etc/prometheus/prometheus.yml \
   --storage.tsdb.path=/data/ \

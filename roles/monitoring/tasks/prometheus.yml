@@ -35,7 +35,7 @@
 - name: copy prometheus systemd service file
   template:
     src: templates/prometheus.service.j2
-    dest: /etc/systemd/system/prometheus.service
+    dest: {{ systemd_dir }}/prometheus.service
   notify:
     - restart prometheus
 

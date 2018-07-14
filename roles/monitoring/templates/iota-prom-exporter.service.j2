@@ -17,6 +17,7 @@ ExecStart=/usr/bin/docker run \
   -v /etc/localtime:/etc/localtime:ro,Z \
   -v {{ iota_prom_exporter_basedir }}/config.js:/exporter/config.js:ro,Z \
   -v {{ iota_prom_exporter_basedir }}/db:/exporter/db:Z \
+  $DOCKER_OPTS \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
   {{ iota_prom_exporter_image }}:${TAG}
 

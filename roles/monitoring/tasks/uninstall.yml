@@ -8,7 +8,7 @@
 
 - name: set variables debian/ubuntu
   set_fact:
-    systemd_dir: /etc/systemd/system
+    systemd_dir: {{ systemd_dir }}
     config_dir: /etc/default
   when: ansible_distribution == 'Ubuntu'
 
@@ -77,12 +77,12 @@
   notify:
     - reload systemd
   with_items:
-    - '/etc/systemd/system/prometheus.service'
-    - '/etc/systemd/system/node-exporter.service'
-    - '/etc/systemd/system/alertmanager.service'
+    - '{{ systemd_dir }}/prometheus.service'
+    - '{{ systemd_dir }}/node-exporter.service'
+    - '{{ systemd_dir }}/alertmanager.service'
     - "{{ systemd_dir }}/field-exporter.service"
-    - '/etc/systemd/system/prom-am-executor.service'
-    - '/etc/systemd/system/iota-prom-exporter.service'
+    - '{{ systemd_dir }}/prom-am-executor.service'
+    - '{{ systemd_dir }}/iota-prom-exporter.service'
     - "{{ config_dir }}/iota-prom-exporter"
     - "{{ config_dir }}/prometheus"
     - "{{ config_dir }}/alertmanager"

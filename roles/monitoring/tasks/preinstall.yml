@@ -6,7 +6,7 @@
 
 - name: set variables debian/ubuntu
   set_fact:
-    systemd_dir: /etc/systemd/system
+    systemd_dir: /lib/systemd/system
     config_dir: /etc/default
   when: ansible_distribution == 'Ubuntu'
 

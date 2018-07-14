@@ -6,3 +6,4 @@ WEB_EXTERNAL_ADDRESS=https://{{ ansible_default_ipv4.address }}:{{ alertmanager_
 WORK_DIR={{ alertmanager_basedir }}
 TEMPLATE_DIR={{ alertmanager_basedir }}/template
 CONFIG_FILE={{ alertmanager_basedir }}/config.yml
+DOCKER_OPTS=""

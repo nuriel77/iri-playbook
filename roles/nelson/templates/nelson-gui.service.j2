@@ -16,6 +16,7 @@ ExecStart=/usr/bin/docker run \
   --cap-drop=ALL \
   -v /etc/localtime:/etc/localtime:ro,Z \
   -p ${GUI_BIND_ADDRESS}:${GUI_PORT}:${GUI_PORT} \
+  $DOCKER_OPTS \
   {{ nelsongui_image }}:${TAG} \
   --port $GUI_PORT \
   --apiHostname nelson \
