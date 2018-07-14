@@ -38,6 +38,13 @@
     state: restarted
     enabled: yes
 
+- name: restart node-exporter
+  systemd:
+    name: node-exporter.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
 - name: restart prom-am-executor
   systemd:
     name: prom-am-executor.service

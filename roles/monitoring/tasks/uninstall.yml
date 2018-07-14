@@ -86,6 +86,7 @@
     - "{{ config_dir }}/iota-prom-exporter"
     - "{{ config_dir }}/prometheus"
     - "{{ config_dir }}/alertmanager"
+    - "{{ config_dir }}/node-exporter"
 
 - name: remove monitoring related files and paths
   file:

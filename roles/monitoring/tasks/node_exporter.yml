@@ -1,25 +1,33 @@
-- name: ensure ownership in exporter basedir
-  file:
-    path: "{{ exporter_basedir }}"
-    state: directory
-    owner: "{{ prom_username }}"
-    group: "{{ prom_username }}"
-    recurse: yes
+- name: 'download node exporter docker image, this can take a moment...'
+  docker_image:
+    name: "{{ exporter_image }}"
+    tag: "{{ exporter_tag }}"
+  tags:
+    - node_exporter_image
+  notify:
+    - restart node-exporter
 
 - name: copy exporter rsyslog config file
   copy:
     src: files/node_exporter.rsyslog.conf
     dest: /etc/rsyslog.d/node_exporter.conf
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
   notify:
     - restart rsyslog
+
+- name: copy exporter sysconfig file
+  template:
+    src: templates/node-exporter.sysconfig.j2
+    dest: "{{ config_dir }}/node-exporter"
+  notify:
+    - restart node-exporter
 
 - name: copy exporter systemd service file
   template:
     src: templates/node-exporter.service.j2
     dest: /etc/systemd/system/node-exporter.service
   notify:
-    - reload systemd
+    - restart node-exporter
 
 - name: flush handlers
   meta: flush_handlers
