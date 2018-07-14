@@ -1,6 +1,6 @@
 [field]
 name = {{ my_field_name }}
-IRIPort = {{ iri_api_port }}
+IRIPort = {{ iri_mgmt_api_port|default('14266') }}
 IRIHostname = {{ field_iri_host }}
 bindAddress = {{ field_bind_address }}
 

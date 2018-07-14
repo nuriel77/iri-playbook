@@ -449,7 +449,7 @@ set_primary_ip
 
 # Add notice to set payout address for Field
 if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]]; then
-    FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/field.ini'"
+    FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/config.ini'"
 fi
 
 OUTPUT=$(cat <<EOF

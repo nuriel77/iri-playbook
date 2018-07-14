@@ -54,7 +54,7 @@ Nelson configuration file::
 
 Field configuration file::
 
-  /etc/field/field.ini
+  /etc/field/config.ini
 
 Field Exporter configuration file::
 

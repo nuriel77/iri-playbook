@@ -1,27 +1,27 @@
 [Unit]
-Description=IOTA Field
+Description=CarrIOTA Field
 
 [Service]
-WorkingDirectory={{ field_dir }}
-ExecStart={{ nodejs_bin }} {{ field_bin }} --config {{ field_configdir }}/field.ini
-ExecReload=/bin/kill -HUP $MAINPID
-KillMode=mixed
-KillSignal=SIGTERM
-Restart=on-failure
-RestartSec=30
-Type=simple
-TimeoutStopSec=60
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-/etc/sysconfig/field
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname field \
+  --user {{ field_uid.stdout }} \
+  --net=iri_net \
+  --cap-drop=ALL \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -v ${FIELD_CONFIG}:/usr/src/field/config.ini:ro,Z \
+  -v ${FIELD_WORKDIR}:/home:rw,Z \
+  -e HOME=/home \
+  -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+  {{ field_image }}:{{ field_tag }} \
+  --config /usr/src/field/config.ini
 
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=field
-User={{ field_username }}
-Group={{ field_username }}
-# Restrict process
-PrivateDevices=yes
-PrivateTmp=yes
-ProtectSystem=full
-ProtectHome=yes
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

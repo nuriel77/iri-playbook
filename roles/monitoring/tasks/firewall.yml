@@ -6,6 +6,7 @@
   when: ansible_distribution == 'CentOS'
 
 - name: firewall CentOS block
+  block:
 
     - name: allow proxy ports in firewall
       firewalld:

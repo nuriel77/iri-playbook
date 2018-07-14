@@ -19,7 +19,7 @@
         state: absent
 
   when:
-    - ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    - ansible_distribution == 'CentOS'
 
 - name: remove nelson tcp ports from firewall
   ufw:
@@ -31,20 +31,19 @@
   with_items:
     - "{{ nelson_tcp_port }}"
     - "{{ nelson_gui_port }}"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
 
 - name: set variables centos/redhat
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
+  when: ansible_distribution == 'Ubuntu'
 
 - name: remove nelson
   block:
@@ -59,15 +58,6 @@
         - nelson
         - nelson-gui
 
-    - name: Remove current nelson packages
-      npm:
-        name: "{{ item }}"
-        global: yes
-        state: absent
-      with_items:
-        - nelson.cli
-        - nelson.gui
-
 - name: remove nelson related files
   file:
     path: "{{ item }}"
@@ -75,6 +65,7 @@
   with_items:
     - "{{ nelson_configdir }}"
     - "{{ nelson_datadir }}"
+    - "{{ config_dir }}/nelson"
     - "{{ config_dir }}/nelson-gui"
 
 - name: remove nelson systemd files

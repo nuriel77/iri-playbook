@@ -14,9 +14,6 @@ iotapm_bind_address: 127.0.0.1
 # The port to serve iota PM on the webserver
 iotapm_proxy_port: 8811
 
-# Run IOTA Peer Manager as this user
-iotapm_username: iotapm
-
 # If setting `iotapm_bind_address` to anything other than
 # localhost (127.0.0.1) should the port be opened in firewall
 # Can be `true` or `false`

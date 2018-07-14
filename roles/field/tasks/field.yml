@@ -2,17 +2,13 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-    nodejs_bin: /usr/bin/node
-    field_bin: /bin/field
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-    nodejs_bin: /usr/bin/nodejs
-    field_bin: /usr/bin/field
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
 
 - name: add user to run field as
   user:
@@ -22,6 +18,11 @@
     home: "{{ field_dir }}"
   tags:
     - field_user
+
+- name: get field user uid
+  shell: "echo -n $(id -u {{ field_username }})"
+  changed_when: false
+  register: field_uid
 
 - name: create field home directory
   file:
@@ -33,6 +34,8 @@
   with_items:
     - "{{ field_dir }}"
     - "{{ field_configdir }}"
+  tags:
+    - field_dirs
 
 # can override with "-e my_field_name=my-unique-name"
 - name: generate my_field_name
@@ -43,11 +46,22 @@
 
 - name: copy field config
   template:
-    src: "templates/field.ini.j2"
-    dest: "{{ field_configdir }}/field.ini"
+    src: templates/config.ini.j2
+    dest: "{{ field_configdir }}/config.ini"
     owner: "{{ field_username }}"
     group: "{{ field_username }}"
     mode: 0600
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+  tags:
+    - field_config
+  notify:
+    - restart field
+
+- name: copy sysconfig file
+  template:
+    src: templates/field.sysconfig.j2
+    dest: "{{ config_dir }}/field"
     force: "{{ overwrite | default('no') }}"
     backup: yes
   notify:
@@ -58,7 +72,14 @@
     src: templates/field.service.j2
     dest: "{{ systemd_dir }}/field.service"
   notify:
-    - reload systemd
+    - restart field
+
+- name: 'download field images, this can take a moment...'
+  docker_image:
+    name: "{{ field_image }}"
+    tag: "{{ field_tag }}"
+  tags:
+    - field_docker_image
 
 - name: flush handlers
   meta: flush_handlers
@@ -73,12 +94,17 @@
   pause:
     seconds: 3
 
+- name: "create field-exporter dirs if it doesn't exist yet"
+  file:
+    path: "{{ field_exporter_basedir }}"
+    state: directory
+
 - name: Field ID for field_exporter
   block:
 
     - name: set field-exporter dirs
       set_fact:
-        field_exporter_fulldir: "{{ prom_basedir }}/{{ field_exporter_basedir }}"
+        field_exporter_fulldir: "{{ field_exporter_basedir }}"
 
     - name: check field ID file
       stat:
@@ -106,3 +132,4 @@
 
   tags:
     - field_exporter
+  ignore_errors: yes

@@ -1221,7 +1221,7 @@ function configure_files() {
             ;;
 
         "h)")
-            edit_config "/etc/field/field.ini" "field"
+            edit_config "/etc/field/config.ini" "field"
             configure_files
             ;;
         "i)")

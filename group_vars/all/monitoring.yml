@@ -24,7 +24,7 @@ iota_prom_exporter_db_days_retention: 14
 field_exporter_bind_port: 9337
 field_exporter_bind_address: 127.0.0.1
 # Here path provided and full path constructed in task
-field_exporter_basedir: field_exporter 
+field_exporter_basedir: /var/lib/field_exporter
 
 # Here (legacy) has been provided the full path
 alertmanager_basedir: /opt/prometheus/alertmanager
