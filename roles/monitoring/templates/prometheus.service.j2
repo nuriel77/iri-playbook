@@ -1,31 +1,30 @@
 [Unit]
 Description=Prometheus
-Wants=network-online.target
-After=network-online.target
+After=network.target docker.service
+Requires=docker.service
 
 [Service]
-User={{ prom_username }}
-Group={{ prom_username }}
-WorkingDirectory={{ prom_basedir }}
-Type=simple
-ExecStart={{ prom_basedir }}/prometheus --config.file={{ prom_configdir }}/{{ prom_config }} \
-    --storage.tsdb.path={{ prom_datadir }}/ --web.listen-address={{ prom_bind_address }}:{{ prom_port }}
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-{{ config_dir }}/prometheus
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname prometheus \
+  --user {{ promuser_uid.stdout }} \
+  --net={{ iri_net_name }} \
+  --cap-drop=ALL \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -v ${CONFIG_FILE}:/etc/prometheus/prometheus.yml:ro,Z \
+  -v ${DATA_DIR}:/data:Z \
+  -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+  {{ prom_image }}:${TAG} \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/data/ \
+  --web.listen-address=:${BIND_PORT}
 
-Restart=on-failure
-RestartSec=10
-ExecReload=/bin/kill -HUP $MAINPID
-KillMode=process
-
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=prometheus
-
-# Restrict process
-PrivateDevices=yes
-PrivateTmp=yes
-ProtectSystem=full
-ProtectHome=yes
-
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

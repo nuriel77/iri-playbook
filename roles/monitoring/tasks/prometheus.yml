@@ -17,15 +17,27 @@
     - "{{ prom_datadir}}"
     - "{{ prom_configdir }}"
 
+- name: 'download prometheus docker image, this can take a moment...'
+  docker_image:
+    name: "{{ prom_image }}"
+    tag: "{{ prom_tag }}"
+  tags:
+    - prometheus_docker_image
+  notify:
+    - restart prometheus
+
+- name: copy prometheus sysconfig file
+  template:
+    src: templates/prometheus.sysconfig.j2
+    dest: "{{ config_dir }}/prometheus"
+    force: "{{ overwrite | default('no') }}"
+
 - name: copy prometheus systemd service file
   template:
     src: templates/prometheus.service.j2
     dest: /etc/systemd/system/prometheus.service
   notify:
-    - reload systemd
-
-- name: flush handlers
-  meta: flush_handlers
+    - restart prometheus
 
 - name: copy prometheus config
   template:
@@ -43,12 +55,15 @@
   copy:
     src: files/alert.rules.yml
     dest: "{{ prom_configdir }}/alert.rules.yml"
-    validate: "{{ prom_basedir }}/promtool check rules %s"
+    validate: '/usr/bin/docker run --rm --name promtool -v %s:/tmp/alert.rules.yml:ro,Z --entrypoint "/bin/promtool" {{ prom_image }}:{{ prom_tag }} check rules /tmp/alert.rules.yml'
   notify:
-    - restart prometheus
+    - reload prometheus
+  #docker run --rm --name prom -v /opt/iri-playbook/roles/monitoring/files/alert.rules.yml:/tmp/alert.rules.yml --entrypoint "/bin/promtool" prom/prometheus:v2.3.2 check rules /tmp/alert.rules.yml
+
+- name: flush handlers
+  meta: flush_handlers
 
 - name: ensure prometheus enabled and started
   systemd:
     name: prometheus.service
     state: started
-    enabled: yes

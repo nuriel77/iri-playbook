@@ -169,6 +169,8 @@
     tag: "{{ iri_tag }}"
   tags:
     - iri_image
+  notify:
+    - restart iri
        
 - name: flush handlers
   meta: flush_handlers

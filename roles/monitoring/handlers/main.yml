@@ -12,6 +12,11 @@
     state: restarted
     enabled: yes
 
+- name: reload prometheus
+  systemd:
+    name: prometheus.service
+    state: reloaded
+
 - name: restart alertmanager
   systemd:
     name: alertmanager.service

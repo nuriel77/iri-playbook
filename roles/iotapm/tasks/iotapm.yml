@@ -64,6 +64,8 @@
     tag: "{{ iotapm_tag }}"
   tags:
     - iotapm_image
+  notify:
+    - restart iota-pm
 
 - name: ensure iota-pm started and enabled
   systemd:

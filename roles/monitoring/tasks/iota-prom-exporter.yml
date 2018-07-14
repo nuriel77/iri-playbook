@@ -70,6 +70,8 @@
     tag: "{{ iota_prom_exporter_tag }}"
   tags:
     - download_iota_prom_exporter_image
+  notify:
+    - restart iota-prom-exporter
 
 - name: flush handlers
   meta: flush_handlers

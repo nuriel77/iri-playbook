@@ -92,6 +92,9 @@
     - {"image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag}}" }
   tags:
     - nelson_images
+  notify:
+    - restart nelson
+    - restart nelson-gui
 
 - name: flush handlers
   meta: flush_handlers

@@ -1,4 +1,5 @@
-prom_version: 2.0.0
+prom_image: prom/prometheus
+prom_tag: v2.3.2
 prom_username: prometheus
 prom_basedir: /opt/prometheus
 prom_datadir: /var/lib/prometheus

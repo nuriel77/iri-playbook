@@ -1,3 +1,15 @@
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /etc/systemd/system
+    config_dir: /etc/default
+  when: ansible_distribution == 'Ubuntu'
+
 - name: add user to run prometheus as
   user:
     name: "{{ prom_username }}"

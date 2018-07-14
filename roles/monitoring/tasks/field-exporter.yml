@@ -7,15 +7,13 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-    nodejs_bin: /usr/bin/node
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-    nodejs_bin: /usr/bin/nodejs
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
 
 - name: stat field-exporter basedir for git updates
   stat:
