@@ -13,7 +13,7 @@
     immediate: yes
   with_items:
     - "{{ iotapm_port }}/tcp"
-    - "{{ iotapm_nginx_port }}/tcp"
+    - "{{ iotapm_proxy_port }}/tcp"
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: remove iota-pm tcp port in firewall
@@ -24,7 +24,7 @@
     delete: yes
     port: "{{ item }}"
   with_items:
-    - "{{ iotapm_nginx_port }}"
+    - "{{ iotapm_proxy_port }}"
     - "{{ iotapm_port }}"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
@@ -32,18 +32,12 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-    nodejs_bin: /usr/bin/node
-    iotapm_bin: /bin/iota-pm
-    nginx_group: nginx
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-    nodejs_bin: /usr/bin/nodejs
-    iotapm_bin: /usr/bin/iota-pm
-    nginx_group: www-data
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: stop iotapm
@@ -73,12 +67,3 @@
   with_items:
     - "/var/spool/iotapm"
     - "{{ config_dir }}/iota-pm"
-    - "/usr/local/bin/validate_nginx_config.sh"
-    - "/etc/nginx/conf.d/ssl.cfg"
-    - "/etc/nginx/conf.d/iotapm.conf"
-
-- name: remove iotapm nginx password
-  htpasswd:
-    path: /etc/nginx/.htpasswd
-    name: '{{ iotapm_nginx_user }}'
-    state: absent

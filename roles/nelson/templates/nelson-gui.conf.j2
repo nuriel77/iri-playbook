@@ -10,6 +10,7 @@ server {
     # Redirect same port from http to https
     error_page 497 https://$host:$server_port$request_uri;
 
+    # File containing SSL directives
     include /etc/nginx/conf.d/ssl.cfg;
 
     # uses own auth

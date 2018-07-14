@@ -147,13 +147,13 @@ http_port = {{ grafana_port }}
 #################################### Security ####################################
 [security]
 # default admin user, created on startup
-admin_user = {{ iotapm_nginx_user }}
+admin_user = {{ fullnode_user }}
 
 # default admin password, can be changed before first start of grafana,  or in profile settings
 # ### NOTE: If the admin password has already been set, changing it here will not change it in the database.
 # ### You will HAVE to stop grafana, remove the database file, set a new password here and restart grafana.
 # ### See http://iri-playbook.readthedocs.io/en/master/troubleshooting.html#solution-b
-admin_password = {% if iotapm_nginx_password | regex_search('#|;') %}"""{% endif %}{{ iotapm_nginx_password }}{% if iotapm_nginx_password | regex_search('#|;') %}"""{% endif %}
+admin_password = {% if fullnode_user_password | regex_search('#|;') %}"""{% endif %}{{ fullnode_user_password }}{% if fullnode_user_password | regex_search('#|;') %}"""{% endif %}
 
 # used for signing
 ;secret_key = SW2YcwTIb9zpOOhoPsMm

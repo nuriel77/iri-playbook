@@ -7,10 +7,6 @@
   tags:
     - nelson_config
 
-- import_tasks: proxy-gui.yml
-  tags:
-    - proxy_gui
-
 - import_tasks: uninstall.yml
   tags:
     - uninstall

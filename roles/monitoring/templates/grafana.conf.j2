@@ -3,13 +3,14 @@ upstream grafana {
 }
 
 server {
-    listen {{ grafana_nginx_port }} default_server ssl http2;
+    listen {{ grafana_proxy_port }} default_server ssl http2;
     server_name _;
     server_tokens off;
 
     # Redirect same port from http to https
     error_page 497 https://$host:$server_port$request_uri;
 
+    # Include SSL Directives
     include /etc/nginx/conf.d/ssl.cfg;
 
     #auth_basic "Restricted";

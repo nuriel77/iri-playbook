@@ -6,7 +6,7 @@ After=network.target
 [Service]
 WorkingDirectory={{ alertmanager_basedir }}
 Restart=on-failure
-ExecStart={{ alertmanager_basedir }}/alertmanager -config.file config.yml -web.listen-address {{ alertmanager_bind }}:{{ alertmanager_port }} -web.external-url http://{{ ansible_default_ipv4.address }}:{{ alertmanager_nginx_port }} -mesh.listen-address "" -log.level {{ alertmanager_loglevel }}
+ExecStart={{ alertmanager_basedir }}/alertmanager -config.file config.yml -web.listen-address {{ alertmanager_bind }}:{{ alertmanager_port }} -web.external-url http://{{ ansible_default_ipv4.address }}:{{ alertmanager_proxy_port }} -mesh.listen-address "" -log.level {{ alertmanager_loglevel }}
 Type=simple
 
 # No need that exporter messes with /dev

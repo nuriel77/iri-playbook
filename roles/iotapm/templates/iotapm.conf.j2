@@ -3,15 +3,20 @@ upstream iotapm {
 }
 
 server {
-    listen {{ iotapm_nginx_port }} default_server ssl http2;
+    listen {{ iotapm_proxy_port }} default_server ssl http2;
     server_name _;
     server_tokens off;
 
     # Redirect same port from http to https
+    # This directive is only used when using any
+    # port other than 80
     error_page 497 https://$host:$server_port$request_uri;
 
+    # Here you would include the SSL directives
+    # or include a file containing the SSL directives
     include /etc/nginx/conf.d/ssl.cfg;
 
+    # For password authentication use a htpasswd file
     auth_basic "Restricted";
     auth_basic_user_file /etc/nginx/.htpasswd;
 

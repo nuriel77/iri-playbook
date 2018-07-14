@@ -339,7 +339,7 @@ a {
                   </td>
 {% endraw %}
                   <td class="content-block">
-                    <a href='http://{{ ansible_default_ipv4.address }}:{{ grafana_nginx_port }}/dashboard/db/iota?refresh=30s&orgId=1' class="btn-primary">View in Grafana</a>
+                    <a href='http://{{ ansible_default_ipv4.address }}:{{ grafana_proxy_port }}/dashboard/db/iota?refresh=30s&orgId=1' class="btn-primary">View in Grafana</a>
                   </td>{% raw %}
                 </tr>
                 {{ if gt (len .Alerts.Firing) 0 }}

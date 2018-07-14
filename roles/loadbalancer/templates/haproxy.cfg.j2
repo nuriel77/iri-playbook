@@ -39,7 +39,7 @@ defaults
 # Can be used for various authentications
 # in case user wants to add more backends
 userlist lb_auth
-    user iotapm password {{ iotapm_nginx_password | password_hash('sha512') }}
+    user iotapm password {{ fullnode_user_password | password_hash('sha512') }}
 
 
 frontend iri_front

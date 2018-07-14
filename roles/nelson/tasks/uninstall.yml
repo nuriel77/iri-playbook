@@ -11,7 +11,7 @@
         - "{{ nelson_tcp_port }}"
         - "{{ nelson_gui_port }}"
 
-    - name: remove nelson gui nginx port via selinux seport
+    - name: remove nelson gui proxy port via selinux seport
       seport:
         ports: "{{ nelson_gui_port }}"
         proto: tcp
@@ -76,7 +76,6 @@
     - "{{ nelson_configdir }}"
     - "{{ nelson_datadir }}"
     - "{{ config_dir }}/nelson-gui"
-    - '/etc/nginx/conf.d/nelson-gui.conf'
 
 - name: remove nelson systemd files
   file:

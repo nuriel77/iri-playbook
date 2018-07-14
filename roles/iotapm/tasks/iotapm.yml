@@ -2,14 +2,12 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-    nginx_group: nginx
   when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-    nginx_group: www-data
   when: ansible_distribution == 'Ubuntu'
 
 - name: add user to run iota-pm as
@@ -59,47 +57,6 @@
     backup: yes
   notify:
     - restart iota-pm
-
-- name: nginx config block
-  block:
-
-    - name: copy validation script
-      copy:
-        src: ../shared-files/validate_nginx_config.sh
-        dest: /usr/local/bin/validate_nginx_config.sh
-        mode: 0755
-
-    - name: copy ssl.cfg nginx config
-      template:
-        src: ../shared-files/ssl.cfg.j2
-        dest: /etc/nginx/conf.d/ssl.cfg
-        validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/ssl.conf -r"
-      notify:
-        - reload nginx
-      tags:
-        - configure_nginx_ssl
-
-    - name: copy iotapm nginx config
-      template:
-        src: templates/iotapm.conf.j2
-        dest: /etc/nginx/conf.d/iotapm.conf
-        validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/iotapm.conf -r"
-      notify:
-        - reload nginx
-
-    - name: configure iotapm nginx password
-      htpasswd:
-        path: /etc/nginx/.htpasswd
-        name: '{{ iotapm_nginx_user }}' 
-        password: '{{ iotapm_nginx_password }}'
-        owner: root
-        group: "{{ nginx_group }}"
-        mode: 0640
-      no_log: true
-
-  when:
-    - install_nginx is defined
-    - install_nginx|bool == True
 
 - name: 'download iota pm docker image, this can take a moment...'
   docker_image:

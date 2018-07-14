@@ -7,38 +7,32 @@
         state: started
         enabled: yes
 
-    - name: allow iotapm nginx port in firewall
+    - name: allow iotapm proxy port in firewall
       firewalld:
-        port: "{{ iotapm_nginx_port }}/tcp"
+        port: "{{ iotapm_proxy_port }}/tcp"
         permanent: true
         state: enabled
         immediate: yes
 
-    - name: allow iotapm nginx port via selinux seport
+    - name: allow iotapm proxy port via selinux seport
       seport:
-        ports: "{{ iotapm_nginx_port }}"
+        ports: "{{ iotapm_proxy_port }}"
         proto: tcp
         setype: http_port_t
         state: present
 
-    - name: allow nginx to revese proxy
+    - name: allow to revese proxy
       seboolean:
         name: httpd_can_network_connect
         state: yes
         persistent: yes
 
-  when:
-    - install_nginx is defined
-    - install_nginx|bool == True
-    - ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'CentOS'
 
-- name: allow iotapm nginx port in firewall
+- name: allow iotapm proxy port in firewall
   ufw:
     rule: allow
     direction: in
     proto: tcp
-    port: "{{ iotapm_nginx_port }}"
-  when:
-    - install_nginx is defined
-    - install_nginx|bool == True
-    - ansible_distribution == 'Ubuntu'
+    port: "{{ iotapm_proxy_port }}"
+  when: ansible_distribution == 'Ubuntu'

@@ -412,7 +412,7 @@ If this command breaks, it means that you have conflicting changes in one of the
 
 .. code:: bash
 
-   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e overwrite=true -e iotapm_nginx_password="mypassword"
+   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e overwrite=true -e fullnode_user_password="mypassword"
 
 
 .. _configMultipleSSHHost:

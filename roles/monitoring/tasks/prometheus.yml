@@ -52,28 +52,3 @@
     name: prometheus.service
     state: started
     enabled: yes
-
-- name: copy validation script
-  copy:
-    src: ../shared-files/validate_nginx_config.sh
-    dest: /usr/local/bin/validate_nginx_config.sh
-    mode: 0755
-  when: install_nginx is defined and install_nginx
-
-- name: copy ssl.cfg nginx config
-  template:
-    src: ../shared-files/ssl.cfg.j2
-    dest: /etc/nginx/conf.d/ssl.cfg
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/ssl.conf -r"
-  when: install_nginx is defined and install_nginx
-  notify:
-    - reload nginx
-
-- name: copy prometheus nginx config
-  template:
-    src: templates/prometheus.conf.j2
-    dest: /etc/nginx/conf.d/prometheus.conf
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/prometheus.conf -r"
-  when: install_nginx is defined and install_nginx
-  notify:
-    - reload nginx

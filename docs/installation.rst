@@ -165,8 +165,8 @@ Create a new variable file called **group_vars/all/z-override.yml** and set a us
 
 .. code:: bash
 
-   iotapm_nginx_user: someuser
-   iotapm_nginx_password: 'put-a-strong-password-here'
+   fullnode_user: someuser
+   fullnode_user_password: 'put-a-strong-password-here'
 
 
 You can always add new users after the installation has finished:
@@ -334,7 +334,7 @@ Note that in those two steps we are configurinig the variables files directly. P
 
 As mentioned earlier: currently, the fullnode monitoring depends on nginx being installed.
 
-3. In the same file ``group_vars/all/iotapm.yml``, if using nginx, edit ``iotapm_nginx_user`` and ``iotapm_nginx_password``. These will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
+3. In the same file ``group_vars/all/iotapm.yml``, if using nginx, edit ``fullnode_user`` and ``fullnode_user_password``. These will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
 
 
 * To install **IOTA Peer Manager only**, run:

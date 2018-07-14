@@ -6,7 +6,7 @@ prom_configdir: /etc/prometheus
 prom_config: prometheus.yaml
 prom_port: 9090
 prom_bind_address: 127.0.0.1
-prom_nginx_port: 8999
+prom_proxy_port: 8999
 
 exporter_version: 0.15.2
 exporter_basedir: /opt/prometheus/node_exporter
@@ -30,7 +30,7 @@ field_exporter_basedir: field_exporter
 alertmanager_basedir: /opt/prometheus/alertmanager
 alertmanager_version: 0.12.0
 alertmanager_port: 9093
-alertmanager_nginx_port: 9993
+alertmanager_proxy_port: 9993
 alertmanager_bind: 127.0.0.1
 alertmanager_email_from: alertmanager
 alertmanager_email_to: root@localhost
