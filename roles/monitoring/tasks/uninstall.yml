@@ -84,6 +84,8 @@
     - '/etc/systemd/system/prom-am-executor.service'
     - '/etc/systemd/system/iota-prom-exporter.service'
     - "{{ config_dir }}/iota-prom-exporter"
+    - "{{ config_dir }}/prometheus"
+    - "{{ config_dir }}/alertmanager"
 
 - name: remove monitoring related files and paths
   file:

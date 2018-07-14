@@ -3,6 +3,15 @@
     path: "{{ alertmanager_basedir }}/template"
     state: directory
 
+- name: 'download alertmanager docker image, this can take a moment...'
+  docker_image:
+    name: "{{ alertmanager_image }}"
+    tag: "{{ alertmanager_tag }}"
+  tags:
+    - alertmanager_docker_image
+  notify:
+    - restart alertmanager
+
 - name: copy email template for alertmanager
   template:
     src: templates/email.tmpl.j2
@@ -10,15 +19,20 @@
     force: "{{ overwrite | default('no') }}"
     backup: yes
 
+- name: copy alertmanager sysconfig file
+  template:
+    src: templates/alertmanager.sysconfig.j2
+    dest: "{{ config_dir }}/alertmanager"
+    force: "{{ overwrite | default('no') }}"
+  notify:
+    - restart alertmanager
+
 - name: copy alertmanager systemd service file
   template:
     src: templates/alertmanager.service.j2
     dest: /etc/systemd/system/alertmanager.service
   notify:
-    - reload systemd
-
-- name: flush handlers
-  meta: flush_handlers
+    - restart alertmanager
 
 - name: copy alertmanager config
   template:
@@ -31,6 +45,9 @@
     group: "{{ prom_username }}"
   notify:
     - restart alertmanager
+
+- name: flush handlers
+  meta: flush_handlers
 
 - name: ensure alertmanager enabled and started
   systemd:
