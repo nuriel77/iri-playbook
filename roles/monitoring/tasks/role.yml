@@ -21,7 +21,7 @@
 
 - import_tasks: iota-prom-exporter.yml
   tags:
-    - iota_prom_exporter
+    - iota_prom_exporter_config
 
 - import_tasks: field-exporter.yml
   tags:

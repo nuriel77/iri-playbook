@@ -14,7 +14,7 @@
 - name: copy prometheus alertmanager executor service file
   template:
     src: templates/prom-am-executor.service.j2
-    dest: {{ systemd_dir }}/prom-am-executor.service
+    dest: "{{ systemd_dir }}/prom-am-executor.service"
   notify:
     - reload systemd
 

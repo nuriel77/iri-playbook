@@ -30,7 +30,7 @@
 - name: copy alertmanager systemd service file
   template:
     src: templates/alertmanager.service.j2
-    dest: {{ systemd_dir }}/alertmanager.service
+    dest: "{{ systemd_dir }}/alertmanager.service"
   notify:
     - restart alertmanager
 

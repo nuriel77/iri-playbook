@@ -3,18 +3,6 @@
     field_exporter_fulldir: "{{ prom_basedir }}/{{ field_exporter_basedir }}"
     field_exporter_tempdir: "/tmp/field-exporter_{{ ansible_date_time.epoch }}"
 
-- name: set variables centos/redhat
-  set_fact:
-    systemd_dir: /usr/lib/systemd/system
-    config_dir: /etc/sysconfig
-  when: ansible_distribution == 'CentOS'
-
-- name: set variables debian/ubuntu
-  set_fact:
-    systemd_dir: {{ systemd_dir }}
-    config_dir: /etc/default
-  when: ansible_distribution == 'Ubuntu'
-
 - name: stat field-exporter basedir for git updates
   stat:
     path: "{{ field_exporter_fulldir }}"
