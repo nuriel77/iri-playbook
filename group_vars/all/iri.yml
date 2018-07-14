@@ -31,6 +31,9 @@ iri_tcp_port: 14600
 # IRI ZMQ port
 iri_zmq_port: 5556
 
+# IRI ZMQ bind address
+iri_zmq_bind: 127.0.0.1
+
 # IRI ZMQ enabled (extra metrics from IRI)
 iri_zmq_enabled: true
 

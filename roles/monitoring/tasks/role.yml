@@ -1,6 +1,6 @@
-- import_tasks: deps.yml
+- import_tasks: preinstall.yml
   tags:
-    - monitoring_deps
+    - monitoring_preinstall
 
 - import_tasks: firewall.yml
   tags:
@@ -26,9 +26,9 @@
 - import_tasks: field-exporter.yml
   tags:
     - field_exporter
-  when: >
-        field_enabled is defined and
-        field_enabled|bool == true
+  when:
+    - field_enabled is defined
+    - field_enabled|bool == True
 
 - import_tasks: grafana.yml
   tags:
