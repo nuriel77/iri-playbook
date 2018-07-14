@@ -83,10 +83,12 @@
     - "{{ systemd_dir }}/field-exporter.service"
     - '{{ systemd_dir }}/prom-am-executor.service'
     - '{{ systemd_dir }}/iota-prom-exporter.service'
+    - '{{ systemd_dir }}/grafana-server.service'
     - "{{ config_dir }}/iota-prom-exporter"
     - "{{ config_dir }}/prometheus"
     - "{{ config_dir }}/alertmanager"
     - "{{ config_dir }}/node-exporter"
+    - "{{ config_dir }}/grafana-server"
 
 - name: remove monitoring related files and paths
   file:
@@ -98,15 +100,18 @@
     - "{{ prom_configdir }}"
     - '/etc/rsyslog.d/node_exporter.conf'
 
-- name: remove provisioning, datasources and dashboards directories
+- name: remove grafana directories
   file:
     path: "{{ item }}"
     state: absent
   with_items:
-    - "{{ grafana_provisioning_path }}"
-    - "{{ grafana_dashboards_path }}"
+    - "{{ grafana_basedir }}"
+    - "{{ grafana_configdir }}"
 
-- name: remove prometheus user
+- name: remove users
   user:
-    name: "{{ prom_username }}"
+    name: "{{ item }}"
     state: absent
+  with_items:
+    - "{{ grafana_username }}"
+    - "{{ prom_username }}"
