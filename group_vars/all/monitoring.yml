@@ -27,9 +27,12 @@ iota_prom_exporter_market_data: true
 iota_prom_exporter_db_days_retention: 14
 
 # Field exporter
+field_exporter_image: nuriel77/field_exporter
+field_exporter_tag: latest
 field_exporter_bind_port: 9337
 field_exporter_bind_address: 127.0.0.1
-field_exporter_basedir: /var/lib/field_exporter
+field_exporter_configdir: /etc/field-exporter
+field_exporter_dashboard_url: 'https://raw.githubusercontent.com/DaveRingelnatz/field_exporter/master/dashboards/field_exporter_dashboard_grafana.json'
 
 # Alertmanager
 alertmanager_basedir: /opt/prometheus/alertmanager

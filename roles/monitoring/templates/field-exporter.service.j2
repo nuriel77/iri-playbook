@@ -1,30 +1,27 @@
 [Unit]
 Description=IOTA Field Exporter
-After=network.target
+After=network.target docker.service
+Requires=docker.service
 
 [Service]
-Type=simple
-WorkingDirectory={{ field_exporter_fulldir }}
-User={{ prom_username }}
-Group={{ prom_username }}
-ExecStart={{ nodejs_bin }} field_exporter.js
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-{{ config_dir }}/field-exporter
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname field-exporter \
+  --user {{ promuser_uid.stdout }} \
+  --net={{ iri_net_name }} \
+  --cap-drop=ALL \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -v ${CONFIG_FILE}:/app/config.js:ro,Z \
+  -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+  $DOCKER_OPTS \
+  {{ field_exporter_image }}:${TAG}
 
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=field_exporter
-
-# No need that bff messes with /dev
-PrivateDevices=yes
-
-# Dedicated /tmp
-PrivateTmp=yes
-
-# Make /usr, /boot, /etc read only
-ProtectSystem=full
-
-# /home is not accessible at all
-ProtectHome=yes
-Restart=on-failure
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

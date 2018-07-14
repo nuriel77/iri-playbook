@@ -89,6 +89,7 @@
     - "{{ config_dir }}/alertmanager"
     - "{{ config_dir }}/node-exporter"
     - "{{ config_dir }}/grafana-server"
+    - "{{ config_dir }}/field-exporter"
 
 - name: remove monitoring related files and paths
   file:

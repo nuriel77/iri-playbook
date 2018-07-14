@@ -16,7 +16,7 @@
     src: templates/prom-am-executor.service.j2
     dest: "{{ systemd_dir }}/prom-am-executor.service"
   notify:
-    - reload systemd
+    - restart prom-am-executor
 
 - name: ensure prom-am-executor enabled and started
   systemd:

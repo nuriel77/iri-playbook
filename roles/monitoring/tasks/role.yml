@@ -26,6 +26,7 @@
 - import_tasks: field-exporter.yml
   tags:
     - field_exporter
+    - field_exporter_config
   when:
     - field_enabled is defined
     - field_enabled|bool == True
