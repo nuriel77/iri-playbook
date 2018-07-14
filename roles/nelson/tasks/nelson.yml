@@ -83,6 +83,16 @@
   notify:
     - restart nelson-gui
 
+- name: 'download nelson images, this can take a moment...'
+  docker_image:
+    name: "{{ item.image }}"
+    tag: "{{ item.tag }}"
+  with_items:
+    - {"image": "{{ nelson_image }}", "tag": "{{ nelson_tag}}" }
+    - {"image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag}}" }
+  tags:
+    - nelson_images
+
 - name: flush handlers
   meta: flush_handlers
 

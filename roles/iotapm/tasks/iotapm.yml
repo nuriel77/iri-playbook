@@ -101,12 +101,12 @@
     - install_nginx is defined
     - install_nginx|bool == True
 
-- name: Wait max 600 seconds for IRI API port to become available. This can take a while...
-  wait_for:
-    timeout: 600
-    port: "{{ iri_api_port }}"
-  when:
-    - skip_wait_iri is not defined or skip_wait_iri|bool != False
+- name: 'download iota pm docker image, this can take a moment...'
+  docker_image:
+    name: "{{ iotapm_image }}"
+    tag: "{{ iotapm_tag }}"
+  tags:
+    - iotapm_image
 
 - name: ensure iota-pm started and enabled
   systemd:
