@@ -96,17 +96,8 @@
   pause:
     seconds: 3
 
-- name: "create field-exporter dirs if it doesn't exist yet"
-  file:
-    path: "{{ field_exporter_basedir }}"
-    state: directory
-
 - name: Field ID for field_exporter
   block:
-
-    - name: set field-exporter dirs
-      set_fact:
-        field_exporter_fulldir: "{{ field_exporter_basedir }}"
 
     - name: check field ID file
       stat:
@@ -125,7 +116,7 @@
     - name: update field-exporter config
       template:
         src: ../shared-files/field-exporter.config.js.j2
-        dest: "{{ field_exporter_fulldir }}/config.js"
+        dest: "{{ field_configdir }}/config.js"
         owner: "{{ prom_username }}"
         group: "{{ prom_username }}"
         backup: yes
