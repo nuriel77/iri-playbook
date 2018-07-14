@@ -1,7 +1,4 @@
 global
-    chroot /var/lib/haproxy
-    user haproxy
-    group haproxy
     log /dev/log local0 debug
     tune.ssl.default-dh-param 2048
     ssl-server-verify none
@@ -39,7 +36,7 @@ defaults
 # Can be used for various authentications
 # in case user wants to add more backends
 userlist lb_auth
-    user iotapm password {{ fullnode_user_password | password_hash('sha512') }}
+    user {{ fullnode_user }} password {{ fullnode_user_password | password_hash('sha512') }}
 
 
 frontend iri_front
@@ -65,10 +62,10 @@ frontend iri_front
 {% endif %}
 
     # id=0 to store body for logging
-    declare capture request len 40000
+    declare capture request len {{ haproxy_request_capture_length | default('80000') }}
     http-request capture req.body id 0
 
-    # diable client with no TCP body/request lenght
+    # disable client with no TCP body/request lenght
     tcp-request inspect-delay 30s
     acl content_present req_len gt 0
     tcp-request content accept if content_present
@@ -135,9 +132,9 @@ backend iri_back
 
     # dynamic stuff for frontend + raise gpc0 counter
     tcp-request content  track-sc2 src
-    acl conn_rate_abuse  sc2_conn_rate gt 250
-    acl http_rate_abuse  sc2_http_req_rate gt 400
-    acl conn_cur_abuse  sc2_conn_cur gt 20
+    acl conn_rate_abuse  sc2_conn_rate gt {{ haproxy_sc2_conn_rate | default('250') }}
+    acl http_rate_abuse  sc2_http_req_rate gt {{ haproxy_sc2_http_req_rate | default('400') }}
+    acl conn_cur_abuse  sc2_conn_cur gt {{ haproxy_sc2_conn_cur | default('20') }}
 
     # abuser marking
     acl mark_as_abuser   sc1_inc_gpc0 gt 0
@@ -157,7 +154,7 @@ backend iri_back
     option httpchk POST /
     http-check expect status 400
     default-server inter 10s fall 4 rise 2
-    server iri 127.0.0.1:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check
+    server iri 127.0.0.1:{{ iri_mgmt_api_port|default('14266') }} maxconn {{ iri_api_max_connections }} check
 
 listen stats
     bind {{ haproxy_stats_address }}:{{ haproxy_stats_port }} ssl crt {{ ssl_certkey_file }}

@@ -1,0 +1,37 @@
+- name: install depds block
+  block:
+
+    - name: Install some packages
+      apt: state=latest name={{ item }} update_cache=yes
+      with_items:
+        - socat 
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Install epel-release
+      yum: state=latest name=epel-release
+      when: ansible_distribution == 'CentOS'
+
+    - name: Install some packages
+      yum: state=latest name={{ item }}
+      with_items:
+        - socat
+      when: ansible_distribution == 'CentOS'
+
+  when: install_system_deps is defined and install_system_deps|bool == True
+
+- name: add user to run haproxy as
+  user:
+    name: "{{ haproxy_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ haproxy_dir }}"
+  tags:
+    - haproxy_user
+
+- name: copy certbot haproxy script
+  copy:
+    src: files/certbot-haproxy.sh
+    dest: /usr/local/bin/certbot-haproxy.sh
+    mode: 0755
+  tags:
+    - certbot

@@ -1,0 +1,2 @@
+# Send HAProxy messages to a dedicated logfile
+if $programname startswith 'haproxy' then /var/log/haproxy.log

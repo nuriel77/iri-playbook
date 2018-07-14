@@ -1,3 +1,20 @@
+# HAProxy docker image
+haproxy_image: haproxy
+
+# Haproxy image tag
+haproxy_tag: 1.8.9
+
+# Haproxy nameservers for dns resolution
+haproxy_nameservers:
+  - '8.8.8.8:53'
+  - '8.8.4.4:53'   
+
+# haproxy admin socket address. Comment to disable.
+haproxy_admin_address: 127.0.0.1:9999
+
+# haproxy admin socket file. Comment to disable.
+haproxy_admin_socket: /var/run/hapee-lb.sock
+
 # Change to 0.0.0.0 to bind to all interfaces (expose remotely)
 lb_bind_address: 127.0.0.1
 
@@ -19,8 +36,6 @@ haproxy_stats_port: 9292
 # Stats bind to address
 haproxy_stats_address: 127.0.0.1
 
-lua_version: 5.3.4
-lua_dir: '/opt/lua'
 haproxy_dir: '/opt/haproxy'
 haproxy_username: haproxy
 haproxy_base_version: 1.8
@@ -66,3 +81,14 @@ haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttaching
 
 # Bad commands regex example
 haproxy_bad_command: '\"getTransactionsToApprove\"(.*)GFCCGTGSUEVBZYFK9QNAHOVHXUMEATUFLGBZLDKMOGWCXVUZDVEJVCLLCJJ9NQOIMOLMUMFMGZSI99999'
+
+# Maximum open file limit for haproxy
+haproxy_nofile_limit: 65000
+
+# HAProxy docker mounts
+haproxy_mounts:
+  - /etc/haproxy:/usr/local/etc/haproxy:ro,Z
+  - /etc/ssl:/etc/ssl:ro,Z
+  - /etc/letsencrypt:/etc/letsencrypt:ro,Z
+  - /dev/log:/dev/log:Z
+  - /etc/localtime:/etc/localtime:ro,Z

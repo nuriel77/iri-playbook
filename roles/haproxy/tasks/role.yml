@@ -1,34 +1,24 @@
-- import_tasks: deps_apt.yml
-  tags:
-    - lb_deps_apt
-  when: ansible_distribution == 'Ubuntu'
-
-- import_tasks: deps_yum.yml
-  tags:
-    - lb_deps_yum
-  when: ansible_distribution == 'CentOS'
-
 - import_tasks: install.yml
   tags:
-    - lb_install
+    - haproxy_install
 
 - import_tasks: firewalld.yml
   tags:
-    - lb_firewalld
+    - haproxy_firewalld
   when:
     - ansible_distribution == 'CentOS'
     - configure_firewall is defined and configure_firewall|bool == True
 
 - import_tasks: ufw.yml
   tags:
-    - lb_ufw
+    - haproxy_ufw
   when:
     - ansible_distribution == 'Ubuntu'
     - configure_firewall is defined and configure_firewall|bool == True
 
-- import_tasks: lb.yml
+- import_tasks: haproxy.yml
   tags:
-    - lb_config
+    - haproxy_config
 
 - import_tasks: uninstall.yml
   tags:

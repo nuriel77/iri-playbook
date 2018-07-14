@@ -1,3 +1,15 @@
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /lib/systemd/system
+    config_dir: /etc/default
+  when: ansible_distribution == 'Ubuntu'
+
 - name: remove iri api port remote in firewall
   firewalld:
     port: "{{ item }}/tcp"
@@ -7,7 +19,7 @@
   with_items:
     - "{{ haproxy_stats_port }}"
     - "{{ iri_api_port_remote }}"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 
 - name: remove in lb rules from ufw
@@ -34,17 +46,17 @@
         - "{{ haproxy_stats_port }}"
 
   ignore_errors: yes
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
 
 - name: set etc config dir ubuntu
   set_fact:
     etc_config_dir: default
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu'
 
 - name: set etc config dir centos
   set_fact:
     etc_config_dir: sysconfig
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 - name: stop haproxy
   systemd:
@@ -55,7 +67,7 @@
 
 - name: remove haproxy systemd file
   file:
-    path: '/etc/systemd/system/haproxy.service'
+    path: '{{ systemd_dir }}/haproxy.service'
     state: absent
   notify:
     - reload systemd
@@ -70,7 +82,6 @@
     - "/etc/{{ etc_config_dir }}/haproxy"
     - "/etc/haproxy"
     - "/etc/logrotate.d/haproxy"
-    - "{{ lua_dir }}"
   notify:
     - restart rsyslog
 
@@ -83,5 +94,3 @@
   user:
     name: "{{ haproxy_username }}"
     state: absent
-
-

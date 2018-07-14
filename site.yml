@@ -8,6 +8,6 @@
     - iri
     - iotapm
     - monitoring
-    - loadbalancer
+    - haproxy
     - nelson
     - field

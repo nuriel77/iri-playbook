@@ -1,0 +1,37 @@
+[Unit]
+Description=HAProxy Load Balancer
+After=syslog.target network.target docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-{{ config_dir }}/haproxy
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStartPre=/usr/bin/docker run \
+  --name %p \
+  --rm \
+  -v /etc/haproxy:/usr/local/etc/haproxy:ro,Z \
+  -v /etc/ssl:/etc/ssl:ro,Z \
+  -v /etc/letsencrypt:/etc/letsencrypt:ro,Z \
+  {{ haproxy_image }}:${TAG} \
+  haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname %p \
+  --net=host \
+  --pid=host \
+  --ulimit nofile={{ haproxy_nofile_limit }}:{{ haproxy_nofile_limit }} \
+{% for mount in haproxy_mounts %}
+  -v {{ mount }} \
+{% endfor %}
+  $DOCKER_OPTS \
+  {{ haproxy_image }}:${TAG}
+
+ExecReload=/usr/bin/docker kill -s HUP %p
+ExecStop=/usr/bin/docker stop %p
+LimitNOFILE={{ haproxy_nofile_limit }}
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
