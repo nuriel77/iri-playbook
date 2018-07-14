@@ -264,12 +264,15 @@ function set_selections()
         "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
 For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
-Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
-        "ENABLE_NELSON"       "Enable Nelson auto-peering" OFF \
-        "ENABLE_FIELD"        "Enable CarrIOTA Field"      OFF \
-        "ENABLE_HAPROXY"      "Enable HAProxy"             OFF \
-        "DISABLE_MONITORING"  "Disable node monitoring"    OFF \
-        "DISABLE_ZMQ_METRICS" "Disable ZMQ metrics"        OFF \
+Select/unselect options using space and click Enter to proceed.\n" 24 78 8 \
+        "INSTALL_DOCKER"           "Install Docker runtime (recommended)" ON \
+        "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
+        "SKIP_CONFIGURE_FIREWALL"  "Skip configuring firewall" OFF \
+        "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
+        "ENABLE_FIELD"             "Enable CarrIOTA Field"      OFF \
+        "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
+        "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
+        "DISABLE_ZMQ_METRICS"      "Disable ZMQ metrics"        OFF \
         3>&1 1>&2 2>&3)
 
     RC=$?
@@ -282,6 +285,19 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
     for CHOICE in "${RESULTS_ARRAY[@]}"
     do
         case $CHOICE in
+            '"INSTALL_DOCKER"')
+                INSTALL_OPTIONS+=" -e install_docker=true"
+                echo "install_docker: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
+            '"DISABLE_SYS_DEPS"')
+                INSTALL_OPTIONS+=" -e install_system_deps=false"
+                DISABLE_SYS_DEPS=1
+                echo "install_system_deps: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
+            '"SKIP_CONFIGURE_FIREWALL"')
+                INSTALL_OPTIONS+=" -e configure_firewall=false"
+                echo "configure_firewall: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
             '"DISABLE_MONITORING"')
                 SKIP_TAGS+=",monitoring_role,field_exporter"
                 echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml

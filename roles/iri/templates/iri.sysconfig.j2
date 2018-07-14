@@ -22,6 +22,12 @@ TCP_RECEIVER_PORT={{ iri_tcp_port }}
 
 # UDP peering port
 UDP_RECEIVER_PORT={{ iri_udp_port }}
+
+# IRI API Port. Note that this is the port that will be
+# configured for IRI, however, while running as a Docker
+# container, it is recommended to leave this as is.
+# You can expose the node using HAPRoxy and configure
+# with which port your node can be accessed (API/wallet)
 API_PORT={{ iri_api_port }}
 
 # ZMQ Port

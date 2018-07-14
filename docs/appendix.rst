@@ -650,6 +650,18 @@ Installation Options
 
 This is an explanation about the select-options provided by the fully automated installer.
 
+Docker
+------
+This installation runs all the services inside Docker containers. If you already have Docker installed on your system you might choose to skip this step.
+
+System Dependencies
+-------------------
+Although all services are going to run inside of Docker, some additional packages installed on the system are required. If you choose not to install any dependencies, some things might not function as expected and you will have to resolved the dependencies manually.
+
+Firewall
+--------
+The installation takes care of the firewalls: it ensures the firewall is running and configures the required ports. You can choose not to let the installer configure the firewall should you wish to do this manually.
+
 Nelson
 ------
 Nelson is a software which enabled auto-peering for IRI (finding neighbors automatically).
