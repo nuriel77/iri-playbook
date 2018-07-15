@@ -94,6 +94,12 @@
     name: "{{ haproxy_username }}"
     state: absent
 
+- name: remove container
+  docker_container:
+    name: haproxy
+    state: absent
+  ignore_errors: yes
+
 - name: remove haproxy image
   docker_image:
     state: absent

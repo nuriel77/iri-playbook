@@ -61,6 +61,12 @@
     - "/var/spool/iotapm"
     - "{{ config_dir }}/iota-pm"
 
+- name: remove container
+  docker_container:
+    name: "iota-pm"
+    state: absent
+  ignore_errors: yes
+
 - name: remove iotapm image
   docker_image:
     state: absent

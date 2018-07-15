@@ -118,6 +118,12 @@
     state: absent
     remove: yes
 
+- name: delete container
+  docker_container:
+    name: iri
+    state: absent
+  ignore_errors: yes
+
 - name: remove iri image
   docker_image:
     state: absent

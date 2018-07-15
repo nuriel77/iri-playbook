@@ -17,6 +17,12 @@
     enabled: false
   ignore_errors: yes
 
+- name: delete container
+  docker_container:
+    name: nginx
+    state: absent
+  ignore_errors: yes
+
 - name: 'remove nginx images...'
   docker_image:
     name: "{{ nginx_image }}"
@@ -24,7 +30,7 @@
     state: absent
     force: yes
   ignore_errors: yes
- 
+
 - name: remove playbook related nginx vhosts files
   file:
     path: "{{ item }}"

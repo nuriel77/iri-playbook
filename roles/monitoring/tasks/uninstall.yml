@@ -117,6 +117,19 @@
     - "{{ grafana_username }}"
     - "{{ prom_username }}"
 
+- name: remove container
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  ignore_errors: yes
+  with_items:
+    - prometheus
+    - "grafana-server"
+    - alertmanager
+    - "iota-prom-exporter"
+    - "node-exporter"
+    - "field-exporter"
+
 - name: 'remove monitoring images...'
   docker_image:
     name: "{{ item.image }}"

@@ -83,6 +83,15 @@
     name: "{{ nelson_username }}"
     state: absent
 
+- name: delete container
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  ignore_errors: yes
+  with_items:
+    - "nelson"
+    - "nelson-gui"
+
 - name: 'remove nelson images...'
   docker_image:
     name: "{{ item.image }}"

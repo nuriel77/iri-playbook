@@ -49,9 +49,16 @@
     name: "{{ field_username }}"
     state: absent
 
+- name: delete container
+  docker_container:
+    name: field
+    state: absent
+  ignore_errors: yes
+
 - name: remove field image
   docker_image:
     state: absent
     name: "{{ field_image }}"
     tag: "{{ field_tag }}"
+    force: yes
   ignore_errors: yes
