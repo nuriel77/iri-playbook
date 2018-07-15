@@ -6,6 +6,7 @@
   roles:
     - docker
     - iri
+    - nginx
     - iotapm
     - monitoring
     - haproxy

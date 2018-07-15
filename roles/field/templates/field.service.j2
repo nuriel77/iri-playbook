@@ -8,7 +8,7 @@ EnvironmentFile=-/etc/sysconfig/field
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname field \
+  --hostname %p \
   --user {{ field_uid.stdout }} \
   --net=iri_net \
   --cap-drop=ALL \

@@ -8,7 +8,7 @@ EnvironmentFile=-{{ config_dir }}/iota-pm
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname iota-pm \
+  --hostname %p \
   --user {{ iotapm_uid.stdout }} \
   --net={{ iri_net_name }} \
   --cap-drop=ALL \

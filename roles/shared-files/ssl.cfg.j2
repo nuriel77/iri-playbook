@@ -1,0 +1,24 @@
+ssl_certificate {{ ssl_cert_file }};
+ssl_certificate_key {{ ssl_key_file }};
+
+{% if ansible_distribution == 'CentOS' %} 
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+ssl_prefer_server_ciphers on;
+{% endif %}
+# If you choose to add dhparam, run this command and
+# remove # from the line beginning with `ssl_dhparam`:
+# `cd /etc/ssl/private && openssl dhparam -out dhparam.pem 4096`
+#ssl_dhparam /etc/ssl/private/dhparam.pem;
+
+ssl_ciphers 'AES256+EECDH:AES256+EDH:!aNULL';
+ssl_session_timeout 1d;
+ssl_session_cache shared:SSL:10m;
+ssl_ecdh_curve secp384r1;
+resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver_timeout 10s;
+ssl_stapling {% if letsencrypt is defined and letsencrypt %}on{% else %}off{% endif %};
+ssl_stapling_verify {% if letsencrypt is defined and letsencrypt %}on{% else %}off{% endif %};
+{% if letsencrypt is not defined or letsencrypt|bool == False %}#{% endif %}ssl_trusted_certificate {{ ssl_bundle_cert|default('dummy_ssl_bundle.crt') }};
+add_header Strict-Transport-Security max-age=15768000;
+add_header X-Frame-Options DENY;
+add_header X-Content-Type-Options nosniff;

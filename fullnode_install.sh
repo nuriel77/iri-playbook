@@ -271,6 +271,7 @@ For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
 Select/unselect options using space and click Enter to proceed.\n" 24 78 8 \
         "INSTALL_DOCKER"           "Install Docker runtime (recommended)" ON \
+        "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
         "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
         "SKIP_CONFIGURE_FIREWALL"  "Skip configuring firewall" OFF \
         "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
@@ -293,6 +294,10 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 8 \
             '"INSTALL_DOCKER"')
                 INSTALL_OPTIONS+=" -e install_docker=true"
                 echo "install_docker: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
+            '"INSTALL_NGINX"')
+                INSTALL_OPTIONS+=" -e install_nginx=true"
+                echo "install_nginx: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_SYS_DEPS"')
                 INSTALL_OPTIONS+=" -e install_system_deps=false"

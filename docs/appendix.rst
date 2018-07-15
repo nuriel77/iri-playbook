@@ -654,6 +654,10 @@ Docker
 ------
 This installation runs all the services inside Docker containers. If you already have Docker installed on your system you might choose to skip this step.
 
+Nginx
+-----
+Nginx is a fast and versatile webserver. Its main function in this configuration is to allow access to GUIs in the browser such as IOTA Peer Manager, Prometheus, Grafana and more.
+
 System Dependencies
 -------------------
 Although all services are going to run inside of Docker, some additional packages installed on the system are required. If you choose not to install any dependencies, some things might not function as expected and you will have to resolved the dependencies manually.

@@ -1,0 +1,3 @@
+nginx_image: nginx
+nginx_tag: latest
+nginx_username: www-data

@@ -1,0 +1,6 @@
+- import_tasks: role.yml
+  tags:
+    - nginx_role
+  when:
+    - install_nginx is defined
+    - install_nginx|bool == True
