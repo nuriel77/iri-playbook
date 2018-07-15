@@ -1,3 +1,4 @@
+configure_firewall: true
 install_system_deps: true
 ssh_port: 22
 
