@@ -12,8 +12,7 @@
   get_url:
     url: "{{ oracle_java_rpm }}"
     dest: /tmp/jdk-oracle.x86_64.rpm
-    headers:
-      Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
+    headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
     validate_certs: no
     force: yes
     timeout: 45
