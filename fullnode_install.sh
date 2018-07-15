@@ -84,8 +84,7 @@ Welcome to IOTA FullNode Installer!
 2. By pressing 'y' you aknowledge that this installer requires a CLEAN operating system
    and may otherwise !!!BREAK!!! existing software on your server (visit link below).
 3. You read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
-4. This installation ensures firewall is enabled.
-5. If you already have a configured server, re-running this script might overwrite previous configuration.
+4. If you already have a configured server, re-running this script will overwrite previous configuration.
 
 EOF
 
@@ -132,6 +131,12 @@ function set_dist() {
 
 function init_centos(){
     echo "Updating system packages..."
+    yum update -y
+
+    echo "Install epel-release..."
+    yum install epel-release -y
+
+    echo "Update epel packages..."
     yum update -y
 
     echo "Install yum utils..."
@@ -413,8 +418,8 @@ echo "SSH port to use: $SSH_PORT"
 
 echo "Verifying Ansible version..."
 ANSIBLE_VERSION=$(ansible --version|head -1|awk {'print $2'}|cut -d. -f1-2)
-if (( $(awk 'BEGIN {print ("'2.4'" > "'$ANSIBLE_VERSION'")}') )); then
-    echo "Error: Ansible minimum version 2.4 required."
+if (( $(awk 'BEGIN {print ("'2.6'" > "'$ANSIBLE_VERSION'")}') )); then
+    echo "Error: Ansible minimum version 2.6 required."
     echo "Please remove Ansible: (yum remove ansible -y for CentOS, or apt-get remove -y ansible for Ubuntu)."
     echo
     echo "Then refer to the documentation on how to get latest Ansible installed:"
