@@ -12,12 +12,16 @@
   get_url:
     url: "{{ oracle_java_rpm }}"
     dest: /tmp/jdk-oracle.x86_64.rpm
-    headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
+    headers:
+      Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
     validate_certs: no
     force: yes
-    timeout: 20
+    timeout: 45
   when: check_jdk.rc == 1
+  retries: 3
+  delay: 3
   register: dl_oracle_java
+  until: dl_oracle_java is succeeded
   tags:
     - download_jdk_rpm
     - oracle_java_rpm

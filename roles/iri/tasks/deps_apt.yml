@@ -22,12 +22,16 @@
       get_url:
         url: "{{ oracle_java_tar }}"
         dest: /tmp/jdk.x86_64.tgz
-        headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
+        headers:
+          Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
         validate_certs: no
         force: yes
-        timeout: 20
+        timeout: 45
+      retries: 3
+      delay: 3
       when: not oracle_java_dir_stat.stat.exists
       register: jdk_downloaded
+      until: jdk_downloaded is succeeded
       tags:
         - download_jdk_tar
         - oracle_java_tar
