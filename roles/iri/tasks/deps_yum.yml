@@ -1,6 +1,8 @@
 # --- CentOS
 - name: check jdk installed
   shell: "rpm -qa|grep -q ^jdk1.8"
+  args:
+    warn: false
   register: check_jdk
   failed_when: false
   changed_when: false
@@ -8,11 +10,12 @@
     - oracle_java_rpm
     - oracle_java
 
-- name: Download java jdk rpm
+- name: 'Downloading java jdk rpm, this can take a moment...'
   get_url:
     url: "{{ oracle_java_rpm }}"
     dest: /tmp/jdk-oracle.x86_64.rpm
-    headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
+    headers:
+      Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
     validate_certs: no
     force: yes
     timeout: 45

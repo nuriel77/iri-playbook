@@ -134,6 +134,12 @@ function init_centos(){
     echo "Updating system packages..."
     yum update -y
 
+    echo "Install epel-release..."
+    yum install epel-release -y
+
+    echo "Update epel packages..."
+    yum update -y
+
     echo "Install yum utils..."
     yum install -y yum-utils
 
@@ -397,12 +403,13 @@ echo "SSH port to use: $SSH_PORT"
 
 echo "Verifying Ansible version..."
 ANSIBLE_VERSION=$(ansible --version|head -1|awk {'print $2'}|cut -d. -f1-2)
-if (( $(awk 'BEGIN {print ("'2.4'" > "'$ANSIBLE_VERSION'")}') )); then
-    echo "Error: Ansible minimum version 2.4 required."
+if (( $(awk 'BEGIN {print ("'2.6'" > "'$ANSIBLE_VERSION'")}') )); then
+    echo "Error: Ansible minimum version 2.6 required."
     echo "Please remove Ansible: (yum remove ansible -y for CentOS, or apt-get remove -y ansible for Ubuntu)."
     echo
     echo "Then refer to the documentation on how to get latest Ansible installed:"
     echo "http://docs.ansible.com/ansible/latest/intro_installation.html#latest-release-via-yum"
+    echo "Note that for CentOS you may need to install Ansible from Epel to get version 2.6 or higher."
     exit 1
 fi
 
