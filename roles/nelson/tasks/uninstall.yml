@@ -89,6 +89,7 @@
     tag: "{{ item.tag }}"
     state: absent
     force: yes
+  ignore_errors: yes
   with_items:
     - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
     - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }
