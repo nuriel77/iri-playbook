@@ -424,6 +424,7 @@ if (( $(awk 'BEGIN {print ("'2.6'" > "'$ANSIBLE_VERSION'")}') )); then
     echo
     echo "Then refer to the documentation on how to get latest Ansible installed:"
     echo "http://docs.ansible.com/ansible/latest/intro_installation.html#latest-release-via-yum"
+    echo "Note that for CentOS you may need to install Ansible from Epel to get version 2.6 or higher."
     exit 1
 fi
 
