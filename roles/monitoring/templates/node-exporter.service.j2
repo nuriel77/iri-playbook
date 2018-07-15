@@ -10,7 +10,7 @@ EnvironmentFile=-{{ config_dir }}/node-exporter
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname node-exporter \
+  --hostname %p \
   --user {{ promuser_uid.stdout }} \
   --net={{ iri_net_name }} \
   --cap-drop=ALL \

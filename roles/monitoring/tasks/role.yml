@@ -7,13 +7,13 @@
     - monitoring_firewall
   when: configure_firewall is defined and configure_firewall|bool == True
 
-- import_tasks: prometheus.yml
-  tags:
-    - prometheus_config
-
 - import_tasks: alertmanager.yml
   tags:
     - alertmanager_config
+
+- import_tasks: prometheus.yml
+  tags:
+    - prometheus_config
 
 - import_tasks: node_exporter.yml
   tags:

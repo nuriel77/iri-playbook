@@ -10,18 +10,18 @@ scrape_configs:
   - job_name: 'node_exporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:{{ exporter_port }}']
+      - targets: ['node-exporter:{{ exporter_port }}']
 
   - job_name: 'iota_exporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:{{ iota_prom_exporter_port }}']
+      - targets: ['iota-prom-exporter:{{ iota_prom_exporter_port }}']
 
 {% if field_enabled is defined and field_enabled|bool == true %}
   - job_name: 'field_exporter'
     scrape_interval: 30s
     static_configs:
-      - targets: ['{{ field_exporter_bind_address }}:{{ field_exporter_bind_port }}']
+      - targets: ['field-exporter:{{ field_exporter_bind_port }}']
 {% endif %}
 
 alerting:
@@ -29,7 +29,7 @@ alerting:
     - scheme: http
       static_configs:
       - targets:
-        - "{{ alertmanager_bind }}:{{ alertmanager_port }}"
+        - "alertmanager:{{ alertmanager_port }}"
 
 rule_files:
   - "{{ prom_configdir }}/alert.rules.yml"

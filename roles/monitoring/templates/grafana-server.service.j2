@@ -10,7 +10,7 @@ EnvironmentFile=-{{ config_dir }}/grafana-server
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname grafana-server \
+  --hostname %p \
   --user {{ grafana_uid.stdout }} \
   --net={{ iri_net_name }} \
   --cap-drop=ALL \

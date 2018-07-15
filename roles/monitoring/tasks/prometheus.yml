@@ -58,7 +58,11 @@
     validate: '/usr/bin/docker run --rm --name promtool -v %s:/tmp/alert.rules.yml:ro,Z --entrypoint "/bin/promtool" {{ prom_image }}:{{ prom_tag }} check rules /tmp/alert.rules.yml'
   notify:
     - reload prometheus
-  #docker run --rm --name prom -v /opt/iri-playbook/roles/monitoring/files/alert.rules.yml:/tmp/alert.rules.yml --entrypoint "/bin/promtool" prom/prometheus:v2.3.2 check rules /tmp/alert.rules.yml
+
+- name: Wait max 45 seconds for alertmanager port to become available
+  wait_for:
+    timeout: 45
+    port: "{{ alertmanager_port }}"
 
 - name: flush handlers
   meta: flush_handlers

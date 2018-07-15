@@ -123,8 +123,9 @@
     tag: "{{ item.tag }}"
     state: absent
     force: yes
+  ignore_errors: yes
   with_items:
-    - { "image": "{{ prometheus_image }}", "tag": "{{ prometheus_tag }}" }
+    - { "image": "{{ prom_image }}", "tag": "{{ prom_tag }}" }
     - { "image": "{{ alertmanager_image }}", "tag": "{{ alertmanager_tag }}" }
     - { "image": "{{ grafana_image }}", "tag": "{{ grafana_tag }}" }
     - { "image": "{{ exporter_image }}", "tag": "{{ exporter_tag }}" }
