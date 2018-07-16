@@ -35,6 +35,10 @@
   tags:
     - grafana_config
 
+- import_tasks: cadvisor.yml
+  tags:
+    - cadvisor_config
+
 - import_tasks: uninstall.yml
   tags:
     - uninstall

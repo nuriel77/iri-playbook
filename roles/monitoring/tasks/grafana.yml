@@ -110,6 +110,7 @@
     - "iota_exporter_dashboard.json"
     - "prometheus_dashboard.json"
     - "node_exporter_dashboard.json"
+    - "cadvisor_dashboard.json"
 
 - name: get field-exporter dashboard
   get_url:

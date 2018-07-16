@@ -44,3 +44,10 @@
     daemon_reload: yes
     state: restarted
     enabled: yes
+
+- name: restart cadvisor
+  systemd:
+    name: cadvisor.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes

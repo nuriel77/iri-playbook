@@ -44,6 +44,14 @@
     dest: /usr/local/bin/validate_nginx_config.sh
     mode: 0755
 
+- name: ensure nginx config directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/nginx
+    - /etc/nginx/conf.d
+
 - name: copy nginx base config
   template:
     src: templates/nginx.conf.j2
@@ -57,7 +65,7 @@
   template:
     src: ../shared-files/ssl.cfg.j2
     dest: /etc/nginx/conf.d/ssl.cfg
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/ssl.conf -r"
+    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d ssl.conf"
   notify:
     - restart nginx
   tags:

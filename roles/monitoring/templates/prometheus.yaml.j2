@@ -17,6 +17,11 @@ scrape_configs:
     static_configs:
       - targets: ['iota-prom-exporter:{{ iota_prom_exporter_port }}']
 
+  - job_name: 'cadvisor'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['cadvisor:{{ cadvisor_port }}']
+
 {% if field_enabled is defined and field_enabled|bool == true %}
   - job_name: 'field_exporter'
     scrape_interval: 30s

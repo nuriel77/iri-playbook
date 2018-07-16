@@ -12,7 +12,7 @@ prom_proxy_port: 8999
 
 # Node exporter
 exporter_image: prom/node-exporter
-exporter_tag: v0.16.0
+exporter_tag: v0.15.2
 exporter_basedir: /opt/prometheus/node_exporter
 exporter_port: 9100
 exporter_bind_address: 127.0.0.1
@@ -46,3 +46,9 @@ alertmanager_email_to: root@localhost
 alertmanager_loglevel: info
 smtp_host: localhost
 smtp_port: 25
+
+# cAdvisor
+cadvisor_image: google/cadvisor
+cadvisor_tag: latest
+cadvisor_bind_address: 127.0.0.1
+cadvisor_port: 8181

@@ -22,7 +22,7 @@ ExecStart=/usr/bin/docker run \
   $DOCKER_OPTS \
   {{ exporter_image }}:${TAG} \
   --web.listen-address=:${BIND_PORT} \
-  --collector.filesystem.ignored-mount-points ^/(sys|proc|dev|run|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/var/lib/docker/aufs)($$|/) \
+  --collector.filesystem.ignored-mount-points ^/(sys|proc|dev|run|host|etc|rootfs/var/lib/docker/containers|rootfs/run/docker/netns|rootfs/var/lib/docker/overlay2|rootfs/var/lib/docker/aufs)($$|/) \
   --path.procfs=/host/proc \
   --path.sysfs=/host/sys
   

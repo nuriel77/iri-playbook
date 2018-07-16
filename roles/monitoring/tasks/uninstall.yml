@@ -68,6 +68,7 @@
     - iota-prom-exporter
     - node-exporter
     - field-exporter
+    - cadvisor
 
 - name: remove monitoring service files
   file:
@@ -82,12 +83,14 @@
     - "{{ systemd_dir }}/field-exporter.service"
     - '{{ systemd_dir }}/iota-prom-exporter.service'
     - '{{ systemd_dir }}/grafana-server.service'
+    - '{{ systemd_dir }}/cadvisor.service'
     - "{{ config_dir }}/iota-prom-exporter"
     - "{{ config_dir }}/prometheus"
     - "{{ config_dir }}/alertmanager"
     - "{{ config_dir }}/node-exporter"
     - "{{ config_dir }}/grafana-server"
     - "{{ config_dir }}/field-exporter"
+    - "{{ config_dir }}/cadvisor"
 
 - name: remove monitoring related files and paths
   file:
@@ -121,9 +124,9 @@
     state: absent
   ignore_errors: yes
   with_items:
-    - prometheus
+    - "prometheus"
     - "grafana-server"
-    - alertmanager
+    - "alertmanager"
     - "iota-prom-exporter"
     - "node-exporter"
     - "field-exporter"
@@ -142,3 +145,4 @@
     - { "image": "{{ exporter_image }}", "tag": "{{ exporter_tag }}" }
     - { "image": "{{ iota_prom_exporter_image }}", "tag": "{{ iota_prom_exporter_tag }}" }
     - { "image": "{{ field_exporter_image }}", "tag": "{{ field_exporter_tag }}" }
+    - { "image": "{{ cadvisor_image }}", "tag": "{{ cadvisor_tag }}" }
