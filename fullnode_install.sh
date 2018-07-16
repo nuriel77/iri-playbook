@@ -269,11 +269,11 @@ function set_selections()
         "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
 For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
-Select/unselect options using space and click Enter to proceed.\n" 26 78 8 \
+Select/unselect options using space and click Enter to proceed.\n" 28 78 9 \
         "INSTALL_DOCKER"           "Install Docker runtime (recommended)" ON \
         "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
         "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
-        "SKIP_CONFIGURE_FIREWALL"  "Skip configuring firewall" OFF \
+        "SKIP_FIREWALL_CONFIG"  "Skip configuring firewall" OFF \
         "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
         "ENABLE_FIELD"             "Enable CarrIOTA Field"      OFF \
         "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
@@ -304,7 +304,7 @@ Select/unselect options using space and click Enter to proceed.\n" 26 78 8 \
                 DISABLE_SYS_DEPS=1
                 echo "install_system_deps: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
-            '"SKIP_CONFIGURE_FIREWALL"')
+            '"SKIP_FIREWALL_CONFIG"')
                 INSTALL_OPTIONS+=" -e configure_firewall=false"
                 echo "configure_firewall: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
