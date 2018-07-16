@@ -46,6 +46,3 @@ alertmanager_email_to: root@localhost
 alertmanager_loglevel: info
 smtp_host: localhost
 smtp_port: 25
-
-# Prometheus executor
-prom_am_executor_port: 9158

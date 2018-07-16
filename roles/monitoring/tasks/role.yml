@@ -35,10 +35,6 @@
   tags:
     - grafana_config
 
-- import_tasks: prom-am-executor.yml
-  tags:
-    - prom_am_executor
-
 - import_tasks: uninstall.yml
   tags:
     - uninstall
