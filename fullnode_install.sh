@@ -482,17 +482,13 @@ fi
 OUTPUT=$(cat <<EOF
 * A log of this installation has been saved to: $LOGFILE
 
-* You should be able to connect to IOTA Peer Manager in the browser:
+* You should be able to connect to IOTA Peer Manager and Grafana:
 
-https://${PRIMARY_IP}:8811
-
-* You can reach the monitoring (grafana) graphs at:
-
-https://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
+https://${PRIMARY_IP}:8811 and https://${PRIMARY_IP}:5555
 
 * Note that your IP might be different as this one has been auto-detected in best-effort.
 
-* You can use the username 'iotaadmin' and the password you entered during the installation.
+* Log in using 'iotaadmin' and the password you have entered during the installation.
 
 ${FIELD_NOTICE}
 
