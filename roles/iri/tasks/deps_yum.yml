@@ -21,6 +21,9 @@
     - openssl
     - util-linux
     - python-pip
+    - python-passlib
+    - httpd-tools
+    - python-pip
   tags:
     - scripts
     - deps

@@ -27,6 +27,8 @@
     - whiptail
     - python-pip
     - python3-pip
+    - python-passlib
+    - apache2-utils
   tags:
     - deps
     - scripts
