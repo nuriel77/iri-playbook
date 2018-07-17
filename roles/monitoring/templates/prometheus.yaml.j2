@@ -22,7 +22,7 @@ scrape_configs:
     static_configs:
       - targets: ['cadvisor:{{ cadvisor_port }}']
 
-{% if field_enabled is defined and field_enabled|bool == true %}
+{% if field_enabled is defined and field_enabled|bool == True %}
   - job_name: 'field_exporter'
     scrape_interval: 30s
     static_configs:

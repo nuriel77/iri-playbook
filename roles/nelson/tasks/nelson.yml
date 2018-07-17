@@ -91,7 +91,7 @@
     - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
     - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }
   tags:
-    - nelson_images
+    - nelson_docker_images
   notify:
     - restart nelson
     - restart nelson-gui
