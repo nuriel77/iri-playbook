@@ -131,9 +131,3 @@
     name: "{{ iri_image }}"
     tag: "{{ iri_tag }}"
   ignore_errors: yes
-
-- name: destroy iri network
-  docker_network:
-    name: "{{ iri_net_name }}"
-    state: absent
-    force: yes
