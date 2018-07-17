@@ -92,3 +92,7 @@ haproxy_mounts:
   - /etc/letsencrypt:/etc/letsencrypt:ro,Z
   - /dev/log:/dev/log:Z
   - /etc/localtime:/etc/localtime:ro,Z
+
+# Certbot docker image
+certbot_image: nuriel77/certbot
+certbot_tag: latest

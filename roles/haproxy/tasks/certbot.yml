@@ -1,0 +1,14 @@
+- name: copy certbot haproxy script
+  copy:
+    src: files/certbot-haproxy.sh
+    dest: /usr/local/bin/certbot-haproxy.sh
+    mode: 0755
+  tags:
+    - certbot
+
+- name: 'download certbot images, this can take a moment...'
+  docker_image:
+    name: "{{ certbot_image }}"
+    tag: "{{ certbot_tag }}"
+  tags:
+    - certbot_docker_image

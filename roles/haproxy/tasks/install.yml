@@ -27,11 +27,3 @@
     home: "{{ haproxy_dir }}"
   tags:
     - haproxy_user
-
-- name: copy certbot haproxy script
-  copy:
-    src: files/certbot-haproxy.sh
-    dest: /usr/local/bin/certbot-haproxy.sh
-    mode: 0755
-  tags:
-    - certbot

@@ -2,6 +2,10 @@
   tags:
     - haproxy_install
 
+- import_tasks: certbot.yml
+  tags:
+    - certbot_install
+
 - import_tasks: firewalld.yml
   tags:
     - haproxy_firewalld

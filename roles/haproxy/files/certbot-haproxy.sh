@@ -35,10 +35,11 @@ fi
 
 # To override 14267 you can specify HAPROXY_PORT environment variable
 # before running this script (or set on the same command-line)
-HAPROXY_PORT=${HAPROXY_PORT:-14267}
-HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
-HAPROXY_RESTART_CMD="systemctl restart haproxy"
-HAPROXY_START_CMD="systemctl start haproxy"
+: ${HAPROXY_PORT:=14267}
+: ${HAPROXY_CONFIG:=/etc/haproxy/haproxy.cfg}
+: ${DOCKER_IMAGE:=nuriel77/certbot:latest}
+HAPROXY_RESTART_CMD="/bin/systemctl restart haproxy"
+HAPROXY_START_CMD="/bin/systemctl start haproxy"
 WEBROOT="/var/lib/haproxy"
 
 # Enable to redirect output to logfile (for silent cron jobs)
@@ -79,47 +80,36 @@ function get_domain() {
     fi
 }
 
-function set_dist() {
-    if [ -f /etc/os-release ]; then
-        # freedesktop.org and systemd
-        . /etc/os-release
-        OS=$NAME
-        VER=$VERSION_ID
-    elif type lsb_release >/dev/null 2>&1; then
-        # linuxbase.org
-        OS=$(lsb_release -si)
-        VER=$(lsb_release -sr)
-    elif [ -f /etc/lsb-release ]; then
-        # For some versions of Debian/Ubuntu without lsb_release command
-        . /etc/lsb-release
-        OS=$DISTRIB_ID
-        VER=$DISTRIB_RELEASE
-    elif [ -f /etc/debian_version ]; then
-        # Older Debian/Ubuntu/etc.
-        OS=Debian
-        VER=$(cat /etc/debian_version)
-    elif [ -f /etc/SuSe-release ]; then
-        # Older SuSE/etc.
-        echo "Unsupported OS."
-        exit 1
-    elif [ -f /etc/redhat-release ]; then
-        # Older Red Hat, CentOS, etc.
-        echo "Old OS version. Minimum required is 7."
-        exit 1
-    else
-        # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-        OS=$(uname -s)
-        VER=$(uname -r)
-    fi
-}
-
 function newCert {
-    $LE_CLIENT certonly --standalone --email ${EMAIL} -d ${DOMAIN} -n --preferred-challenges http --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --agree-tos
+    /usr/bin/docker run \
+      --rm \
+      --name certbot \
+      -v /var/run/docker.sock:/var/run/docker.sock:Z \
+      -v /etc/letsencrypt:/etc/letsencrypt:Z \
+      "$DOCKER_IMAGE" certonly \
+      --standalone -n \
+      --preferred-challenges http \
+      --email "${EMAIL}" \
+      -d "${DOMAIN}" \
+      --agree-tos \
+      --pre-hook "docker stop nginx" \
+      --post-hook "docker start nginx"
     return $?
 }
 
 function issueCert {
-    $LE_CLIENT certonly --standalone --renew-by-default --preferred-challenges http --agree-tos --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --email ${EMAIL} $1
+    /usr/bin/docker run \
+      --rm \
+      --name certbot \
+      -v /var/run/docker.sock:/var/run/docker.sock:Z \
+      -v /etc/letsencrypt:/etc/letsencrypt:Z \
+      "$DOCKER_IMAGE" certonly \
+      --standalone \
+      --renew-by-default \
+      --preferred-challenges http \
+      --agree-tos \
+      --pre-hook "docker stop nginx" \
+      --post-hook "docker start nginx"
     return $?
 }
 
@@ -179,30 +169,6 @@ if [ ! -f "$HAPROXY_CONFIG" ]
 then
     logger_error "Cannot find haproxy config at '$HAPROXY_CONFIG'"
     exit 1
-fi
-
-# Set OS distribution
-set_dist
-
-if [[ "$OS" =~ ^(CentOS|Red) ]]; then
-    if [ -n "$DOMAIN" ]
-    then
-        logger_info "Start installation of certbot ..."
-        yum install epel-release -y
-        yum install certbot -y
-    fi
-    LE_CLIENT="/bin/certbot"
-elif [[ "$OS" =~ ^Ubuntu ]]; then
-    if [ -n "$DOMAIN" ]
-    then
-        logger_info "Start installation of certbot ..."
-        apt-get update -y
-        apt-get install software-properties-common -y
-        add-apt-repository ppa:certbot/certbot -y
-        apt-get update -y
-        apt-get install certbot -y
-    fi
-    LE_CLIENT="/usr/bin/certbot"
 fi
 
 # Check firewall open for 80/tcp
