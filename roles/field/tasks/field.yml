@@ -48,9 +48,6 @@
   template:
     src: templates/config.ini.j2
     dest: "{{ field_configdir }}/config.ini"
-    owner: "{{ field_username }}"
-    group: "{{ field_username }}"
-    mode: 0600
     force: "{{ overwrite | default('no') }}"
     backup: yes
   tags:

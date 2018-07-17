@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.5.2
+VERSION=0.6.0
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -180,47 +180,7 @@ function enable_field() {
     fi
 }
 
-function get_latest_field_release {
-    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/SemkoDev/field.cli/releases/latest | awk '/tag_name/{print $2}' | tr -d '"v,' | cut -d- -f1
-}
-
 function upgrade_field() {
-    local FIELD_VERSION
-
-    echo "Checking for updates..."
-    local FIELD_LATEST=$(get_latest_field_release)
-    if [[ $? -ne 0 ]]; then
-        FIELD_LATEST=unknown
-    fi
-    clear
-
-    FIELD_VERSION=$(field --version 2>&1)
-    if [[ $? -ne 0 ]]; then
-        whiptail --title "Error!" \
-                 --msgbox "ERROR: Is Field installed?\n$FIELD_VERSION" \
-                 10 $WIDTH
-        return 1
-    fi
-
-    if (( $(awk 'BEGIN {print ("'$FIELD_VERSION'" >= "'$FIELD_LATEST'")}') )); then
-        if ! (whiptail --title "No Updates" \
-                     --yesno "You already have the latest version: ${FIELD_LATEST}.\nDo you want to proceed anyway?" \
-                     --defaultno \
-                     10 $WIDTH) then
-            return
-        else
-            local NO_CONFIRM=1
-        fi
-    fi
-
-    if [ -z "$NO_CONFIRM" ]; then
-        if ! (whiptail --title "Upgrade Field" \
-                     --yesno "Are you sure you want to upgrade Field from ${FIELD_VERSION} to ${FIELD_LATEST}?" \
-                     8 $WIDTH) then
-            return
-        fi
-    fi
-
     verify_playbook
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
@@ -228,7 +188,7 @@ function upgrade_field() {
                   8 $WIDTH
          return 1
     fi
-    cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "upgrade_field=true" -e "field_enabled=true"
+    cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=field_docker_image -e "field_enabled=true"
     [[ $? -ne 0 ]] && MSG="Updating Field failed!!! Check output above for errors." || MSG="Update finished successfully!"
     pause "$MSG Press any key to return to menu."
 
@@ -258,45 +218,16 @@ function get_latest_nelson_release {
 }
 
 function upgrade_nelson() {
-    local NELSON_VERSION
-
-    echo "Checking for updates..."
-    local NELSON_LATEST=$(get_latest_nelson_release)
+    verify_playbook
     if [[ $? -ne 0 ]]; then
-        NELSON_LATEST=unknown
+         whiptail --title "Error!" \
+                  --msgbox "ERROR: Cannot update Nelson." \
+                  8 $WIDTH
+         return 1
     fi
-    clear
-
-    NELSON_VERSION=$(nelson --version 2>&1)
-    if [[ $? -ne 0 ]]; then
-        whiptail --title "Error!" \
-                 --msgbox "ERROR: Is Nelson installed?\n$NELSON_VERSION" \
-                 10 $WIDTH
-        return 1
-    fi
-
-    if (( $(awk 'BEGIN {print ("'$NELSON_VERSION'" >= "'$NELSON_LATEST'")}') )); then
-        whiptail --title "No Updates" \
-                 --msgbox "You already have the latest version: $NELSON_VERSION" \
-                 8 $WIDTH
-        return
-    fi
-
-    if (whiptail --title "Upgrade Nelson" \
-                 --yesno "Are you sure you want to upgrade Nelson from ${NELSON_VERSION} to ${NELSON_LATEST}?" \
-                 --defaultno \
-                 8 $WIDTH) then
-        verify_playbook
-        if [[ $? -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: Cannot update Nelson." \
-                      8 $WIDTH
-             return 1
-        fi
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "upgrade_nelson=true" -e "nelson_enabled=true"
-        [[ $? -ne 0 ]] && MSG="Updating Nelson failed!!! Check output above for errors." || MSG="Update finished successfully!"
-        pause "$MSG Press any key to return to menu."
-    fi
+    cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_docker_images -e "nelson_enabled=true"
+    [[ $? -ne 0 ]] && MSG="Updating Nelson failed!!! Check output above for errors." || MSG="Update finished successfully!"
+    pause "$MSG Press any key to return to menu."
 }
 
 ### IRI ###
@@ -314,6 +245,7 @@ function upgrade_iri() {
         return 1
     fi
     clear
+
     local IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
@@ -349,10 +281,19 @@ function upgrade_iri() {
                  8 $WIDTH
         return 1
     fi
-    echo "Downloading new version..."
-    IRIVER=${IRI_LATEST}
-    TFILE=$(mktemp /tmp/iri-${IRIVER}.XXXXXXXXX)
-    wget "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" -O "$TFILE"
+
+    # Verify the image version is already available in dockerhub
+    local IRI_IMAGE=$(grep iotaledger/iri /opt/iri-playbook/group_vars/all/iri.yml | awk {'print $2'})
+    curl -s "https://hub.docker.com/v2/repositories/$IRI_IMAGE/tags/" | jq -r '.results|.[]|.name' | grep -q "v${IRI_LATEST}"
+    if [[ $? -ne 0 ]]; then
+        whiptail --title "Error!" \
+                 --msgbox "ERROR: Failed to get latest version from Docker hub!\nMaybe you need to wait until the new image is published?\n\nTag: v${IRI_LATEST}\n" \
+                 12 $WIDTH
+        return 1
+    fi
+
+    echo "Upgrading IRI Docker image.... (IRI will automatically restart if image gets updated)"
+    cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_docker_image -e "iri_tag=v$IRI_LATEST"
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
                   --msgbox "ERROR: Failed upgrading IRI." \
@@ -360,14 +301,11 @@ function upgrade_iri() {
          rm -f "$TFILE"
          return 1
     fi
-    echo "Move '$TFILE' to '/var/lib/iri/target/iri-${IRIVER}.jar' ..."
-    mv "$TFILE" "/var/lib/iri/target/iri-${IRIVER}.jar" && chmod 644 "/var/lib/iri/target/iri-${IRIVER}.jar"
-    echo "Update iri configuration files..."
+
+    echo "Updating IRI configuration files..."
     IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
-    sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST/" $IRI_CONFIG
+    sed -i "s/^TAG=.*$/TAG=$IRI_LATEST/" $IRI_CONFIG
     sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
-    echo "Restart IRI, this can take a few moments..."
-    systemctl restart iri
     pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press any key to return to menu."
     clear
 }
@@ -390,7 +328,7 @@ function upgrade_monitoring() {
         grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri
 
         # Upgrade iota-prom-exporter and dashboards
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,prometheus_config,monitoring_deps,iota_prom_exporter,grafana_config -e overwrite=yes
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,prometheus_config,grafana_config,download_iota_prom_exporter_image -e monitoring_enabled=yes -e overwrite=yes
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press any key to return to menu."
         clear
@@ -1196,7 +1134,7 @@ function configure_files() {
             ;;
 
         "c)")
-            edit_config "/opt/prometheus/iota-prom-exporter/config.js" "iota-prom-exporter"
+            edit_config "/var/lib/iota-prom-exporter/config.js" "iota-prom-exporter"
             configure_files
             ;;
 
@@ -1225,7 +1163,7 @@ function configure_files() {
             configure_files
             ;;
         "i)")
-            edit_config "/opt/prometheus/field_exporter/config.js" "field-exporter"
+            edit_config "/etc/field-exporter/config.js" "field-exporter"
             configure_files
             ;;
         "j)")

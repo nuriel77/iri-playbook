@@ -38,7 +38,7 @@ Prometheus configuration file::
 
 IOTA-Prom-Exporter configuration file::
 
-  /opt/prometheus/iota-prom-exporter/config.js
+  /var/lib/iota-prom-exporter/config.js
 
 Alert Manager configuration file::
 
@@ -58,4 +58,4 @@ Field configuration file::
 
 Field Exporter configuration file::
 
-  /opt/prometheus/field_exporter/config.js
+  /etc/field-exporter/config.js
