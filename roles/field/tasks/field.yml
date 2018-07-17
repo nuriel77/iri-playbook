@@ -113,7 +113,7 @@
     - name: update field-exporter config
       template:
         src: ../shared-files/field-exporter.config.js.j2
-        dest: "{{ field_configdir }}/config.js"
+        dest: "{{ field_exporter_configdir }}/config.js"
         owner: "{{ prom_username }}"
         group: "{{ prom_username }}"
         backup: yes
