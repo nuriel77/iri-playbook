@@ -130,6 +130,7 @@
     - "iota-prom-exporter"
     - "node-exporter"
     - "field-exporter"
+    - "cadvisor"
 
 - name: 'remove monitoring images...'
   docker_image:
