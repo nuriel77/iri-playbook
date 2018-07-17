@@ -173,7 +173,7 @@ function enable_field() {
         [[ -n "$ID_MOVE" ]] && mv "/var/lib/field/.carriota-field.id" "/var/lib/field/.carriota-field.id.${ID_MOVE}"
 
         # run playbook enabling field
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e "field_enabled=true" -e overwrite=yes -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=monitoring_preinstall,prometheus_config_file,field_exporter,field_role -e "field_enabled=true" -e overwrite=yes -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
 
         [[ $? -ne 0 ]] && MSG="Enabling Field failed!!! Check output above for errors." || MSG="Installation finished successfully!"
         pause "$MSG Press any key to return to menu."
@@ -211,10 +211,6 @@ function enable_nelson() {
         [[ $? -ne 0 ]] && MSG="Enabling Nelson failed!!! Check output above for errors." || MSG="Installation finished successfully!"
         pause "$MSG Press any key to return to menu."
     fi
-}
-
-function get_latest_nelson_release {
-    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/SemkoDev/nelson.cli/releases/latest | awk '/tag_name/{print $2}' | tr -d '"v,' | cut -d- -f1
 }
 
 function upgrade_nelson() {
@@ -256,7 +252,7 @@ function upgrade_iri() {
     
     if (( $(awk 'BEGIN {print ("'$IRI_VERSION'" >= "'$IRI_LATEST'")}') )); then
         if ! (whiptail --title "No Updates" \
-                 --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
+                 --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway?" \
                  --defaultno \
                  10 $WIDTH) then
             return
@@ -304,7 +300,7 @@ function upgrade_iri() {
 
     echo "Updating IRI configuration files..."
     IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
-    sed -i "s/^TAG=.*$/TAG=$IRI_LATEST/" $IRI_CONFIG
+    sed -i "s/^TAG=.*$/TAG=v${IRI_LATEST}/" $IRI_CONFIG
     sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
     pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press any key to return to menu."
     clear
@@ -324,11 +320,8 @@ function upgrade_monitoring() {
              return 1
         fi
 
-        # Enable ZMQ
-        grep -q ^ZMQ_ENABLED /var/lib/iri/iri.ini || echo "ZMQ_ENABLED = true" >>/var/lib/iri/iri.ini && systemctl restart iri
-
         # Upgrade iota-prom-exporter and dashboards
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,prometheus_config,grafana_config,download_iota_prom_exporter_image -e monitoring_enabled=yes -e overwrite=yes
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image -e monitoring_enabled=yes -e overwrite=yes
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press any key to return to menu."
         clear
