@@ -16,7 +16,7 @@ First, it is always a good practice to check for updates on the server.
 Update System Packages
 ======================
 
-For **Ubuntu** we type:
+For **Ubuntu/Debian** we type:
 
 .. code-block:: bash
 
@@ -36,7 +36,7 @@ Reboot Required?
 
 Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
 
-For **Ubuntu** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``::
+For **Ubuntu/Debian** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``::
 
   # ls -l /var/run/reboot-required
   -rw-r--r-- 1 root root 32 Dec  8 10:09 /var/run/reboot-required
@@ -79,7 +79,9 @@ This playbook installs required dependencies, the IOTA IRI package and IOTA Peer
 In addition, it configures firewalls and places some handy files for us to control these services.
 
 To install Ansible on **Ubuntu** I refer to the `official documentation <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt
--ubuntu>`_:
+-ubuntu>`_
+
+To install Ansible on **Debian** I refer to the `official documentation >https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-debian>`_
 
 .. code:: bash
 

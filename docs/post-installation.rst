@@ -317,7 +317,7 @@ On **CentOS** you can add neighbors to the file:
 
    /etc/sysconfig/iri
 
-On **Ubuntu**:
+On **Ubuntu/Debian**:
 
 .. code:: bash
 
@@ -336,7 +336,7 @@ Install IOTA Python libs
 ========================
 You can install the official iota.libs.py to use for various python scripting with IOTA and the iota-cli.
 
-On **Ubuntu**:
+On **Ubuntu/Debian**:
 
 .. code:: bash
 

@@ -61,7 +61,7 @@ In **CentOS**::
 
   firewall-cmd --add-port=14265/tcp --zone=public --permanent && firewall-cmd --reload
 
-In **Ubuntu**::
+In **Ubuntu/Debian**::
 
   ufw allow 14265/tcp
 
@@ -85,7 +85,7 @@ You might need to install it:
 
 .. code:: bash
 
-   On Ubuntu: apt-get install htop -y
+   On Ubuntu/Debian: apt-get install htop -y
    On CentOS: yum install htop -y
 
 

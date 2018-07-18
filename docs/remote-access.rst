@@ -25,6 +25,7 @@ The ``--remote`` option can be specified in the configuration file:
 
 * on **CentOS** ``/etc/sysconfig/iri``
 * on **Ubuntu** ``/etc/default/iri``
+* on **Debian** ``/etc/default/iri``
 
 Edit the file and find the line:
 
@@ -63,11 +64,11 @@ On **CentOS**::
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_firewalld -e api_port_remote=yes
 
-On **Ubuntu** without rate limiting::
+On **Ubuntu/Debian** without rate limiting::
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ufw -e api_port_remote=yes
 
-On **Ubuntu** with rate limiting::
+On **Ubuntu/Debian** with rate limiting::
 
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ufw -e api_port_remote=yes -e ufw_limit_iri_api=yes
 
@@ -87,7 +88,7 @@ On **CentOS** we run the command (which also adds rate limiting):
 
 
 
-On **Ubuntu**:
+On **Ubuntu/Debian**:
 
 .. code:: bash
 
@@ -227,7 +228,7 @@ Below we describe how to edit these commands, if necessary.
 
 
 * On **CentOS** edit the file ``/etc/sysconfig/iri``
-* On **Ubuntu** edit the file ``/etc/default/iri``.
+* On **Ubuntu/Debian** edit the file ``/etc/default/iri``.
 
 This option excludes the commands in it for the remote connection. This is to protect your node.
 If you make changes to this option, you will have to **restart IRI**: ``systemctl restart iri``.

@@ -35,7 +35,8 @@ Playbook was tested with:
   - Ansible>=2.4
   - Ubuntu 16.04
   - Ubuntu 17.04
-  - CentOS 7.4
+  - Debian 9.5
+  - CentOS 7.4 and 7.5
 
 
 
@@ -106,6 +107,13 @@ sudo systemctl stop iri
 Then:
 ```sh
 ansible-playbook -i inventory -v site.yml -e "remove_iri_workdir=1"
+```
+
+### Uninstall
+
+Uninstall feature works on best effort. All related files and services will be removed, and firewall configuration reverted:
+```sh
+ansible-playbook -i inventory site.yml --tags=uninstall -e uninstall_playbook=yes
 ```
 
 ### Overwrite/Update Configuration Files

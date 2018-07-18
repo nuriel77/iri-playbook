@@ -16,11 +16,11 @@ First make sure you have the pastebin tool installed.
 
 On **CentOS**: ``yum install -y fpaste``
 
-On **Ubuntu**: ``apt-get install -y pastebinit``
+On **Ubuntu/Debian**: ``apt-get install -y pastebinit``
 
 
 
-Below are examples for Ubuntu and CentOS how to upload various files. You can tweak parameters as required.
+Below are examples for Ubuntu, Debian and CentOS how to upload various files. You can tweak parameters as required.
 
 Note that the long ``sed`` commands are there to hide IP addresses.
 
@@ -29,8 +29,8 @@ The command will return a URL link which you can share, that will open the logs 
 
 ** DO NOT COPY PASTE BLINDLY, edit commands as required before execution! **
 
-Ubuntu Logs
------------
+Ubuntu/Debian Logs
+------------------
 
 Here are a few examples. You can change the log file name if required.
 

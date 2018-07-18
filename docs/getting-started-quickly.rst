@@ -11,7 +11,7 @@ If you haven't already, just make sure your server matches the :ref:`requirement
 
 .. warning::
 
-   Your server's installation of Ubuntu or CentOS must be a clean one, i.e. no pre-installed cpanel, whcms, plesk and so on.
+   Your server's installation of Ubuntu, Debian or CentOS must be a clean one, i.e. no pre-installed cpanel, whcms, plesk and so on.
    This installer might BREAK any previously installed web-server. It is meant to be installed on a clean system!
 
 
@@ -97,7 +97,7 @@ You can always "reattach" back that session when you re-connect to your server:
 
 .. warning::
 
-  Some VPS providers might be depending on Network Block Devices (for example Scaleway). If using Ubuntu, you need to configure ufw prior to running the installer.
+  Some VPS providers might be depending on Network Block Devices (for example Scaleway). If using Ubuntu or Debian, you need to configure ufw prior to running the installer.
   See: https://gist.github.com/georgkreimer/7a02af49604da91c5e3605b08b2872ec
 
 

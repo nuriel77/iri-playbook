@@ -80,7 +80,7 @@ You should be able to point your browser to ``http://pm.my-fqdn.com`` and see th
 
 .. note::
 
-  For **Ubuntu** you will have to allow http port in ufw firewall:
+  For **Ubuntu/Debian** you will have to allow http port in ufw firewall:
 
   ufw allow http
 
@@ -137,7 +137,7 @@ By having a "valid" certificate for your server (signed by a trusted authority),
 Your connection will also be encrypted if you opt for a self-signed certificate. However, the browser cannot verify who signed the certificate and will report a certificate error (in most cases you can just accept it as an exception and proceed).
 
 
-Here is a great tutorial on how to add HTTPS to your **nginx**, choose nginx and the OS version you are using (Ubuntu/CentOS):
+Here is a great tutorial on how to add HTTPS to your **nginx**, choose nginx and the OS version you are using (Ubuntu/Debian/CentOS):
 
 (For iri-playbook installations you can configure the generated certificate and key in /etc/nginx/conf.d/ssl.cfg)
 
@@ -152,7 +152,7 @@ https://certbot.eff.org/
 
 .. note::
 
-  For **Ubuntu** you will have to allow https port in ufw firewall:
+  For **Ubuntu/Debian** you will have to allow https port in ufw firewall:
 
   ufw allow https
 
@@ -417,7 +417,7 @@ Most Linux experts use ``vi`` or ``vim`` which is much harder for beginners.
 
 First, ensure you have ``nano`` installed:
 
-* On **Ubuntu**: ``apt-get install nano -y``
+* On **Ubuntu/Debian**: ``apt-get install nano -y``
 * On **CentOS**: ``yum install nano -y``
 
 Next, you can use nano to create a new file or edit an existing one. For example, we want to create a new file ``/tmp/test.txt``, we run:
@@ -634,7 +634,7 @@ Upgrade IRI and Keep Existing Database
 If you want to keep the existing database, the instructions provided by the IF include steps to compile the RC version (v1.4.2.4_RC) and apply a database migration tool.
 
 
-To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu (but **only** for ``iri-playbook`` installations).
+To make this process easy, I included a script that will automate this process. This script works for both CentOS and Ubuntu/Debian (but **only** for ``iri-playbook`` installations).
 
 You will be asked if you want to download a pre-compiled IRI from my server, or compile it on your server should you choose to do so.
 
