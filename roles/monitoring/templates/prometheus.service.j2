@@ -15,12 +15,12 @@ ExecStart=/usr/bin/docker run \
   --net={{ iri_net_name }} \
   --cap-drop=ALL \
   -v /etc/localtime:/etc/localtime:ro,Z \
-  -v ${CONFIG_FILE}:/etc/prometheus/prometheus.yml:ro,Z \
+  -v /etc/prometheus:/etc/prometheus:ro,Z \
   -v ${DATA_DIR}:/data:Z \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
   $DOCKER_OPTS \
   {{ prom_image }}:${TAG} \
-  --config.file=/etc/prometheus/prometheus.yml \
+  --config.file=${CONFIG_FILE} \
   --storage.tsdb.path=/data/ \
   --web.listen-address=:${BIND_PORT}
 
