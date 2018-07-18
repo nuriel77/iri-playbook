@@ -1,0 +1,6 @@
+- import_tasks: role.yml
+  tags:
+    - docker_role
+  when:
+    - install_docker is defined
+    - install_docker|bool == True

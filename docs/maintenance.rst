@@ -26,7 +26,7 @@ In the following example we assume that the new version is **1.5.0**.
 .. note::
 
   The foundation might announce additional information in tandem with upgrades, for example whether to use the ``--rescan`` flag, remove older database etc.
-  If required, additional options can be specified under the ``OPTIONS=""`` value in the configuration file (``/etc/default/iri`` for Ubuntu or ``/etc/sysconfig/iri`` for CentOS). The database folder is in ``/var/lib/iri/target/mainnetdb`` and can be removed using ``systemctl stop iri && rm -rf /var/lib/iri/target/mainnet*``.
+  If required, additional options can be specified under the ``OPTIONS=""`` value in the configuration file (``/etc/default/iri`` for Ubuntu and Debian or ``/etc/sysconfig/iri`` for CentOS). The database folder is in ``/var/lib/iri/target/mainnetdb`` and can be removed using ``systemctl stop iri && rm -rf /var/lib/iri/target/mainnet*``.
 
 
 You can update IRI using the ``iric`` tool: :ref:`iric`. Make sure that there are no additional manual steps to be taken if any are announced by the Foundation.
@@ -43,7 +43,7 @@ Make sure you are running all the commands as 'root' (run ``sudo su`` first). Th
 
 Then update the IRI configuration file in place using ``sed``:
 
-In **Ubuntu**::
+In **Ubuntu/Debian**::
 
   sed -i 's/^IRI_VERSION=.*$/IRI_VERSION=1.5.0/' /etc/default/iri
 

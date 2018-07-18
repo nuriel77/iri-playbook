@@ -1,0 +1,31 @@
+upstream nelsongui {
+    server 127.0.0.1:{{ nelson_gui_port_internal }};
+}
+
+# Rate limit requests
+limit_req_zone $binary_remote_addr zone=nelsongui:{{ nginx_shared_mem_rate_limit | default('10m') }} rate={{ nginx_req_per_sec | default('5') }}r/s;
+
+server {
+    limit_req zone=nelsongui burst={{ vhost_nginx_burst_limit | default('5') }};
+    listen {{ nelson_gui_port }} default_server ssl http2;
+    server_name _;
+    server_tokens off;
+
+    # Redirect same port from http to https
+    error_page 497 https://$host:$server_port$request_uri;
+
+    # File containing SSL directives
+    include /etc/nginx/conf.d/ssl.cfg;
+
+    # uses own auth
+    #auth_basic "Restricted";
+    #auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location / {
+        proxy_pass http://nelsongui;
+        proxy_redirect              off;
+        proxy_set_header            Host $host;
+        proxy_set_header            X-Real-IP $remote_addr;
+        proxy_set_header            X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}

@@ -1,0 +1,31 @@
+- import_tasks: install.yml
+  tags:
+    - haproxy_install
+
+- import_tasks: certbot.yml
+  tags:
+    - certbot_install
+
+- import_tasks: firewalld.yml
+  tags:
+    - haproxy_firewalld
+  when:
+    - ansible_distribution == 'CentOS'
+    - configure_firewall is defined and configure_firewall|bool == True
+
+- import_tasks: ufw.yml
+  tags:
+    - haproxy_ufw
+  when:
+    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    - configure_firewall is defined and configure_firewall|bool == True
+
+- import_tasks: haproxy.yml
+  tags:
+    - haproxy_config
+
+- import_tasks: uninstall.yml
+  tags:
+    - uninstall
+    - uninstall_loadbalancer
+  when: uninstall_playbook is defined and uninstall_playbook|bool == True

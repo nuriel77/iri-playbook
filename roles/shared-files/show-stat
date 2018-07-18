@@ -1,0 +1,10 @@
+#!/bin/bash
+
+: ${HAPROXY_SOCKET:=tcp4-connect:127.0.0.1:9999}
+
+if [[ "$1" == "servers" ]]
+then
+    echo "show servers state" | socat stdio ${HAPROXY_SOCKET}
+else
+    echo "show stat" | socat stdio ${HAPROXY_SOCKET} | egrep -v "FRONTEND|BACKEND" | cut -d, -f1,2,18,19,74
+fi

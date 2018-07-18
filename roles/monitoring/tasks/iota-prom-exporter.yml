@@ -1,93 +1,58 @@
-- name: set iota-prom-exporter dirs
-  set_fact:
-    iota_prom_fulldir: "{{ prom_basedir }}/{{ iota_prom_exporter_basedir }}"
-    iota_prom_tempdir: "/tmp/iota-prom-exporter_{{ ansible_date_time.epoch }}"
-
 - name: set variables centos/redhat
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-    nodejs_bin: /usr/bin/node
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
-    systemd_dir: /etc/systemd/system
+    systemd_dir: /lib/systemd/system
     config_dir: /etc/default
-    nodejs_bin: /usr/bin/nodejs
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: stat iota-prom-exporter basedir for git updates
   stat:
-    path: "{{ iota_prom_fulldir }}"
-  register: iota_prom_fulldir_git
-
-- name: check iota-prom-exporter requires updates
-  shell: "cd {{ iota_prom_fulldir }} && [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\\// /g') | cut -f1) ] && echo -n 'up to date' || echo -n 'not up to date'"
-  when: iota_prom_fulldir_git.stat.exists
-  register: iota_exporter_update
-  failed_when: false
-  changed_when: false
-
-- name: prepare iota-prom-exporter for updating
-  block:
-    - name: stop iota-prom-exporter
-      systemd:
-        name: iota-prom-exporter
-        state: stopped
-      failed_when: false
-
-    - name: force remove iota-prom-exporter
-      set_fact:
-        remove_iota_prom_exporter_basedir: true
-
-  when: "'stdout' in iota_exporter_update and iota_exporter_update.stdout == 'not up to date'"
+    path: "{{ iota_prom_exporter_basedir }}"
+  register: iota_prom_exporter_basedir_git
 
 - name: remove existing iota-prom-exporter dir
   file:
-    path: "{{ iota_prom_fulldir }}"
+    path: "{{ iota_prom_exporter_basedir }}"
     state: absent
-  when: >
-        remove_iota_prom_exporter_basedir is defined and
-        remove_iota_prom_exporter_basedir|bool
+  when:
+    - remove_iota_prom_exporter_basedir is defined
+    - remove_iota_prom_exporter_basedir|bool == True
 
-# Check if needs (re)downloading
-- name: stat iota-prom-exporter basedir
-  stat:
-    path: "{{ iota_prom_fulldir }}"
-  register: iota_prom_fulldir_stat
-
-- name: clone iota-prom-exporter repository
-  git:
-    repo: 'https://github.com/crholliday/iota-prom-exporter.git'
-    dest: "{{ iota_prom_tempdir }}"
-    force: yes
-  when: not iota_prom_fulldir_stat.stat.exists
-  register: iota_prom_git
-
-- name: move iota-prom-exporter temp dir to its final location
-  shell: "mv {{ iota_prom_tempdir }} {{ iota_prom_fulldir }}"
-  when: iota_prom_git and iota_prom_git.changed
-
-- name: set ownership on iota-prom-exporter path
+- name: create iota-prom-exporter dir
   file:
-    path: "{{ iota_prom_fulldir }}"
+    path: "{{ iota_prom_exporter_basedir }}"
     state: directory
-    recurse: yes
     owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+    mode: 0700
 
-- name: install iota-prom-exporter
-  shell: "cd {{ iota_prom_fulldir }} && npm install"
-  become: yes
-  become_user: "{{ prom_username }}"
-  when: iota_prom_git and iota_prom_git.changed
+- name: create iota-prom-exporter db dir
+  file:
+    path: "{{ iota_prom_exporter_basedir }}/db"
+    state: directory
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+    mode: 0700
 
 - name: install iota-prom-exporter config
   template:
     src: templates/iota-prom-exporter.config.js.j2
-    dest: "{{ iota_prom_fulldir }}/config.js"
+    dest: "{{ iota_prom_exporter_basedir }}/config.js"
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
+    force: "{{ overwrite | default('no') }}"
+  notify:
+    - restart iota-prom-exporter
+
+- name: copy iota-prom-exporter sysconfig file
+  template:
+    src: templates/iota-prom-exporter.sysconfig.j2
+    dest: "{{ config_dir }}/iota-prom-exporter"
   notify:
     - restart iota-prom-exporter
 
@@ -95,8 +60,21 @@
   template:
     src: iota-prom-exporter.service.j2
     dest: "{{ systemd_dir }}/iota-prom-exporter.service"
+    force: "{{ overwrite | default('no') }}"
   notify:
-    - reload systemd
+    - restart iota-prom-exporter
+
+- name: 'download iota-prom-exporter docker image, this can take a moment...'
+  docker_image:
+    name: "{{ iota_prom_exporter_image }}"
+    tag: "{{ iota_prom_exporter_tag }}"
+  tags:
+    - download_iota_prom_exporter_image
+  notify:
+    - restart iota-prom-exporter
+
+- name: flush handlers
+  meta: flush_handlers
 
 - name: start and enable iota-prom-exporter
   systemd:

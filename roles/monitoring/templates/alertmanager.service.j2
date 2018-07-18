@@ -1,29 +1,34 @@
 [Unit]
 Description=Alertmanager for Prometheus
-Wants=network-online.target
-After=network.target
+After=network.target docker.service
+Requires=docker.service
 
 [Service]
-WorkingDirectory={{ alertmanager_basedir }}
-Restart=on-failure
-ExecStart={{ alertmanager_basedir }}/alertmanager -config.file config.yml -web.listen-address {{ alertmanager_bind }}:{{ alertmanager_port }} -web.external-url http://{{ ansible_default_ipv4.address }}:{{ alertmanager_nginx_port }} -mesh.listen-address "" -log.level {{ alertmanager_loglevel }}
-Type=simple
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-{{ config_dir }}/alertmanager
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname %p \
+  --user {{ promuser_uid.stdout }} \
+  --net={{ iri_net_name }} \
+  --cap-drop=ALL \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -v ${CONFIG_FILE}:/etc/config.yml:ro,Z \
+  -v ${WORK_DIR}:/alertmanager:Z \
+  -v ${TEMPLATE_DIR}:/etc/alertmanager/template:ro,Z \
+  -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+  $DOCKER_OPTS \
+  {{ alertmanager_image }}:${TAG} \
+  --config.file=/etc/config.yml \
+  --web.listen-address=:${BIND_PORT} \
+  --web.external-url=${WEB_EXTERNAL_ADDRESS} \
+  --log.level ${LOG_LEVEL} \
+  --storage.path=/alertmanager/
 
-# No need that exporter messes with /dev
-PrivateDevices=yes
-
-# Dedicated /tmp
-PrivateTmp=yes
-
-# Make /usr, /boot, /etc read only
-ProtectSystem=full
-
-# /home is not accessible at all
-ProtectHome=yes
-
-# Unprivileged user
-User={{ prom_username }}
-Group={{ prom_username }}
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

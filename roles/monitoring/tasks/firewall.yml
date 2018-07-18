@@ -3,55 +3,49 @@
     name: firewalld
     state: started
     enabled: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
-- name: allow nginx ports in firewall
-  firewalld:
-    port: "{{ item }}/tcp"
-    permanent: true
-    state: enabled
-    immediate: yes
-  with_items:
-    - "{{ prom_nginx_port }}"
-    - "{{ grafana_nginx_port }}"
-    - "{{ alertmanager_nginx_port }}"
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+- name: firewall CentOS block
+  block:
 
-- name: allow prometheus grafana nginx port via selinux seport
-  seport:
-    ports: "{{ item }}"
-    proto: tcp
-    setype: http_port_t
-    state: present
-  with_items:
-    - "{{ prom_nginx_port }}"
-    - "{{ grafana_nginx_port }}"
-    - "{{ alertmanager_nginx_port }}"
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+    - name: allow proxy ports in firewall
+      firewalld:
+        port: "{{ item }}/tcp"
+        permanent: true
+        state: enabled
+        immediate: yes
+      with_items:
+        - "{{ prom_proxy_port }}"
+        - "{{ grafana_proxy_port }}"
+        - "{{ alertmanager_proxy_port }}"
 
-- name: allow nginx to revese proxy
-  seboolean:
-    name: httpd_can_network_connect
-    state: yes
-    persistent: yes
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+    - name: allow prometheus grafana proxy port via selinux seport
+      seport:
+        ports: "{{ item }}"
+        proto: tcp
+        setype: http_port_t
+        state: present
+      with_items:
+        - "{{ prom_proxy_port }}"
+        - "{{ grafana_proxy_port }}"
+        - "{{ alertmanager_proxy_port }}"
 
-- name: allow prometheus and grafana nginx port in firewall
+    - name: allow to revese proxy
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
+
+  when: ansible_distribution == 'CentOS'
+
+- name: allow prometheus and grafana proxy port in firewall
   ufw:
     rule: allow
     direction: in
     proto: tcp
     port: "{{ item }}"
   with_items:
-    - "{{ prom_nginx_port }}"
-    - "{{ grafana_nginx_port }}"
-    - "{{ alertmanager_nginx_port }}"
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+    - "{{ prom_proxy_port }}"
+    - "{{ grafana_proxy_port }}"
+    - "{{ alertmanager_proxy_port }}"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

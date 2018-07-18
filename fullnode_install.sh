@@ -84,8 +84,7 @@ Welcome to IOTA FullNode Installer!
 2. By pressing 'y' you aknowledge that this installer requires a CLEAN operating system
    and may otherwise !!!BREAK!!! existing software on your server (visit link below).
 3. You read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
-4. This installation ensures firewall is enabled.
-5. If you already have a configured server, re-running this script might overwrite previous configuration.
+4. If you already have a configured server, re-running this script will overwrite previous configuration.
 
 EOF
 
@@ -174,6 +173,27 @@ function init_ubuntu(){
     apt-get install ansible git expect-dev tcl libcrack2 cracklib-runtime whiptail -y
 }
 
+function init_debian(){
+    echo "Updating system packages..."
+    apt update -qqy --fix-missing
+    apt-get upgrade -y
+    apt-get clean
+    apt-get autoremove -y --purge
+
+    echo "Check reboot required..."
+    if [ -f /var/run/reboot-required ]; then
+        [ -z "$SKIP_REBOOT" ] && { inform_reboot; exit 0; }
+    fi
+
+    echo "Installing Ansible and git..."
+    local ANSIBLE_SOURCE="deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+    grep -q "$ANSIBLE_SOURCE" /etc/apt/sources.list || echo "$ANSIBLE_SOURCE" >> /etc/apt/sources.list
+    apt-get install dirmngr --install-recommends -y
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+    apt-get update -y
+    apt-get install ansible git expect-dev tcl libcrack2 cracklib-runtime whiptail -y
+}
+
 function inform_reboot() {
 cat <<EOF
 
@@ -256,7 +276,7 @@ function get_admin_password() {
     # Ensure we escape single quotes (using single quotes) because we need to
     # encapsulate the password with single quotes for the Ansible variable file
     PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
-    echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
+    echo "fullnode_user_password: '${PASSWORD_A}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
 }
 
 # Installation selection menu
@@ -270,12 +290,16 @@ function set_selections()
         "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
 For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
-Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
-        "ENABLE_NELSON"       "Enable Nelson auto-peering" OFF \
-        "ENABLE_FIELD"        "Enable CarrIOTA Field"      OFF \
-        "ENABLE_HAPROXY"      "Enable HAProxy"             OFF \
-        "DISABLE_MONITORING"  "Disable node monitoring"    OFF \
-        "DISABLE_ZMQ_METRICS" "Disable ZMQ metrics"        OFF \
+Select/unselect options using space and click Enter to proceed.\n" 28 78 9 \
+        "INSTALL_DOCKER"           "Install Docker runtime (recommended)" ON \
+        "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
+        "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
+        "SKIP_FIREWALL_CONFIG"  "Skip configuring firewall" OFF \
+        "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
+        "ENABLE_FIELD"             "Enable CarrIOTA Field"      OFF \
+        "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
+        "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
+        "DISABLE_ZMQ_METRICS"      "Disable ZMQ metrics"        OFF \
         3>&1 1>&2 2>&3)
 
     RC=$?
@@ -288,6 +312,23 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
     for CHOICE in "${RESULTS_ARRAY[@]}"
     do
         case $CHOICE in
+            '"INSTALL_DOCKER"')
+                INSTALL_OPTIONS+=" -e install_docker=true"
+                echo "install_docker: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
+            '"INSTALL_NGINX"')
+                INSTALL_OPTIONS+=" -e install_nginx=true"
+                echo "install_nginx: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
+            '"DISABLE_SYS_DEPS"')
+                INSTALL_OPTIONS+=" -e install_system_deps=false"
+                DISABLE_SYS_DEPS=1
+                echo "install_system_deps: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
+            '"SKIP_FIREWALL_CONFIG"')
+                INSTALL_OPTIONS+=" -e configure_firewall=false"
+                echo "configure_firewall: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                ;;
             '"DISABLE_MONITORING"')
                 SKIP_TAGS+=",monitoring_role,field_exporter"
                 echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
@@ -385,6 +426,14 @@ elif [[ "$OS" =~ ^Ubuntu ]]; then
     fi
     check_arch
     init_ubuntu
+elif [[ "$OS" =~ ^Debian ]]; then
+    if [[ ! "$VER" =~ ^9 ]]; then
+        echo "ERROR: $OS version $VER not supported"
+        display_requirements_url
+        exit 1
+    fi
+    check_arch
+    init_debian
 else
     echo "$OS not supported"
     exit 1
@@ -456,23 +505,19 @@ set_primary_ip
 
 # Add notice to set payout address for Field
 if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]]; then
-    FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/field.ini'"
+    FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/config.ini'"
 fi
 
 OUTPUT=$(cat <<EOF
 * A log of this installation has been saved to: $LOGFILE
 
-* You should be able to connect to IOTA Peer Manager pointing your browser to:
+* You should be able to connect to IOTA Peer Manager and Grafana:
 
-http://${PRIMARY_IP}:8811
-
-* You can reach the monitoring (grafana) graphs at:
-
-http://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
+https://${PRIMARY_IP}:8811 and https://${PRIMARY_IP}:5555
 
 * Note that your IP might be different as this one has been auto-detected in best-effort.
 
-* You can use the username 'iotapm' and the password you entered during the installation.
+* Log in using 'iotaadmin' and the password you have entered during the installation.
 
 ${FIELD_NOTICE}
 

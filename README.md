@@ -35,7 +35,8 @@ Playbook was tested with:
   - Ansible>=2.4
   - Ubuntu 16.04
   - Ubuntu 17.04
-  - CentOS 7.4
+  - Debian 9.5
+  - CentOS 7.4 and 7.5
 
 
 
@@ -53,7 +54,7 @@ If you want to install to a remote host, edit the `inventory` and set the name a
 ### Configure options
 In `groups_vars/all/*.yml` you will find files with some configuration options and comments.
 
-Important value to edit is the `iotapm_nginx_password` in the `group_vars/all/iotapm.yml`. Set a strong password.
+Important value to edit is the `fullnode_user_password` in the `group_vars/all/iotapm.yml`. Set a strong password.
 
 To edit the password and/or add more users refer to the wiki link up in this README doc.
 
@@ -106,6 +107,13 @@ sudo systemctl stop iri
 Then:
 ```sh
 ansible-playbook -i inventory -v site.yml -e "remove_iri_workdir=1"
+```
+
+### Uninstall
+
+Uninstall feature works on best effort. All related files and services will be removed, and firewall configuration reverted:
+```sh
+ansible-playbook -i inventory site.yml --tags=uninstall -e uninstall_playbook=yes
 ```
 
 ### Overwrite/Update Configuration Files

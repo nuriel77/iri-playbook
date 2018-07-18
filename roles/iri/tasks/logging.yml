@@ -16,4 +16,4 @@
   copy:
     src: files/syslog.centos
     dest: /etc/logrotate.d/syslog
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'

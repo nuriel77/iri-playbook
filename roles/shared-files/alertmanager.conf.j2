@@ -1,0 +1,31 @@
+upstream alertmanager {
+    server 127.0.0.1:{{ alertmanager_port }};
+}
+
+# Rate limit requests
+limit_req_zone $binary_remote_addr zone=alertmanager:{{ nginx_shared_mem_rate_limit | default('2m') }} rate={{ nginx_req_per_sec | default('10') }}r/s;
+
+server {
+    limit_req zone=alertmanager burst={{ vhost_nginx_burst_limit | default('20') }};
+    listen {{ alertmanager_proxy_port }} default_server ssl http2;
+    server_name _;
+    server_tokens off;
+
+    # Redirect same port from http to https
+    error_page 497 https://$host:$server_port$request_uri;
+
+    # Include SSL Directives from file
+    include /etc/nginx/conf.d/ssl.cfg;
+
+    auth_basic "Restricted";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location / {
+        proxy_pass http://alertmanager;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

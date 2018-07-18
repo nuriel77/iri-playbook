@@ -1,0 +1,30 @@
+[Unit]
+Description=cAdvisor Docker Stats
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-{{ config_dir }}/cadvisor
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname %p \
+  --net={{ iri_net_name }} \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -v /:/rootfs:ro \
+  -v /var/run:/var/run:rw \
+  -v /sys:/sys:ro \
+  -v /var/lib/docker/:/var/lib/docker:ro \
+  -v /dev/disk/:/dev/disk:ro \
+  -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+  $DOCKER_OPTS \
+  {{ cadvisor_image }}:${TAG} \
+  -port ${BIND_PORT}
+
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

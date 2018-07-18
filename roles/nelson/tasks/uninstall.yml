@@ -11,7 +11,7 @@
         - "{{ nelson_tcp_port }}"
         - "{{ nelson_gui_port }}"
 
-    - name: remove nelson gui nginx port via selinux seport
+    - name: remove nelson gui proxy port via selinux seport
       seport:
         ports: "{{ nelson_gui_port }}"
         proto: tcp
@@ -19,7 +19,7 @@
         state: absent
 
   when:
-    - ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    - ansible_distribution == 'CentOS'
 
 - name: remove nelson tcp ports from firewall
   ufw:
@@ -37,14 +37,13 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
 
 - name: remove nelson
   block:
@@ -59,15 +58,6 @@
         - nelson
         - nelson-gui
 
-    - name: Remove current nelson packages
-      npm:
-        name: "{{ item }}"
-        global: yes
-        state: absent
-      with_items:
-        - nelson.cli
-        - nelson.gui
-
 - name: remove nelson related files
   file:
     path: "{{ item }}"
@@ -75,8 +65,8 @@
   with_items:
     - "{{ nelson_configdir }}"
     - "{{ nelson_datadir }}"
+    - "{{ config_dir }}/nelson"
     - "{{ config_dir }}/nelson-gui"
-    - '/etc/nginx/conf.d/nelson-gui.conf'
 
 - name: remove nelson systemd files
   file:
@@ -92,3 +82,23 @@
   user:
     name: "{{ nelson_username }}"
     state: absent
+
+- name: delete container
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  ignore_errors: yes
+  with_items:
+    - "nelson"
+    - "nelson-gui"
+
+- name: 'remove nelson images...'
+  docker_image:
+    name: "{{ item.image }}"
+    tag: "{{ item.tag }}"
+    state: absent
+    force: yes
+  ignore_errors: yes
+  with_items:
+    - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
+    - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }

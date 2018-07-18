@@ -1,67 +1,38 @@
-- name: ensure firewalld started and enabled
-  systemd:
-    name: firewalld
-    state: started
-    enabled: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+- name: Nginx firewall block CentOS
+  block:
 
-- name: allow iota-pm tcp port in firewall
-  firewalld:
-    port: "{{ iotapm_port }}/tcp"
-    permanent: true
-    state: enabled
-    immediate: yes
-  when: >
-        iotapm_allow_firewall is defined and
-        iotapm_allow_firewall and
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+    - name: ensure firewalld started and enabled
+      systemd:
+        name: firewalld
+        state: started
+        enabled: yes
 
-- name: allow iota-pm tcp port in firewall
+    - name: allow iotapm proxy port in firewall
+      firewalld:
+        port: "{{ iotapm_proxy_port }}/tcp"
+        permanent: true
+        state: enabled
+        immediate: yes
+
+    - name: allow iotapm proxy port via selinux seport
+      seport:
+        ports: "{{ iotapm_proxy_port }}"
+        proto: tcp
+        setype: http_port_t
+        state: present
+
+    - name: allow to revese proxy
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
+
+  when: ansible_distribution == 'CentOS'
+
+- name: allow iotapm proxy port in firewall
   ufw:
     rule: allow
     direction: in
     proto: tcp
-    port: "{{ iotapm_port }}"
-  when: >
-        iotapm_allow_firewall is defined and
-        iotapm_allow_firewall and
-        (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
-
-- name: allow iotapm nginx port in firewall
-  firewalld:
-    port: "{{ iotapm_nginx_port }}/tcp"
-    permanent: true
-    state: enabled
-    immediate: yes
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
-
-- name: allow iotapm nginx port via selinux seport
-  seport:
-    ports: "{{ iotapm_nginx_port }}"
-    proto: tcp
-    setype: http_port_t
-    state: present
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
-
-- name: allow nginx to revese proxy
-  seboolean:
-    name: httpd_can_network_connect
-    state: yes
-    persistent: yes
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
-
-- name: allow iotapm nginx port in firewall
-  ufw:
-    rule: allow
-    direction: in
-    proto: tcp
-    port: "{{ iotapm_nginx_port }}"
-  when: >
-        install_nginx is defined and install_nginx and
-        (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+    port: "{{ iotapm_proxy_port }}"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

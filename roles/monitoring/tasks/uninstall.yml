@@ -2,13 +2,13 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
   tags:
     - nbctl_config
 
 - name: set variables debian/ubuntu
   set_fact:
-    systemd_dir: /etc/systemd/system
+    systemd_dir: "{{ systemd_dir }}"
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
@@ -19,63 +19,31 @@
     enabled: false
   ignore_errors: yes
 
-- name: remove yum grafana
-  block:
-
-    - name: uninstall grafana
-      yum:
-        name: grafana
-        state: absent
-
-    - name: remove grafana repository
-      yum_repository:
-        name: grafana
-        description: grafana
-        baseurl: https://packagecloud.io/grafana/stable/el/6/$basearch
-        state: absent
-
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: remove apt grafana 
-  block:
-
-    - name: uninstall grafana
-      apt:
-        state: absent
-        name: grafana
-
-    - name: remove grafana apt repository
-      apt_repository:
-        repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
-        state: absent
-
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- name: remove nginx ports in firewall for monitoring services
+- name: remove proxy ports in firewall for monitoring services
   firewalld:
     port: "{{ item }}/tcp"
     permanent: true
     state: disabled
     immediate: yes
   with_items:
-    - "{{ prom_nginx_port }}"
-    - "{{ grafana_nginx_port }}"
-    - "{{ alertmanager_nginx_port }}"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    - "{{ prom_proxy_port }}"
+    - "{{ grafana_proxy_port }}"
+    - "{{ alertmanager_proxy_port }}"
+  when: ansible_distribution == 'CentOS'
 
-- name: remove prometheus grafana nginx port via selinux seport
+- name: remove prometheus grafana proxy port via selinux seport
   seport:
     ports: "{{ item }}"
     proto: tcp
     setype: http_port_t
     state: absent
   with_items:
-    - "{{ prom_nginx_port }}"
-    - "{{ grafana_nginx_port }}"
-    - "{{ alertmanager_nginx_port }}"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    - "{{ prom_proxy_port }}"
+    - "{{ grafana_proxy_port }}"
+    - "{{ alertmanager_proxy_port }}"
+  when: ansible_distribution == 'CentOS'
 
-- name: remove prometheus and grafana nginx port from firewall
+- name: remove prometheus and grafana proxy port from firewall
   ufw:
     rule: allow
     direction: in
@@ -83,9 +51,9 @@
     port: "{{ item }}"
     delete: yes
   with_items:
-    - "{{ prom_nginx_port }}"
-    - "{{ grafana_nginx_port }}"
-    - "{{ alertmanager_nginx_port }}"
+    - "{{ prom_proxy_port }}"
+    - "{{ grafana_proxy_port }}"
+    - "{{ alertmanager_proxy_port }}"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: stop monitoring services
@@ -98,9 +66,9 @@
     - prometheus
     - alertmanager
     - iota-prom-exporter
-    - prom-am-executor
     - node-exporter
     - field-exporter
+    - cadvisor
 
 - name: remove monitoring service files
   file:
@@ -109,12 +77,20 @@
   notify:
     - reload systemd
   with_items:
-    - '/etc/systemd/system/prometheus.service'
-    - '/etc/systemd/system/node-exporter.service'
-    - '/etc/systemd/system/alertmanager.service'
+    - '{{ systemd_dir }}/prometheus.service'
+    - '{{ systemd_dir }}/node-exporter.service'
+    - '{{ systemd_dir }}/alertmanager.service'
     - "{{ systemd_dir }}/field-exporter.service"
-    - '/etc/systemd/system/prom-am-executor.service'
-    - '/etc/systemd/system/iota-prom-exporter.service'
+    - '{{ systemd_dir }}/iota-prom-exporter.service'
+    - '{{ systemd_dir }}/grafana-server.service'
+    - '{{ systemd_dir }}/cadvisor.service'
+    - "{{ config_dir }}/iota-prom-exporter"
+    - "{{ config_dir }}/prometheus"
+    - "{{ config_dir }}/alertmanager"
+    - "{{ config_dir }}/node-exporter"
+    - "{{ config_dir }}/grafana-server"
+    - "{{ config_dir }}/field-exporter"
+    - "{{ config_dir }}/cadvisor"
 
 - name: remove monitoring related files and paths
   file:
@@ -125,19 +101,49 @@
     - "{{ prom_datadir}}"
     - "{{ prom_configdir }}"
     - '/etc/rsyslog.d/node_exporter.conf'
-    - '/etc/nginx/conf.d/alertmanager.conf'
-    - '/etc/nginx/conf.d/prometheus.conf'
-    - '/etc/nginx/conf.d/grafana.conf'
 
-- name: remove provisioning, datasources and dashboards directories
+- name: remove grafana directories
   file:
     path: "{{ item }}"
     state: absent
   with_items:
-    - "{{ grafana_provisioning_path }}"
-    - "{{ grafana_dashboards_path }}"
+    - "{{ grafana_basedir }}"
+    - "{{ grafana_configdir }}"
 
-- name: remove prometheus user
+- name: remove users
   user:
-    name: "{{ prom_username }}"
+    name: "{{ item }}"
     state: absent
+  with_items:
+    - "{{ grafana_username }}"
+    - "{{ prom_username }}"
+
+- name: remove container
+  docker_container:
+    name: "{{ item }}"
+    state: absent
+  ignore_errors: yes
+  with_items:
+    - "prometheus"
+    - "grafana-server"
+    - "alertmanager"
+    - "iota-prom-exporter"
+    - "node-exporter"
+    - "field-exporter"
+    - "cadvisor"
+
+- name: 'remove monitoring images...'
+  docker_image:
+    name: "{{ item.image }}"
+    tag: "{{ item.tag }}"
+    state: absent
+    force: yes
+  ignore_errors: yes
+  with_items:
+    - { "image": "{{ prom_image }}", "tag": "{{ prom_tag }}" }
+    - { "image": "{{ alertmanager_image }}", "tag": "{{ alertmanager_tag }}" }
+    - { "image": "{{ grafana_image }}", "tag": "{{ grafana_tag }}" }
+    - { "image": "{{ exporter_image }}", "tag": "{{ exporter_tag }}" }
+    - { "image": "{{ iota_prom_exporter_image }}", "tag": "{{ iota_prom_exporter_tag }}" }
+    - { "image": "{{ field_exporter_image }}", "tag": "{{ field_exporter_tag }}" }
+    - { "image": "{{ cadvisor_image }}", "tag": "{{ cadvisor_tag }}" }

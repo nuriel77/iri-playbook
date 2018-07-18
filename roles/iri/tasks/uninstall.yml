@@ -84,7 +84,7 @@
         port: "{{ iri_tcp_port }}"
         delete: yes
 
-    - name: reemove iri udp port in firewall
+    - name: remove iri udp port in firewall
       ufw:
         rule: allow
         direction: in
@@ -117,3 +117,17 @@
     name: "{{ iri_username }}"
     state: absent
     remove: yes
+
+- name: delete container
+  docker_container:
+    name: iri
+    state: absent
+  ignore_errors: yes
+
+- name: remove iri image
+  docker_image:
+    state: absent
+    force: yes
+    name: "{{ iri_image }}"
+    tag: "{{ iri_tag }}"
+  ignore_errors: yes

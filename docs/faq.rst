@@ -56,7 +56,7 @@ This will output 2 numbers which should be equal.
 
 You can install ``jq``:
 
-**Ubuntu**: ``apt-get install jq -y``
+**Ubuntu/Debian**: ``apt-get install jq -y``
 
 **Centos**: ``yum install jq -y``
 
@@ -165,7 +165,7 @@ It is possible to add these options to the IRI configuration file (or startup co
 
 If you have used this installation's tutorial / automation, you will find the configuration file in the following location::
 
-  On Ubuntu: /etc/default/iri
+  On Ubuntu/Debian: /etc/default/iri
   On CentOS: /etc/sysconfig/iri
 
 You will see the OPTIONS variable, so you can tweak it like so::

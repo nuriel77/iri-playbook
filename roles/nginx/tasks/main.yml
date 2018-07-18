@@ -1,0 +1,8 @@
+- import_tasks: role.yml
+  tags:
+    - nginx_role
+  when: >
+       (install_nginx is defined and
+        install_nginx|bool == True) or
+       (uninstall_playbook is defined and
+        uninstall_playbook|bool == True)

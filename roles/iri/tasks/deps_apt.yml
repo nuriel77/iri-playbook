@@ -8,69 +8,9 @@
 - name: Install software-properties-common
   apt: state=latest name=software-properties-common update_cache=yes
 
-- name: install oracle java
-  block:
-
-    - name: stat oracle java directory
-      stat:
-        path: "/opt/jdk/{{ oracle_java_dir }}"
-      register: oracle_java_dir_stat
-      tags:
-        - oracle_java_tar
-
-    - name: Download java jdk tar
-      get_url:
-        url: "{{ oracle_java_tar }}"
-        dest: /tmp/jdk.x86_64.tgz
-        headers:
-          Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
-        validate_certs: no
-        force: yes
-        timeout: 45
-      retries: 3
-      delay: 3
-      when: not oracle_java_dir_stat.stat.exists
-      register: jdk_downloaded
-      until: jdk_downloaded is succeeded
-      tags:
-        - download_jdk_tar
-        - oracle_java_tar
-
-    - name: ensure target path for jdk exists
-      file:
-        path: "/opt/jdk"
-        state: directory
-      tags:
-        - oracle_java_tar
-
-    - name: unarchive java tar
-      unarchive:
-        src: /tmp/jdk.x86_64.tgz
-        dest: "/opt/jdk"
-        copy: no
-      when: >
-            not oracle_java_dir_stat.stat.exists or
-            (jdk_downloaded and jdk_downloaded.changed)
-      tags:
-        - oracle_java_tar
-
-    - name: set java environment
-      shell: "update-alternatives --install /usr/bin/java java /opt/jdk/{{ oracle_java_dir }}/bin/java 10000"
-      register: java_env
-      changed_when: "java_env.stdout != ''"
-
-    - name: set javac environment
-      shell: "update-alternatives --install /usr/bin/javac javac /opt/jdk/{{ oracle_java_dir }}/bin/javac 10000"
-      register: javac_env
-      changed_when: "javac_env.stdout != ''"
-
-  tags:
-    - oracle_java
-
 - name: Install some packages
   apt: state=latest name={{ item }} update_cache=yes
   with_items:
-    - maven
     - jq
     - ufw
     - wget
@@ -85,15 +25,10 @@
     - openssl
     - bsdmainutils
     - whiptail
+    - python-pip
+    - python3-pip
+    - python-passlib
+    - apache2-utils
   tags:
     - deps
     - scripts
-
-- name: set java home environment
-  lineinfile:
-    path: /etc/environment
-    regexp: '^JAVA_HOME'
-    line: 'JAVA_HOME="/opt/jdk/{{ oracle_java_dir }}"'
-  when: jdk_downloaded is defined and jdk_downloaded.changed
-  tags:
-    - oracle_java

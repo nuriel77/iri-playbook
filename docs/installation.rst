@@ -16,7 +16,7 @@ First, it is always a good practice to check for updates on the server.
 Update System Packages
 ======================
 
-For **Ubuntu** we type:
+For **Ubuntu/Debian** we type:
 
 .. code-block:: bash
 
@@ -36,7 +36,7 @@ Reboot Required?
 
 Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
 
-For **Ubuntu** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``::
+For **Ubuntu/Debian** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``::
 
   # ls -l /var/run/reboot-required
   -rw-r--r-- 1 root root 32 Dec  8 10:09 /var/run/reboot-required
@@ -79,7 +79,9 @@ This playbook installs required dependencies, the IOTA IRI package and IOTA Peer
 In addition, it configures firewalls and places some handy files for us to control these services.
 
 To install Ansible on **Ubuntu** I refer to the `official documentation <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt
--ubuntu>`_:
+-ubuntu>`_
+
+To install Ansible on **Debian** I refer to the `official documentation >https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-debian>`_
 
 .. code:: bash
 
@@ -165,8 +167,8 @@ Create a new variable file called **group_vars/all/z-override.yml** and set a us
 
 .. code:: bash
 
-   iotapm_nginx_user: someuser
-   iotapm_nginx_password: 'put-a-strong-password-here'
+   fullnode_user: someuser
+   fullnode_user_password: 'put-a-strong-password-here'
 
 
 You can always add new users after the installation has finished:
@@ -334,7 +336,7 @@ Note that in those two steps we are configurinig the variables files directly. P
 
 As mentioned earlier: currently, the fullnode monitoring depends on nginx being installed.
 
-3. In the same file ``group_vars/all/iotapm.yml``, if using nginx, edit ``iotapm_nginx_user`` and ``iotapm_nginx_password``. These will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
+3. In the same file ``group_vars/all/iotapm.yml``, if using nginx, edit ``fullnode_user`` and ``fullnode_user_password``. These will set the user and password with which you will be able to access Peer Manager and/or the fullnode monitoring graphs.
 
 
 * To install **IOTA Peer Manager only**, run:
@@ -423,7 +425,7 @@ View Status/Logs and configuration
 Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's log.
 
 
-* Nelson's configuration file can be found here: ``/etc/nelson/nelson.ini``.
+* Nelson's configuration file can be found here: ``/etc/nelson/config.ini``.
 
 * Nelson's data directory can be found here: ``/var/lib/nelson/data``.
 
@@ -456,7 +458,7 @@ The manual procedure to install Field:
   cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=prometheus_config_file,field_exporter,field_role -e field_enabled=yes
 
 
-This will result in Field installed and configured. You should check the configuration file at ``/etc/field/field.ini`` to configure your payout address and node's name.
+This will result in Field installed and configured. You should check the configuration file at ``/etc/field/config.ini`` to configure your payout address and node's name.
 
 
 Control Field

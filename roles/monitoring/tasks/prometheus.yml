@@ -17,15 +17,27 @@
     - "{{ prom_datadir}}"
     - "{{ prom_configdir }}"
 
+- name: 'download prometheus docker image, this can take a moment...'
+  docker_image:
+    name: "{{ prom_image }}"
+    tag: "{{ prom_tag }}"
+  tags:
+    - prometheus_docker_image
+  notify:
+    - restart prometheus
+
+- name: copy prometheus sysconfig file
+  template:
+    src: templates/prometheus.sysconfig.j2
+    dest: "{{ config_dir }}/prometheus"
+    force: "{{ overwrite | default('no') }}"
+
 - name: copy prometheus systemd service file
   template:
     src: templates/prometheus.service.j2
-    dest: /etc/systemd/system/prometheus.service
+    dest: "{{ systemd_dir }}/prometheus.service"
   notify:
-    - reload systemd
-
-- name: flush handlers
-  meta: flush_handlers
+    - restart prometheus
 
 - name: copy prometheus config
   template:
@@ -43,37 +55,19 @@
   copy:
     src: files/alert.rules.yml
     dest: "{{ prom_configdir }}/alert.rules.yml"
-    validate: "{{ prom_basedir }}/promtool check rules %s"
+    validate: '/usr/bin/docker run --rm --name promtool -v %s:/tmp/alert.rules.yml:ro,Z --entrypoint "/bin/promtool" {{ prom_image }}:{{ prom_tag }} check rules /tmp/alert.rules.yml'
   notify:
     - restart prometheus
+
+- name: Wait max 45 seconds for alertmanager port to become available
+  wait_for:
+    timeout: 45
+    port: "{{ alertmanager_port }}"
+
+- name: flush handlers
+  meta: flush_handlers
 
 - name: ensure prometheus enabled and started
   systemd:
     name: prometheus.service
     state: started
-    enabled: yes
-
-- name: copy validation script
-  copy:
-    src: ../shared-files/validate_nginx_config.sh
-    dest: /usr/local/bin/validate_nginx_config.sh
-    mode: 0755
-  when: install_nginx is defined and install_nginx
-
-- name: copy ssl.cfg nginx config
-  template:
-    src: ../shared-files/ssl.cfg.j2
-    dest: /etc/nginx/conf.d/ssl.cfg
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/ssl.conf -r"
-  when: install_nginx is defined and install_nginx
-  notify:
-    - reload nginx
-
-- name: copy prometheus nginx config
-  template:
-    src: templates/prometheus.conf.j2
-    dest: /etc/nginx/conf.d/prometheus.conf
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/prometheus.conf -r"
-  when: install_nginx is defined and install_nginx
-  notify:
-    - reload nginx

@@ -1,1 +1,12 @@
+configure_firewall: true
+install_system_deps: true
 ssh_port: 22
+
+# The username to use when accessing iota-pm
+# though the webserver
+fullnode_user: iotaadmin
+
+# The password to use when accessing iota-pm
+# through the webserver
+# PLEASE CHANGE THIS BEFORE INSTALLATION!!!
+fullnode_user_password: 'AllTangle81'

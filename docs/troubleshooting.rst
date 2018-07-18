@@ -16,11 +16,11 @@ First make sure you have the pastebin tool installed.
 
 On **CentOS**: ``yum install -y fpaste``
 
-On **Ubuntu**: ``apt-get install -y pastebinit``
+On **Ubuntu/Debian**: ``apt-get install -y pastebinit``
 
 
 
-Below are examples for Ubuntu and CentOS how to upload various files. You can tweak parameters as required.
+Below are examples for Ubuntu, Debian and CentOS how to upload various files. You can tweak parameters as required.
 
 Note that the long ``sed`` commands are there to hide IP addresses.
 
@@ -29,8 +29,8 @@ The command will return a URL link which you can share, that will open the logs 
 
 ** DO NOT COPY PASTE BLINDLY, edit commands as required before execution! **
 
-Ubuntu Logs
------------
+Ubuntu/Debian Logs
+------------------
 
 Here are a few examples. You can change the log file name if required.
 
@@ -162,7 +162,7 @@ This is how the error would look like::
   PLAY RECAP *************************************************************************************************************************************************
 
 
-This can happen for a number of reasons. It is most probably a password mismatch between what the playbook sees in ``group_vars/all/iotapm.yml`` under the value ``iotapm_nginx_password`` and perhaps the ``iotapm_nginx_user`` too.
+This can happen for a number of reasons. It is most probably a password mismatch between what the playbook sees in ``group_vars/all/iotapm.yml`` under the value ``fullnode_user_password`` and perhaps the ``fullnode_user`` too.
 
 
 Solution A
@@ -182,7 +182,7 @@ You can try to override the password when running the playbook, appending it to 
 
 .. code:: bash
 
-   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e iotapm_nginx_password=hello123
+   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e fullnode_user_password=hello123
 
 
 Solution B

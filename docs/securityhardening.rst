@@ -297,8 +297,8 @@ If the command gets an error that semanage was not found, make sure to install i
   yum -y install policycoreutils-python
 
 
-Ubuntu
-^^^^^^
+Ubuntu/Debian
+^^^^^^^^^^^^^
 
 Run:
 
