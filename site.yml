@@ -4,9 +4,12 @@
   become: true
   become_method: sudo
   roles:
+    - docker
     - iri
+    - nginx
     - iotapm
     - monitoring
-    - loadbalancer
+    - haproxy
     - nelson
     - field
+    - cleanup

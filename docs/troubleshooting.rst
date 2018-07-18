@@ -162,7 +162,7 @@ This is how the error would look like::
   PLAY RECAP *************************************************************************************************************************************************
 
 
-This can happen for a number of reasons. It is most probably a password mismatch between what the playbook sees in ``group_vars/all/iotapm.yml`` under the value ``iotapm_nginx_password`` and perhaps the ``iotapm_nginx_user`` too.
+This can happen for a number of reasons. It is most probably a password mismatch between what the playbook sees in ``group_vars/all/iotapm.yml`` under the value ``fullnode_user_password`` and perhaps the ``fullnode_user`` too.
 
 
 Solution A
@@ -182,7 +182,7 @@ You can try to override the password when running the playbook, appending it to 
 
 .. code:: bash
 
-   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e iotapm_nginx_password=hello123
+   ansible-playbook -i inventory -v site.yml --tags=monitoring_role -e fullnode_user_password=hello123
 
 
 Solution B

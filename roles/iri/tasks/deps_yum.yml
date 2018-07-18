@@ -1,52 +1,4 @@
 # --- CentOS
-- name: check jdk installed
-  shell: "rpm -qa|grep -q ^jdk1.8"
-  args:
-    warn: false
-  register: check_jdk
-  failed_when: false
-  changed_when: false
-  tags:
-    - oracle_java_rpm
-    - oracle_java
-
-- name: 'Downloading java jdk rpm, this can take a moment...'
-  get_url:
-    url: "{{ oracle_java_rpm }}"
-    dest: /tmp/jdk-oracle.x86_64.rpm
-    headers:
-      Cookie: 'gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'
-    validate_certs: no
-    force: yes
-    timeout: 45
-  when: check_jdk.rc == 1
-  retries: 3
-  delay: 3
-  register: dl_oracle_java
-  until: dl_oracle_java is succeeded
-  tags:
-    - download_jdk_rpm
-    - oracle_java_rpm
-    - oracle_java
-
-- name: yum install oracle java rpm
-  yum:
-    name: /tmp/jdk-oracle.x86_64.rpm
-    state: present
-  when: dl_oracle_java.changed
-  tags:
-    - oracle_java_rpm
-    - oracle_java
-
-- name: remove local jdk rpm
-  file:
-    path: /tmp/jdk-oracle.x86_64.rpm
-    state: absent
-  tags:
-    - oracle_java_rpm
-    - oracle_java
-
-# Required
 - name: Install epel-release
   yum: state=latest name=epel-release
 
@@ -68,6 +20,10 @@
     - fpaste
     - openssl
     - util-linux
+    - python-pip
+    - python-passlib
+    - httpd-tools
+    - python-pip
   tags:
     - scripts
     - deps

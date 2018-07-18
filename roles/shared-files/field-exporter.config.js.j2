@@ -8,6 +8,6 @@ module.exports = {
     field_nodes_public_ids_array: [{% for item in field_nodes_public_ids_array %}"{{ item }}"{% if loop.index < loop.length %},{% endif %}{% endfor %}],
 
     // address and port where the exporter will be bound
-    bind_address: '{{ field_exporter_bind_address }}',
+    bind_address: '0.0.0.0',
     bind_port: {{ field_exporter_bind_port }},
 }

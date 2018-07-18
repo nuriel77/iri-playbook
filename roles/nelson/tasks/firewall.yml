@@ -17,17 +17,15 @@
         - "{{ nelson_tcp_port }}"
         - "{{ nelson_gui_port }}"
 
-    - name: allow nelson gui nginx port via selinux seport
+    - name: allow nelson gui proxy port via selinux seport
       seport:
         ports: "{{ nelson_gui_port }}"
         proto: tcp
         setype: http_port_t
         state: present
-      when:
-        - install_nginx is defined and install_nginx|bool
 
   when:
-    - ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    - ansible_distribution == 'CentOS'
 
 - name: allow nelson tcp port in firewall
   ufw:

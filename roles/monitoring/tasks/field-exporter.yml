@@ -1,98 +1,38 @@
-- name: set field-exporter dirs
-  set_fact:
-    field_exporter_fulldir: "{{ prom_basedir }}/{{ field_exporter_basedir }}"
-    field_exporter_tempdir: "/tmp/field-exporter_{{ ansible_date_time.epoch }}"
-
-- name: set variables centos/redhat
-  set_fact:
-    systemd_dir: /usr/lib/systemd/system
-    config_dir: /etc/sysconfig
-    nodejs_bin: /usr/bin/node
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-- name: set variables debian/ubuntu
-  set_fact:
-    systemd_dir: /etc/systemd/system
-    config_dir: /etc/default
-    nodejs_bin: /usr/bin/nodejs
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- name: stat field-exporter basedir for git updates
-  stat:
-    path: "{{ field_exporter_fulldir }}"
-  register: field_exporter_fulldir_git
-
-- name: check field-exporter requires updates
-  shell: "cd {{ field_exporter_fulldir }} && [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\\// /g') | cut -f1) ] && echo -n 'up to date' || echo -n 'not up to date'"
-  when: field_exporter_fulldir_git.stat.exists
-  register: field_exporter_update
-  failed_when: false
-  changed_when: false
-
-- name: prepare field-exporter for updating
-  block:
-    - name: stop field-exporter
-      systemd:
-        name: field-exporter
-        state: stopped
-      failed_when: false
-
-    - name: force remove field-exporter
-      set_fact:
-        remove_field_exporter_basedir: true
-
-  when: "'stdout' in field_exporter_update and field_exporter_update.stdout == 'not up to date'"
-
-- name: remove existing field-exporter dir
-  file:
-    path: "{{ field_exporter_fulldir }}"
-    state: absent
-  when: >
-        remove_field_exporter_basedir is defined and
-        remove_field_exporter_basedir|bool
-
-# Check if needs (re)downloading
-- name: stat field-exporter basedir
-  stat:
-    path: "{{ field_exporter_fulldir }}"
-  register: field_exporter_fulldir_stat
-
-- name: clone field-exporter repository
-  git:
-    repo: 'https://github.com/DaveRingelnatz/field_exporter.git'
-    dest: "{{ field_exporter_tempdir }}"
-    force: yes
-  when: not field_exporter_fulldir_stat.stat.exists
-  register: field_exporter_git
-
-- name: move field-exporter temp dir to its final location
-  shell: "mv {{ field_exporter_tempdir }} {{ field_exporter_fulldir }}"
-  when: field_exporter_git and field_exporter_git.changed
-
-- name: set ownership on field-exporter path
-  file:
-    path: "{{ field_exporter_fulldir }}"
-    state: directory
-    recurse: yes
-    owner: "{{ prom_username }}"
-
-- name: install field-exporter
-  shell: "cd {{ field_exporter_fulldir }} && npm install"
-  become: yes
-  become_user: "{{ prom_username }}"
-  when: field_exporter_git and field_exporter_git.changed
-
 - name: set empty fact
   set_fact:
     field_public_id: ''
 
+- name: ensure config directory exists for field-exporter
+  file:
+    path: "{{ field_exporter_configdir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+
+- name: 'download field_exporter docker image, this can take a moment...'
+  docker_image:
+    name: "{{ field_exporter_image }}"
+    tag: "{{ field_exporter_tag }}"
+  tags:
+    - field_exporter_docker_image
+  notify:
+    - restart field-exporter
+
 - name: install field-exporter config
   template:
     src: ../shared-files/field-exporter.config.js.j2
-    dest: "{{ field_exporter_fulldir }}/config.js"
+    dest: "{{ field_exporter_configdir }}/config.js"
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
     force: "{{ overwrite | default('no') }}"
+  notify:
+    - restart field-exporter
+
+- name: copy field-exporter sysconfig file
+  template:
+    src: field-exporter.sysconfig.j2
+    dest: "{{ config_dir }}/field-exporter"
   notify:
     - restart field-exporter
 
@@ -102,6 +42,9 @@
     dest: "{{ systemd_dir }}/field-exporter.service"
   notify:
     - restart field-exporter
+
+- name: flush handlers
+  meta: flush_handlers
 
 - name: start and enable field-exporter
   systemd:

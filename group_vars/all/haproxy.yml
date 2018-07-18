@@ -1,0 +1,98 @@
+# HAProxy docker image
+haproxy_image: haproxy
+
+# Haproxy image tag
+haproxy_tag: 1.8.9
+
+# Haproxy nameservers for dns resolution
+haproxy_nameservers:
+  - '8.8.8.8:53'
+  - '8.8.4.4:53'   
+
+# haproxy admin socket address. Comment to disable.
+haproxy_admin_address: 127.0.0.1:9999
+
+# haproxy admin socket file. Comment to disable.
+haproxy_admin_socket: /var/run/hapee-lb.sock
+
+# Change to 0.0.0.0 to bind to all interfaces (expose remotely)
+lb_bind_address: 127.0.0.1
+
+# This will be the external accessible port
+iri_api_port_remote: 14267
+
+# Max connections to API
+iri_api_max_connections: 12
+
+# Enable remote auth with password (uses the same as iotapm/grafana)
+iri_remote_auth: false
+
+# Load balancer max connections (all backends)
+lb_max_connections: 24
+
+# Stats port for haproxy
+haproxy_stats_port: 9292
+
+# Stats bind to address
+haproxy_stats_address: 127.0.0.1
+
+haproxy_dir: '/opt/haproxy'
+haproxy_username: haproxy
+haproxy_base_version: 1.8
+haproxy_min_version: 3
+
+# Enable haproxy https
+haproxy_https: false
+
+# Default bind options for haproxy https
+haproxy_default_bind_options: 'no-sslv3 no-tls-tickets'
+
+# Default bind ciphers for haproxy https
+haproxy_default_bind_ciphers: 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
+
+# Frontend response headers for https
+haproxy_https_response_headers:
+  - 'Strict-Transport-Security "max-age=31536000; includeSubdomains; preload;"'
+  - 'X-Frame-Options DENY'
+  - 'X-Content-Type-Options nosniff'
+
+# A list of IPs to whitelist on haproxy
+# The IPs in this list will override command
+# limitations and rate limiting rules.
+haproxy_whitelist_file: /etc/haproxy/whitelist.lst
+
+# If set to `false`, the list of IPs below will be
+# written to the haproxy config and managed in
+# the haroxy config file only. If set to `true`,
+# the above file will be used to whitelist IPs.
+haproxy_use_whitelist_file: false
+
+# A list of IPs to whitelist on haproxy
+# This will allow those IPs to bypass command 
+# regex limitations. The format is a yaml list
+# thus ['value', 'value'] or `- value` on each
+# new line.
+haproxy_whitelist:
+  - 127.0.0.1
+#   - 10.20.30.40/22 # -> example IP with cidr notation
+
+# Commands to deny access to
+haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'
+
+# Bad commands regex example
+haproxy_bad_command: '\"getTransactionsToApprove\"(.*)GFCCGTGSUEVBZYFK9QNAHOVHXUMEATUFLGBZLDKMOGWCXVUZDVEJVCLLCJJ9NQOIMOLMUMFMGZSI99999'
+
+# Maximum open file limit for haproxy
+haproxy_nofile_limit: 65000
+
+# HAProxy docker mounts
+haproxy_mounts:
+  - /etc/haproxy:/usr/local/etc/haproxy:ro,Z
+  - /etc/ssl:/etc/ssl:ro,Z
+  - /etc/letsencrypt:/etc/letsencrypt:ro,Z
+  - /dev/log:/dev/log:Z
+  - /etc/localtime:/etc/localtime:ro,Z
+
+# Certbot docker image
+certbot_image: nuriel77/certbot
+certbot_tag: latest

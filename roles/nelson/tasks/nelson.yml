@@ -2,18 +2,12 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
-    nodejs_bin: /usr/bin/node
-    nelson_bin: /bin/nelson
-    nelson_gui_bin: /usr/bin/nelson.gui
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
-    systemd_dir: /etc/systemd/system
+    systemd_dir: /lib/systemd/system
     config_dir: /etc/default
-    nodejs_bin: /usr/bin/nodejs
-    nelson_bin: /usr/bin/nelson
-    nelson_gui_bin: /usr/bin/nelson.gui
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: add user to run nelson as
@@ -24,6 +18,11 @@
     home: "{{ nelson_datadir }}"
   tags:
     - nelson_user
+
+- name: get nelson user uid
+  shell: "echo -n $(id -u {{ nelson_username }})"
+  changed_when: false
+  register: nelson_uid
 
 - name: create nelson data and config directory
   file:
@@ -38,8 +37,8 @@
 
 - name: copy nelson config
   template:
-    src: "templates/nelson.ini.j2"
-    dest: "{{ nelson_configdir }}/nelson.ini"
+    src: "templates/config.ini.j2"
+    dest: "{{ nelson_configdir }}/config.ini"
     owner: "{{ nelson_username }}"
     group: "{{ nelson_username }}"
     mode: 0600
@@ -57,27 +56,54 @@
   notify:
     - restart nelson-gui
 
-- name: copy systemd service file
+- name: copy nelson environment configuration file
+  template:
+    src: templates/nelson.sysconfig.j2
+    dest: "{{ config_dir }}/nelson"
+    force: "{{ overwrite | default('no') }}"
+  notify:
+    - restart nelson
+
+- name: copy nelson systemd service file
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "{{ systemd_dir }}/{{ item }}"
+    force: "{{ overwrite | default('no') }}"
+  with_items:
+    - nelson.service
+  notify:
+    - restart nelson
+
+- name: copy nelson gui systemd service file
   template:
     src: "templates/{{ item }}.j2"
     dest: "{{ systemd_dir }}/{{ item }}"
   with_items:
-    - nelson.service
     - nelson-gui.service
   notify:
-    - reload systemd
+    - restart nelson-gui
+
+- name: 'download nelson images, this can take a moment...'
+  docker_image:
+    name: "{{ item.image }}"
+    tag: "{{ item.tag }}"
+  with_items:
+    - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
+    - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }
+  tags:
+    - nelson_docker_images
+  notify:
+    - restart nelson
+    - restart nelson-gui
 
 - name: flush handlers
   meta: flush_handlers
 
-- name: ensure nelson started and enabled
+- name: ensure nelson services started and enabled
   systemd:
-    name: nelson.service
+    name: "{{ item }}"
     state: started
     enabled: yes
-
-- name: ensure nelson-gui started and enabled
-  systemd:
-    name: nelson-gui.service
-    state: started
-    enabled: yes
+  with_items:
+    - nelson.service
+    - nelson-gui.service

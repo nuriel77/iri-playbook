@@ -1,27 +1,30 @@
 [Unit]
-Description=IOTA Nelson
+Description=Nelson
+After=docker.service
+Requires=docker.service
 
 [Service]
-WorkingDirectory={{ nelson_datadir }}
-ExecStart={{ nodejs_bin }} {{ nelson_bin }} --config {{ nelson_configdir }}/nelson.ini
-ExecReload=/bin/kill -HUP $MAINPID
-KillMode=mixed
-KillSignal=SIGTERM
-Restart=on-failure
-RestartSec=30
-Type=simple
-TimeoutStopSec=60
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-{{ config_dir }}/nelson
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname nelson \
+  --user {{ nelson_uid.stdout }} \
+  --net={{ iri_net_name }} \
+  --cap-drop=ALL \
+  -v {{ nelson_datadir }}:/var/lib/nelson/data:Z \
+  -v {{ nelson_configdir }}:/etc/nelson:ro,Z \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -p ${NELSON_API_HOST}:${API_PORT}:${API_PORT} \
+  -p ${TCP_PORT}:${TCP_PORT}  \
+  -e NELSON_CONFIG=${NELSON_CONFIG} \
+  $DOCKER_OPTS \
+  {{ nelson_image }}:${TAG}
 
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=nelson
-User={{ nelson_username }}
-Group={{ nelson_username }}
-# Restrict process
-PrivateDevices=yes
-PrivateTmp=yes
-ProtectSystem=full
-ProtectHome=yes
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

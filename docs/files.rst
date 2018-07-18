@@ -38,7 +38,7 @@ Prometheus configuration file::
 
 IOTA-Prom-Exporter configuration file::
 
-  /opt/prometheus/iota-prom-exporter/config.js
+  /var/lib/iota-prom-exporter/config.js
 
 Alert Manager configuration file::
 
@@ -50,12 +50,12 @@ HAProxy configuration file::
 
 Nelson configuration file::
 
-  /etc/nelson/nelson.ini
+  /etc/nelson/config.ini
 
 Field configuration file::
 
-  /etc/field/field.ini
+  /etc/field/config.ini
 
 Field Exporter configuration file::
 
-  /opt/prometheus/field_exporter/config.js
+  /etc/field-exporter/config.js

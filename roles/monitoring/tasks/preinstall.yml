@@ -1,0 +1,49 @@
+- name: set variables centos/redhat
+  set_fact:
+    systemd_dir: /usr/lib/systemd/system
+    config_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    systemd_dir: /lib/systemd/system
+    config_dir: /etc/default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: add user to run prometheus as
+  user:
+    name: "{{ prom_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ prom_basedir }}"
+  tags:
+    - prom_user
+
+- name: get prometheus user uid
+  shell: "echo -n $(id -u {{ prom_username }})"
+  changed_when: false
+  register: promuser_uid
+  tags:
+    - prom_user
+
+- name: remove existing prometheus basedir
+  file:
+    path: "{{ prom_basedir }}"
+    state: absent
+  when: remove_prom_basedir is defined and remove_prom_basedir
+
+- name: ensure prometheurs basedir ownership and permissions
+  file:
+    path: "{{ prom_basedir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+
+- name: ensure alertmanager basedir ownership and permissions
+  file:
+    path: "{{ alertmanager_basedir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"

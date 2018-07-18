@@ -1,4 +1,4 @@
-- name: restart grafana
+- name: restart grafana-server
   systemd:
     name: grafana-server.service
     daemon_reload: yes
@@ -11,6 +11,11 @@
     daemon_reload: yes
     state: restarted
     enabled: yes
+
+- name: reload prometheus
+  systemd:
+    name: prometheus.service
+    state: reloaded
 
 - name: restart alertmanager
   systemd:
@@ -33,9 +38,16 @@
     state: restarted
     enabled: yes
 
-- name: restart prom-am-executor
+- name: restart node-exporter
   systemd:
-    name: prom-am-executor.service
+    name: node-exporter.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
+- name: restart cadvisor
+  systemd:
+    name: cadvisor.service
     daemon_reload: yes
     state: restarted
     enabled: yes

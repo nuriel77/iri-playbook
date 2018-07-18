@@ -1,0 +1,31 @@
+upstream grafana {
+    server 127.0.0.1:{{ grafana_port }};
+}
+
+# Rate limit requests
+limit_req_zone $binary_remote_addr zone=grafana:{{ nginx_shared_mem_rate_limit | default('2m') }} rate=125r/s;
+
+server {
+    limit_req zone=grafana burst=350;
+    listen {{ grafana_proxy_port }} default_server ssl http2;
+    server_name _;
+    server_tokens off;
+
+    # Redirect same port from http to https
+    error_page 497 https://$host:$server_port$request_uri;
+
+    # Include SSL Directives
+    include /etc/nginx/conf.d/ssl.cfg;
+
+    #auth_basic "Restricted";
+    #auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location / {
+        proxy_pass http://grafana;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

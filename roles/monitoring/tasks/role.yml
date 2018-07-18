@@ -1,18 +1,19 @@
-- import_tasks: deps.yml
+- import_tasks: preinstall.yml
   tags:
-    - monitoring_deps
+    - monitoring_preinstall
 
 - import_tasks: firewall.yml
   tags:
     - monitoring_firewall
-
-- import_tasks: prometheus.yml
-  tags:
-    - prometheus_config
+  when: configure_firewall is defined and configure_firewall|bool == True
 
 - import_tasks: alertmanager.yml
   tags:
     - alertmanager_config
+
+- import_tasks: prometheus.yml
+  tags:
+    - prometheus_config
 
 - import_tasks: node_exporter.yml
   tags:
@@ -20,22 +21,23 @@
 
 - import_tasks: iota-prom-exporter.yml
   tags:
-    - iota_prom_exporter
+    - iota_prom_exporter_config
 
 - import_tasks: field-exporter.yml
   tags:
     - field_exporter
-  when: >
-        field_enabled is defined and
-        field_enabled|bool == true
+    - field_exporter_config
+  when:
+    - field_enabled is defined
+    - field_enabled|bool == True
 
 - import_tasks: grafana.yml
   tags:
     - grafana_config
 
-- import_tasks: prom-am-executor.yml
+- import_tasks: cadvisor.yml
   tags:
-    - prom_am_executor
+    - cadvisor_config
 
 - import_tasks: uninstall.yml
   tags:

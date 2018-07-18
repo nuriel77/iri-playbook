@@ -2,24 +2,28 @@
 Description=IOTA Peer Manager
 
 [Service]
+TimeoutStartSec=0
+Restart=always
 EnvironmentFile=-{{ config_dir }}/iota-pm
-ExecStart={{ nodejs_bin }} {{ iotapm_bin }} -r ${REFRESH} -p ${BIND} -i ${IRI}
-ExecReload=/bin/kill -HUP $MAINPID
-KillMode=process
-Restart=on-failure
-RestartSec=10
-Type=simple
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --hostname %p \
+  --user {{ iotapm_uid.stdout }} \
+  --net={{ iri_net_name }} \
+  --cap-drop=ALL \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  -v /var/spool/iotapm/iota-pm.conf:/opt/iota-pm/iota-pm.conf \
+  -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+  -e IOTA_NODE=${IRI_ADDRESS} \
+  -e HTTP_PORT=${BIND_PORT} \
+  -e HOME=/opt/iota-pm \
+  -e REFRESH=${REFRESH} \
+  $DOCKER_OPTS \
+  {{ iotapm_image }}:${TAG}
 
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=iotapm
-User={{ iotapm_username }}
-Group={{ iotapm_username }}
-# Restrict process
-PrivateDevices=yes
-PrivateTmp=yes
-ProtectSystem=full
-ProtectHome=yes
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

@@ -3,6 +3,15 @@
     path: "{{ alertmanager_basedir }}/template"
     state: directory
 
+- name: 'download alertmanager docker image, this can take a moment...'
+  docker_image:
+    name: "{{ alertmanager_image }}"
+    tag: "{{ alertmanager_tag }}"
+  tags:
+    - alertmanager_docker_image
+  notify:
+    - restart alertmanager
+
 - name: copy email template for alertmanager
   template:
     src: templates/email.tmpl.j2
@@ -10,15 +19,20 @@
     force: "{{ overwrite | default('no') }}"
     backup: yes
 
+- name: copy alertmanager sysconfig file
+  template:
+    src: templates/alertmanager.sysconfig.j2
+    dest: "{{ config_dir }}/alertmanager"
+    force: "{{ overwrite | default('no') }}"
+  notify:
+    - restart alertmanager
+
 - name: copy alertmanager systemd service file
   template:
     src: templates/alertmanager.service.j2
-    dest: /etc/systemd/system/alertmanager.service
+    dest: "{{ systemd_dir }}/alertmanager.service"
   notify:
-    - reload systemd
-
-- name: flush handlers
-  meta: flush_handlers
+    - restart alertmanager
 
 - name: copy alertmanager config
   template:
@@ -32,18 +46,11 @@
   notify:
     - restart alertmanager
 
+- name: flush handlers
+  meta: flush_handlers
+
 - name: ensure alertmanager enabled and started
   systemd:
     name: alertmanager.service
     state: started
     enabled: yes
-
-- name: copy alertmanager nginx config
-  template:
-    src: templates/alertmanager.conf.j2
-    dest: /etc/nginx/conf.d/alertmanager.conf
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/alertmanager.conf -r"
-  when: install_nginx is defined and install_nginx
-  notify:
-    - reload nginx
-

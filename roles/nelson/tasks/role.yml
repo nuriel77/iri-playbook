@@ -1,18 +1,11 @@
-- import_tasks: deps.yml
-  tags:
-    - nelson_deps
-
 - import_tasks: firewall.yml
   tags:
     - nelson_firewall
+  when: configure_firewall is defined and configure_firewall|bool == True
 
 - import_tasks: nelson.yml
   tags:
     - nelson_config
-
-- import_tasks: proxy-gui.yml
-  tags:
-    - proxy_gui
 
 - import_tasks: uninstall.yml
   tags:

@@ -1,32 +1,74 @@
+- name: add user to run grafana as
+  user:
+    name: "{{ grafana_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ grafana_basedir }}"
+  tags:
+    - prom_user
+
+- name: get grafana user uid
+  shell: "echo -n $(id -u {{ grafana_username }})"
+  changed_when: false
+  register: grafana_uid
+  tags:
+    - grafana_user
+
+- name: create grafana config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+    owner: "{{ grafana_username }}"
+    group: "{{ grafana_username }}"
+  with_items:
+    - "{{ grafana_configdir }}"
+    - "{{ grafana_provisioning_path }}"
+    - "{{ grafana_basedir }}"
+    - "{{ grafana_dashboards_path }}"
+
+- name: 'download grafana docker image, this can take a moment...'
+  docker_image:
+    name: "{{ grafana_image }}"
+    tag: "{{ grafana_tag }}"
+  tags:
+    - grafana_docker_image
+  notify:
+    - restart grafana-server
+
+- name: copy grafana sysconfig file
+  template:
+    src: templates/grafana.sysconfig.j2
+    dest: "{{ config_dir }}/grafana-server"
+    force: "{{ overwrite | default('no') }}"
+
+- name: copy grafana systemd service file
+  template:
+    src: templates/grafana-server.service.j2
+    dest: "{{ systemd_dir }}/grafana-server.service"
+  notify:
+    - restart grafana-server
+
 - name: copy grafana new config file
   template:
     src: templates/grafana.ini.j2
     dest: /etc/grafana/grafana.ini
+    force: "{{ overwrite | default('no') }}"
     backup: yes
+    owner: "{{ grafana_username }}"
+    group: "{{ grafana_username }}"
+    mode: 0600
   notify:
-    - restart grafana
+    - restart grafana-server
+
+- name: flush handlers
+  meta: flush_handlers
 
 - name: start and enable grafana service
   systemd:
     name: grafana-server
     state: started
     enabled: yes
-
-- name: copy validation script
-  copy:
-    src: ../shared-files/validate_nginx_config.sh
-    dest: /usr/local/bin/validate_nginx_config.sh
-    mode: 0755
-  when: install_nginx is defined and install_nginx|bool
-
-- name: copy grafana nginx config
-  template:
-    src: templates/grafana.conf.j2
-    dest: /etc/nginx/conf.d/grafana.conf
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d conf.d/grafana.conf -r"
-  when: install_nginx is defined and install_nginx|bool
-  notify:
-    - reload nginx
 
 - name: flush handlers
   meta: flush_handlers
@@ -51,14 +93,14 @@
     src: templates/grafana.datasources.prov.yaml.j2
     dest: "{{ grafana_provisioning_path }}/datasources/grafana.datasources.prov.yaml"
   notify:
-    - restart grafana
+    - restart grafana-server
 
 - name: copy default dashboard provisioning file
   template:
     src: templates/grafana.dashboards.prov.yaml.j2
     dest: "{{ grafana_provisioning_path }}/dashboards/grafana.dashboards.prov.yaml"
   notify:
-    - restart grafana
+    - restart grafana-server
 
 - name: copy dashboards
   copy:
@@ -68,13 +110,14 @@
     - "iota_exporter_dashboard.json"
     - "prometheus_dashboard.json"
     - "node_exporter_dashboard.json"
+    - "cadvisor_dashboard.json"
 
-- name: copy field-exporter dashboard
-  copy:
-    src: "{{ field_exporter_fulldir }}/dashboards/field_exporter_dashboard_grafana.json"
+- name: get field-exporter dashboard
+  get_url:
+    url: "{{ field_exporter_dashboard_url }}"
     dest: "{{ grafana_dashboards_path }}/field_exporter_dashboard.json"
-  when: >
-        field_enabled is defined and
-        field_enabled|bool == true
+  when:
+    - field_enabled is defined
+    - field_enabled|bool == True
   tags:
     - field_exporter

@@ -1,4 +1,6 @@
-prom_version: 2.0.0
+# Prometheus
+prom_image: prom/prometheus
+prom_tag: v2.3.2
 prom_username: prometheus
 prom_basedir: /opt/prometheus
 prom_datadir: /var/lib/prometheus
@@ -6,31 +8,38 @@ prom_configdir: /etc/prometheus
 prom_config: prometheus.yaml
 prom_port: 9090
 prom_bind_address: 127.0.0.1
-prom_nginx_port: 8999
+prom_proxy_port: 8999
 
-exporter_version: 0.15.2
+# Node exporter
+exporter_image: prom/node-exporter
+exporter_tag: v0.15.2
 exporter_basedir: /opt/prometheus/node_exporter
 exporter_port: 9100
 exporter_bind_address: 127.0.0.1
 
-nodesource_version: 8
-# Here path provided and full path constructed in task
-iota_prom_exporter_basedir: iota-prom-exporter
+# IOTA Prometheus Exporter
+iota_prom_exporter_image: bambash/iota-prom-exporter
+iota_prom_exporter_tag: latest
+iota_prom_exporter_basedir: /var/lib/iota-prom-exporter
 iota_prom_exporter_port: 9311
 iota_prom_exporter_bind: 127.0.0.1
 iota_prom_exporter_market_data: true
 iota_prom_exporter_db_days_retention: 14
 
+# Field exporter
+field_exporter_image: nuriel77/field_exporter
+field_exporter_tag: latest
 field_exporter_bind_port: 9337
 field_exporter_bind_address: 127.0.0.1
-# Here path provided and full path constructed in task
-field_exporter_basedir: field_exporter 
+field_exporter_configdir: /etc/field-exporter
+field_exporter_dashboard_url: 'https://raw.githubusercontent.com/DaveRingelnatz/field_exporter/master/dashboards/field_exporter_dashboard_grafana.json'
 
-# Here (legacy) has been provided the full path
+# Alertmanager
 alertmanager_basedir: /opt/prometheus/alertmanager
-alertmanager_version: 0.12.0
+alertmanager_image: prom/alertmanager
+alertmanager_tag: v0.15.1
 alertmanager_port: 9093
-alertmanager_nginx_port: 9993
+alertmanager_proxy_port: 9993
 alertmanager_bind: 127.0.0.1
 alertmanager_email_from: alertmanager
 alertmanager_email_to: root@localhost
@@ -38,4 +47,8 @@ alertmanager_loglevel: info
 smtp_host: localhost
 smtp_port: 25
 
-prom_am_executor_port: 9158
+# cAdvisor
+cadvisor_image: google/cadvisor
+cadvisor_tag: latest
+cadvisor_bind_address: 127.0.0.1
+cadvisor_port: 8181
