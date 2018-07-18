@@ -20,7 +20,7 @@
     proto: tcp
     port: "{{ field_tcp_port }}"
     delete: yes
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: set variables centos/redhat
   set_fact:
@@ -32,7 +32,7 @@
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: remove field files
   file:

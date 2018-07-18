@@ -48,4 +48,4 @@
     - "{{ prom_proxy_port }}"
     - "{{ grafana_proxy_port }}"
     - "{{ alertmanager_proxy_port }}"
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

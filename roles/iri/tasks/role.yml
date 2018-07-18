@@ -2,7 +2,7 @@
   tags:
     - iri_deps_apt
   when:
-    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     - install_system_deps is defined and install_system_deps|bool == True
 
 - import_tasks: deps_yum.yml
@@ -31,7 +31,7 @@
   tags:
     - iri_ufw
   when:
-    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     - configure_firewall is defined and configure_firewall|bool == True
 
 - import_tasks: iri.yml

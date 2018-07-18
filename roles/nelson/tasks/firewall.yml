@@ -36,4 +36,4 @@
   with_items:
     - "{{ nelson_tcp_port }}"
     - "{{ nelson_gui_port }}"
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

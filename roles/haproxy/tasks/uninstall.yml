@@ -8,7 +8,7 @@
   set_fact:
     systemd_dir: /lib/systemd/system
     config_dir: /etc/default
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: remove iri api port remote in firewall
   firewalld:
@@ -45,12 +45,12 @@
         - "{{ haproxy_stats_port }}"
 
   ignore_errors: yes
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: set etc config dir ubuntu
   set_fact:
     etc_config_dir: default
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: set etc config dir centos
   set_fact:

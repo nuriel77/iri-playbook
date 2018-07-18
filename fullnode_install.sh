@@ -173,6 +173,27 @@ function init_ubuntu(){
     apt-get install ansible git expect-dev tcl libcrack2 cracklib-runtime whiptail -y
 }
 
+function init_debian(){
+    echo "Updating system packages..."
+    apt update -qqy --fix-missing
+    apt-get upgrade -y
+    apt-get clean
+    apt-get autoremove -y --purge
+
+    echo "Check reboot required..."
+    if [ -f /var/run/reboot-required ]; then
+        [ -z "$SKIP_REBOOT" ] && { inform_reboot; exit 0; }
+    fi
+
+    echo "Installing Ansible and git..."
+    local ANSIBLE_SOURCE="deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main"
+    grep -q "$ANSIBLE_SOURCE" /etc/apt/sources.list || echo "$ANSIBLE_SOURCE" >> /etc/apt/sources.list
+    apt-get install dirmngr --install-recommends -y
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+    apt-get update -y
+    apt-get install ansible git expect-dev tcl libcrack2 cracklib-runtime whiptail -y
+}
+
 function inform_reboot() {
 cat <<EOF
 
@@ -405,6 +426,14 @@ elif [[ "$OS" =~ ^Ubuntu ]]; then
     fi
     check_arch
     init_ubuntu
+elif [[ "$OS" =~ ^Debian ]]; then
+    if [[ ! "$VER" =~ ^9 ]]; then
+        echo "ERROR: $OS version $VER not supported"
+        display_requirements_url
+        exit 1
+    fi
+    check_arch
+    init_debian
 else
     echo "$OS not supported"
     exit 1

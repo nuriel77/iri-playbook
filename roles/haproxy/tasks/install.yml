@@ -5,7 +5,7 @@
       apt: state=latest name={{ item }} update_cache=yes
       with_items:
         - socat 
-      when: ansible_distribution == 'Ubuntu'
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
     - name: Install epel-release
       yum: state=latest name=epel-release

@@ -35,4 +35,4 @@
     direction: in
     proto: tcp
     port: "{{ iotapm_proxy_port }}"
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

@@ -14,7 +14,7 @@
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags:
     - nbctl_config
 

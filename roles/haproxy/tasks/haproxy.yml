@@ -8,7 +8,7 @@
   set_fact:
     systemd_dir: /lib/systemd/system
     config_dir: /etc/default
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: 'download haproxy docker image, this can take a moment...'
   docker_image:
