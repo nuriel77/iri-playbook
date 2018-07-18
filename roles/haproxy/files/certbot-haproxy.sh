@@ -81,7 +81,7 @@ function get_domain() {
 }
 
 function newCert {
-    /usr/bin/docker run \
+    /bin/docker run \
       --rm \
       --name certbot \
       -v /var/run/docker.sock:/var/run/docker.sock:Z \
@@ -98,7 +98,7 @@ function newCert {
 }
 
 function issueCert {
-    /usr/bin/docker run \
+    /bin/docker run \
       --rm \
       --name certbot \
       -v /var/run/docker.sock:/var/run/docker.sock:Z \

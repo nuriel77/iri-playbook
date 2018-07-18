@@ -77,7 +77,7 @@
     mode: 0600
     owner: "{{ haproxy_username }}"
     group: "{{ haproxy_username }}"
-    validate: "/usr/bin/docker run --name haproxy_test --rm -v %s:/usr/local/etc/haproxy/haproxy.cfg:ro,Z -v /etc/ssl:/etc/ssl:ro,Z -v /etc/letsencrypt:/etc/letsencrypt:ro,Z {{ haproxy_image }}:{{ haproxy_tag }} haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg"
+    validate: "/bin/docker run --name haproxy_test --rm -v %s:/usr/local/etc/haproxy/haproxy.cfg:ro,Z -v /etc/ssl:/etc/ssl:ro,Z -v /etc/letsencrypt:/etc/letsencrypt:ro,Z {{ haproxy_image }}:{{ haproxy_tag }} haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg"
   tags:
     - haproxy_cfg
   notify:

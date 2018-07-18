@@ -5,9 +5,9 @@ Description=Nginx
 TimeoutStartSec=0
 Restart=always
 EnvironmentFile=-{{ config_dir }}/nginx
-ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment SSL_CERTS_DIR=$(readlink -f /etc/ssl/certs)"
-ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run \
+ExecStartPre=/bin/bash -c "/bin/systemctl set-environment SSL_CERTS_DIR=$(readlink -f /etc/ssl/certs)"
+ExecStartPre=-/bin/docker rm %p
+ExecStart=/bin/docker run \
   --name %p \
   --hostname %p \
   --net=host \
@@ -22,8 +22,8 @@ ExecStart=/usr/bin/docker run \
   $DOCKER_OPTS \
   {{ nginx_image }}:${TAG}
 
-ExecStop=/usr/bin/docker stop %p
-ExecReload=/usr/bin/docker kill -s HUP %p
+ExecStop=/bin/docker stop %p
+ExecReload=/bin/docker kill -s HUP %p
 
 [Install]
 WantedBy=multi-user.target

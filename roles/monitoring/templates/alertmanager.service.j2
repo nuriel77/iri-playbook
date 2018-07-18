@@ -7,8 +7,8 @@ Requires=docker.service
 TimeoutStartSec=0
 Restart=always
 EnvironmentFile=-{{ config_dir }}/alertmanager
-ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run \
+ExecStartPre=-/bin/docker rm %p
+ExecStart=/bin/docker run \
   --name %p \
   --hostname %p \
   --user {{ promuser_uid.stdout }} \
@@ -27,8 +27,8 @@ ExecStart=/usr/bin/docker run \
   --log.level ${LOG_LEVEL} \
   --storage.path=/alertmanager/
 
-ExecStop=/usr/bin/docker stop %p
-ExecReload=/usr/bin/docker restart %p
+ExecStop=/bin/docker stop %p
+ExecReload=/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target

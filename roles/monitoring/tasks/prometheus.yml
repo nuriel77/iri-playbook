@@ -55,7 +55,7 @@
   copy:
     src: files/alert.rules.yml
     dest: "{{ prom_configdir }}/alert.rules.yml"
-    validate: '/usr/bin/docker run --rm --name promtool -v %s:/tmp/alert.rules.yml:ro,Z --entrypoint "/bin/promtool" {{ prom_image }}:{{ prom_tag }} check rules /tmp/alert.rules.yml'
+    validate: '/bin/docker run --rm --name promtool -v %s:/tmp/alert.rules.yml:ro,Z --entrypoint "/bin/promtool" {{ prom_image }}:{{ prom_tag }} check rules /tmp/alert.rules.yml'
   notify:
     - restart prometheus
 
