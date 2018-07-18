@@ -7,8 +7,8 @@ Requires=docker.service
 TimeoutStartSec=0
 Restart=always
 EnvironmentFile=-{{ config_dir }}/prometheus
-ExecStartPre=-/bin/docker rm %p
-ExecStart=/bin/docker run \
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
   --name %p \
   --hostname %p \
   --user {{ promuser_uid.stdout }} \
@@ -24,8 +24,8 @@ ExecStart=/bin/docker run \
   --storage.tsdb.path=/data/ \
   --web.listen-address=:${BIND_PORT}
 
-ExecStop=/bin/docker stop %p
-ExecReload=/bin/docker kill -s HUP %p
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker kill -s HUP %p
 
 [Install]
 WantedBy=multi-user.target

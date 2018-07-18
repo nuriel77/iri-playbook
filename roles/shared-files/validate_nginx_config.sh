@@ -4,7 +4,7 @@
 # To use when running nginx in a Docker container
 set -e
 
-DOCKER=/bin/docker
+DOCKER=/usr/bin/docker
 TEMP_CONFIG_FILENAME=
 DEST_CONFIG_FILENAME=
 REPLACE_ETC_NGINX="n"

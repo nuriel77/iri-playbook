@@ -7,8 +7,8 @@ Requires=docker.service
 TimeoutStartSec=0
 Restart=always
 EnvironmentFile=-{{ config_dir }}/cadvisor
-ExecStartPre=-/bin/docker rm %p
-ExecStart=/bin/docker run \
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run \
   --name %p \
   --hostname %p \
   --net={{ iri_net_name }} \
@@ -23,8 +23,8 @@ ExecStart=/bin/docker run \
   {{ cadvisor_image }}:${TAG} \
   -port ${BIND_PORT}
 
-ExecStop=/bin/docker stop %p
-ExecReload=/bin/docker restart %p
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target
