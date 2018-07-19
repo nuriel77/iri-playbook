@@ -18,20 +18,27 @@
     state: enabled
     immediate: yes
 
-- name: allow and rate limit api port in firewall
-  firewalld:
-    rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="24/m" accept'
-    permanent: true
-    state: enabled
-    immediate: yes
-  when: api_port_remote is defined and api_port_remote
+- name: iri default API port
+  block:
 
-- name: log api port access in firewall
-  firewalld:
-    rich_rule: 'rule port port="{{ iri_api_port }}" protocol="tcp" log prefix="iri_api" level="info" limit value="120/m"'
-    permanent: true
-    state: enabled
-    immediate: yes
+    - name: allow and rate limit api port in firewall
+      firewalld:
+        rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="120/m" accept'
+        permanent: true
+        state: enabled
+        immediate: yes
+      when: api_port_remote is defined and api_port_remote
+
+    - name: log api port access in firewall
+      firewalld:
+        rich_rule: 'rule port port="{{ iri_api_port }}" protocol="tcp" log prefix="iri_api" level="info" limit value="120/m"'
+        permanent: true
+        state: enabled
+        immediate: yes
+
+  when:
+    - api_port_remote is defined
+    - api_port_remote|bool == True
 
 - name: ensure selinux enabled
   selinux:
