@@ -28,7 +28,7 @@ ExecStart=/usr/bin/docker run \
   -e DOCKER_IRI_MONITORING_API_PORT_ENABLE=${DOCKER_IRI_MONITORING_API_PORT_ENABLE} \
   $DOCKER_OPTS \
   {{ iri_image }}:${TAG} \
-  -n "${NEIGHBORS}" \
+  -n "${IRI_NEIGHBORS}" \
   -p ${API_PORT} \
   -u ${UDP_RECEIVER_PORT} \
   -t ${TCP_RECEIVER_PORT} \
