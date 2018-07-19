@@ -94,5 +94,5 @@ haproxy_mounts:
   - /etc/localtime:/etc/localtime:ro,Z
 
 # Certbot docker image
-certbot_image: nuriel77/certbot
+certbot_image: certbot/certbot
 certbot_tag: latest

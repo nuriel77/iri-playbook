@@ -81,10 +81,11 @@ function get_domain() {
 }
 
 function newCert {
+    local RC
+    /bin/systemctl stop nginx
     /usr/bin/docker run \
       --rm \
       --name certbot \
-      -v /var/run/docker.sock:/var/run/docker.sock:Z \
       -v /etc/letsencrypt:/etc/letsencrypt:Z \
       -p 80:80 \
       "$DOCKER_IMAGE" certonly \
@@ -92,27 +93,28 @@ function newCert {
       --preferred-challenges http \
       --email "${EMAIL}" \
       -d "${DOMAIN}" \
-      --agree-tos \
-      --pre-hook "docker stop nginx" \
-      --post-hook "docker start nginx"
-    return $?
+      --agree-tos
+    RC=$?
+    /bin/systemctl start nginx
+    return $RC
 }
 
 function issueCert {
+    local RC
+    /bin/systemctl stop nginx
     /usr/bin/docker run \
       --rm \
       --name certbot \
-      -v /var/run/docker.sock:/var/run/docker.sock:Z \
       -v /etc/letsencrypt:/etc/letsencrypt:Z \
       -p 80:80 \
       "$DOCKER_IMAGE" certonly \
       --standalone \
       --renew-by-default \
       --preferred-challenges http \
-      --agree-tos \
-      --pre-hook "docker stop nginx" \
-      --post-hook "docker start nginx"
-    return $?
+      --agree-tos
+    RC=$?
+    /bin/systemctl start nginx
+    return $RC
 }
 
 function logger_error {
