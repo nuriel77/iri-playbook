@@ -424,7 +424,7 @@ function enable_https() {
     fi
 
     # Will configure nginx to use the let's encrypt certificates
-    if [[ $ENABLE_NGINX_CERT == "yes" ]]; then
+    if [[ $ENABLE_NGINX_CERT == "yes" ]] && [ -f "/etc/letsencrypt/live/${SSL_DOMAIN}/cert.pem" ]; then
         cat <<EOF >> /opt/iri-playbook/group_vars/all/z-ssl-override.yml
 ssl_cert_file: /etc/letsencrypt/live/${SSL_DOMAIN}/cert.pem
 ssl_key_file: /etc/letsencrypt/live/${SSL_DOMAIN}/privkey.pem
