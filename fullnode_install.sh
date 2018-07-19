@@ -279,6 +279,27 @@ function get_admin_password() {
     echo "fullnode_user_password: '${PASSWORD_A}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
 }
 
+function set_admin_username() {
+    ADMIN_USER=$(whiptail --inputbox "Choose an administrator's username.\nOnly valid ASCII characters are allowed:" 10 $WIDTH "$ADMIN_USER" --title "Choose Admin Username" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]]; then
+        echo "Installation cancelled"
+    fi
+
+    local LC_CTYPE=C
+    case "${ADMIN_USER}" in
+        *[![:cntrl:][:print:]]*)
+            whiptail --title "Invalid characters!!" \
+                     --msgbox "Only ASCII characters are allowed:\n\n!\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_\`abcdefghijklmnopqrstuvwxyz{|}~" \
+                     12 78
+            set_admin_username
+            return
+            ;;
+    esac
+
+    echo "fullnode_user: '${ADMIN_USER}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
+
+}
+
 # Installation selection menu
 function set_selections()
 {
@@ -479,7 +500,10 @@ cd iri-playbook
 # Let user choose installation add-ons
 set_selections
 
-# web access (ipm, haproxy and grafana)
+# Get the administrators username
+set_admin_username
+
+# web access (ipm, haproxy, grafana, etc)
 get_admin_password
 echo -e "\nRunning playbook..."
 
