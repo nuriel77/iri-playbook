@@ -86,6 +86,7 @@ function newCert {
       --name certbot \
       -v /var/run/docker.sock:/var/run/docker.sock:Z \
       -v /etc/letsencrypt:/etc/letsencrypt:Z \
+      -p 80:80 \
       "$DOCKER_IMAGE" certonly \
       --standalone -n \
       --preferred-challenges http \
@@ -103,6 +104,7 @@ function issueCert {
       --name certbot \
       -v /var/run/docker.sock:/var/run/docker.sock:Z \
       -v /etc/letsencrypt:/etc/letsencrypt:Z \
+      -p 80:80 \
       "$DOCKER_IMAGE" certonly \
       --standalone \
       --renew-by-default \
