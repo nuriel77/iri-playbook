@@ -3,7 +3,7 @@ Description=Nginx
 
 [Service]
 TimeoutStartSec=0
-Restart=always
+Restart=on-failure
 EnvironmentFile=-{{ config_dir }}/nginx
 ExecStartPre=/bin/bash -c "/bin/systemctl set-environment SSL_CERTS_DIR=$(readlink -f /etc/ssl/certs)"
 ExecStartPre=-/usr/bin/docker rm %p
