@@ -37,7 +37,7 @@ fi
 # before running this script (or set on the same command-line)
 : ${HAPROXY_PORT:=14267}
 : ${HAPROXY_CONFIG:=/etc/haproxy/haproxy.cfg}
-: ${DOCKER_IMAGE:=nuriel77/certbot:latest}
+: ${DOCKER_IMAGE:=certbot/certbot:latest}
 HAPROXY_RESTART_CMD="/bin/systemctl restart haproxy"
 HAPROXY_START_CMD="/bin/systemctl start haproxy"
 WEBROOT="/var/lib/haproxy"
