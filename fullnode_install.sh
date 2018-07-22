@@ -277,6 +277,7 @@ function get_admin_password() {
     # encapsulate the password with single quotes for the Ansible variable file
     PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
     echo "fullnode_user_password: '${PASSWORD_A}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
+    chmod 600 /opt/iri-playbook/group_vars/all/z-installer-override.yml
 }
 
 function set_admin_username() {
