@@ -4,7 +4,7 @@ Description=CarrIOTA Field
 [Service]
 TimeoutStartSec=0
 Restart=always
-EnvironmentFile=-/etc/sysconfig/field
+EnvironmentFile=-{{ config_dir }}/field
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
