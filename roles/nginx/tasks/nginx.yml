@@ -79,7 +79,7 @@
     owner: root
     group: 101
     mode: 0640
-  #no_log: true
+  no_log: true
 
 - name: 'download nginx docker image, this can take a moment...'
   docker_image:
