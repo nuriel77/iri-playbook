@@ -238,7 +238,7 @@ then
         exitcode=1
     fi
     renewed_certs+=("$DOMAIN")
-    DOMAIN_DIR="${le_cert_root}/${DOMAIN}"
+    DOMAIN_DIR=$(find "${le_cert_root}" -type d -name "${DOMAIN}*" -print -quit)
 else
     if [ ! -d ${le_cert_root} ]; then
         logger_error "${le_cert_root} does not exist!"
@@ -277,12 +277,13 @@ fi
 if [[ $exitcode -eq 0 ]]; then
     # create haproxy.pem file(s)
     for domain in ${renewed_certs[@]}; do
-        cat ${le_cert_root}/${domain}/fullchain.pem ${le_cert_root}/${domain}/privkey.pem | tee ${le_cert_root}/${domain}/haproxy.pem >/dev/null
+        full_path=$(find "${le_cert_root}" -type d -name "${DOMAIN}*" -print -quit)
+        cat "${full_path}/fullchain.pem" "${full_path}/privkey.pem" | tee "${full_path}/haproxy.pem" >/dev/null
         if [ $? -ne 0 ]; then
             logger_error "failed to create haproxy.pem file!"
             exit 1
         fi
-        chmod 400 ${le_cert_root}/${domain}/haproxy.pem
+        chmod 400 "${full_path}/haproxy.pem"
     done
 
     grep -q $DOMAIN_DIR/haproxy.pem /etc/haproxy/haproxy.cfg
@@ -296,15 +297,16 @@ if [[ $exitcode -eq 0 ]]; then
     # restart haproxy
     if [ "${#renewed_certs[@]}" -gt 0 ] || [[ $HAPROXY_RESTART -eq 1 ]]; then
         systemctl status haproxy >/dev/null
-        if [[ $? -eq 3 ]]; then
+        RC_A=$?
+        if [[ $RC_A -eq 3 ]]; then
             $HAPROXY_START_CMD
-            RC=$?
-	elif [[ $? -eq 0 ]]; then
+            RC_B=$?
+	elif [[ $RC_A -eq 0 ]]; then
             $HAPROXY_RESTART_CMD
-            RC=$?
+            RC_B=$?
         fi
 
-        if [[ $RC -ne 0 ]]; then
+        if [[ $RC_B -ne 0 ]]; then
             logger_error "failed to restart haproxy!"
         fi
     fi
