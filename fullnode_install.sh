@@ -542,7 +542,7 @@ https://${PRIMARY_IP}:8811 and https://${PRIMARY_IP}:5555
 
 * Note that your IP might be different as this one has been auto-detected in best-effort.
 
-* Log in using 'iotaadmin' and the password you have entered during the installation.
+* Log in with username ${ADMIN_USER} and the password you have entered during the installation.
 
 ${FIELD_NOTICE}
 
