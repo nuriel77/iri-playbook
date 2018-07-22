@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.0
+VERSION=0.6.1
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -411,24 +411,29 @@ function enable_https() {
     fi
 
     # Run the script to request a certificate
-    /usr/local/bin/certbot-haproxy.sh ${SSL_EMAIL} ${SSL_DOMAIN}
+    /usr/local/bin/certbot-haproxy.sh "${SSL_EMAIL}" "${SSL_DOMAIN}"
     if [[ $? -ne 0 ]]; then
         pause "SSL Certificate request failed. See output above for more details."
         clear
         return 1
     fi
 
+    # Subsequent requests to create new certificates (for example, original
+    # directory was wiped) certbot will start appending an index for path name
+    # We need to make sure we find a directory.
+    FULL_PATH=$(find /etc/letsencrypt/live -type d -name "${SSL_DOMAIN}*" -print -quit)
+
     # Will ensure subsequent playbook runs will use haproxy.pem
-    if [ -f "/etc/letsencrypt/live/${SSL_DOMAIN}/haproxy.pem" ]; then
-        echo "ssl_certkey_file: /etc/letsencrypt/live/${SSL_DOMAIN}/haproxy.pem" > /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+    if [ -f "${FULL_PATH}/haproxy.pem" ]; then
+        echo "ssl_certkey_file: ${FULL_PATH}/haproxy.pem" > /opt/iri-playbook/group_vars/all/z-ssl-override.yml
     fi
 
     # Will configure nginx to use the let's encrypt certificates
-    if [[ $ENABLE_NGINX_CERT == "yes" ]] && [ -f "/etc/letsencrypt/live/${SSL_DOMAIN}/cert.pem" ]; then
+    if [[ "$ENABLE_NGINX_CERT" == "yes" ]] && [ -f "${FULL_PATH}/cert.pem" ]; then
         cat <<EOF >> /opt/iri-playbook/group_vars/all/z-ssl-override.yml
-ssl_cert_file: /etc/letsencrypt/live/${SSL_DOMAIN}/cert.pem
-ssl_key_file: /etc/letsencrypt/live/${SSL_DOMAIN}/privkey.pem
-ssl_bundle_cert: /etc/letsencrypt/live/${SSL_DOMAIN}/fullchain.pem
+ssl_cert_file: ${FULL_PATH}/cert.pem
+ssl_key_file: ${FULL_PATH}/privkey.pem
+ssl_bundle_cert: ${FULL_PATH}/fullchain.pem
 create_selfsigned_cert: False
 letsencrypt: True
 EOF
