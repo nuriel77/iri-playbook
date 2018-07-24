@@ -566,6 +566,10 @@ To enable HTTPS for haproxy find the option in the main menu of ``iric``. It wil
 The option will also allow you to configure all the services served via nginx to use the certificate (Grafana, IOTA Peer Manager etc)
 
 
+.. note::
+
+  If you previously used a script to configure Let's Encrypt with Nginx and your Nginx is no longer working, please follow the instructions at :ref:`fixNginx`
+
 .. _options:
 
 Installation Options
