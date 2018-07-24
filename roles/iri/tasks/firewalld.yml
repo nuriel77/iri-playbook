@@ -46,14 +46,35 @@
 
 - name: exit and notify reboot required if selinux got enabled
   block:
+
+    - name: ensure file exists
+      copy:
+        content: ""
+        dest: /var/run/playbook_reboot
+        force: no
+        group: root
+        owner: root
+        mode: 0644
+
     - name: exit and notify reboot required to get selinux enabled
       debug:
         msg: "** NOTE *** Selinux was disabled on this host. It has now been enabled. Please reboot this host `shutdown -r now` and re-run this playbook."
     - meta: end_play
+
   when: selinux_enabled is defined and selinux_enabled.changed
 
 - name: exit and notify selinux not enabled
   block:
+
+    - name: ensure file exists
+      copy:
+        content: ""
+        dest: /var/run/playbook_reboot
+        force: no
+        group: root
+        owner: root
+        mode: 0644
+
     - name: exit and notify selinux not enabled
       debug:
         msg: >

@@ -451,6 +451,25 @@ if [ $RC -ne 0 ]; then
 fi
 set -e
 
+# Check playbook needs reboot
+if [ -f "/var/run/playbook_reboot" ]; then
+    cat <<EOF
+-------------------- NOTE --------------------
+
+The installer detected that the playbook requires a reboot,
+most probably to enable a functionality which requires the reboot.
+
+You can reboot the server using 'shutdown -r now'.
+
+Please note that you will have to re-run this script once the server is back on.
+Unfortunately, this also requires that you go through the first steps all over again.
+
+EOF
+
+    rm -f "/var/run/playbook_reboot"
+    exit
+fi
+
 # Calling set_primary_ip
 set_primary_ip
 
