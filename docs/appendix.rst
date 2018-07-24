@@ -561,37 +561,9 @@ Don't forget to restart HAProxy afterwards: ``systemctl restart haproxy``.
 Enabling HTTPS for HAProxy
 --------------------------
 
-To enable HTTPS for haproxy run the following command or find the option in the main menu of ``iric``. It will enable HAProxy to serve the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to ``/etc/haproxy/haproxy.cfg`` previously):
+To enable HTTPS for haproxy find the option in the main menu of ``iric``. It will enable HAProxy to serve the IRI API on port 14267 with HTTPS (Warning: this will override any manual changes you might have applied to ``/etc/haproxy/haproxy.cfg`` previously).
 
-.. code:: bash
-
-  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e haproxy_https=yes -e overwrite=yes
-
-Note that this will apply a default self-signed certificate, but the command is required to enable HTTPS in the first place. If you want to use a valid certificate from a trusted certificate authority you can provide your own certificate + key file manually after running the above command. Alternatively, check the section below for installing a Let's Encrypt certificate which is free:
-
-**Let's Encrypt Free Certificate** You can install a ``letsencrypt`` certificate: one prerequisite is that you have a fully qualified domain name pointing to the IP of your node.
-
-If you already have a domain name, and ran the above command to enable HTTPS, you can run the following script::
-
-  /usr/local/bin/certbot-haproxy.sh
-
-The script will ask you for your email address which is used as an account at Let's Encrypt. It will also ask for the domain name that points to your server's public IP address.
-
-The script will install the required utilities and request the certificate for you. It will proceed to install the certificate with HAProxy and add a cron job to automatically renew the certificate before it expires.
-
-Once the script is finished you can point your browser to ``https://your-domain-name:14267``: you should get a 403 forbidden page. You will be able to see the green lock icon/pad on the left of the URL which means the certificate is valid.
-
-
-If you need help with this, please find help on Discord #fullnodes channel.
-
-.. note::
-
-  This setup is not fully automated yet via ``iric``. For that reason, please avoid running the HAProxy enable commands as that will overwrite the certificate configuration in haproxy configuration file. If you did that accidentally you can always run the ``/usr/local/bin/certbot-haproxy.sh`` once more and it will set the correct configuration file for haproxy.
-
-.. note::
-
-  If you previously used a script to configure Let's Encrypt with Nginx and your Nginx is no longer working, please follow the instructions at :ref:`fixNginx`
-
+The option will also allow you to configure all the services served via nginx to use the certificate (Grafana, IOTA Peer Manager etc)
 
 
 .. _options:
