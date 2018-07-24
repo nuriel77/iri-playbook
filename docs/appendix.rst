@@ -17,6 +17,8 @@ For example, ``x-vps.com`` points to 185.10.48.110 (if you simply ``ping x-vps.c
 
 Instead of using the ports e.g. 8811 and 5555 with IP combination, we can use a FQDN, e.g. ``pm.example.com`` to reach peer manager on our server.
 
+Note that by doing this you will not be able to re-use a let's encrypt free certificate. Unless you request a certificate per domain, or purchase a star certificate.
+
 |
 
 
