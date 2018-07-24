@@ -20,7 +20,7 @@ Instead of using the ports e.g. 8811 and 5555 with IP combination, we can use a 
 |
 
 
-In this chapter we are going to configure nginx to serve IOTA Peer Manager and Grafana on port 80, while using a fully qualified domain name.
+In this chapter we are going to configure nginx to serve IOTA Peer Manager and Grafana on port 443 (HTTPS), while using a fully qualified domain name.
 
 
 You should be able to create subdomains for your main domain name. For example, if your FQDN is "example.com", you can create in your DNS service an entry for::
