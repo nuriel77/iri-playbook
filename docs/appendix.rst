@@ -41,15 +41,10 @@ For Peer Manager, edit the file ``/etc/nginx/conf.d/iotapm.conf``::
   }
 
   server {
-    listen 80;
+    listen 443 ssl http2;
     server_name pm.example.com;
     server_tokens off;
 
-    # Redirect same port from http to https
-    # The two lines here under are included in newer
-    # versions of the playbook. Omit those if they were
-    # not present in your configuration file.
-    error_page 497 https://$host:$server_port$request_uri;
     include /etc/nginx/conf.d/ssl.cfg;
 
     auth_basic "Restricted";
@@ -76,18 +71,16 @@ Then, reload nginx configuration::
 
   systemctl reload nginx
 
-You should be able to point your browser to ``http://pm.my-fqdn.com`` and see the Peer Manager.
+You should be able to point your browser to ``https://pm.my-fqdn.com`` and see the Peer Manager.
 
-.. note::
-
-  For **Ubuntu** you will have to allow http port in ufw firewall:
+For **Ubuntu** you will have to allow http port in ufw firewall::
 
   ufw allow http
 
 
-  For **Centos**:
+For **Centos**::
 
-  firewall-cmd --add-service=http --permanent --zone=public && firewall-cmd --reload
+  firewall-cmd --add-service=https --permanent --zone=public && firewall-cmd --reload
 
 
 The same can be done for grafana ``/etc/nginx/conf.d/grafana.conf``::
@@ -97,9 +90,11 @@ The same can be done for grafana ``/etc/nginx/conf.d/grafana.conf``::
   }
 
   server {
-      listen 80;
-      server_name grafana.example.com;
-      server_tokens off;
+    listen 443 ssl http2;
+    server_name grafana.example.com;
+    server_tokens off;
+
+    include /etc/nginx/conf.d/ssl.cfg;
 
     location / {
         proxy_pass http://grafana;
@@ -113,53 +108,7 @@ The same can be done for grafana ``/etc/nginx/conf.d/grafana.conf``::
 
 Again, test nginx: ``nginx -t`` and reload nginx: ``systemctl reload nginx``.
 
-Now you should be able to point your browser to ``http://grafana.my-fqdn.com``.
-
-
-.. note::
-
-  Using SSL/HTTPS for accessing your panels ensures all traffic and passwords are impossible to "sniff". The iri-playbook enables HTTPS by default but uses a self-signed certificate.
-
-
-.. _serverHTTPS:
-
-Configuring my server with HTTPS
-================================
-
-There are amazing tutorials out there explaining how to achieve this. What is important to realize is that you can either create your own "self-signed" certificates (you become the Certificate Authority which isn't recognized by anyone else), or use valid certificate authorities.
-
-Since a while the IRI Playbook uses own generated self-signed certificate by default. You can replace the certificate and key with your own certificate+key. This can be done here ``/etc/nginx/conf.d/ssl.cfg`` (this file is included in most configurations).
-
-`Let's Encrypt <https://letsencrypt.org/getting-started/>`_ is a free service which allows you to create a certificate per domain name. Other solution would be to purchase a certificates.
-
-By having a "valid" certificate for your server (signed by a trusted authority), you will get the green lock next to the URL in the browser, indicating that your connection is secure.
-
-Your connection will also be encrypted if you opt for a self-signed certificate. However, the browser cannot verify who signed the certificate and will report a certificate error (in most cases you can just accept it as an exception and proceed).
-
-
-Here is a great tutorial on how to add HTTPS to your **nginx**, choose nginx and the OS version you are using (Ubuntu/CentOS):
-
-(For iri-playbook installations you can configure the generated certificate and key in /etc/nginx/conf.d/ssl.cfg)
-
-https://certbot.eff.org/
-
-
-.. note::
-
-  I encourage you to refer to the previous chapter about configuring FQDN for Peer Manager and Grafana. From there you can proceed to adding HTTPS to those configurations.
-
-
-
-.. note::
-
-  For **Ubuntu** you will have to allow https port in ufw firewall:
-
-  ufw allow https
-
-
-  For **Centos**:
-
-  firewall-cmd --add-service=https --permanent --zone=public && firewall-cmd --reload
+Now you should be able to point your browser to ``https://grafana.my-fqdn.com``.
 
 
 .. _revProxyWallet:
