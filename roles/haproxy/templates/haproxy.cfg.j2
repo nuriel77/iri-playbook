@@ -1,5 +1,5 @@
 global
-    log /dev/log local0 debug
+    log /dev/log local0 debug alert
     tune.ssl.default-dh-param 2048
     ssl-server-verify none
 {% if haproxy_https is defined and haproxy_https|bool == True %}
