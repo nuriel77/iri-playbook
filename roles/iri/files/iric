@@ -176,7 +176,7 @@ function enable_field() {
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=monitoring_preinstall,prometheus_config_file,field_exporter,field_role -e "field_enabled=true" -e overwrite=yes -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
 
         [[ $? -ne 0 ]] && MSG="Enabling Field failed!!! Check output above for errors." || MSG="Installation finished successfully!"
-        pause "$MSG Press any key to return to menu."
+        pause "$MSG Press ENTER to return to menu."
     fi
 }
 
@@ -190,7 +190,7 @@ function upgrade_field() {
     fi
     cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=field_docker_image -e "field_enabled=true"
     [[ $? -ne 0 ]] && MSG="Updating Field failed!!! Check output above for errors." || MSG="Update finished successfully!"
-    pause "$MSG Press any key to return to menu."
+    pause "$MSG Press ENTER to return to menu."
 
 }
 
@@ -209,7 +209,7 @@ function enable_nelson() {
         fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
         [[ $? -ne 0 ]] && MSG="Enabling Nelson failed!!! Check output above for errors." || MSG="Installation finished successfully!"
-        pause "$MSG Press any key to return to menu."
+        pause "$MSG Press ENTER to return to menu."
     fi
 }
 
@@ -223,7 +223,7 @@ function upgrade_nelson() {
     fi
     cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_docker_images -e "nelson_enabled=true"
     [[ $? -ne 0 ]] && MSG="Updating Nelson failed!!! Check output above for errors." || MSG="Update finished successfully!"
-    pause "$MSG Press any key to return to menu."
+    pause "$MSG Press ENTER to return to menu."
 }
 
 ### IRI ###
@@ -303,7 +303,7 @@ function upgrade_iri() {
          return 1
     fi
 
-    pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press any key to return to menu."
+    pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press ENTER to return to menu."
     clear
 }
 
@@ -324,7 +324,7 @@ function upgrade_monitoring() {
         # Upgrade iota-prom-exporter and dashboards
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image -e monitoring_enabled=yes -e overwrite=yes
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
-        pause "$MSG Press any key to return to menu."
+        pause "$MSG Press ENTER to return to menu."
         clear
     fi
 }
@@ -463,7 +463,7 @@ function enable_haproxy() {
 
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
         [[ $? -ne 0 ]] && MSG="Enabling HAProxy failed!!! Check output above for errors." || MSG="Installation finished successfully!"
-        pause "$MSG Press any key to return to menu."
+        pause "$MSG Press ENTER to return to menu."
     fi
 }
 
@@ -725,7 +725,7 @@ function update_iric() {
     fi
     cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
     [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully!"
-    pause "$MSG Press any key to return to menu."
+    pause "$MSG Press ENTER to return to menu."
     clear
     exec "$0"
 }
