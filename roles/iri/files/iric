@@ -288,6 +288,11 @@ function upgrade_iri() {
         return 1
     fi
 
+    echo "Updating IRI configuration files..."
+    IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
+    sed -i "s/^TAG=.*$/TAG=v${IRI_LATEST}/" $IRI_CONFIG
+    sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
+
     echo "Upgrading IRI Docker image.... (IRI will automatically restart if image gets updated)"
     cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_docker_image -e "iri_tag=v$IRI_LATEST"
     if [[ $? -ne 0 ]]; then
@@ -298,10 +303,6 @@ function upgrade_iri() {
          return 1
     fi
 
-    echo "Updating IRI configuration files..."
-    IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
-    sed -i "s/^TAG=.*$/TAG=v${IRI_LATEST}/" $IRI_CONFIG
-    sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
     pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press any key to return to menu."
     clear
 }
