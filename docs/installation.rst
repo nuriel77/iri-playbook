@@ -143,8 +143,8 @@ For example, if your server has 4096MB (4GB memory), a good setting would be:
 
 .. code:: bash
 
-   iri_java_mem: 3072
-   iri_init_java_mem: 256
+   iri_java_mem: 3072m
+   iri_init_java_mem: 256m
 
 Just leave some room for the operating system and other processes.
 You will also be able to tweak this after the installation, so don't worry about it too much.
