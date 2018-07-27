@@ -156,7 +156,7 @@ function init_centos(){
 
 function init_ubuntu(){
     echo "Updating system packages..."
-    apt update -qqy --fix-missing
+    apt update -y --fix-missing
     apt-get upgrade -y
     apt-get clean
     apt-get autoremove -y --purge
@@ -409,7 +409,7 @@ function display_requirements_url() {
 function check_arch() {
     # Check architecture
     ARCH=$(uname -m)
-    if [ "$ARCH" != "x86_64" ]; then
+    if [[ ! "$ARCH" =~ ^(x86_64|aarch64) ]]; then
         echo "ERROR: $ARCH architecture not supported"
         display_requirements_url
         exit 1
@@ -513,6 +513,11 @@ LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
 
 # Override ssh_port
 [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
+
+# Set aarch64 dockers images
+if [[ "$ARCH" == "aarch64" ]]; then
+    echo "iri_image: nuriel77/iri-arm64" >group_vars/all/z-iri-override.yml
+fi
 
 # Run the playbook
 echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
