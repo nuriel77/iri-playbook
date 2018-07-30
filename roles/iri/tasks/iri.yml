@@ -167,6 +167,7 @@
   docker_image:
     name: "{{ iri_image }}"
     tag: "{{ iri_tag }}"
+    force: "{{ force_pull_image | default('no') }}"
   tags:
     - iri_docker_image
   notify:

@@ -2,6 +2,7 @@
   docker_image:
     name: "{{ exporter_image }}"
     tag: "{{ exporter_tag }}"
+    force: "{{ force_pull_image | default('no') }}"
   tags:
     - node_exporter_image
   notify:

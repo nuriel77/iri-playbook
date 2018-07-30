@@ -14,6 +14,7 @@
   docker_image:
     name: "{{ field_exporter_image }}"
     tag: "{{ field_exporter_tag }}"
+    force: "{{ force_pull_image | default('no') }}"
   tags:
     - field_exporter_docker_image
   notify:

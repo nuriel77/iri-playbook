@@ -2,6 +2,7 @@
   docker_image:
     name: "{{ cadvisor_image }}"
     tag: "{{ cadvisor_tag }}"
+    force: "{{ force_pull_image | default('no') }}"
   tags:
     - cadvisor_docker_image
   notify:

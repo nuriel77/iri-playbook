@@ -87,6 +87,7 @@
   docker_image:
     name: "{{ item.image }}"
     tag: "{{ item.tag }}"
+    force: "{{ force_pull_image | default('no') }}"
   with_items:
     - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
     - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }

@@ -85,6 +85,7 @@
   docker_image:
     name: "{{ nginx_image }}"
     tag: "{{ nginx_tag }}"
+    force: "{{ force_pull_image | default('no') }}"
   tags:
     - nginx_docker_image
   notify:

@@ -68,6 +68,7 @@
   docker_image:
     name: "{{ iota_prom_exporter_image }}"
     tag: "{{ iota_prom_exporter_tag }}"
+    force: "{{ force_pull_image | default('no') }}"
   tags:
     - download_iota_prom_exporter_image
   notify:
