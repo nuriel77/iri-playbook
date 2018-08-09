@@ -76,6 +76,8 @@
       with_items:
         - nelson.cli
         - nelson.gui
+        - '@semkodev/nelson.cli' 
+        - '@semkodev/nelson.gui'
       notify:
         - restart nelson
         - restart nelson-gui
@@ -92,13 +94,13 @@
     global: yes
   with_items:
     - serve
-    - nelson.cli
+    - '@semkodev/nelson.cli'
   tags:
     - nelson_npm
 
 # Using Ansible's npm module hangs when installing nelson.gui
 - name: install nelson-gui via shell command
-  shell: "npm install --unsafe-perm -g nelson.gui"
+  shell: "npm install --unsafe-perm -g @semkodev/nelson.gui"
   tags:
     - nelson_npm
     - nelson_gui
@@ -106,7 +108,7 @@
   register: nelson_gui_install
 
 - name: install nelson-gui via shell command (retry)
-  shell: "npm install --unsafe-perm -g nelson.gui@{{ nelson_gui_version }}"
+  shell: "npm install --unsafe-perm -g @semkodev/nelson.gui@{{ nelson_gui_version }}"
   when: nelson_gui_install.rc != 0
   tags:
     - nelson_npm

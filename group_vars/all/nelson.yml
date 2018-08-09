@@ -32,4 +32,4 @@ nelson_gui_port: 6600
 # Nelson gui fallback version to install
 # If latest version fails, this is the latest
 # known version to install without breaking
-nelson_gui_version: 0.2.2
+nelson_gui_version: 0.2.9
