@@ -66,9 +66,12 @@
 
     - name: Remove current field package
       npm:
-        name: field.cli
+        name: "{{ item }}"
         global: yes
         state: absent
+      with_items:
+        - '@semkodev/field.cli'
+        - 'field.cli'
       notify:
         - restart field
 
@@ -79,7 +82,7 @@
 
 - name: Install field package
   npm:
-    name: field.cli
+    name: '@semkodev/field.cli'
     state: latest
     global: yes
   tags:
