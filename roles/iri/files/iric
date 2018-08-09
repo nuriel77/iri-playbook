@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.5.3
+VERSION=0.5.4
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -204,9 +204,9 @@ function upgrade_field() {
 
     if (( $(awk 'BEGIN {print ("'$FIELD_VERSION'" >= "'$FIELD_LATEST'")}') )); then
         if ! (whiptail --title "No Updates" \
-                     --yesno "You already have the latest version: ${FIELD_LATEST}.\nDo you want to proceed anyway?" \
+                     --yesno "You already have the latest version: ${FIELD_LATEST}. Or, latest version detection failed.\n\nDo you want to proceed anyway?" \
                      --defaultno \
-                     10 $WIDTH) then
+                     12 $WIDTH) then
             return
         else
             local NO_CONFIRM=1
@@ -277,9 +277,8 @@ function upgrade_nelson() {
 
     if (( $(awk 'BEGIN {print ("'$NELSON_VERSION'" >= "'$NELSON_LATEST'")}') )); then
         whiptail --title "No Updates" \
-                 --msgbox "You already have the latest version: $NELSON_VERSION" \
+                 --msgbox "You already have the latest version: ${NELSON_VERSION}\n\nOr, latest version detection failed. You can proceed to force install the latest version if it exists." \
                  8 $WIDTH
-        return
     fi
 
     if (whiptail --title "Upgrade Nelson" \
