@@ -181,7 +181,7 @@ function enable_field() {
 }
 
 function get_latest_field_release {
-    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/SemkoDev/field.cli/releases/latest | awk '/tag_name/{print $2}' | tr -d '"v,' | cut -d- -f1
+    curl -H 'Cache-Control: no-cache' -s -m 5 -f -X GET "https://gitlab.com/api/v4/projects/semkodev%2Ffield.cli/repository/tags" | jq -r '.[].name' | tr -d '^v'
 }
 
 function upgrade_field() {
@@ -254,7 +254,7 @@ function enable_nelson() {
 }
 
 function get_latest_nelson_release {
-    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/SemkoDev/nelson.cli/releases/latest | awk '/tag_name/{print $2}' | tr -d '"v,' | cut -d- -f1
+    curl -H 'Cache-Control: no-cache' -s -m 5 -f -X GET "https://gitlab.com/api/v4/projects/semkodev%2Fnelson.cli/repository/tags" | jq -r '.[].name' | tr -d '^v'
 }
 
 function upgrade_nelson() {
