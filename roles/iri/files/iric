@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.1
+VERSION=0.6.2
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -137,9 +137,9 @@ function enable_field() {
 
     # Check if id file already exist, and ask if to keep
     local ID_MOVE
-    if [ -f "/var/lib/field/.carriota-field.id" ]; then
+    if [ -f "/var/lib/field/.deviota-field.id" ]; then
         if ! (whiptail --title "Field Node ID" \
-                     --yesno "An existing node ID file was found in '/var/lib/field/.carriota-field.id'.\n\nDo you want to keep using this one or let Field generate a new one? (choose 'yes' to keep it!)" \
+                     --yesno "An existing node ID file was found in '/var/lib/field/.deviota-field.id'.\n\nDo you want to keep using this one or let Field generate a new one? (choose 'yes' to keep it!)" \
                          12 $WIDTH) then
             ID_MOVE="$(date +%s)"
         fi
@@ -154,7 +154,7 @@ function enable_field() {
 
     local ID_CHOICE
     if [[ -n "$ID_MOVE" ]]; then
-        ID_CHOICE="An existing Field node ID file will be backed up to /var/lib/field/.carriota-field.id.${ID_MOVE} allowing Field to generate a new one.\n"
+        ID_CHOICE="An existing Field node ID file will be backed up to /var/lib/field/.deviota-field.id.${ID_MOVE} allowing Field to generate a new one.\n"
     fi
 
     if (whiptail --title "Enable Field" \
@@ -170,7 +170,7 @@ function enable_field() {
         fi
 
         # backup old ID file
-        [[ -n "$ID_MOVE" ]] && mv "/var/lib/field/.carriota-field.id" "/var/lib/field/.carriota-field.id.${ID_MOVE}"
+        [[ -n "$ID_MOVE" ]] && mv "/var/lib/field/.deviota-field.id" "/var/lib/field/.deviota-field.id.${ID_MOVE}"
 
         # run playbook enabling field
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=monitoring_preinstall,prometheus_config_file,field_exporter,field_role -e "field_enabled=true" -e overwrite=yes -e "my_field_name=$NODE_NAME" $ADDRESS_ARG
