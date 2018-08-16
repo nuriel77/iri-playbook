@@ -587,7 +587,7 @@ You can read more about it `here <https://github.com/SemkoDev/nelson.cli>`_.
 
 Field
 -----
-Field is a proxy for your IRI node that sends regular statistics to the `Field server <http://field.carriota.com>`_.
+Field is a proxy for your IRI node that sends regular statistics to the `Field server <http://field.deviota.com>`_.
 
 You can read more about it `here <https://github.com/SemkoDev/field.cli>`_.
 

@@ -481,6 +481,6 @@ Again, the recommended way to enable, upgrade and manage Field is via the ``iric
 
 .. note::
 
-  For more information and support with Carriota Field please join IOTA's Discord and find "#carriota-field" channel.
+  For more information and support with Carriota Field please join IOTA's Discord and find "#deviota" channel.
 
 
