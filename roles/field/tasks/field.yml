@@ -99,11 +99,11 @@
 
     - name: check field ID file
       stat:
-        path: "{{ field_dir }}/.carriota-field.id"
+        path: "{{ field_dir }}/.deviota-field.id"
       register: field_id_file
 
     - name: get field ID from file
-      shell: "cat {{ field_dir }}/.carriota-field.id | head -c${1:-16}"
+      shell: "cat {{ field_dir }}/.deviota-field.id | head -c${1:-16}"
       register: field_id_read
       changed_when: false
 
