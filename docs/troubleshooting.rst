@@ -42,7 +42,7 @@ The two ``sed`` commands can be added in between any command to hide IP addresse
   tail -200 /var/log/syslog | sed 's/\([0-9]\{1,3\}\.\)\{3,3\}[0-9]\{1,3\}/x.x.x.x/g'|sed  -r 's#:\[.*\]:([0-9]+)#:\[xxxx:xxxx:xxxx:xxxx\]:\1#g'| pastebinit -b pastebin.com -P
 
   # Example uploading iri-playbook log
-  cat /tmp/iri-playbook-201801061902.log | pastebinit -b pastebin.com -P
+  cat /var/log/iri-playbook-201801061902.log | pastebinit -b pastebin.com -P
 
 
   # Example uploading last 200 lines of iota-pm service log
@@ -66,7 +66,7 @@ The two ``sed`` commands can be added in between any command to hide IP addresse
   tail -200 /var/log/messages | sed 's/\([0-9]\{1,3\}\.\)\{3,3\}[0-9]\{1,3\}/x.x.x.x/g'|sed  -r 's#:\[.*\]:([0-9]+)#:\[xxxx:xxxx:xxxx:xxxx\]:\1#g'| fpaste -P "yes"
 
   # Example uploading iri-playbook log
-  cat /tmp/iri-playbook-201801061902.log | fpaste -P "yes"
+  cat /var/log/iri-playbook-201801061902.log | fpaste -P "yes"
 
 
   # Example uploading last 200 lines of iota-pm service log
@@ -162,7 +162,7 @@ This is how the error would look like::
   PLAY RECAP *************************************************************************************************************************************************
 
 
-This can happen for a number of reasons. It is most probably a password mismatch between what the playbook sees in ``group_vars/all/iotapm.yml`` under the value ``fullnode_user_password`` and perhaps the ``fullnode_user`` too.
+This can happen for a number of reasons. It is most probably a password mismatch between what the playbook sees in ``group_vars/all/z-installer-override.yml`` under the value ``fullnode_user_password`` and perhaps the ``fullnode_user`` too.
 
 
 Solution A

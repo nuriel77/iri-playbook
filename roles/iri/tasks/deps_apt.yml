@@ -19,7 +19,7 @@
     - pv
     - nano
     - sysstat
-    - atop
+    #- atop Disabled due to kernel bug: https://github.com/Atoptool/atop/blob/master/README#L34
     - htop
     - pastebinit
     - openssl
