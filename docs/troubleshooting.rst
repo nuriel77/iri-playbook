@@ -77,6 +77,21 @@ The two ``sed`` commands can be added in between any command to hide IP addresse
 
 
 
+.. _udpPeeringIssues:
+
+UDP Peering Issues
+==================
+When you add a TCP or UDP neighbor you specify a syntax such as: ``udp://neighbor-ip:14600``.
+
+For UDP it is important that the incoming packets' source port is the same as the one registered for that neigbor.
+
+In some situations (depending on routers/paths/hosting) the source IP may change and an random port is chosen.
+
+This will not allow IRI to establish a session with that neighbor. It might be that your neighbor's source port has been changed, or yours.
+
+I won't go into details, but this situation can be confirmed using ``tcpdump`` tool. If you are having issues with UDP simply switch to peering with TCP.
+
+
 
 .. _gitConflicts:
 

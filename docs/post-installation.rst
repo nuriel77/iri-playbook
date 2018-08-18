@@ -30,8 +30,7 @@ See examples in the chapters below:
 
 .. warning::
 
-  All web pages served by this installer will be served on HTTPS with self-signed certificates. The browser will issue a warning when you connect for the first time. You can proceed and accept the certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and look for the Let's encrypt
-link.
+  All web pages served by this installer will be served on HTTPS with self-signed certificates. The browser will issue a warning when you connect for the first time. You can proceed and accept the certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and look for the Let's encrypt link.
 
 .. _controlingIRI:
 
@@ -165,6 +164,9 @@ allow the new ports in the firewall (if you choose to do so, check google for ip
 
 Checking IRI Full Node Status
 =============================
+
+If you prefer usin the command line read further. Otherwise, I recommend using the ``iric`` tool.
+
 The tool ``curl`` can issue commands to the IRI API.
 
 For example, we can run:
@@ -199,6 +201,8 @@ For IOTA Peer Manager, this installation has already configured it to be accessi
 
 Adding or Removing Neighbors
 ============================
+I strongly recommend to use ``iric`` in order to add or remove neighbors. It has the advantage that it works seamlessly with Nelson and also makes sure the neighbors you've added or removed persist even after IRI restarts.
+
 In order to add neighbors you can either use the iota Peer Manager or the command-line.
 
 To use the command line you can use the script ``nbctl`` that was shipped with this installation.

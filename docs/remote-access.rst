@@ -3,7 +3,9 @@
 Full Node Remote Access
 ***********************
 
-Update: the recommended way to enable remote access to IRI API port (e.g. for wallets) is via HAProxy. Please refer to :ref:`haproxyEnable`.
+**Update**: the recommended way to enable remote access to IRI API port (e.g. for wallets) is via HAProxy. Please refer to :ref:`haproxyEnable`.
+
+The topics described below are for advanced users.
 
 1. Exposing IRI Port Externally
 ===============================

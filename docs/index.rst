@@ -17,22 +17,23 @@ IOTA Full Node Installation wiki
    :target: http://iri-playbook.readthedocs.io/en/master/?badge=master
    :alt: Documentation Status
 
-For a "click-'n-go" installation (recommended) see :ref:`getting_started_quickly`.
+To install your node, check the "click-'n-go" installation (recommended) here :ref:`getting_started_quickly`.
 
 In this installation
 ====================
 
-* Automate the installation
-* Take care of firewalls
-* Automatically configure the java memory limit based on your system's RAM
+* Automate the entrire installation
+* Take care of firewall and security
+* Automatically configure the java memory limits based on your system's RAM
 * Explain how to connect a wallet to your full node
-* Install IOTA Peer Manager
-* Serve IOTA PM and Graphs password protected via HTTPS
-* Optionally install `Nelson <https://github.com/SemkoDev/nelson.cli>`_.
-* Install monitoring graphs. Big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
+* Install IOTA Peer Manager to manage neighbors
+* Serve IOTA Peer Manager and Graphs password protected via HTTPS (secure)
+* Optionally install `Nelson <https://gitlab.com/semkodev/nelson.cli>`_ for automatic peering.
+* Optionally install `Field <https://gitlab.com/semkodev/field.cli>`_ to "plug" your node under a public load balancer.
+* Install monitoring graphs, big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
 * Email alert notifications manager
 
-Feel free to star this repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
+Please star the playbook's repository on github: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
 
 |
 
