@@ -16,14 +16,13 @@ Virtual Private Server
 
 This is probably the best and most common option for running a full node.
 
-I will not get into where or how to purchase a VPS (virtual private server). There are many companies offering a VPS for good prices.
+
+There are many companies offering a VPS for good prices. Make sure not to take a VPS platform which is based on Virtuozzo or OpenVZ. Performance is not best and I personally don't like the fact the hosting company can see what processes I am running on my private server.
+
+Also, a good advice is not to take a contract for a year, but try to find hosting services with pay-per-hour or monthly contract. Some hostings such as SSDNodes
+are not recommended: some fullnode operators claimed their contracts have been cancelled due to running "crypto" software (IRI).
 
 The basic recommendation is to have one with at least 4GB RAM, 2 cores and minimum 30GB harddrive (SSD preferably).
-
-.. note::
-
-   At time of writing (December 2017) many users are experiencing out-of-memory errors with 4GB RAM. This should be remedied by next snapshot.
-
 
 .. _operatingSystem:
 
