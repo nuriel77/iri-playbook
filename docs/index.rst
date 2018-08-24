@@ -10,28 +10,30 @@
 
 |
 
-IOTA Full Node Installation wiki
-################################
+The IOTA Full Node Installer (IRI)
+##################################
 
 .. image:: https://readthedocs.org/projects/iri-playbook/badge/?version=master
    :target: http://iri-playbook.readthedocs.io/en/master/?badge=master
    :alt: Documentation Status
 
+Welcome to IRI-playbook full node installer!
+
 To install your node, check the "click-'n-go" installation (recommended) here :ref:`getting_started_quickly`.
 
-In this installation
-====================
+This Installer Includes
+=======================
 
-* Automate the entrire installation
-* Take care of firewall and security
+* Fully automated installation
+* Configuration of firewall and security
+* All services running in Docker containers
 * Automatically configure the java memory limits based on your system's RAM
-* Explain how to connect a wallet to your full node
+* Introduction on how to connect a wallet to your full node
 * Install IOTA Peer Manager to manage neighbors
 * Serve IOTA Peer Manager and Graphs password protected via HTTPS (secure)
 * Optionally install `Nelson <https://gitlab.com/semkodev/nelson.cli>`_ for automatic peering.
 * Optionally install `Field <https://gitlab.com/semkodev/field.cli>`_ to "plug" your node under a public load balancer.
 * Install monitoring graphs, big thanks to Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
-* Email alert notifications manager
 
 Please star the playbook's repository on github: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
 
@@ -49,6 +51,7 @@ Please star the playbook's repository on github: `iri-playbook <https://github.c
    remote-access
    files
    maintenance
+   docker
    securityhardening
    iric
    troubleshooting
