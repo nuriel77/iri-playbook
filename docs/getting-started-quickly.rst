@@ -26,9 +26,20 @@ For **Ubuntu/Debian** if ``curl`` isi missing you can install it by running: ``s
 
 **This command will pull the installer script and kick off the installation. Make sure you read the warning above!**
 
+To install the original playbook version:
+
 .. code:: bash
 
    bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+
+For the "Dockerized" beta version (containers) run:
+
+.. code:: bash
+
+  GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
+
+Documentation for the "Dockerized" version can be `found here <https://iri-playbook.readthedocs.io/en/feat-docker/>`_.
+
 
 
 .. note::
