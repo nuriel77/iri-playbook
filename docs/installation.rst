@@ -3,14 +3,15 @@
 Installation
 ************
 
-The recommend way to install is using the :ref:`getting_started_quickly`.
+The **proper** way to install the node is using the :ref:`getting_started_quickly`.
 
-I strongly recommend **not** to install using the manual method unless you feel comfortable and experienced enough to work with Linux.
+The following documentation is provided as reference for those with good experience with Linux and Ansible.
 
-To prepare for running the automated "playbook" from this repository you require some basic packages, as shown below.
 
 Update System Packages
 ======================
+
+To prepare for running the automated "playbook" from this repository you require some basic packages, as shown below.
 
 For **Ubuntu/Debian** we type:
 
@@ -77,7 +78,7 @@ In addition, it configures firewalls and places some handy files for us to contr
 To install Ansible on **Ubuntu** I refer to the `official documentation <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt
 -ubuntu>`_
 
-To install Ansible on **Debian** I refer to the `official documentation >https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-debian>`_
+To install Ansible on **Debian** I refer to the `official documentation <https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-debian>`_
 
 .. code:: bash
 
@@ -210,8 +211,6 @@ Edit the file ``inventory``. Here's an example of how we would list four hosts, 
   iota02.tangle.io ansible_user=root
   10.20.30.40      ansible_ssh_port=9922
 
-A requirement is that you can SSH access these servers from the server you are working on. Please check :ref:`configMultipleSSHHost` for more information.
-
 
 Running the Playbook
 ====================
@@ -275,4 +274,4 @@ To configure an email for alerts see :ref:`alerting`.
 Fully Synchronized Database Download
 ------------------------------------
 
-In order to get up to speed quickly you can download a fully sycned database. Please check :ref:`getFullySyncedDB`
+In order to get up to speed quickly you can download a fully synced database. Please check :ref:`getFullySyncedDB`

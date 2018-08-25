@@ -67,8 +67,6 @@ Alternatively, use python::
 
 If you have problems getting in sync after a very long time, consider downloading a fully synced database as described here: :ref:`getFullySyncedDB`
 
-If the issue still persists, perhaps difficulties syncing are related to this: :ref:`whyAmISeeingUDPBadLength`
-
 
 .. _howDoITellIfIamSyncing:
 
@@ -95,7 +93,8 @@ It used to be possible via the botbox on Slack. And since Slack is no longer in 
 
 This is a value which is based on querying approximately 100 full nodes.
 
-At time of writing, we are still waiting for the official ``botbox`` to be added to IOTA's Discord chat application.
+
+You can also use ``iric`` as it has an option in the menu to view the latest milestone index.
 
 
 .. _whyIsLSMAlwaysBehind:

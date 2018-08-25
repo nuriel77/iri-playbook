@@ -83,7 +83,7 @@ UDP Peering Issues
 ==================
 When you add a TCP or UDP neighbor you specify a syntax such as: ``udp://neighbor-ip:14600``.
 
-For UDP it is important that the incoming packets' source port is the same as the one registered for that neigbor.
+For UDP it is important that the incoming packets' source port is the same as the one registered for that neighbor.
 
 In some situations (depending on routers/paths/hosting) the source IP may change and an random port is chosen.
 
@@ -157,7 +157,7 @@ The next step is to identify the changes. You can view the files that have been 
 
 For each file in that directory find its corresponding (new) updated file: ``find -name filename``.
 
-To view the differeneces run ``diff /tmp/my-changes/my-old-file my-newfile``. The command's output might not be the prettiest; you can choose to handle the conflicts manually.
+To view the differences run ``diff /tmp/my-changes/my-old-file my-newfile``. The command's output might not be the prettiest; you can choose to handle the conflicts manually.
 
 Once you are done applying your changes, you can proceed to run the playbook command you were about to apply.
 

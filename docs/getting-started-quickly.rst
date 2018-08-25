@@ -16,13 +16,23 @@ If you haven't already, just make sure your server matches the :ref:`requirement
 Run the Installer!
 ==================
 
-For **CentOS** users: you may need to install ``curl``. You can do that by running: ``sudo yum install curl -y``.
+Step 1
+------
+For **CentOS** users: you may need to install ``curl`` and ``screen``. You can do that by running: ``sudo yum install curl screen -y``.
 
-For **Debian** or **Ubuntu** users: you may need to install ``curl``. You can do that by running: ``sudo apt-get install curl -y``.
+For **Debian** or **Ubuntu** users: you may need to install ``curl`` and ``screen``. You can do that by running: ``sudo apt-get install screen curl -y``.
 
-|
+Step 2
+------
 
-**This command will pull the installer script and kick off the installation. Make sure you read the warning above!**
+Enter into a "screen" session by typing: ``screen -S iota``. If connection to the server is lost during the installation you can re-attach to the session by running ``screen -r iota``.
+
+Step 3
+------
+
+First become ``root`` user by typing ``sudo su``.
+
+**The following command will pull the installer script and kick off the installation. Make sure you read the warning above!**
 
 .. code:: bash
 
@@ -64,13 +74,12 @@ and Peer Manager via::
 
 DONATIONS
 ---------
-Making this installer happen, supporting and maintaing it takes much effort and time. Nevertheless, it is done happily in order to contribute and help the community.
 
 If you want to leave a donation you can use this address::
 
   CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
 
-And/or star the playbook's repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
+And please star the playbook's repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
 
 Thanks!
 
@@ -110,7 +119,7 @@ You can access the peer manager using the username and password you've configure
 
 Accessing Monitoring Graphs
 ---------------------------
-You can access the Grafana IOTA graphs using the username and the password you've configured during the installaton:
+You can access the Grafana IOTA graphs using the username and the password you've configured during the installation:
 
 .. code:: bash
 

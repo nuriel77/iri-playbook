@@ -6,14 +6,16 @@ Docker
 
 The new release of IRI-playbook introduces a valuable feature where all services are run inside of Docker containers.
 
-To provide a technical answer to the question "what is Docker"::
+.. note::
 
   Docker is a tool designed to make it easier to create, deploy, and run applications by using containers. Containers allow a developer to package up an application with all of the parts it needs, such as libraries and other dependencies, and ship it all out as one package. By doing so, thanks to the container, the developer can rest assured that the application will run on any other Linux machine regardless of any customized settings that machine might have that could differ from the machine used for writing and testing the code.
+
+`Source <https://opensource.com/resources/what-docker>`_
 
 Docker Installation
 ===================
 
-During the insallation phase of the playbook, you are provided a selection menu where some options can be selected. One of those options is whether to install Docker on your server (enabled by default). Docker is the service which controls and managed containers on your server.
+During the installation phase of the playbook, you are provided a selection menu where some options can be selected. One of those options is whether to install Docker on your server (enabled by default). Docker is the service which controls and managed containers on your server.
 
 Services Management
 ===================

@@ -177,7 +177,7 @@ Once you open pagent you will find its icon on the task bar's icons. Right click
 
 Browse the filesystem to select your private key. Enter the password, and that's about it.
 
-Now, everytime you connect to the server using Putty you should not be asked to enter the password again.
+From now on, every time you connect to the server using Putty you will not be asked to enter the password.
 
 
 Disabling Password Authentication
@@ -251,7 +251,7 @@ To re-enabled root access:
 
   sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 
-And restat sshd daemon as shown above.
+And restart sshd daemon as shown above.
 
 
 Using Alternative SSH Port
@@ -259,7 +259,7 @@ Using Alternative SSH Port
 
 SSH by default uses port 22. That means that any hacker trying to force his way into a server will try hammering this port. One of the most simple ways to get rid of those attempts and make them useless is switching to an alternative port number. 
 
-There are more than 65k ports on a Linux system to choose from. No hacker is going to bother and try to find the SSH port if he doesn't find it on 22 to begin with. They much rather save time and skip to a different server where SSH is on port 22.
+There are more than 65000 ports on a Linux system to choose from. No hacker is going to bother and try to find the SSH port if he doesn't find it on 22 to begin with. They much rather save time and skip to a different server where SSH is on port 22.
 
 To change the port, a few things have to be done. The most important step is to ensure that you have some terminal/console access provided to you by your hosting provider. This is important in case you lock yourself out. Then you can still access the server and revert or fix any faults.
 

@@ -15,7 +15,7 @@ Maintenance
 Upgrade IRI
 ===========
 
-I strongly recommed to use ``iric`` in order to upgrade IRI's version when a new release is out.
+I strongly recommend to use ``iric`` in order to upgrade IRI's version when a new release is out.
 
 Latest IRI release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
 
@@ -50,9 +50,9 @@ You can check the size of the database using ``du -hs /var/lib/iri/target/mainne
 
 .. note::
 
-   To check free space on the system's paritions use ``df -h``
-   If one of the paritions' usage exceeds 85% you should consider a cleanup.
-   Don't worry about the /boot paritition though.
+   To check free space on the system's partitions use ``df -h``
+   If one of the partitions' usage exceeds 85% you should consider a cleanup.
+   Don't worry about the /boot partitition though.
 
 
 .. _checkLogs:
