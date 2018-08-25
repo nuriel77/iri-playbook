@@ -82,20 +82,6 @@ and Peer Manager via::
 .. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/master/docs/images/iric_01.png
             :alt: iric01
 
-
-Donations
----------
-Making this installer happen, supporting and maintaing it takes much effort and time. Nevertheless, it is done happily in order to contribute and help the community.
-
-If you want to leave a donation you can use this address::
-
-  CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
-
-And star the repository: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
-
-Thanks!
-
-
 Connection Lost
 ---------------
 
