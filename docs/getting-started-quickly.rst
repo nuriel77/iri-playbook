@@ -83,7 +83,7 @@ and Peer Manager via::
             :alt: iric01
 
 
-DONATIONS
+Donations
 ---------
 Making this installer happen, supporting and maintaing it takes much effort and time. Nevertheless, it is done happily in order to contribute and help the community.
 
