@@ -72,7 +72,7 @@ and Peer Manager via::
             :alt: iric01
 
 
-DONATIONS
+Donations
 ---------
 
 If you want to leave a donation you can use this address::
