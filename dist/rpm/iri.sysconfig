@@ -1,0 +1,34 @@
+# Port used for API calls (and/or lightwallet connection)
+IRI_API_PORT=14265
+
+# UDP neighbor peering port
+IRI_UDP_PORT=14600
+
+# TCP neighbor peering port
+IRI_TCP_PORT=14600
+
+# Java max mem usage for iri
+JAVA_MEM=1024m
+
+# Java initial mem usage
+JAVA_INIT_MEM=256m
+
+# Java heap mem
+JAVA_HEAP_MEM=256m
+
+# Exclude the commands below from the API.
+# # Applied only to connections other than localhost/127.0.0.1
+REMOTE_LIMIT_API="removeNeighbors, addNeighbors, interruptAttachingToTangle, attachToTangle, getNeighbors, setApiRateLimit"
+
+# Optional OPTIONS can contain multiple values e.g.
+#OPTIONS="--rescan --debug --remote"
+OPTIONS=""
+
+# IRI Configuration file. Basically, most options can either
+# be provided as commandline arguments to iri or via this file.
+# We make use of this file for additional options, e.g. REMOTE_AUTH etc.
+IRI_CONFIG_FILE=/etc/iri/iri.ini
+
+# Fill in neighbor addresses separated by space, e.g.
+# IRI_NEIGHBORS="udp://cfb.is.ai:14600 tcp://iota.rules.io:15600"
+IRI_NEIGHBORS=""
