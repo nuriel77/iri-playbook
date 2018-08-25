@@ -24,7 +24,10 @@ For **Ubuntu/Debian** if ``curl`` isi missing you can install it by running: ``s
 
 |
 
-**This command will pull the installer script and kick off the installation. Make sure you read the warning above!**
+**The installation command will pull a script and kick off the installation. Make sure you read the warning above!**
+
+Original IRI Playbook
+---------------------
 
 To install the original playbook version:
 
@@ -32,7 +35,10 @@ To install the original playbook version:
 
    bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
-For the "Dockerized" beta version (containers) run:
+Dockerized IRI Playbook (beta)
+------------------------------
+
+For the "Dockerized" version (containers) run:
 
 .. code:: bash
 
@@ -41,13 +47,12 @@ For the "Dockerized" beta version (containers) run:
 Documentation for the "Dockerized" version can be `found here <https://iri-playbook.readthedocs.io/en/feat-docker/>`_.
 
 
+Additional Information
+----------------------
 
-.. note::
-
-   If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
+* If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
 
 * Like the project at the `IOTA Ecosystem <https://ecosystem.iota.org/projects/iri-fullnode-installer>`_
-
 
 * A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
 
