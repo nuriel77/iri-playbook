@@ -468,7 +468,7 @@ The API port will be accessible on **14267** by default.
 
 In addition, the **REMOTE_LIMIT_API** in the configuration files are no longer playing any role. HAProxy has taken control over the limited commands.
 
-To see the configured denied/limited commands see ``group_vars/all/lb.yml`` or edit ``/etc/haproxy/haroxy.cfg`` after installation. The regex is different from what you have been used to.
+To see the configured denied/limited commands see ``group_vars/all/lb.yml`` or edit ``/etc/haproxy/haproxy.cfg`` after installation. The regex is different from what you have been used to.
 
 
 .. _rateLimits:
