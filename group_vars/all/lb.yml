@@ -48,7 +48,7 @@ haproxy_whitelist_file: /etc/haproxy/whitelist.lst
 
 # If set to `false`, the list of IPs below will be
 # written to the haproxy config and managed in
-# the haroxy config file only. If set to `true`,
+# the haproxy config file only. If set to `true`,
 # the above file will be used to whitelist IPs.
 haproxy_use_whitelist_file: false
 
