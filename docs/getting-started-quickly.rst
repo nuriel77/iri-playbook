@@ -52,8 +52,6 @@ Additional Information
 
 * If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
 
-* Like the project at the `IOTA Ecosystem <https://ecosystem.iota.org/projects/iri-fullnode-installer>`_
-
 * A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
 
 By default you can access the graphs at::
@@ -74,6 +72,7 @@ and Peer Manager via::
 
 * To configure an email for alerts see :ref:`alerting`.
 
+* Visit the project's page at the `IOTA Ecosystem <https://ecosystem.iota.org/projects/iri-fullnode-installer>`_
 
 .. note::
 
