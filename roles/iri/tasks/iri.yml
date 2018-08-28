@@ -160,6 +160,11 @@
   docker_network:
     name: "{{ iri_net_name }}"
     driver: bridge
+    driver_options:
+      com.docker.network.bridge.enable_ip_masquerade: 'true'
+      com.docker.network.bridge.host_binding_ipv4: '0.0.0.0'
+      com.docker.network.bridge.enable_icc: 'true'
+      com.docker.network.bridge.name: 'br-iri0'
   tags:
     - iri_network
 
