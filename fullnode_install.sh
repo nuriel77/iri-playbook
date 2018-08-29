@@ -243,6 +243,7 @@ function get_admin_password() {
                  --msgbox "Passwords do not match, please try again." \
                  8 78
         get_admin_password
+        return
     fi
 
     PASSWD_CHECK=$(echo -n "$PASSWORD_A" | cracklib-check)
@@ -251,6 +252,7 @@ function get_admin_password() {
                  --msgbox "Please choose a better password:$(echo ${PASSWD_CHECK}|cut -d: -f2-)" \
                  8 78
         get_admin_password
+        return
     fi
 
     # Ensure we escape single quotes (using single quotes) because we need to
