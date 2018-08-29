@@ -259,6 +259,7 @@ function get_admin_password() {
     # encapsulate the password with single quotes for the Ansible variable file
     PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
     echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
+    chmod 400 group_vars/all/z-override-iotapm.yml
 }
 
 # Installation selection menu
