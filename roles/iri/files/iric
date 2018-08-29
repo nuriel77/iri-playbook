@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.2
+VERSION=0.6.3
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -62,8 +62,8 @@ function set_admin_password_b() {
 }
 
 function get_admin_password() {
-    PASSWORD_A=$(set_admin_password_a)
-    PASSWORD_B=$(set_admin_password_b)
+    local PASSWORD_A=$(set_admin_password_a)
+    local PASSWORD_B=$(set_admin_password_b)
 
     if [ "$PASSWORD_A" != "$PASSWORD_B" ]; then
         whiptail --title "Passwords Mismatch!" \
@@ -659,6 +659,8 @@ function get_db() {
             whiptail --title "New DB Failed!" \
                      --msgbox "Well this is embarrassing. Downloading the new DB failed... Note that IRI was not re-activated." \
                      8 $WIDTH
+            # Cleanup any leftovers
+            rm -rf /var/lib/iri/target/mainnetdb*
             return 1
         else
             pause "Done! Please check IRI's status and logs to verify it is error free."
