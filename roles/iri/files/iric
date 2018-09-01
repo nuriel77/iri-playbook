@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.4
+VERSION=0.6.5
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -650,8 +650,7 @@ function get_db() {
     SOURCES_ARRAY_INDEXED=($(printf "%s\n" "${SOURCES_ARRAY[@]}"| awk -F, '!/^ / && NF { print NR")"; print $1}'))
 
     # Output the menu
-    SOURCE_INDEX=$(whiptail --title "Select DB Source" --menu "This action will download and boostrap a fully synced database.\nChoose a source where to download th
-e database from:" 16 $WIDTH 4 "${SOURCES_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
+    SOURCE_INDEX=$(whiptail --title "Select DB Source" --menu "This action will download and boostrap a fully synced database.\nChoose a source where to download the database from:" 16 $WIDTH 4 "${SOURCES_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
     if [ $? -eq 1 ]; then
         return
     fi
