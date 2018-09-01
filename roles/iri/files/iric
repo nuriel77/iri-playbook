@@ -640,24 +640,50 @@ function list_neighbors() {
 
 ### Get DB ###
 function get_db() {
+    # Playbook's default source
     XVPS_SOURCE="https://x-vps.com/iota.db.tgz"
-    DB_SOURCE=$(whiptail --inputbox "This action will download and boostrap a fully synced database.\nChoose a source where to download the database from:" 8 $WIDTH  $XVPS_SOURCE --title "IRIC v${VERSION} - Download Database" 3>&1 1>&2 2>&3)
-    if [[ $? -ne 0 ]]; then
+
+    # Create array of available DB resources
+    SOURCES_ARRAY=("$XVPS_SOURCE" "http://node08.iotatoken.nl:8888/iota.db.tgz" "Custom")
+
+    # Create an indexed array for building the menu
+    SOURCES_ARRAY_INDEXED=($(printf "%s\n" "${SOURCES_ARRAY[@]}"| awk -F, '!/^ / && NF { print NR")"; print $1}'))
+
+    # Output the menu
+    SOURCE_INDEX=$(whiptail --title "Select DB Source" --menu "This action will download and boostrap a fully synced database.\nChoose a source where to download th
+e database from:" 16 $WIDTH 4 "${SOURCES_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
+    if [ $? -eq 1 ]; then
         return
     fi
 
+    # Parse to get the correct database source
+    local CHOSEN_INDEX=$(( $(echo "$SOURCE_INDEX"| sed 's/)//') - 1 ))
+    local DB_SOURCE="${SOURCES_ARRAY[$CHOSEN_INDEX]}"
+
+    # Try to get database size. If source is custom, ask to enter URL.
+    local FILE_SIZE
+    local LAST_UPDATED="unknown"
     if [ "$DB_SOURCE" == "$XVPS_SOURCE" ]; then
         local JSON_OUTPUT=$(curl -H "Content-Type: application/json" -m 4 -f -s https://x-vps.com/index.php 2>/dev/null)
-        local FILE_SIZE=$(echo "$JSON_OUTPUT" | jq -r .file_size)
-        local LAST_UPDATED=$(echo "$JSON_OUTPUT" | jq -r .last_updated)
+        FILE_SIZE=$(echo "$JSON_OUTPUT" | jq -r .file_size)
+        LAST_UPDATED=$(echo "$JSON_OUTPUT" | jq -r .last_updated)
+    elif [ "$DB_SOURCE" == "Custom" ]; then
+        DB_SOURCE=$(whiptail --inputbox "Choose a source where to download the database from:" 8 $WIDTH "" --title "Select Custom Database Source" 3>&1 1>&2 2>&3)
     fi
+
+    # Try to get the file size before download
+    [ -z "$FILE_SIZE" ] && { FILE_SIZE=$(wget --spider "$DB_SOURCE" 2>&1 | grep "^Length: " | sed 's/^.* (\(.*\)) .*$/\1/'); }
+
     if (whiptail --title "Confirm DB" \
                  --yesno "Download new database from '$DB_SOURCE'?\n\nupdated: ${LAST_UPDATED}, size: ${FILE_SIZE}" \
                  12 $WIDTH) then
-        echo "Stopping IRI and commencing download ..." && systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
+        # This command will stop iri, remove older database directories,
+        # extract the database (on the fly) set correct user ownership and start IRI up again.
+        systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - "$DB_SOU
+RCE" | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
         if [[ $? -ne 0 ]]; then
             whiptail --title "New DB Failed!" \
-                     --msgbox "Well this is embarrassing. Downloading the new DB failed... Note that IRI was not re-activated." \
+                     --msgbox "Well this is embarrassing. Downloading the new DB failed..." \
                      8 $WIDTH
             # Cleanup any leftovers
             rm -rf /var/lib/iri/target/mainnetdb*
