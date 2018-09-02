@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.5
+VERSION=0.6.6
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -644,13 +644,13 @@ function get_db() {
     XVPS_SOURCE="https://x-vps.com/iota.db.tgz"
 
     # Create array of available DB resources
-    SOURCES_ARRAY=("$XVPS_SOURCE" "http://node08.iotatoken.nl:8888/iota.db.tgz" "Custom")
+    SOURCES_ARRAY=("$XVPS_SOURCE" "https://database.iotatoken.nl/iota.db.tgz" "Custom")
 
     # Create an indexed array for building the menu
     SOURCES_ARRAY_INDEXED=($(printf "%s\n" "${SOURCES_ARRAY[@]}"| awk -F, '!/^ / && NF { print NR")"; print $1}'))
 
     # Output the menu
-    SOURCE_INDEX=$(whiptail --title "Select DB Source" --menu "This action will download and boostrap a fully synced database.\nChoose a source where to download the database from:" 16 $WIDTH 4 "${SOURCES_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
+    SOURCE_INDEX=$(whiptail --title "Select DB Source" --menu "This action will download and boostrap a synced database.\nChoose a source where to download the database from:" 16 $WIDTH 4 "${SOURCES_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
     if [ $? -eq 1 ]; then
         return
     fi
