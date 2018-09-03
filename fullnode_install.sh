@@ -20,6 +20,10 @@ export NEWT_COLORS='
 window=,
 '
 
+if grep -q 'IRI PLAYBOOK' /etc/motd; then
+    :>/etc/motd
+fi
+
 declare -g INSTALL_OPTIONS
 
 clear
@@ -195,6 +199,17 @@ function init_debian(){
 }
 
 function inform_reboot() {
+cat <<EOF >/etc/motd
+======================== IRI PLAYBOOK ========================
+
+To proceed with the installation, please re-run:
+
+GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
+
+(make sure to run it as user root)
+
+EOF
+
 cat <<EOF
 
 
@@ -206,11 +221,10 @@ and allow the node installer to proceed with the installation.
 *** Please reboot this machine and re-run this script ***
 
 
->>> To reboot run: 'shutdown -r now', when back online:
-bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+>>> To reboot run: 'reboot', and when the server is back online:
+GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
 
-!! Remember to re-run this script as root !!
-
+!! Remember to run this command as user 'root' !!
 
 EOF
 }
@@ -430,7 +444,114 @@ function set_ssh_port() {
     fi
 }
 
-# Get OS and version
+function run_playbook(){
+    # Get default SSH port
+    set +o pipefail
+    SSH_PORT=$(grep ^Port /etc/ssh/sshd_config | awk {'print $2'})
+    set -o pipefail
+    if [[ "$SSH_PORT" != "" ]] && [[ "$SSH_PORT" != "22" ]]; then
+        set_ssh_port
+    else
+        SSH_PORT=22
+    fi
+    echo "SSH port to use: $SSH_PORT"
+
+    # Ansible output log file
+    LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
+
+    # Override ssh_port
+    [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
+
+    # Run the playbook
+    echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
+    set +e
+    unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
+    RC=$?
+    if [ $RC -ne 0 ]; then
+        echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
+        exit $RC
+    fi
+    set -e
+
+    # Check playbook needs reboot
+    if [ -f "/var/run/playbook_reboot" ]; then
+        cat <<EOF >/etc/motd
+-------------------- IRI PLAYBOOK --------------------
+
+It seems you have rebooted the node. You can proceed with
+the installation by running the command:
+
+/opt/iri-playbook/rerun.sh
+
+(make sure you are user root!)
+
+-------------------- IRI PLAYBOOK --------------------
+EOF
+
+        cat <<EOF
+-------------------- NOTE --------------------
+
+The installer detected that the playbook requires a reboot,
+most probably to enable a functionality which requires the reboot.
+
+You can reboot the server using the command 'reboot'.
+
+Once the server is back online you can use the following command
+to proceed with the installation (become user root first):
+
+/opt/iri-playbook/rerun.sh
+
+-------------------- NOTE --------------------
+
+EOF
+
+        rm -f "/var/run/playbook_reboot"
+        exit
+    fi
+
+    # Calling set_primary_ip
+    set_primary_ip
+
+    # Add notice to set payout address for Field
+    if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]] || grep -q '^field_enabled: true' /opt/iri-playbook/group_vars/all/z-installer-override.yml; then
+        FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/config.ini'"
+    fi
+
+    OUTPUT=$(cat <<EOF
+* A log of this installation has been saved to: $LOGFILE
+
+* You should be able to connect to IOTA Peer Manager and Grafana:
+
+https://${PRIMARY_IP}:8811 and https://${PRIMARY_IP}:5555
+
+* Note that your IP might be different as this one has been auto-detected in best-effort.
+
+* Log in with username ${ADMIN_USER} and the password you have entered during the installation.
+
+${FIELD_NOTICE}
+
+Please refer to the tutorial for post-installation information:
+http://iri-playbook.readthedocs.io/en/master/post-installation.html
+
+Like the project at:
+https://ecosystem.iota.org/projects/iri-fullnode-installer
+
+EOF
+)
+
+    HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
+    whiptail --title "Installation Done" \
+             --msgbox "$OUTPUT" \
+             $HEIGHT 78
+}
+
+# Incase we call a re-run
+if [[ -n "$1" ]] && [[ "$1" == "rerun" ]]; then
+    run_playbook
+    exit
+fi
+
+### Get OS and version
 set_dist
 
 # Check OS version compatibility
@@ -462,17 +583,6 @@ else
     echo "$OS not supported"
     exit 1
 fi
-
-set +o pipefail
-# Get default SSH port
-SSH_PORT=$(grep ^Port /etc/ssh/sshd_config | awk {'print $2'})
-set -o pipefail
-if [[ "$SSH_PORT" != "" ]] && [[ "$SSH_PORT" != "22" ]]; then
-    set_ssh_port
-else
-    SSH_PORT=22
-fi
-echo "SSH port to use: $SSH_PORT"
 
 echo "Verifying Ansible version..."
 ANSIBLE_VERSION=$(ansible --version|head -1|awk {'print $2'}|cut -d. -f1-2)
@@ -508,76 +618,6 @@ set_admin_username
 
 # web access (ipm, haproxy, grafana, etc)
 get_admin_password
+
 echo -e "\nRunning playbook..."
-
-# Ansible output log file
-LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
-
-# Override ssh_port
-[[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
-
-# Run the playbook
-echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
-set +e
-unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
-RC=$?
-if [ $RC -ne 0 ]; then
-    echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
-    exit $RC
-fi
-set -e
-
-# Check playbook needs reboot
-if [ -f "/var/run/playbook_reboot" ]; then
-    cat <<EOF
--------------------- NOTE --------------------
-
-The installer detected that the playbook requires a reboot,
-most probably to enable a functionality which requires the reboot.
-
-You can reboot the server using 'shutdown -r now'.
-
-Please note that you will have to re-run this script once the server is back on.
-Unfortunately, this also requires that you go through the first steps all over again.
-
-EOF
-
-    rm -f "/var/run/playbook_reboot"
-    exit
-fi
-
-# Calling set_primary_ip
-set_primary_ip
-
-# Add notice to set payout address for Field
-if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]]; then
-    FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/config.ini'"
-fi
-
-OUTPUT=$(cat <<EOF
-* A log of this installation has been saved to: $LOGFILE
-
-* You should be able to connect to IOTA Peer Manager and Grafana:
-
-https://${PRIMARY_IP}:8811 and https://${PRIMARY_IP}:5555
-
-* Note that your IP might be different as this one has been auto-detected in best-effort.
-
-* Log in with username ${ADMIN_USER} and the password you have entered during the installation.
-
-${FIELD_NOTICE}
-
-Please refer to the tutorial for post-installation information:
-http://iri-playbook.readthedocs.io/en/master/post-installation.html
-
-Like the project at:
-https://ecosystem.iota.org/projects/iri-fullnode-installer
-
-EOF
-)
-
-HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
-whiptail --title "Installation Done" \
-         --msgbox "$OUTPUT" \
-         $HEIGHT 78
-
+run_playbook
