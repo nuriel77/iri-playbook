@@ -1,0 +1,50 @@
+{
+  "datacenter": "{{ default_dc }}",
+  "domain": "{{ default_domain }}",
+  "encrypt": "{{ consul_key_data.stdout }}",
+  "log_level": "{{ consul_debug_level }}",
+  "node_name": "{{ inventory_hostname }}",
+  "enable_script_checks": true,
+{% if groups['fullnode'] | length == 1 %}
+  "bootstrap": true,
+{% else %}
+  "start_join": [{% for host in groups['fullnode'] %}"{{ host }}"{% if not loop.last %},{% endif %}{% endfor %}],
+  "bootstrap_expect": {{ groups['fullnode'] | length }},
+{% endif %}
+  "leave_on_terminate": true,
+  "rejoin_after_leave": true,
+  "server": true,
+  "bind_addr": "{{ consul_ip|default('127.0.0.1') }}",
+  "advertise_addr": "{{ consul_ip|default('127.0.0.1') }}",
+  "client_addr": "{{ consul_ip|default('127.0.0.1') }}",
+{% if consul_default_key_file is defined and consul_default_cert_file is defined and consul_default_ca_file is defined %}
+  "addresses": {
+    "https": "0.0.0.0"
+  },
+{% endif %}
+  "advertise_addr_wan": "{{ consul_ip|default('127.0.0.1') }}",
+{% if consul_default_key_file is defined and consul_default_cert_file is defined and consul_default_ca_file is defined %}
+  "ports": {
+    "https": {{ consul_ssl_port|default('8443') }}
+  },
+  "key_file": "{{ consul_default_key_file }}",
+  "cert_file": "{{ consul_default_cert_file }}",
+  "ca_file": "{{ consul_default_ca_file }}",
+{% endif %}
+{% if consul_dns_enabled is defined and consul_dns_enabled|bool == True %}
+  "dns_config": {
+    "allow_stale": true,
+    "max_stale": "30s",
+    "node_ttl": "30s",
+    "enable_truncate": true,
+    "only_passing": true,
+    "udp_answer_limit": 100
+  },
+{% endif %}
+  "acl_datacenter": "{{ default_dc }}",
+  "acl_default_policy": "{{ consul_default_acl_policy | default('deny') }}",
+  "acl_down_policy": "extend-cache",
+  "acl_master_token": "{{ consul_master_token.stdout }}"{% if consul_agent_token is defined %},
+  "acl_agent_token": "{{ consul_agent_token }}"
+{% endif %}
+}

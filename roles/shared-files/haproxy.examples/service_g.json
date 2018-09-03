@@ -1,0 +1,20 @@
+{
+  "ID": "my.testnode.com:14267",
+  "Name": "iri",
+  "tags": [
+    "haproxy.maxconn=5",
+    "haproxy.scheme=https",
+    "haproxy.pow=false"
+  ],
+  "Address": "my.testnode.com",
+  "Port": 14267,
+  "EnableTagOverride": false,
+  "Check": {
+    "id": "my.testnode.com:14267",
+    "name": "API my.testnode.com:14267",
+    "args": ["/bin/bash", "/scripts/node_check.sh", "-a", "https://my.testnode.com:14267", "-i"],
+    "Interval": "30s",
+    "timeout": "5s",
+    "DeregisterCriticalServiceAfter": "24h"
+  }
+}

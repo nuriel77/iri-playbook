@@ -60,3 +60,24 @@ iri_remote_limit_api: "removeNeighbors, addNeighbors, interruptAttachingToTangle
 # `true` is necessary in order to allow external wallets/APIs to connect without tunneling.
 # If set to `false` it will only bind to localhost (127.0.0.1)
 api_port_remote: false
+
+# When using distributed LB
+# Haproxy stats port with https
+haproxy_stats_https: false
+
+# Load balancer max connections (all backends)
+lb_max_connections: 720
+
+# Allowed concurrent connections to all iri backends
+# (pow and default)
+haproxy_iri_max_connections: 360
+
+# Allowed concurrent connections to PoW backend
+max_connections_pow_backend: 180
+
+# Allowed concurrent connection to default backend (no PoW)
+max_connections_backend: 180
+
+# Enable remote auth with password.
+# This will only allow connections using basic auth.
+haproxy_remote_auth: false

@@ -1,8 +1,8 @@
 - import_tasks: role.yml
   tags:
-    - field_role
+    - consul_role
   when: >
-        (field_enabled is defined and
-         field_enabled|bool == True) or
+        (consul_enabled is defined and
+         consul_enabled|bool == True) or
         (uninstall_playbook is defined and
          uninstall_playbook|bool == True)

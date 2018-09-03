@@ -1,0 +1,6 @@
+HAPROXY_TEMPLATE=/etc/haproxy/haproxy.cfg.tmpl
+HAPROXY_CONFIG=/etc/haproxy/haproxy.cfg
+HAPROXY_RELOAD=/usr/local/bin/haproxy_reload.sh
+CONSUL_TEMPLATE_LOGLEVEL={{ consul_template_loglevel|default('DEBUG') }}
+CONSUL_ADDRESS={{ consul_scheme|default('http') }}://{{ consul_ip|default('127.0.0.1') }}:{{ consul_comm_port|default('8500') }}
+CONSUL_HTTP_TOKEN={{ consul_master_token.stdout }}

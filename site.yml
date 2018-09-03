@@ -9,6 +9,7 @@
     - nginx
     - iotapm
     - monitoring
+    - consul
     - haproxy
     - nelson
     - field

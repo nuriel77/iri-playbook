@@ -21,6 +21,9 @@ lb_bind_address: 127.0.0.1
 # This will be the external accessible port
 iri_api_port_remote: 14267
 
+# Loadbalancer administrative name
+lb_service_name: my.loadbalancer.io
+
 # Max connections to API
 iri_api_max_connections: 12
 

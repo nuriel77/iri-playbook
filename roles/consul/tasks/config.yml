@@ -1,0 +1,205 @@
+- name: set variables centos
+  set_fact:
+    sysconfig_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    sysconfig_dir: /etc/default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+# If running a cluster of Consul, use default interface's IP
+- name: set interface ip
+  set_fact:
+    consul_ip: hostvars[inventory_hostname]['ansible_default_ipv4']['address'] 
+  when: groups['fullnode'] | length > 1
+
+# If running on a single machine, use localhost
+- name: set local ip
+  set_fact:
+    consul_ip: 127.0.0.1
+  when: groups['fullnode'] | length == 1
+
+- name: Create user consul
+  user:
+    name: "{{ consul_username }}"
+    shell: /sbin/nologin
+    createhome: no
+    home: "{{ consul_data_dir }}"
+  tags:
+    - consul_user
+
+- name: copy scripts
+  copy:
+    src: "files/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+  with_items:
+    - node_check.sh
+  tags:
+    - scripts
+
+- name: Ensure consul directories exist
+  file:
+    state: directory
+    mode: 0700
+    dest: "{{ item }}"
+    owner: "{{ consul_username }}"
+    group: "{{ consul_username }}"
+  with_items:
+    - "{{ consul_config_dir }}"
+    - "{{ consul_config_dir }}/certs.d"
+    - "{{ consul_config_dir }}/conf.d"
+    - "{{ consul_data_dir }}"
+
+- name: remove consul image
+  block:
+
+    - name: "stopping consul service, this might take a moment..."
+      systemd:
+        name: consul.service
+        state: stopped
+      ignore_errors: yes
+
+    - name: delete consul image
+      docker_image:
+        name: "{{ consul_image }}"
+        tag: "{{ consul_tag }}"
+        state: absent
+        force: yes
+
+  when:
+    - remove_consul_image is defined
+    - remove_consul_image|bool == True
+
+- name: check consul image exists
+  shell: "/usr/bin/docker images {{ consul_image }}:{{ consul_tag }} | grep -q ^consul"
+  changed_when: False
+  register: consul_image_stat
+  failed_when: "consul_image_stat.rc > 1"
+
+- name: docker build consul image
+  block:
+
+    - name: create temporary build directory
+      tempfile:
+        state: directory
+      register: tempdir
+
+    - name: copy Dockerfile
+      template:
+        src: templates/Dockerfile.j2
+        dest: "{{ tempdir.path }}/Dockerfile"
+
+    - name: build consul image
+      docker_image:
+        path: "{{ tempdir.path }}"
+        name: "{{ consul_image }}"
+        tag: "{{ consul_tag }}"
+
+    - name: remove temporary build dir
+      file:
+        state: absent
+        path: "{{ tempdir.path }}"
+  when: consul_image_stat.rc == 1
+  tags:
+    - docker_build
+
+- name: copy consul systemd file
+  template:
+    src: templates/consul.service.j2
+    dest: /etc/systemd/system/consul.service
+  notify:
+    - restart consul
+
+- name: check consul key exists
+  run_once: yes
+  stat:
+    path: "{{ consul_config_dir }}/{{ consul_key_file }}"
+  register: consul_key
+  tags:
+    - consul_tokens
+
+- name: create a new encryption key
+  run_once: yes
+  shell: "/usr/bin/docker run --name tempconsul --rm consul:latest consul keygen > {{ consul_config_dir }}/{{ consul_key_file }}"
+  no_log: yes
+  when: not consul_key.stat.exists
+  tags:
+    - consul_tokens
+
+- name: ensure key file mode
+  run_once: yes
+  file:
+    path: "{{ consul_config_dir }}/{{ consul_key_file }}"
+    owner: "{{ consul_username }}"
+    group: "{{ consul_username }}"
+    mode: 0400
+  tags:
+    - consul_tokens
+
+- name: slurp key
+  run_once: yes
+  shell: "echo -n $(cat {{ consul_config_dir }}/{{ consul_key_file }})"
+  register: consul_key_data
+  changed_when: false
+  no_log: yes
+  tags:
+    - consul_tokens
+
+- name: check master token file exists
+  run_once: yes
+  stat:
+    path: "{{ consul_config_dir }}/{{ consul_master_token_file }}"
+  register: consul_token
+  tags:
+    - consul_tokens
+
+- name: create a new master token
+  run_once: yes
+  shell: "uuidgen > {{ consul_config_dir }}/{{ consul_master_token_file }}"
+  no_log: yes
+  when: consul_token.stat.exists == False
+  tags:
+    - consul_tokens
+
+- name: ensure master token file mode
+  run_once: yes
+  file:
+    path: "{{ consul_config_dir }}/{{ consul_master_token_file }}"
+    owner: "{{ consul_username }}"
+    group: "{{ consul_username }}"
+    mode: 0400
+  tags:
+    - consul_tokens
+
+- name: slurp master token
+  run_once: yes
+  shell: "echo -n $(cat {{ consul_config_dir }}/{{ consul_master_token_file }})"
+  register: consul_master_token
+  no_log: yes
+  changed_when: false
+  tags:
+    - consul_tokens
+
+- name: copy consul configuration files
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "{{ consul_config_dir }}/conf.d/{{ item }}"
+    owner: "{{ consul_username }}"
+    group: "{{ consul_username }}"
+    mode: 0644
+  with_items:
+    - main.json
+  notify: restart consul
+  tags:
+    - consul_tokens
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure consul started and enabled
+  systemd:
+    name: consul.service
+    state: started
+    enabled: true

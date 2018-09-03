@@ -1,0 +1,37 @@
+- name: set variables centos
+  set_fact:
+    sysconfig_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS'
+
+- name: set variables ubuntu/debian
+  set_fact:
+    sysconfig_dir: /etc/default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- import_tasks: firewalld.yml
+  tags:
+    - consul_firewalld
+  when:
+    - ansible_distribution == 'CentOS'
+    - configure_firewall is defined and configure_firewall|bool == True
+
+- import_tasks: ufw.yml
+  tags:
+    - consul_ufw
+  when:
+    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    - configure_firewall is defined and configure_firewall|bool == True
+
+- import_tasks: config.yml
+  tags:
+    - consul_config
+
+- import_tasks: config-consul-template.yml
+  tags:
+    - consul_template_config
+
+- import_tasks: uninstall.yml
+  tags:
+    - uninstall
+    - uninstall_consul
+  when: uninstall_playbook is defined and uninstall_playbook|bool == True
