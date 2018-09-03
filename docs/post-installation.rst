@@ -106,29 +106,29 @@ IRI uses 3 ports by default:
 
 1. UDP neighbor peering port
 2. TCP neighbor peering port
-3. TCP API port (this is where a light wallet would connect to or iota peer manageR)
+3. TCP API port (this is where a light wallet would connect to, unless using HAProxy in which case the default port is 14267 TCP)
 
-You can check if IRI and iota-pm are "listening" on the ports if you run:
+You can check if IRI is "listening" on the ports when you run:
 
-``lsof -Pni|egrep "iri|iotapm"``.
+``lsof -Pni|grep "iri"``.
 
 Here is the output you should expect::
 
   # lsof -Pni|egrep "iri|iotapm"
   java     2297    iri   19u  IPv6  20331      0t0  UDP *:14600
-  java     2297    iri   21u  IPv6  20334      0t0  TCP *:14600 (LISTEN)
+  java     2297    iri   21u  IPv6  20334      0t0  TCP *:15600 (LISTEN)
   java     2297    iri   32u  IPv6  20345      0t0  TCP 127.0.0.1:14265 (LISTEN)
-  node     2359 iotapm   12u  IPv4  21189      0t0  TCP 127.0.0.1:8011 (LISTEN)
 
+(note that when running IRI dockerized you will see docker and not java as the process name)
 
 What does this tell us?
 
-1. ``*:<port number>`` means this port is listening on all interfaces - from the example above we see that IRI is listening on ports TCP and UDP no. 14600
+1. ``*:<port number>`` means this port is listening on all interfaces - from the example above we see that IRI is listening on ports TCP and UDP no. 15600 and 14600 respectively
 2. IRI is listening for API (or wallet connections) on a local interface (not accessible from "outside") no. 14265
-3. Iota-PM is listening on local interface port no. 8011
 
-Now we can tell new neighbors to connect to our IP address.
+To peer with neighbors we need to choose whether to let them connect to TCP 15600 or UDP 14600 port.
 
+You can have a mix of TCP and UDP neighbors. In some cases, if UDP isn't working well, you can switch to TCP or vice-versa.
 
 
 Here's how to check your IP address:
@@ -154,7 +154,9 @@ See the IP address on ``eth0``? (10.50.0.24) this is the IP address of the serve
 
 **Yes** - for those of you who've noticed, this example is a **private** address. But if you have a VPS you should have a public IP.
 
-I could tell neighbors to connect to my UDP port: ``udp://10.50.0.14:14600`` or to my TCP port: ``tcp://10.50.0.14:14600``.
+I could have a neighbor connect to my UDP port: ``udp://10.50.0.14:14600`` or to my TCP port: ``tcp://10.50.0.14:15600``.
+
+If you are behind a home or office router, you will probably have to forward ports from your router to this IP (as this IP will be "internal" and the router have thexternal IP).
 
 Note that the playbook installation automatically configured the firewall to allow connections to these ports. If you happen to change those, you will have to
 allow the new ports in the firewall (if you choose to do so, check google for iptables or firewalld commands).

@@ -2641,8 +2641,8 @@
                     "scopedVars": {
                         "neighbor": {
                             "selected": false,
-                            "text": "104.225.220.194:14600",
-                            "value": "104.225.220.194:14600"
+                            "text": "104.10.10.10:14600",
+                            "value": "104.10.10.10:14600"
                         }
                     },
                     "seriesOverrides": [],
@@ -2760,8 +2760,8 @@
                     "scopedVars": {
                         "neighbor": {
                             "selected": false,
-                            "text": "iota.lukaseder.de:14600",
-                            "value": "iota.lukaseder.de:14600"
+                            "text": "iota.test.de:14600",
+                            "value": "iota.test.de:14600"
                         }
                     },
                     "seriesOverrides": [],
@@ -2879,8 +2879,8 @@
                     "scopedVars": {
                         "neighbor": {
                             "selected": false,
-                            "text": "v22017114288256343.hotsrv.de:14600",
-                            "value": "v22017114288256343.hotsrv.de:14600"
+                            "text": "v220.hotsrv.de:14600",
+                            "value": "v220.hotsrv.de:14600"
                         }
                     },
                     "seriesOverrides": [],
@@ -2998,8 +2998,8 @@
                     "scopedVars": {
                         "neighbor": {
                             "selected": false,
-                            "text": "vmi157545.contaboserver.net:14600",
-                            "value": "vmi157545.contaboserver.net:14600"
+                            "text": "vmi0000.contaboserver.net:14600",
+                            "value": "vmi0000.contaboserver.net:14600"
                         }
                     },
                     "seriesOverrides": [],
