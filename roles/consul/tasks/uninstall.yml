@@ -1,0 +1,65 @@
+- name: set variables centos
+  set_fact:
+    sysconfig_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS'
+
+- name: set variables debian/ubuntu
+  set_fact:
+    sysconfig_dir: /etc/default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: stop consul
+  systemd:
+    name: consul
+    state: stopped
+    enabled: false
+  ignore_errors: yes
+
+- name: stop consul-template
+  systemd:
+    name: consul-template
+    state: stopped
+    enabled: false
+  ignore_errors: yes
+
+- name: remove consul systemd file
+  file:
+    path: "/etc/systemd/system/{{ item }}"
+    state: absent
+  notify:
+    - reload systemd
+  with_items:
+    - 'consul-template.service'
+    - 'consul.service'
+
+- name: remove consul related files and paths
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/var/lib/consul"
+    - "/etc/consul"
+    - "{{ consul_node_check }}"
+    - "{{ consul_template_basedir }}"
+    - "/etc/haproxy/haproxy.cfg.tmpl"
+    - "{{ sysconfig_dir }}/consul-template"
+    - "/usr/local/bin/haproxy_reload.sh"
+
+- name: remove user to run consul as
+  user:
+    name: "{{ consul_username }}"
+    state: absent
+
+- name: remove consul container
+  docker_container:
+    name: consul
+    state: absent
+  ignore_errors: yes
+
+- name: remove consul image
+  docker_image:
+    forice: yes
+    state: absent
+    name: "{{ consul_image }}"
+    tag: "{{ consul_tag }}"
+  ignore_errors: yes

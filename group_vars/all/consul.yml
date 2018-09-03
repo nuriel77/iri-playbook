@@ -1,0 +1,22 @@
+# Consul
+consul_image: consul
+consul_tag: 1.2.2
+consul_username: consul
+consul_config_dir: /etc/consul
+consul_data_dir: /var/lib/consul
+consul_comm_port: 8500
+consul_ssl_port: 8443
+consul_key_file: consul.key
+consul_master_token_file: consul_master_token
+consul_agent_token_file: consul_agent_token
+consul_debug_level: DEBUG
+default_domain: "{{ lb_service_name }}"
+default_dc: my_dc
+consul_node_check: /usr/local/bin/node_check.sh
+consul_dns_enabled: false
+consul_default_acl_policy: deny
+
+# Consul template
+consul_template_version: 0.19.5
+consul_template_basedir: /opt/consul-template
+consul_template_plugin: "{{ consul_template_basedir }}/consul-template-plugin.py"

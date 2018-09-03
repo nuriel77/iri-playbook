@@ -1,0 +1,19 @@
+{
+  "ID": "my.pow.io:14265",
+  "Name": "iri",
+  "tags": [
+    "haproxy.maxconn=1",
+    "haproxy.pow=true"
+  ],
+  "Address": "my.pow.io",
+  "Port": 14265,
+  "EnableTagOverride": false,
+  "Check": {
+    "id": "my.pow.io:14265",
+    "name": "API my.pow.io:14265",
+    "args": ["/scripts/node_check.sh", "-a", "http://my.pow.io:14265", "-i","-w","120","-p"],
+    "Interval": "30s",
+    "timeout": "10s",
+    "DeregisterCriticalServiceAfter": "24h"
+  }
+}

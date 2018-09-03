@@ -1,0 +1,20 @@
+{
+  "ID": "40.50.30.10:14265",
+  "Name": "iri",
+  "tags": [
+    "haproxy.maxconn=7",
+    "haproxy.scheme=http",
+    "haproxy.pow=false"
+  ],
+  "Address": "40.50.30.10",
+  "Port": 14265,
+  "EnableTagOverride": false,
+  "Check": {
+    "id": "40.50.30.10:14265",
+    "name": "API 40.50.30.10:14265",
+    "args": ["/scripts/node_check.sh", "-a", "http://40.50.30.10:14265", "-i", "-t", "10"],
+    "Interval": "30s",
+    "timeout": "5s",
+    "DeregisterCriticalServiceAfter": "24h"
+  }
+}

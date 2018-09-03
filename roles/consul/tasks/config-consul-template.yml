@@ -1,0 +1,98 @@
+- name: set etc config dir debian/ubuntu
+  set_fact:
+    sysconfig_dir: /etc/default
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: set etc config dir centos
+  set_fact:
+    sysconfig_dir: /etc/sysconfig
+  when: ansible_distribution == 'CentOS'
+
+- name: ensure etc haproxy dir
+  file:
+    path: /etc/haproxy
+    state: directory
+    mode: 0750
+
+- name: remove existing consul-template basedir
+  file:
+    path: "{{ consul_template_basedir }}"
+    state: absent
+  when:
+    - remove_consul_template_basedir is defined
+    - consul_template_basedir|bool == True
+
+- name: stat consul-template dir
+  stat:
+    path: "{{ consul_template_basedir }}"
+  register: consul_template_basedir_stat
+
+# example: https://releases.hashicorp.com/consul-template/0.19.5/consul-template_0.19.5_linux_amd64.tgz
+- name: download and extract consul-template
+  unarchive:
+    src: "https://releases.hashicorp.com/consul-template/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_amd64.tgz"
+    dest: /tmp
+    remote_src: True
+  when: not consul_template_basedir_stat.stat.exists
+  register: downloaded_consul_template
+
+- name: consul-template install
+  block:
+  
+    - name: create consul-template directory
+      file:
+        path: "{{ consul_template_basedir }}"
+        state: directory
+
+    - name: move temporary extracted consul-template binary to its basedir
+      shell: "mv /tmp/consul-template {{ consul_template_basedir }}/. && rm -f consul-template_{{ consul_template_version }}_linux_amd64.tgz"
+      when:
+        - downloaded_consul_template is defined
+        - downloaded_consul_template.changed
+
+- name: copy consul-template service file
+  template:
+    src: templates/consul-template.service.j2
+    dest: /etc/systemd/system/consul-template.service
+  notify:
+    - restart consul-template
+
+- name: copy consul-template plugin
+  copy:
+    src: files/consul-template-plugin.py
+    dest: "{{ consul_template_plugin }}"
+    mode: 0755
+
+- name: copy consul-template environment file
+  template:
+    src: templates/consul-template.sysconfig.j2
+    dest: "{{ sysconfig_dir }}/consul-template"
+    mode: 0600
+
+- name: copy haproxy_reload script
+  template:
+    src: templates/haproxy_reload.sh.j2
+    dest: /usr/local/bin/haproxy_reload.sh
+    mode: 0755
+  tags:
+    - haproxy_reload_script
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: copy haproxy cfg template file
+  template:
+    src: ../shared-files/haproxy.cfg.tmpl.j2
+    dest: /etc/haproxy/haproxy.cfg.tmpl
+  notify:
+    - reload consul-template
+  ignore_errors: yes
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: Ensure consul-template is started and enabled
+  systemd:
+    name: consul-template
+    state: started
+    enabled: yes

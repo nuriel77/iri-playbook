@@ -1,0 +1,16 @@
+{
+  "ID": "my.node.com:15265",
+  "Name": "iri",
+  "tags": [],
+  "Address": "my.node.com",
+  "Port": 15265,
+  "EnableTagOverride": false,
+  "Check": {
+    "id": "my.node.com:15265",
+    "name": "API my.node.com:15265",
+    "args": ["/bin/bash", "/scripts/node_check.sh", "-a", "http://my.node.com:15265", "-i"],
+    "Interval": "30s",
+    "timeout": "5s",
+    "DeregisterCriticalServiceAfter": "24h"
+  }
+}

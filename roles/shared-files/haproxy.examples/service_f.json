@@ -1,0 +1,21 @@
+{
+  "ID": "only.pow.io:14265",
+  "Name": "iri",
+  "tags": [
+    "haproxy.maxconn=7",
+    "haproxy.scheme=http",
+    "haproxy.weight=2",
+    "haproxy.pow=only"
+  ],
+  "Address": "only.pow.io",
+  "Port": 14265,
+  "EnableTagOverride": false,
+  "Check": {
+    "id": "only.pow.io:14265",
+    "name": "API only.pow.io:14265",
+    "args": ["/scripts/node_check.sh", "-a", "http://only.pow.io:14265", "-i", "-p"],
+    "Interval": "30s",
+    "timeout": "5s",
+    "DeregisterCriticalServiceAfter": "24h"
+  }
+}

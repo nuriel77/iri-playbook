@@ -1,0 +1,28 @@
+- name: firewall allow
+  block:
+
+    - name: allow consul members peering ports
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+        immediate: true
+        zone: public
+      with_items:
+        - "8300-8304/tcp"
+        - "8300-8304/udp"
+
+    - name: allow consul communication port
+      firewalld:
+        port: "{{ item }}"
+        permanent: true
+        state: enabled
+        immediate: true
+        zone: public
+      with_items:
+        - "{{ consul_comm_port }}/tcp"
+        - "{{ consul_ssl_port }}/tcp"
+        - "8600/tcp"
+        - "8600/udp"
+
+  when: groups['fullnode'] | length > 1

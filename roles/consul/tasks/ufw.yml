@@ -1,0 +1,25 @@
+- name: allow ssh port firewall
+  ufw:
+    rule: allow
+    direction: in
+    proto: tcp
+    port: "{{ ssh_port|default('22') }}"
+
+- name: ufw default outgoing policy allowed
+  ufw:
+    direction: outgoing
+    policy: allow
+
+- name: ensure ufw started and default incoming policy denied
+  ufw:
+    state: enabled
+    direction: incoming
+    policy: deny
+
+- name: allow iri api port in firewall
+  ufw:
+    rule: allow
+    direction: in
+    proto: tcp
+    port: "{{ iri_api_port_remote }}"
+    log: yes
