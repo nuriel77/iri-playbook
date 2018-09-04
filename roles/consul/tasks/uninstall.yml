@@ -43,9 +43,10 @@
     - "{{ consul_template_basedir }}"
     - "/etc/haproxy/haproxy.cfg.tmpl"
     - "{{ config_dir }}/consul-template"
+    - "{{ config_dir }}/consul"
     - "/usr/local/bin/haproxy_reload.sh"
 
-- name: remove user to run consul as
+- name: remove consul user
   user:
     name: "{{ consul_username }}"
     state: absent
@@ -58,7 +59,7 @@
 
 - name: remove consul image
   docker_image:
-    forice: yes
+    force: yes
     state: absent
     name: "{{ consul_image }}"
     tag: "{{ consul_tag }}"
