@@ -35,8 +35,18 @@ fi
 
 # To override 14267 you can specify HAPROXY_PORT environment variable
 # before running this script (or set on the same command-line)
-: ${HAPROXY_PORT:=14267}
+# Otherwise the port will try to get set from iri-playbook configuration
+if [[ -z "$HAPROXY_PORT" ]]; then
+    # Get the configured haproxy iri api port
+    HAPROXY_PORT=$(ls /opt/iri-playbook/group_vars/all/*.yml | sort -n | xargs -d '\n' grep ^iri_api_port_remote | tail -1 | awk {'print $2'})
+    if [ $? -ne 0 ]; then
+        HAPROXY_PORT=14267
+    fi
+fi
+
+# Set defaults
 : ${HAPROXY_CONFIG:=/etc/haproxy/haproxy.cfg}
+: ${HAPROXY_TMPL:=/etc/haproxy/haproxy.cfg.tmpl}
 : ${DOCKER_IMAGE:=certbot/certbot:latest}
 HAPROXY_RESTART_CMD="/bin/systemctl restart haproxy"
 HAPROXY_START_CMD="/bin/systemctl start haproxy"
@@ -256,12 +266,17 @@ if [[ $exitcode -eq 0 ]]; then
         chmod 400 "${full_path}/haproxy.pem"
     done
 
-    grep -q $DOMAIN_DIR/haproxy.pem /etc/haproxy/haproxy.cfg
+    grep -q "$DOMAIN_DIR/haproxy.pem" /etc/haproxy/haproxy.cfg
     HAPROXY_RESTART=$?
 
     if [[ $HAPROXY_RESTART -eq 1 ]]; then
         # Match certificate name for haproxy
-        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" $HAPROXY_CONFIG
+        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" "$HAPROXY_CONFIG"
+    fi
+
+    # Configure if haproxy template file exists
+    if [[ -f "$HAPROXY_TMPL" ]]; then
+        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" "$HAPROXY_TMPL"
     fi
 
     # restart haproxy

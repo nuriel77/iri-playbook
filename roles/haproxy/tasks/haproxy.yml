@@ -83,6 +83,9 @@
     - haproxy_cfg
   notify:
     - restart haproxy
+  when: >
+        consul_enabled is not defined or
+        consul_enabled|bool == False
 
 - name: flush handlers
   meta: flush_handlers
