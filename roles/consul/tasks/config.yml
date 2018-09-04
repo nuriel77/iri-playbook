@@ -134,7 +134,7 @@
 
 - name: create a new encryption key
   run_once: yes
-  shell: "/usr/bin/docker run --name tempconsul --rm consul:latest consul keygen > {{ consul_config_dir }}/{{ consul_key_file }}"
+  shell: "/usr/bin/docker run --name tempconsul --rm {{ consul_image}}:{{ consul_tag }} consul keygen > {{ consul_config_dir }}/{{ consul_key_file }}"
   no_log: yes
   when: not consul_key.stat.exists
   tags:
