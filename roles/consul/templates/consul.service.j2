@@ -6,17 +6,21 @@ Requires=docker.service
 [Service]
 TimeoutStartSec=0
 Restart=always
+EnvironmentFile=-{{ config_dir }}/consul
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
   --hostname %p \
   --net=host \
   --pid=host \
+  --cap-drop=ALL \
+  --user={{ consul_uid.stdout }}
   -v /usr/local/bin:/scripts:ro,Z \
   -v {{ consul_data_dir }}/data:/consul/data:rw,Z \
   -v {{ consul_config_dir }}/conf.d:/consul/config:Z \
   -v /etc/localtime:/etc/localtime:ro,Z \
-  {{ consul_image }}:{{ consul_tag }} agent
+  $DOCKER_OPTS \
+  {{ consul_image }}:${TAG} agent
 
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p

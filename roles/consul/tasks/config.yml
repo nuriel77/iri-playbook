@@ -1,11 +1,11 @@
 - name: set variables centos
   set_fact:
-    sysconfig_dir: /etc/sysconfig
+    config_dir: /etc/sysconfig
   when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
-    sysconfig_dir: /etc/default
+    config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 # If running a cluster of Consul, use default interface's IP
@@ -28,6 +28,11 @@
     home: "{{ consul_data_dir }}"
   tags:
     - consul_user
+
+- name: get consul user uid
+  shell: "echo -n $(id -u {{ consul_username }})"
+  changed_when: false
+  register: consul_uid
 
 - name: copy scripts
   copy:
@@ -104,6 +109,13 @@
   when: consul_image_stat.rc == 1
   tags:
     - docker_build
+
+- name: copy consul sysconfig file
+  template:
+    src: templates/consul.sysconfig.j2
+    dest: "{{ config_dir }}/consul"
+  notify:
+    - restart consul
 
 - name: copy consul systemd file
   template:

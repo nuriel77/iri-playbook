@@ -1,11 +1,11 @@
 - name: set variables centos
   set_fact:
-    sysconfig_dir: /etc/sysconfig
+    config_dir: /etc/sysconfig
   when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
-    sysconfig_dir: /etc/default
+    config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: stop consul
@@ -42,7 +42,7 @@
     - "{{ consul_node_check }}"
     - "{{ consul_template_basedir }}"
     - "/etc/haproxy/haproxy.cfg.tmpl"
-    - "{{ sysconfig_dir }}/consul-template"
+    - "{{ config_dir }}/consul-template"
     - "/usr/local/bin/haproxy_reload.sh"
 
 - name: remove user to run consul as

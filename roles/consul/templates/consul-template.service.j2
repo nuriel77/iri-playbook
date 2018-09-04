@@ -6,7 +6,7 @@ Requires=consul.service
 [Service]
 TimeoutStartSec=0
 Restart=always
-EnvironmentFile=-{{ sysconfig_dir }}/consul-template
+EnvironmentFile=-{{ config_dir }}/consul-template
 ExecStart={{ consul_template_basedir }}/consul-template \
   -template=${HAPROXY_TEMPLATE}:${HAPROXY_CONFIG}:${HAPROXY_RELOAD} \
   -log-level=${CONSUL_TEMPLATE_LOGLEVEL} \

@@ -1,11 +1,11 @@
 - name: set etc config dir debian/ubuntu
   set_fact:
-    sysconfig_dir: /etc/default
+    config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: set etc config dir centos
   set_fact:
-    sysconfig_dir: /etc/sysconfig
+    config_dir: /etc/sysconfig
   when: ansible_distribution == 'CentOS'
 
 - name: ensure etc haproxy dir
@@ -78,7 +78,7 @@
 - name: copy consul-template environment file
   template:
     src: templates/consul-template.sysconfig.j2
-    dest: "{{ sysconfig_dir }}/consul-template"
+    dest: "{{ config_dir }}/consul-template"
     mode: 0600
 
 - name: copy haproxy_reload script

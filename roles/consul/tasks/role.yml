@@ -1,11 +1,11 @@
 - name: set variables centos
   set_fact:
-    sysconfig_dir: /etc/sysconfig
+    config_dir: /etc/sysconfig
   when: ansible_distribution == 'CentOS'
 
 - name: set variables ubuntu/debian
   set_fact:
-    sysconfig_dir: /etc/default
+    config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - import_tasks: firewalld.yml
