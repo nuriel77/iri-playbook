@@ -14,6 +14,18 @@
     state: directory
     mode: 0750
 
+- name: check if haproxy.cfg already exists
+  stat:
+    path: /etc/haproxy/haproxy.cfg
+  register: haproxy_file_stat
+  
+- name: copy/backup the current haproxy.cfg
+  copy:
+    remote_src: yes
+    src: /etc/haproxy/haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg-orig
+    mode: 0600
+
 - name: remove existing consul-template basedir
   file:
     path: "{{ consul_template_basedir }}"
