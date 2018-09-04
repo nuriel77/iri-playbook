@@ -65,7 +65,7 @@ frontend iri_front
     declare capture request len {{ haproxy_request_capture_length | default('80000') }}
     http-request capture req.body id 0
 
-    # disable client with no TCP body/request lenght
+    # disable client with no TCP body/request length
     tcp-request inspect-delay 30s
     acl content_present req_len gt 0
     tcp-request content accept if content_present
