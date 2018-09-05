@@ -13,7 +13,10 @@ ExecStart=/usr/bin/docker run \
   --hostname %p \
   --net=host \
   --pid=host \
-  --cap-drop=ALL \
+  --cap-drop=all \
+  --cap-add=chown \
+  --cap-add=setgid \
+  --cap-add=setuid \
   -v /usr/local/bin:/scripts:ro,Z \
   -v {{ consul_data_dir }}/data:/consul/data:rw,Z \
   -v {{ consul_config_dir }}/conf.d:/consul/config:Z \
