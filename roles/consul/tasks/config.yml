@@ -26,7 +26,7 @@
 # interface of the default route if ansible default
 # interface detection failed.
 #- name: set advertise address
-#  shell: "ip -4 a show $(ip r | grep default | sed 's|^.*dev \\(.*\\) proto.*$|\\1|') | grep 'inet' | awk '{print $2}' | cut -d/ -f1"
+#  shell: "ip -4 a show $(ip r | grep default | sed 's|^.*dev \\(.*\\) proto.*$|\\1|') | grep 'inet' | head -1 | awk '{print $2}' | cut -d/ -f1"
 #  register: consul_advertise_address
 #  changed_when: false
 
