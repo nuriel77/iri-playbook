@@ -56,7 +56,6 @@
     - "{{ consul_config_dir }}/certs.d"
     - "{{ consul_config_dir }}/conf.d"
     - "{{ consul_data_dir }}"
-    - "{{ consul_data_dir }}/data"
 
 - name: remove consul image
   block:
