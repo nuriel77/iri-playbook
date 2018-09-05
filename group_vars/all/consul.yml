@@ -14,7 +14,7 @@ default_domain: "{{ lb_service_name }}"
 default_dc: my_dc
 consul_node_check: /usr/local/bin/node_check.sh
 consul_dns_enabled: false
-consul_default_acl_policy: deny
+consul_default_acl_policy: allow
 
 # Consul template
 consul_template_version: 0.19.5
