@@ -82,6 +82,8 @@
   changed_when: False
   register: consul_image_stat
   failed_when: "consul_image_stat.rc > 1"
+  tags:
+    - docker_build
 
 - name: docker build consul image
   block:
