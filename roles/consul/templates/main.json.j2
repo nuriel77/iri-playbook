@@ -14,18 +14,24 @@
   "leave_on_terminate": true,
   "rejoin_after_leave": true,
   "server": true,
-  "bind_addr": "{{ consul_ip|default('127.0.0.1') }}",
-  "advertise_addr": "{{ consul_ip|default('127.0.0.1') }}",
-  "client_addr": "{{ consul_ip|default('127.0.0.1') }}",
+  "bind_addr": "{{ consul_bind_ip }}",
+  "advertise_addr": "{{ consul_bind_ip }}",
+  "client_addr": "{{ consul_client_addr|default('127.0.0.1') }}",
 {% if consul_default_key_file is defined and consul_default_cert_file is defined and consul_default_ca_file is defined %}
   "addresses": {
     "https": "0.0.0.0"
   },
 {% endif %}
-  "advertise_addr_wan": "{{ consul_ip|default('127.0.0.1') }}",
+  "advertise_addr_wan": "{{ consul_bind_ip }}",
 {% if consul_default_key_file is defined and consul_default_cert_file is defined and consul_default_ca_file is defined %}
   "ports": {
     "https": {{ consul_ssl_port|default('8443') }}
+  },
+  "disable_update_check": true,
+  "http_config": {
+    "response_headers": {
+      "Access-Control-Allow-Origin": "*"
+    }
   },
   "key_file": "{{ consul_default_key_file }}",
   "cert_file": "{{ consul_default_cert_file }}",
@@ -47,4 +53,5 @@
   "acl_master_token": "{{ consul_master_token.stdout }}"{% if consul_agent_token is defined %},
   "acl_agent_token": "{{ consul_agent_token }}"
 {% endif %}
+
 }

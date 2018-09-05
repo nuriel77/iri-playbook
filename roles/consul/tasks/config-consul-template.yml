@@ -17,14 +17,26 @@
 - name: check if haproxy.cfg already exists
   stat:
     path: /etc/haproxy/haproxy.cfg
-  register: haproxy_file_stat
+  register: haproxy_file
   
-- name: copy/backup the current haproxy.cfg
-  copy:
-    remote_src: yes
-    src: /etc/haproxy/haproxy.cfg
-    dest: /etc/haproxy/haproxy.cfg-orig
-    mode: 0600
+- name: back up original haproxy.cfg file
+  block:
+
+    - name: check if current haproxy.cfg is from template
+      shell: "grep -q '^### Produced by consul-template.service' /etc/haproxy/haproxy.cfg"
+      changed_when: false
+      failed_when: false
+      register: from_template
+
+    - name: copy/backup the current haproxy.cfg
+      copy:
+        remote_src: yes
+        src: /etc/haproxy/haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg-orig
+        mode: 0600
+      when: from_template.rc == 1
+
+  when: haproxy_file.stat.exists
 
 - name: remove existing consul-template basedir
   file:

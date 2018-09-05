@@ -11,14 +11,24 @@
 # If running a cluster of Consul, use default interface's IP
 - name: set interface ip
   set_fact:
-    consul_ip: hostvars[inventory_hostname]['ansible_default_ipv4']['address'] 
+    consul_bind_ip: hostvars[inventory_hostname]['ansible_default_ipv4']['address'] 
   when: groups['fullnode'] | length > 1
 
 # If running on a single machine, use localhost
+# This can be overriden via setting variables
+# in the variables file or commandline
 - name: set local ip
   set_fact:
-    consul_ip: 127.0.0.1
+    consul_bind_ip: 127.0.0.1
   when: groups['fullnode'] | length == 1
+
+# For interface advertise make sure we use the
+# interface of the default route if ansible default
+# interface detection failed.
+#- name: set advertise address
+#  shell: "ip -4 a show $(ip r | grep default | sed 's|^.*dev \\(.*\\) proto.*$|\\1|') | grep 'inet' | awk '{print $2}' | cut -d/ -f1"
+#  register: consul_advertise_address
+#  changed_when: false
 
 - name: Create user consul
   user:
