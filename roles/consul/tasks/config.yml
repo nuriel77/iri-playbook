@@ -83,7 +83,7 @@
   register: consul_image_stat
   failed_when: "consul_image_stat.rc > 1"
   tags:
-    - docker_build
+    - consul_image_build
 
 - name: docker build consul image
   block:
@@ -110,7 +110,7 @@
         path: "{{ tempdir.path }}"
   when: consul_image_stat.rc == 1
   tags:
-    - docker_build
+    - consul_image_build
 
 - name: copy consul sysconfig file
   template:
