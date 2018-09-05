@@ -14,7 +14,6 @@ ExecStart=/usr/bin/docker run \
   --net=host \
   --pid=host \
   --cap-drop=ALL \
-  --user={{ consul_uid.stdout }} \
   -v /usr/local/bin:/scripts:ro,Z \
   -v {{ consul_data_dir }}/data:/consul/data:rw,Z \
   -v {{ consul_config_dir }}/conf.d:/consul/config:Z \
