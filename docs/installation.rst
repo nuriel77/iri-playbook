@@ -5,7 +5,7 @@ Installation
 
 The **proper** way to install the node is using the :ref:`getting_started_quickly`.
 
-The following documentation is provided as reference for those with good experience with Linux and Ansible.
+The following documentation is provided as reference for those with good experience with Linux and Ansible, or for those who would like to install multiple nodes at once.
 
 
 Update System Packages
@@ -75,10 +75,12 @@ This repository contains what Ansible refers to as a "Playbook" which is a set o
 This playbook installs required dependencies, the IOTA IRI package and IOTA Peer Manager.
 In addition, it configures firewalls and places some handy files for us to control these services.
 
-To install Ansible on **Ubuntu** I refer to the `official documentation <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt
+To install Ansible on **Ubuntu** please refer to the `official documentation <http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt
 -ubuntu>`_
 
-To install Ansible on **Debian** I refer to the `official documentation <https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-debian>`_
+To install Ansible on **Debian** please refer to the `official documentation <https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-debian>`_
+
+Hereby a one-liner to install Ansible on Ubuntu:
 
 .. code:: bash
 
@@ -109,22 +111,21 @@ To clone, run:
 
 This will pull the repository to the directory in which you are and move you into the repository's directory.
 
+If you need to change a branch (e.g. to test a new feature), for example to a branch called ``feat/docker`` you can run:
+
+.. code:: bash
+
+  git checkout feat/docker
+
+
+
 Configuring Values
 ==================
 
-Below are two variable files names provided as an example. You will find some configuration parameters for the installation in those files.
+The directory containing all variable files are in ``group_vars/all/*.yml``. You will find some configuration parameters for the installation in those files.
 
-Please don't edit those files directly but copy the files to ``group_vars/all/z-iri-override.yml`` (depending on the name of the original file) and edit the options there.
+**Please don't edit those files directly** but copy the files to ``group_vars/all/z-iri-override.yml`` (depending on the name of the original file) and edit the options there. This will effectively override existing variables from other files. Hence the usage of ``z-`` as the files get loaded in an alphabetic order, it ensures the variables will be overridden.
 
-.. code:: bash
-
-   group_vars/all/iri.yml
-
-and
-
-.. code:: bash
-
-   group_vars/all/iotapm.yml
 
 .. note::
 
@@ -162,7 +163,7 @@ Set Access Password
 
 This user name and password are used for all web-based authentications (e.g. Peer Manager, Monitoring Graphs).
 
-Create a new variable file called **group_vars/all/z-override.yml** and set a user and a (strong!) password of your choice:
+If you haven't done so already, create a new variable file called **group_vars/all/z-override.yml** and set a user and a (strong!) password of your choice:
 
 .. code:: bash
 
@@ -190,6 +191,39 @@ To remove a user from authenticating:
   This username and password will also be used for Grafana (monitoring graphs)
 
 
+
+Extra Configuration Options
+---------------------------
+
+Some extra configuration options can be specified, for example:
+
+Ensure Docker is installed:
+
+.. code:: bash
+
+  echo "install_docker: true" >>/opt/iri-playbook/group_vars/all/z-iri-override.yml
+
+Ensure nginx is installed:
+
+.. code:: bash
+
+  echo "install_nginx: true" >>/opt/iri-playbook/group_vars/all/z-iri-override.yml
+
+
+Ensure HAProxy is enabled:
+
+.. code:: bash
+
+  echo "lb_bind_address: 0.0.0.0" >>/opt/iri-playbook/group_vars/all/z-iri-override.yml
+
+Enable memory auto-configuration:
+
+.. code:: bash
+
+  echo "memory_autoset: True" >>/opt/iri-playbook/group_vars/all/z-iri-override.yml
+
+
+
 .. _multipleHosts:
 
 Configure Multiple Fullnodes
@@ -197,9 +231,9 @@ Configure Multiple Fullnodes
 
 You can skip this section and proceed to "Running the Playbook" below if you are only installing on a single server.
 
-The nice thing about Ansible's playbooks is the ability to configure multiple nodes at once.
+The nice thing about Ansible's playbooks is the ability to configure multiple nodes at once. You can have hundreds of fullnodes installed simultaneously!
 
-You can have hundreds of fullnodes installed simultaneously!
+Please make sure you configure some options as shown above into the variable override file.
 
 To configure multiple hosts you need to use their IP addresses or hostnames (hostnames must resolve to their respective IP).
 
@@ -210,6 +244,16 @@ Edit the file ``inventory``. Here's an example of how we would list four hosts, 
   iota01.tangle.io ansible_user=john
   iota02.tangle.io ansible_user=root
   10.20.30.40      ansible_ssh_port=9922
+
+  [fullnode:vars]
+  # Only add this line for Ubuntu and Debian
+  ansible_python_interpreter=/usr/bin/python3
+  # Only set this line if you didn't ssh to the servers previously
+  # from the node where you are about to run the playbook from:
+  ansible_ssh_common_args='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+
+
+At this stage management of multiple nodes is not centralized. You'll have to manage each node separately (downloading a fully synced database, configuring neighbors etc).
 
 
 Running the Playbook
@@ -233,22 +277,6 @@ Or, for more verbose output add the `-v` flag:
 
 This can take a while as it has to install packages, download IRI and compile it.
 Hopefully this succeeds without any errors (create a git Issue if it does, I will try to help).
-
-Please note that there are many options that can be added, such as enabling Field, Nelson or HAProxy. To name a few:
-
-.. code:: bash
-
-  -e install_docker=true
-  -e install_nginx=true
-  -e nelson_enabled=true
-  -e field_enabled=true
-  -e lb_bind_address=0.0.0.0
-
-Each can be added to the command line arguments of the installation command, for example:
-
-.. code:: bash
-
-  ansible-playbook -i inventory -v site.yml -e field_enabled=true -e lb_bind_address=0.0.0.0
 
 
 Final Steps
