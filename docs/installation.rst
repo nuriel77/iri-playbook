@@ -3,9 +3,11 @@
 Installation
 ************
 
-The **proper** way to install the node is using the :ref:`getting_started_quickly`.
+The **recommended** way to install the node is using the :ref:`getting_started_quickly`.
 
-The following documentation is provided as reference for those with good experience with Linux and Ansible, or for those who would like to install multiple nodes at once.
+The following documentation is provided as reference for those with good experience with Linux and Ansible, or for those who would like to **install multiple nodes at once**.
+
+If you are about to install multiple nodes at once, you can use one of the nodes as the node from which you will be running the IRI playbook. All the information below should be executed on this node.
 
 
 Update System Packages
@@ -17,13 +19,13 @@ For **Ubuntu/Debian** we type:
 
 .. code-block:: bash
 
-   apt-get update
+   apt-get update -y
 
 and for **CentOS**:
 
 .. code-block:: bash
 
-   yum update
+   yum update -y
 
 
 This will search for any packages to update on the system and require you to confirm the update.
@@ -33,6 +35,9 @@ Reboot Required?
 
 Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
 
+
+Ubuntu and Debian
++++++++++++++++++
 For **Ubuntu/Debian** we can check if a reboot is required. Issue the command ``ls -l /var/run/reboot-required``::
 
   # ls -l /var/run/reboot-required
@@ -41,6 +46,8 @@ For **Ubuntu/Debian** we can check if a reboot is required. Issue the command ``
 
 If the file is found as seen here, you can issue a reboot (``shutdown -r now`` or simply ``reboot``).
 
+Centos
+++++++
 For **Centos** we have a few options how to check if a reboot is required.
 
 One of these options requires to install ``yum-utils``::
@@ -80,7 +87,7 @@ To install Ansible on **Ubuntu** please refer to the `official documentation <ht
 
 To install Ansible on **Debian** please refer to the `official documentation <https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-apt-debian>`_
 
-Hereby a one-liner to install Ansible on Ubuntu:
+Hereby a one-liner to install Ansible on **Ubuntu**:
 
 .. code:: bash
 
@@ -135,6 +142,8 @@ The directory containing all variable files are in ``group_vars/all/*.yml``. You
 Configure Memory Limits
 ------------------------
 
+You can choose to let the playbook configure the memory automatically by setting "memory_autoset: true" in a variable override file. Alternatively, you can choose to configure the values manually in a variable-override file as shown below:
+
 In **group_vars/all/iri.yml** (don't forget to copy the file to ``group_vars/all/z-iri-override.yml`` and edit values there):
 
 The options ``iri_java_mem`` and ``iri_init_java_mem`` in the configuration files can determine what are the memory usage limits for IRI.
@@ -169,6 +178,7 @@ If you haven't done so already, create a new variable file called **group_vars/a
 
    fullnode_user: someuser
    fullnode_user_password: 'put-a-strong-password-here'
+
 
 
 You can always add new users after the installation has finished:
@@ -235,9 +245,11 @@ The nice thing about Ansible's playbooks is the ability to configure multiple no
 
 Please make sure you configure some options as shown above into the variable override file.
 
-To configure multiple hosts you need to use their IP addresses or hostnames (hostnames must resolve to their respective IP).
+To configure multiple hosts you need to set their IP addresses or hostnames (hostnames must resolve to their respective IP). For the node from which you are going to run the playbook, you can just keep the line beginning with ``localhost``.
 
-Edit the file ``inventory``. Here's an example of how we would list four hosts, using hostname and/or IP::
+Edit the file ``inventory`` or create a new inventory file e.g. ``inventory-multi`` (you will have to point ansible-playbook to the correct file once you run the playbook using the ``-i filename``).
+
+Here's an example of how we would list four hosts, using hostname and/or IP::
 
   [fullnode]
   localhost        ansible_connection=local
