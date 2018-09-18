@@ -6,10 +6,33 @@
     upgrade: dist
 
 - name: Install software-properties-common
-  apt: state=latest name=software-properties-common update_cache=yes
+  apt:
+    state: latest
+    name: software-properties-common
+    update_cache: yes
+
+- name: add ansible repository Ubuntu
+  apt_repository:
+    repo: ppa:ansible/ansible
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Debian block
+  block:
+
+    - name: add ansible repository Debian
+        repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
+        state: present
+
+    - name: Add an apt key by id from a keyserver
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 93C4A3FD7BB9C367
 
 - name: Install some packages
-  apt: state=latest name={{ item }} update_cache=yes
+  apt:
+    state: latest
+    name: "{{ item }}"
+    update_cache: yes
   with_items:
     - jq
     - ufw
@@ -29,6 +52,7 @@
     - python3-pip
     - python-passlib
     - apache2-utils
+    - ansible
   tags:
     - deps
     - scripts

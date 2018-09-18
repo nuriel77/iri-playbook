@@ -24,6 +24,7 @@
     - python-passlib
     - httpd-tools
     - python-pip
+    - ansible
   tags:
     - scripts
     - deps
