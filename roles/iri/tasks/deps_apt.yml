@@ -20,7 +20,8 @@
   block:
 
     - name: add ansible repository Debian
-      repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
+      apt_repository:
+        repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
         state: present
 
     - name: Add an apt key by id from a keyserver
