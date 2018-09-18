@@ -14,6 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
 VERSION=0.6.7
+IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -88,10 +89,7 @@ function verify_playbook() {
     local HEIGHT
     local RC
     if [ ! -d /opt/iri-playbook ]; then
-        whiptail --title "Missing Playbook!" \
-                 --msgbox "ERROR: Cannot find the iri-playbook in /opt/iri-playbook!" \
-                 8 $WIDTH
-        return 1
+        cd /opt && git clone -b "$IRI_BRANCH" https://github.com/nuriel77/iri-playbook.git
     fi
     cd /opt/iri-playbook
     OUTPUT=$(git pull 2>&1)
