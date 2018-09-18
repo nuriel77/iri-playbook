@@ -8,19 +8,19 @@
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-#- import_tasks: firewalld.yml
-#  tags:
-#    - consul_firewalld
-#  when:
-#    - ansible_distribution == 'CentOS'
-#    - configure_firewall is defined and configure_firewall|bool == True
+- import_tasks: firewalld.yml
+  tags:
+    - consul_firewalld
+  when:
+    - ansible_distribution == 'CentOS'
+    - configure_firewall is defined and configure_firewall|bool == True
 
-#- import_tasks: ufw.yml
-#  tags:
-#    - consul_ufw
-#  when:
-#    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-#    - configure_firewall is defined and configure_firewall|bool == True
+- import_tasks: ufw.yml
+  tags:
+    - consul_ufw
+  when:
+    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    - configure_firewall is defined and configure_firewall|bool == True
 
 - import_tasks: config.yml
   tags:

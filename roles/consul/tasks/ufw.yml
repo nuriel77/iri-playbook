@@ -1,25 +1,19 @@
-- name: allow ssh port firewall
+- name: allow consul ports in firewall
   ufw:
     rule: allow
     direction: in
-    proto: tcp
-    port: "{{ ssh_port|default('22') }}"
-
-- name: ufw default outgoing policy allowed
-  ufw:
-    direction: outgoing
-    policy: allow
-
-- name: ensure ufw started and default incoming policy denied
-  ufw:
-    state: enabled
-    direction: incoming
-    policy: deny
-
-- name: allow iri api port in firewall
-  ufw:
-    rule: allow
-    direction: in
-    proto: tcp
-    port: "{{ iri_api_port_remote }}"
-    log: yes
+    proto: "{{ item.proto }}"
+    port: "{{ item.port }}"
+  with_items:
+    - {"port": 8600, "proto": "udp"}
+    - {"port": 8600, "proto": "tcp"}
+    - {"port": 8300, "proto": "tcp"}
+    - {"port": 8301, "proto": "tcp"}
+    - {"port": 8302, "proto": "tcp"}
+    - {"port": 8303, "proto": "tcp"}
+    - {"port": 8304, "proto": "tcp"}
+    - {"port": 8300, "proto": "udp"}
+    - {"port": 8301, "proto": "udp"}
+    - {"port": 8302, "proto": "udp"}
+    - {"port": 8303, "proto": "udp"}
+    - {"port": 8304, "proto": "udp"}

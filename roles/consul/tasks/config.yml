@@ -11,7 +11,7 @@
 # If running a cluster of Consul, use default interface's IP
 - name: set interface ip
   set_fact:
-    consul_bind_ip: hostvars[inventory_hostname]['ansible_default_ipv4']['address'] 
+    consul_bind_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
   when: groups['fullnode'] | length > 1
 
 # If running on a single machine, use localhost

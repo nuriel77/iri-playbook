@@ -37,6 +37,11 @@ Consul Template listens to consul and processes any changes on key value store, 
 
 ### Commands
 
+Check consul cluster members (e.g. when running consul in a cluster/multiple nodes). Output should show all members of the cluster with status Alive:
+```sh
+docker exec -it consul consul members
+```
+
 Export the Consul master token to a variable so it can be reused when using curl:
 ```sh
 export CONSUL_HTTP_TOKEN=$(cat /etc/consul/consul_master_token)

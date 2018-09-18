@@ -101,9 +101,6 @@
   tags:
     - haproxy_reload_script
 
-- name: flush handlers
-  meta: flush_handlers
-
 - name: copy haproxy cfg template file
   template:
     src: ../shared-files/haproxy.cfg.tmpl.j2
