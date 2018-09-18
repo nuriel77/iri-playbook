@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.6
+VERSION=0.6.7
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -678,8 +678,7 @@ function get_db() {
                  12 $WIDTH) then
         # This command will stop iri, remove older database directories,
         # extract the database (on the fly) set correct user ownership and start IRI up again.
-        systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - "$DB_SOU
-RCE" | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
+        systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
         if [[ $? -ne 0 ]]; then
             whiptail --title "New DB Failed!" \
                      --msgbox "Well this is embarrassing. Downloading the new DB failed..." \
