@@ -1,3 +1,7 @@
+- import_tasks: deps.yml
+  tags:
+    - nginx_deps
+
 - import_tasks: nginx.yml
   tags:
     - nginx_config
