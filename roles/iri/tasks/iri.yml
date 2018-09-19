@@ -164,6 +164,21 @@
     dest: "{{ iri_basedir }}/iri.ini"
     state: link
 
+- name: check docker firewall rules
+  block:
+
+    - name: check docker in iptables
+      shell: "iptables-save | grep -q DOCKER"
+      failed_when: False
+      changed_when: False
+      register: docker_iptables
+
+    - name: restart docker to apply iptables chain
+      systemd:
+        name: docker
+        state: restarted
+      when: docker_iptables.rc == 1
+
 - name: Create a network for iri
   docker_network:
     name: "{{ iri_net_name }}"
