@@ -1,0 +1,19 @@
+{
+  "ID": "{{ ip | default(consul_bind_ip) }}:{{ iri_api_port }}",
+  "Name": "iri",
+  "tags": [
+    "haproxy.pow=true",
+    "haproxy.maxconn=5"
+  ],
+  "Address": "{{ ip | default(consul_bind_ip) }}",
+  "Port": 14265,
+  "EnableTagOverride": false,
+  "Check": {
+    "id": "{{ ip | default(consul_bind_ip) }}:{{ iri_api_port }}",
+    "name": "API {{ ip | default(consul_bind_ip) }}:{{ iri_api_port }}",
+    "args": ["/bin/bash", "/scripts/node_check.sh", "-a", "http://{{ ip | default(consul_bind_ip) }}:{{ iri_api_port }}", "-i", "-n", "1"],
+    "Interval": "30s",
+    "timeout": "5s",
+    "DeregisterCriticalServiceAfter": "24h"
+  }
+}
