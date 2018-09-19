@@ -30,6 +30,10 @@
   tags:
     - consul_template_config
 
+- import_tasks: register-node.yml
+  tags:
+    - consul_register_node
+
 - import_tasks: uninstall.yml
   tags:
     - uninstall

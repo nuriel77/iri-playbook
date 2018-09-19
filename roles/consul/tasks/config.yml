@@ -13,7 +13,9 @@
   set_fact:
     consul_bind_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
   when: groups['fullnode'] | length > 1
-
+  tags:
+    - consul_get_ip
+ 
 # If running on a single machine, use localhost
 # This can be overriden via setting variables
 # in the variables file or commandline
@@ -21,6 +23,8 @@
   set_fact:
     consul_bind_ip: 127.0.0.1
   when: groups['fullnode'] | length == 1
+  tags:
+    - consul_get_ip
 
 # For interface advertise make sure we use the
 # interface of the default route if ansible default

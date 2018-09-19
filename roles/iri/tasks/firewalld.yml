@@ -18,27 +18,24 @@
     state: enabled
     immediate: yes
 
-- name: iri default API port
-  block:
-
-    - name: allow and rate limit api port in firewall
-      firewalld:
-        rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="120/m" accept'
-        permanent: true
-        state: enabled
-        immediate: yes
-      when: api_port_remote is defined and api_port_remote
-
-    - name: log api port access in firewall
-      firewalld:
-        rich_rule: 'rule port port="{{ iri_api_port }}" protocol="tcp" log prefix="iri_api" level="info" limit value="120/m"'
-        permanent: true
-        state: enabled
-        immediate: yes
-
+# Allow direct access to IRI API port
+# from other nodes in the cluster.
+# This is only done when deploying
+# multiple nodes.
+- name: allow api port in firewall
+  firewalld:
+    rich_rule: 'rule family="ipv4" source address="{{ item }}" port port={{ iri_api_port }} protocol=tcp accept'
+    permanent: true
+    state: enabled
+    immediate: yes
+  with_items: "{{ groups['fullnode'] | map('extract', hostvars, ['ip']) | list | difference([ip]) }}"
   when:
+    - groups['fullnode'] | length > 1
     - api_port_remote is defined
     - api_port_remote|bool == True
+  tags:
+    - expose_api_for_lb
+    - consul_role
 
 - name: ensure selinux enabled
   selinux:

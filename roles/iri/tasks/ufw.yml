@@ -12,31 +12,25 @@
     proto: udp
     port: "{{ iri_udp_port }}"
 
-- name: ufw iri port
-  block:
-    - name: allow iri api port in firewall
-      ufw:
-        rule: allow
-        direction: in
-        proto: tcp
-        port: "{{ iri_api_port }}"
-        log: yes
-
-    # ufw supports connection rate limiting, which is useful for protecting
-    # against denial of service attacks. ufw will deny connections if an IP
-    # address has attempted to initiate 6 or more connections in the last
-    # 30 seconds. See  http://www.debian-administration.org/articles/187
-    # for details.
-    - name: rate limit iri api port in firewall
-      ufw:
-        rule: limit
-        direction: in
-        proto: tcp
-        port: "{{ iri_api_port }}"
-        log: yes
-      when: ufw_limit_iri_api is defined and ufw_limit_iri_api
-
-  when: api_port_remote is defined and api_port_remote
+# Allow direct access to IRI API port
+# from other nodes in the cluster.
+# This is only done when deploying
+# multiple nodes.
+- name: allow iri api port in firewall
+  ufw:
+    rule: allow
+    direction: in
+    proto: tcp
+    port: "{{ iri_api_port }}"
+    from_ip: "{{ item }}"
+  with_items: "{{ groups['fullnode'] | map('extract', hostvars, ['ip']) | list | difference([ip]) }}"
+  when:
+    - groups['fullnode'] | length > 1
+    - api_port_remote is defined
+    - api_port_remote|bool == True
+  tags:
+    - expose_api_for_lb
+    - consul_role
 
 - name: allow ssh port firewall
   ufw:
