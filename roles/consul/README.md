@@ -1,6 +1,16 @@
 # Consul HAProxy Template Loader
 
+This role will enable consul and consul-template to control HAProxy.
+
 Some information from https://github.com/nuriel77/iri-lb-haproxy
+
+## Enabling the Feature
+
+Run the following command in ``/opt/iri-playbook`` to enable the feature:
+
+```sh
+ansible-playbook -i inventory -v site.yml  --tags=consul_role -e consul_enabled=yes -e api_port_remote=yes
+```
 
 ## HAProxy
 

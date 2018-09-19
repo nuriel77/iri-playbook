@@ -20,6 +20,14 @@
   tags:
     - logging_config
 
+- name: set ip variable if not set
+  set_fact:
+    ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+  when: ip is not defined
+  tags:
+    - expose_api_for_lb
+    - consul_role
+
 - import_tasks: firewalld.yml
   tags:
     - iri_firewalld
