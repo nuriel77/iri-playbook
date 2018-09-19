@@ -6,10 +6,28 @@ Some information from https://github.com/nuriel77/iri-lb-haproxy
 
 ## Enabling the Feature
 
-Run the following command in ``/opt/iri-playbook`` to enable the feature:
+Make sure you are user `root`, then enter the playbook's directory:
 
 ```sh
-ansible-playbook -i inventory -v site.yml  --tags=consul_role -e consul_enabled=yes -e api_port_remote=yes
+cd /opt/iri-playbook
+```
+
+Enable the feature by configuring the variables file:
+
+```sh
+grep -qir "^consul_enabled: [yes|true]" group_vars/all/z-consul-override.yml || echo "consul_enabled: yes" >> group_vars/all/z-consul-override.yml
+```
+
+When configuring multiple nodes, add set the option `api_port_remote` to true:
+
+```sh
+grep -qir "^api_port_remote: [yes|true]" group_vars/all/z-consul-override.yml || echo "api_port_remote: yes" >> group_vars/all/z-consul-override.yml
+```
+
+Run the playbook:
+
+```sh
+ansible-playbook -i inventory -v site.yml  --tags=consul_role
 ```
 
 ## HAProxy
