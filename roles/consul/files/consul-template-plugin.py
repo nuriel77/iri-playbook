@@ -46,6 +46,8 @@ def main():
                weight = value
            elif key == 'haproxy.maxconn':
                maxconn = value
+           elif (key == 'haproxy.maxconnpow' and backend == 'iri_pow_back'):
+               maxconn = value
            elif key == 'haproxy.scheme':
                scheme = value
            elif key == 'haproxy.sslverify':

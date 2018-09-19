@@ -3,7 +3,8 @@
   "Name": "iri",
   "tags": [
     "haproxy.pow=true",
-    "haproxy.maxconn=5"
+    "haproxy.maxconn=5",
+    "haproxy.maxconnpow=1"
   ],
   "Address": "{{ ip | default(consul_bind_ip) }}",
   "Port": 14265,
