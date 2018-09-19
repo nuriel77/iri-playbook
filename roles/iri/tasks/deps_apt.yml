@@ -38,6 +38,7 @@
     update_cache: yes
   with_items:
     - jq
+    - git
     - ufw
     - wget
     - lsof

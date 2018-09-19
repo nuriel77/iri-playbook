@@ -5,6 +5,7 @@
 - name: Install some packages
   yum: state=latest name={{ item }}
   with_items:
+    - git
     - policycoreutils-python
     - libappindicator
     - firewalld
