@@ -39,3 +39,18 @@ smtp_host: localhost
 smtp_port: 25
 
 prom_am_executor_port: 9158
+
+#Here you can define Mutli Datasource for Grafana just change multi_datasource_enabled: False => True
+multi_datasource_enabled: False
+multi_datasource:
+  - name: Prometheus
+    type: prometheus
+    url: http://localhost:{{ prom_port }}
+    user: someuser
+    password: somepassword
+  - name: Prometheus2
+    type: prometheus
+    url: http://localhost2:{{ prom_port }}
+    user: someuser2
+    password: somepassword2
+
