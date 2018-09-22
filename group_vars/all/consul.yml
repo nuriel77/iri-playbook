@@ -1,4 +1,5 @@
 # Consul
+consul_enabled: false
 consul_image: consul
 consul_tag: 1.2.2
 consul_username: consul

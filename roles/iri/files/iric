@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.7
+VERSION=0.6.8
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -368,7 +368,7 @@ function enable_https() {
 
     # Enable haproxy https via variable override file
     echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
-    cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role,certbot -e lb_bind_address=0.0.0.0 -e overwrite=yes
+    cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,consul_role,loadbalancer_role,certbot -e lb_bind_address=0.0.0.0 -e overwrite=yes
     if [[ $? -ne 0 ]]; then
         pause "Enabling HTTPS failed!!! Check output above for errors."
         clear
@@ -694,7 +694,7 @@ function get_db() {
 ## IRIC
 function get_latest_iric_version() {
     local RAND=$(echo -n $(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 7 | head -n 1))
-    curl -s -f -m 5 -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric?nocache=$RAND"|grep ^VERSION|cut -d= -f2
+    curl -s -f -m 5 -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/nuriel77/iri-playbook/${IRI_BRANCH}/roles/iri/files/iric?nocache=$RAND"|grep ^VERSION|cut -d= -f2
 }
 
 function check_new_iric() {
