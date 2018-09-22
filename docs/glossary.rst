@@ -43,7 +43,7 @@ Check iri and iota-pm ports listening
 
 .. code:: bash
 
-   lsof -Pni|egrep "iri|iotapm
+   lsof -Pni|egrep "iri|iotapm"
 
 
 Check all ports on the node
