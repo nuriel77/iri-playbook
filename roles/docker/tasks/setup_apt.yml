@@ -1,19 +1,20 @@
 # Source: https://github.com/geerlingguy/ansible-role-docker/blob/master/tasks/setup-Debian.yml
 - name: Ensure dependencies are installed
   apt:
-    name: "{{ item }}"
+    name: "{{ packages }}"
     state: present
-  with_items:
-    - software-properties-common
-    - apt-transport-https
-    - ca-certificates
-    - jq
-    - ufw
-    - wget
-    - lsof
-    - curl
-    - pv
-    - python-pip
+  vars:
+    packages:
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - jq
+      - ufw
+      - wget
+      - lsof
+      - curl
+      - pv
+      - python-pip
 
 - name: Add Docker apt key
   apt_key:

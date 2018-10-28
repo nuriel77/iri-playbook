@@ -33,30 +33,30 @@
 
 - name: Install some packages
   apt:
-    state: latest
-    name: "{{ item }}"
+    name: "{{ packages }}"
     update_cache: yes
-  with_items:
-    - jq
-    - git
-    - ufw
-    - wget
-    - lsof
-    - curl
-    - pv
-    - nano
-    - sysstat
-    #- atop Disabled due to kernel bug: https://github.com/Atoptool/atop/blob/master/README#L34
-    - htop
-    - pastebinit
-    - openssl
-    - bsdmainutils
-    - whiptail
-    - python-pip
-    - python3-pip
-    - python-passlib
-    - apache2-utils
-    - ansible
+  vars:
+    packages:
+      - jq
+      - git
+      - ufw
+      - wget
+      - lsof
+      - curl
+      - pv
+      - nano
+      - sysstat
+      #- atop Disabled due to kernel bug: https://github.com/Atoptool/atop/blob/master/README#L34
+      - htop
+      - pastebinit
+      - openssl
+      - bsdmainutils
+      - whiptail
+      - python-pip
+      - python3-pip
+      - python-passlib
+      - apache2-utils
+      - ansible
   tags:
     - deps
     - scripts
