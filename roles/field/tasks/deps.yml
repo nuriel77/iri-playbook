@@ -32,28 +32,35 @@
 
 # Required
 - name: Install epel-release
-  yum: state=latest name=epel-release
+  yum:
+    state: latest
+    name: epel-release
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install some packages
-  yum: state=latest name={{ item }}
-  with_items:
-    - make
-    - gcc-c++
-    - nodejs
-    - firewalld
-    - curl
-    - lsof
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - make
+      - gcc-c++
+      - nodejs
+      - firewalld
+      - curl
+      - lsof
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install some packages
-  apt: state=latest name={{ item }} update_cache=yes
-  with_items:
-    - make
-    - g++
-    - lsof
-    - curl
-    - nodejs
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+      - make
+      - g++
+      - lsof
+      - curl
+      - nodejs
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 # Fix for ansible npm bug not upgrading package to latest

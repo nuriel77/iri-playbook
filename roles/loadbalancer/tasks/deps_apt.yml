@@ -1,9 +1,12 @@
 - name: Install some packages
-  apt: state=latest name={{ item }} update_cache=yes
-  with_items:
-    - whois
-    - libssl-dev
-    - zlib1g-dev
-    - libpcre3-dev
-    - build-essential
-    - libreadline-dev
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+      - whois
+      - libssl-dev
+      - zlib1g-dev
+      - libpcre3-dev
+      - build-essential
+      - libreadline-dev

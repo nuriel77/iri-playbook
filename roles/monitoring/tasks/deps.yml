@@ -116,14 +116,14 @@
 
     - name: Install grafana and postfix
       apt:
-        state: latest
-        name: "{{ item }}"
+        name: "{{ packages }}"
         update_cache: yes
-      with_items:
-        - grafana
-        - postfix
-        - mutt
-        - mailutils
+      vars:
+        packages:
+          - grafana
+          - postfix
+          - mutt
+          - mailutils
       notify:
         - reload systemd
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -132,7 +132,9 @@
 - block:
 
     - name: Install epel-release
-      yum: state=latest name=epel-release
+      yum:
+        state: latest
+        name: epel-release
 
     - name: add grafana repository
       yum_repository:
@@ -147,13 +149,14 @@
 
     - name: Install grafana and postfix
       yum:
-        name: "{{ item }}"
+        name: "{{ packages }}"
         state: latest
-      with_items:
-        - grafana
-        - mutt
-        - postfix
-        - mailx
+      vars:
+        packages:
+          - grafana
+          - mutt
+          - postfix
+          - mailx
 
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 

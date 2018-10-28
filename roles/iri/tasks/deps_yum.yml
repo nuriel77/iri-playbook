@@ -48,26 +48,30 @@
 
 # Required
 - name: Install epel-release
-  yum: state=latest name=epel-release
+  yum:
+    state: latest
+    name: epel-release
 
 - name: Install some packages
-  yum: state=latest name={{ item }}
-  with_items:
-    - policycoreutils-python
-    - libappindicator
-    - firewalld
-    - curl
-    - wget
-    - lsof
-    - jq
-    - pv
-    - nano
-    - sysstat
-    - atop
-    - htop
-    - fpaste
-    - openssl
-    - util-linux
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - policycoreutils-python
+      - libappindicator
+      - firewalld
+      - curl
+      - wget
+      - lsof
+      - jq
+      - pv
+      - nano
+      - sysstat
+      - atop
+      - htop
+      - fpaste
+      - openssl
+      - util-linux
   tags:
     - scripts
     - deps

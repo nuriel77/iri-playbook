@@ -36,37 +36,44 @@
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install some packages
-  yum: state=latest name={{ item }}
-  with_items:
-    - make
-    - gcc-c++
-    - nodejs
-    - firewalld
-    - curl
-    - lsof
-    - python-pip
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - make
+      - gcc-c++
+      - nodejs
+      - firewalld
+      - curl
+      - lsof
+      - python-pip
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install nginx packages
-  yum: state=latest name={{ item }}
-  with_items:
-    - python-passlib
-    - httpd-tools
-    - nginx
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python-passlib
+      - httpd-tools
+      - nginx
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
 - name: Install some packages
-  apt: state=latest name={{ item }} update_cache=yes
-  with_items:
-    - make
-    - g++
-    - lsof
-    - curl
-    - nodejs
-    - python-pip
-    - python3-pip
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+      - make
+      - g++
+      - lsof
+      - curl
+      - nodejs
+      - python-pip
+      - python3-pip
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: install pip requirements, to support remote installations
@@ -74,11 +81,14 @@
     name: passlib
 
 - name: Install nginx packages
-  apt: state=latest name={{ item }} update_cache=yes
-  with_items:
-    - nginx
-    - python-passlib
-    - apache2-utils
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+      - nginx
+      - python-passlib
+      - apache2-utils
   when: >
         install_nginx is defined and install_nginx and
         (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')

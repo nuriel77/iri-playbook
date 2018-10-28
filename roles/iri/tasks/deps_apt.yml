@@ -68,24 +68,27 @@
     - oracle_java
 
 - name: Install some packages
-  apt: state=latest name={{ item }} update_cache=yes
-  with_items:
-    - maven
-    - jq
-    - ufw
-    - wget
-    - lsof
-    - curl
-    - pv
-    - nano
-    - sysstat
-    # disabled due to https://github.com/Atoptool/atop/blob/master/README#L34
-    #- atop
-    - htop
-    - pastebinit
-    - openssl
-    - bsdmainutils
-    - whiptail
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+      - maven
+      - jq
+      - ufw
+      - wget
+      - lsof
+      - curl
+      - pv
+      - nano
+      - sysstat
+      # disabled due to https://github.com/Atoptool/atop/blob/master/README#L34
+      #- atop
+      - htop
+      - pastebinit
+      - openssl
+      - bsdmainutils
+      - whiptail
   tags:
     - deps
     - scripts
