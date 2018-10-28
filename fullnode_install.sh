@@ -501,9 +501,6 @@ ${FIELD_NOTICE}
 Please refer to the tutorial for post-installation information:
 http://iri-playbook.readthedocs.io/en/master/post-installation.html
 
-Like the project at:
-https://ecosystem.iota.org/projects/iri-fullnode-installer
-
 EOF
 )
 
