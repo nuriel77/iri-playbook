@@ -15,19 +15,19 @@ cd /opt/iri-playbook
 Enable the feature by configuring the variables file:
 
 ```sh
-grep -qir "^consul_enabled: [yes|true]" group_vars/all/z-consul-override.yml || echo "consul_enabled: yes" >> group_vars/all/z-consul-override.yml
+grep -qir "^consul_enabled: [yes|true]" group_vars/all/z-consul-override.yml >/dev/null 2>&1 || echo "consul_enabled: yes" >> group_vars/all/z-consul-override.yml
 ```
 
 When configuring multiple nodes, add set the option `api_port_remote` to true:
 
 ```sh
-grep -qir "^api_port_remote: [yes|true]" group_vars/all/z-consul-override.yml || echo "api_port_remote: yes" >> group_vars/all/z-consul-override.yml
+grep -qir "^api_port_remote: [yes|true]" group_vars/all/z-consul-override.yml >/dev/null 2>&1 || echo "api_port_remote: yes" >> group_vars/all/z-consul-override.yml
 ```
 
-Run the playbook:
+Run the playbook, make sure you are referencing the correct inventory file (you might have created a new customized one, perhaps `inventory-multi`?)
 
 ```sh
-ansible-playbook -i inventory -v site.yml  --tags=consul_role
+ansible-playbook -i inventory -v site.yml --tags=consul_role
 ```
 
 ## HAProxy
