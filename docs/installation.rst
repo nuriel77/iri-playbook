@@ -7,7 +7,7 @@ The **recommended** way to install the node is using the :ref:`getting_started_q
 
 The following documentation is provided as reference for those with good experience with Linux and Ansible, or for those who would like to **install multiple nodes at once**.
 
-If you are about to install multiple nodes at once, you can use one of the nodes as the node from which you will be running the IRI playbook. All the information below should be executed on this node.
+If you are about to install **multiple nodes at once**, you can use one of the nodes as the node from which you will be running the IRI playbook. All the information below should be executed on this node only.
 
 
 Update System Packages
@@ -243,11 +243,13 @@ You can skip this section and proceed to "Running the Playbook" below if you are
 
 The nice thing about Ansible's playbooks is the ability to configure multiple nodes at once. You can have hundreds of fullnodes installed simultaneously!
 
+You pick one of the nodes and use it as the "main" installer node. That is where the installer will run from and configure all the rest of the nodes.
+
 Please make sure you configure some options as shown above into the variable override file.
 
 To configure **multiple hosts** you need to set their IP addresses or hostnames (hostnames must resolve to their respective IP). For the node from which you are going to run the playbook, you will have to remove the line begining with ``localhost`` and use the node's hostname or IP address. If you need to explicitly set the ip addres of the node for use by the playbook you can add ``ip=ip-address-here`` next to the hostname or IP of the node (this is used in the playbook to configure firewall access between the nodes).
 
-Edit the file ``inventory`` or create a new inventory file e.g. ``inventory-multi`` (you will have to point ansible-playbook to the correct file once you run the playbook using the ``-i filename``).
+Edit the file ``inventory`` or create a new inventory file e.g. ``inventory-multi`` (you will have to point ansible-playbook to the correct file once you run the playbook using the `-i` option and the filename, e.g.: ``-i inventory-multi``).
 
 Here's an example of how we would list four hosts, using hostname and/or IP::
 
@@ -270,10 +272,9 @@ At this stage management of multiple nodes is not centralized. You'll have to ma
 Running the Playbook
 ====================
 
-Two prerequisites here: you have already installed Ansible and cloned the playbook's repository.
+By default, the playbook will run locally on the server where you've cloned it to. If you are installing on several nodes at once and have configured a new inventory file (e.g. ``inventory-mutli``) makes sure to refernce this file on the command below instead of the default ``inventory``.
 
-By default, the playbook will run locally on the server where you've cloned it to.
-You can run it:
+This will run the installer:
 
 .. code:: bash
 
