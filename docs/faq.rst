@@ -188,11 +188,6 @@ For the sake of the community, I regularly create a copy of a fully synced datab
 
 You can use the ``iric`` tool to download and install the database :ref:`iric`, or update manually using the following instructions:
 
-**NOTE** I am providing this database copy to help the community. Making this possible involves increasing costs due to the frequent downloads/bandwidth usage. Please consider donating to help keep this possible::
-
-  CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
-
-
 * The full command will only work if you've installed your full node using this tutorial/playbook.
 
 .. code:: bash
