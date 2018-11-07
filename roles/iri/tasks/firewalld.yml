@@ -48,6 +48,9 @@
   changed_when: false
   register: getenforce
 
+- name: flush handlers
+  meta: flush_handlers
+
 - name: exit and notify reboot required if selinux got enabled
   block:
 
