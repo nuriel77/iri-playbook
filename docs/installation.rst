@@ -245,7 +245,7 @@ The nice thing about Ansible's playbooks is the ability to configure multiple no
 
 Please make sure you configure some options as shown above into the variable override file.
 
-To configure multiple hosts you need to set their IP addresses or hostnames (hostnames must resolve to their respective IP). For the node from which you are going to run the playbook, you will have to remove the line begining with ``localhost`` and use the node's hostname or IP address. If you need to explicitly set the ip addres of the node for use by the playbook you can add ``ip=ip-address-here`` next to the hostname or IP of the node (this is used in the playbook to configure firewall access between the nodes).
+To configure **multiple hosts** you need to set their IP addresses or hostnames (hostnames must resolve to their respective IP). For the node from which you are going to run the playbook, you will have to remove the line begining with ``localhost`` and use the node's hostname or IP address. If you need to explicitly set the ip addres of the node for use by the playbook you can add ``ip=ip-address-here`` next to the hostname or IP of the node (this is used in the playbook to configure firewall access between the nodes).
 
 Edit the file ``inventory`` or create a new inventory file e.g. ``inventory-multi`` (you will have to point ansible-playbook to the correct file once you run the playbook using the ``-i filename``).
 
