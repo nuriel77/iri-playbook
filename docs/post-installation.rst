@@ -13,6 +13,7 @@ Using the ``systemctl status iri`` we can see if the process is ``Active: active
 
 See examples in the chapters below:
 
+* `Enabling Multiple Loadbalancers`_
 * `Controlling IRI`_
 * `Controlling IOTA Peer Manager`_
 * `Checking Ports`_
@@ -32,7 +33,22 @@ See examples in the chapters below:
 
   All web pages served by this installer will be served on HTTPS with self-signed certificates. The browser will issue a warning when you connect for the first time. You can proceed and accept the certificate as an exception. If you want valid certificates you can refer to :ref:`serverHTTPS` and look for the Let's encrypt link.
 
-.. _controlingIRI:
+
+.. _enablingMultipleLoadbalancers:
+
+Enabling Multiple Loadbalancers
+===============================
+
+A new addition to the Dockerized version is the ability to configure Consul (service discovery) to automatically configure HAProxy.
+
+This can work for a single node or multi node cluster (if you have followed the instructions to install multiple nodes at once).
+
+The feature is still under development and considered experimental. You will need some knowledge about HAProxy, Consul and running HTTP/API calls.
+
+For further read please see the documentation `here <https://github.com/nuriel77/iri-playbook/tree/feat/docker/roles/consul>`_
+
+
+.. _controllingIRI:
 
 Controlling IRI
 ===============

@@ -447,6 +447,8 @@ After having saved the file, you can run ``nano /tmp/test.txt`` again in order t
 Running IRI API Port Behind HAProxy
 ===================================
 
+On the IRI Dockerized version, IRI is already configured to run behind of HAProxy on port 14267. You do not need to follow the instructions below. They are kept here is reference only.
+
 The IRI API port can be configured to be accessible via HAProxy. The benefits in doing so are:
 
 - Logging
