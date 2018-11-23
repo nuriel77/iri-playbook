@@ -13,7 +13,7 @@
   "Check": {
     "id": "only.pow.io:14265",
     "name": "API only.pow.io:14265",
-    "args": ["/scripts/node_check.sh", "-a", "http://only.pow.io:14265", "-i", "-p", "-u"],
+    "args": ["/scripts/node_check.sh", "-a", "http://only.pow.io:14265", "-i", "-p", "-n", "0", "-u"],
     "Interval": "30s",
     "timeout": "5s",
     "DeregisterCriticalServiceAfter": "24h"
