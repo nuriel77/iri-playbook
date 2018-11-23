@@ -19,7 +19,7 @@ For **Ubuntu/Debian** we type:
 
 .. code-block:: bash
 
-   apt-get update -y
+  apt update -qqy --fix-missing -y && apt-get upgrade -y && apt-get clean && apt-get autoremove -y --purge
 
 and for **CentOS**:
 
@@ -30,10 +30,20 @@ and for **CentOS**:
 
 This will search for any packages to update on the system and require you to confirm the update.
 
+Centos Selinux
+--------------
+For CentOS the playbook requires (for security enhancement) that Selinux is enabled. Please edit the file ``/etc/sysconfig/selinux`` and make sure the line with ``SELINXU=`` is set to ``enforcing``:
+
+.. code:: bash
+
+  SELINUX=enforcing
+
+If you had to edit the file to set it to enforcing, you'll have to restart the server using the command ``reboot``.
+
 Reboot Required?
 ----------------
 
-Sometimes it is required to reboot the system after these updates (e.g. kernel updated).
+Sometimes it is required to reboot the system after package updates (e.g. kernel updated). You can skip this test if you have already restarted the server in the prebious step to enable Selinux for CentOS.
 
 
 Ubuntu and Debian
@@ -129,6 +139,8 @@ If you need to change to a specific branch (e.g. to test a new feature), for exa
 Configuring Values
 ==================
 
+Here is some general information about configuring installation options in variable files. You can skip this information and proceed with the next sections for default configuration.
+
 The directory containing all variable files are in ``group_vars/all/*.yml``. You will find some configuration parameters for the installation in those files.
 
 **Please don't edit those files directly** but copy the files to ``group_vars/all/z-iri-override.yml`` (depending on the name of the original file) and edit the options there. This will effectively override existing variables from other files. Hence the usage of ``z-`` as the files get loaded in an alphabetic order, it ensures the variables will be overridden.
@@ -142,7 +154,9 @@ The directory containing all variable files are in ``group_vars/all/*.yml``. You
 Configure Memory Limits
 ------------------------
 
-You can choose to let the playbook configure the memory automatically by setting ``memory_autoset: true`` in a variable override file. Alternatively, you can choose to configure the values manually in a variable-override file as shown below:
+You can choose to let the playbook configure the memory automatically by setting ``memory_autoset: true`` in a variable override file, and skip this section.
+
+Alternatively, you can choose to configure the values manually in a variable-override file as shown below:
 
 In **group_vars/all/iri.yml** (don't forget to copy the file to ``group_vars/all/z-iri-override.yml`` and edit values there):
 
@@ -260,7 +274,9 @@ At this stage management of multiple nodes is not centralized. You'll have to ma
 Running the Playbook
 ====================
 
-By default, the playbook will run locally on the server where you've cloned it to. If you are installing on several nodes at once and have configured a new inventory file (e.g. ``inventory-mutli``) makes sure to refernce this file on the command below instead of the default ``inventory``.
+By default, the playbook will run locally on the server where you've cloned it to.
+
+If you are installing on several nodes at once, you can copy ``inventory-multi.example`` to ``inventory-mutli`` and makes sure to refernce this file on the command below instead of the default ``inventory`` when running the playbook.
 
 This will run the installer on a **single node**:
 
