@@ -15,6 +15,7 @@ If any of the tests fails this script will return failure.
 -p                 Check if node allows PoW (attachToTangle)
 -k                 Skip TLS verification
 -i                 Ignore/skip REMOTE_LIMIT_API commands check
+-u                 Ignore unsynced node (e.g. PoW only node)
 -h                 Print help and exit
 
 example:
@@ -24,7 +25,7 @@ example:
 EOF
 }
 
-while getopts ":a:t:n:r:m:w:pkih" opt; do
+while getopts ":a:t:n:r:m:w:pukih" opt; do
     case "${opt}" in
         a)
             ADDRESS=$OPTARG
@@ -56,6 +57,9 @@ while getopts ":a:t:n:r:m:w:pkih" opt; do
             ;;
         p)
             CHECK_POW=1
+            ;;
+        u)
+            IGNORE_UNSYNCED=1
             ;;
         :)
             echo "Option -$OPTARG requires an argument" >&2
@@ -121,7 +125,7 @@ elif [[ "$APP_NAME" != "$REQUIRED_APP_NAME" ]]; then
 elif [[ $DURATION -gt $API_DURATION ]]; then
     echo "Response too slow, took $DURATION seconds"
     exit 2
-elif [[ $(expr $LMI - $LSSMI) -gt 1 ]]; then
+elif [[ $(expr $LMI - $LSSMI) -gt 1 ]] && [[ -z "$IGNORE_UNSYNCED" ]]; then
     echo "No sync: latestMilestoneIndex: $LMI and latestSolidSubtangleMilestoneIndex: $LSSMI"
     exit 2
 elif [[ $NEIGHBORS -lt $MINIMUM_NEIGHBORS ]]; then
