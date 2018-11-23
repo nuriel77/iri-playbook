@@ -80,6 +80,11 @@ Example view all registered services on catalog (Consul cluster) level:
 curl -s -H "X-Consul-Token: $CONSUL_HTTP_TOKEN" -X GET http://localhost:8500/v1/catalog/services | jq .
 ```
 
+Example view detailed iri service from catalog (cluster-wide):
+```sh
+curl -s -H "X-Consul-Token: $CONSUL_HTTP_TOKEN" -X GET http://localhost:8500/v1/catalog/service/iri | jq .
+```
+
 Example register a service (IRI node):
 ```sh
 curl -H "X-Consul-Token: $CONSUL_HTTP_TOKEN" -X PUT -d@service.json http://localhost:8500/v1/agent/service/register
