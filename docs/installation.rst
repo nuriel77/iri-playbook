@@ -110,19 +110,19 @@ In addition, I've added 'nano' which is helpful for beginners to edit files with
 
 Cloning the Repository
 ======================
-To clone, run:
+In this step we're going to clone the ``feat/docker`` branch of the iri-playbook repository:
 
 .. code:: bash
 
-   cd /opt && git clone https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
+   cd /opt && git clone -b "feat/docker" https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
 
 This will pull the repository to the directory in which you are and move you into the repository's directory.
 
-If you need to change a branch (e.g. to test a new feature), for example to a branch called ``feat/docker`` you can run:
+If you need to change to a specific branch (e.g. to test a new feature), for example to a branch called ``feat/docker-dev`` you can run:
 
 .. code:: bash
 
-  git checkout feat/docker
+  git checkout feat/docker-dev
 
 
 
@@ -142,7 +142,7 @@ The directory containing all variable files are in ``group_vars/all/*.yml``. You
 Configure Memory Limits
 ------------------------
 
-You can choose to let the playbook configure the memory automatically by setting "memory_autoset: true" in a variable override file. Alternatively, you can choose to configure the values manually in a variable-override file as shown below:
+You can choose to let the playbook configure the memory automatically by setting ``memory_autoset: true`` in a variable override file. Alternatively, you can choose to configure the values manually in a variable-override file as shown below:
 
 In **group_vars/all/iri.yml** (don't forget to copy the file to ``group_vars/all/z-iri-override.yml`` and edit values there):
 
@@ -172,33 +172,21 @@ Set Access Password
 
 This user name and password are used for all web-based authentications (e.g. Peer Manager, Monitoring Graphs).
 
-If you haven't done so already, create a new variable file called **group_vars/all/z-override.yml** and set a user and a (strong!) password of your choice:
+If you haven't done so already, create a new variable file called **group_vars/all/z-iri-override.yml** and set a user and a (strong!) password of your choice:
 
 .. code:: bash
 
-   fullnode_user: someuser
-   fullnode_user_password: 'put-a-strong-password-here'
+  fullnode_user: someuser
+  fullnode_user_password: 'put-a-strong-password-here'
 
-
-
-You can always add new users after the installation has finished:
+Make sure to restrict access to the password file:
 
 .. code:: bash
 
-   htpasswd /etc/nginx/.htpasswd newuser
-
-Replace 'newuser' with the user name of your choice. You will be prompted for a password.
-
-To remove a user from authenticating:
-
-.. code:: bash
-
-   htpasswd -D /etc/nginx/.htpasswd username
+  chmod 600 group_vars/all/z-iri-override.yml  
 
 
-.. note::
-
-  This username and password will also be used for Grafana (monitoring graphs)
+**NOTE:** This username and password will also be used for Grafana (monitoring graphs)
 
 
 
@@ -239,7 +227,7 @@ Enable memory auto-configuration:
 Configure Multiple Fullnodes
 ----------------------------
 
-You can skip this section and proceed to "Running the Playbook" below if you are only installing on a single server.
+You can skip this section and proceed to "Running the Playbook" below if you are only installing a single server.
 
 The nice thing about Ansible's playbooks is the ability to configure multiple nodes at once. You can have hundreds of fullnodes installed simultaneously!
 
@@ -274,17 +262,17 @@ Running the Playbook
 
 By default, the playbook will run locally on the server where you've cloned it to. If you are installing on several nodes at once and have configured a new inventory file (e.g. ``inventory-mutli``) makes sure to refernce this file on the command below instead of the default ``inventory``.
 
-This will run the installer:
+This will run the installer on a **single node**:
 
 .. code:: bash
 
-   ansible-playbook -i inventory site.yml
+   ansible-playbook -i inventory site.yml -v
 
-Or, for more verbose output add the `-v` flag:
+This will run the installer for **multiple nodes**:
 
 .. code:: bash
 
-   ansible-playbook -i inventory -v site.yml
+   ansible-playbook -i inventory-multi site.yml -v
 
 
 This can take a while as it has to install packages, download IRI and compile it.
@@ -303,7 +291,7 @@ If you installed `monitoring` and `IOTA Peer Manager` you should be able to acce
   Peer Manager: https://your-external-ip:8811
   Grafana: https://your-external-ip:5555
 
-Use the username and password from ``group_vars/all/z-override.yml`` if you set it there previously.
+Use the username and password from ``group_vars/all/z-iri-override.yml`` if you set it there previously.
 
 If you followed the Getting Started Quickly guide, you've configured a username and password during the installation.
 
