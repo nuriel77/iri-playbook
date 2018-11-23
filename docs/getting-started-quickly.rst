@@ -12,6 +12,10 @@ If you haven't already, just make sure your server matches the :ref:`requirement
    Your server's installation of Ubuntu, Debian or CentOS must be a clean one, i.e. no pre-installed cpanel, whcms, plesk and so on.
    This installer might BREAK any previously installed web-server. It is meant to be installed on a clean system!
 
+.. note::
+
+   To install multiple nodes you will have to follow the manual installation steps. Please refer to the "Installation" chapter.
+
 
 Run the Installer!
 ==================
@@ -36,23 +40,22 @@ First become ``root`` user by typing ``sudo su``.
 
 .. code:: bash
 
-   bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
-
+  GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
 
 .. note::
 
-   If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
+  If during the installation you are requested to reboot the node, just do so and re-run the commands above once the node is back.
 
 
 * A successful installation will display some information when it is done, e.g. the URLs where you can access the graphs and IOTA Peer Manager.
 
 By default you can access the graphs at::
 
-  http://your-ip:5555/dashboard/db/iota?refresh=30s&orgId=1
+  https://your-ip:5555/dashboard/db/iota?refresh=30s&orgId=1
 
 and Peer Manager via::
 
-  http://your-ip:8811
+  https://your-ip:8811
 
 * You can log in using the username and password you have chosen during the start of the installtion.
 
