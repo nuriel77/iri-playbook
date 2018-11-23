@@ -173,6 +173,7 @@ function init_ubuntu(){
     echo "Installing Ansible and git..."
     apt-get install software-properties-common -y
     apt-add-repository ppa:ansible/ansible -y
+    add-apt-repository universe -y
     apt-get update -y
     apt-get install ansible git expect-dev tcl libcrack2 cracklib-runtime whiptail -y
 }
