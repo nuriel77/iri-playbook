@@ -5,7 +5,9 @@ iota02.tangle.io ansible_user=root ip=10.30.40.50 ansible_ssh_host=10.200.200.10
 10.20.30.40      ansible_ssh_port=9922
 
 [fullnode:vars]
-# Only add this line for Ubuntu and Debian
+# Only add this line for Ubuntu and Debian!
+# If you add this line, also add it to the
+# original `inventory` file!!!
 #ansible_python_interpreter=/usr/bin/python3
 
 # Only set this line if you didn't ssh to the servers previously
