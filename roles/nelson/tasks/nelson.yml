@@ -96,6 +96,8 @@
   notify:
     - restart nelson
     - restart nelson-gui
+  retries: 1
+  delay: 5
 
 - name: flush handlers
   meta: flush_handlers

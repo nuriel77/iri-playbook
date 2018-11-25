@@ -52,6 +52,7 @@ Please star the playbook's repository on github: `iri-playbook <https://github.c
    files
    maintenance
    docker
+   loadbalancer
    securityhardening
    iric
    troubleshooting

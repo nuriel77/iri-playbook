@@ -73,6 +73,8 @@
     - download_iota_prom_exporter_image
   notify:
     - restart iota-prom-exporter
+  retries: 1
+  delay: 5
 
 - name: flush handlers
   meta: flush_handlers

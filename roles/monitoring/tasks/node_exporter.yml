@@ -7,6 +7,8 @@
     - node_exporter_image
   notify:
     - restart node-exporter
+  retries: 1
+  delay: 5
 
 - name: copy exporter rsyslog config file
   copy:

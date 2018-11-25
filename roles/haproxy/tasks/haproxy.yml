@@ -19,6 +19,8 @@
     - haproxy_image
   notify:
     - restart haproxy
+  retries: 1
+  delay: 5
 
 - name: ensure etc haproxy dir
   file:

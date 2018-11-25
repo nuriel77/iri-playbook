@@ -200,6 +200,8 @@
     - iri_docker_image
   notify:
     - restart iri
+  retries: 1
+  delay: 5
        
 - name: flush handlers
   meta: flush_handlers
