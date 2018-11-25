@@ -26,7 +26,9 @@
     - prometheus_docker_image
   notify:
     - restart prometheus
-  retries: 1
+  register: download_image_status
+  until: download_image_status is succeeded
+  retries: 2
   delay: 5
 
 - name: copy prometheus sysconfig file

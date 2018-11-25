@@ -73,7 +73,9 @@
     - download_iota_prom_exporter_image
   notify:
     - restart iota-prom-exporter
-  retries: 1
+  register: download_image_status
+  until: download_image_status is succeeded
+  retries: 2
   delay: 5
 
 - name: flush handlers
