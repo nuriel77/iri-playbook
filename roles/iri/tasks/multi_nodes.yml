@@ -1,0 +1,61 @@
+- name: ensure admin group exists
+  group:
+    name: "{{ admin_group | default('wheel') }}"
+    state: present
+
+- name: allow admin group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "^%{{ admin_group | default('wheel') }}"
+    line: "%{{ admin_group | default('wheel') }} ALL=(ALL) NOPASSWD: ALL"
+    validate: 'visudo -cf %s'
+
+- name: add deployer user to admin group
+  user:
+    name: "{{ deployer_user | default('deployer') }}"
+    groups: "{{ admin_group | default('wheel') }}"
+    shell: /bin/bash
+    append: yes
+    state: present
+    createhome: yes
+
+- name: ensure .ssh dir created in deployers home dir
+  file:
+    state: directory
+    path: "/home/{{ deployer_user | default('deployer') }}/.ssh"
+    mode: 0700
+    owner: "{{ deployer_user | default('deployer') }}"
+    group: "{{ deployer_user | default('deployer') }}"
+
+- name: generate SSH keys for deployer
+  shell: "ssh-keygen -b 4096 -t rsa -f /home/{{ deployer_user | default('deployer') }}/.ssh/id_rsa -q -N ''"
+  become_user: "{{ deployer_user | default('deployer') }}"
+  run_once: yes
+  args:
+    creates: "/home/{{ deployer_user | default('deployer') }}/.ssh/id_rsa"
+
+- name: slurp public SSH key
+  slurp:
+    src: "/home/{{ deployer_user | default('deployer') }}/.ssh/id_rsa.pub"
+  run_once: yes
+  changed_when: false
+  register: sshpub_key
+
+- name: set up authorized keys for the deployer user
+  authorized_key:
+    user: "{{ deployer_user | default('deployer') }}"
+    key: "{{ sshpub_key['content'] | b64decode }}"
+
+- name: scan and register host keys
+  command: "ssh-keyscan {{ item }}"
+  run_once: yes
+  register: host_keys
+  changed_when: false
+  with_items: '{{ groups.all }}'
+
+- name: write host keys
+  template:
+    src: templates/ssh-hosts.j2
+    dest: /etc/ssh/ssh_known_hosts
+  run_once: yes

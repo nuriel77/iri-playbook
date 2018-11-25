@@ -1,3 +1,8 @@
+- import_tasks: multi_nodes.yml
+  tags:
+    - multi_node_setup
+  when: groups['fullnode'] | length > 1
+
 - import_tasks: deps_apt.yml
   tags:
     - iri_deps_apt
