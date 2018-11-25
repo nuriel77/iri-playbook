@@ -2,4 +2,4 @@ site.retry
 _site/
 .*.swp
 group_vars/all/z-*.yml
-inventory-mutli
+inventory-multi
