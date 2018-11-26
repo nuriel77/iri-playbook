@@ -12,7 +12,7 @@ Consul is used in combination with Consul-template to provide HAProxy with a dyn
 
 .. note::
 
-  It is strongly recommended **NOT** to use the load balancer feature to register unknown nodes. Please make sure you only use the load balancer feature for your own cluster of nodes. There is no way to validate whether unknown nodes are up to no good.
+  It is strongly recommended **NOT** to use the load balancer feature to register unknown nodes. Please make sure you only use the load balancer feature for your own cluster of nodes. There is no way to check whether unknown nodes are up to no good.
 
 Disclaimer: I take no responsibility for any problems that might arise due to ignoring the recommendation above.
 

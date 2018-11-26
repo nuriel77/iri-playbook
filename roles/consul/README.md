@@ -24,10 +24,10 @@ When configuring multiple nodes, add set the option `api_port_remote` to true:
 grep -qir "^api_port_remote: [yes|true]" group_vars/all/z-consul-override.yml >/dev/null 2>&1 || echo "api_port_remote: yes" >> group_vars/all/z-consul-override.yml
 ```
 
-Run the playbook, make sure you are referencing the correct inventory file (you might have created a new customized one, perhaps `inventory-multi`?)
+Run the playbook, make sure you are referencing the correct `inventory` file (you might have created a new customized one, e.g. `inventory-multi`?)
 
 ```sh
-ansible-playbook -i inventory -v site.yml --tags=consul_role
+ansible-playbook -i inventory-multi -v site.yml --tags=consul_role
 ```
 
 ## HAProxy
