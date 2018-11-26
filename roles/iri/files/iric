@@ -12,8 +12,9 @@ fi
 
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
+[ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.0
+VERSION=0.7.1
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -368,7 +369,15 @@ function enable_https() {
 
     # Enable haproxy https via variable override file
     echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
-    cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=py_docker,iri_ssl,consul_role,loadbalancer_role,certbot --skip-tags=consul_register_node -e lb_bind_address=0.0.0.0 -e overwrite=yes
+    if [ -f /opt/iri-playbook/inventory-multi ]; then
+        ansible -i /opt/iri-playbook/inventory-multi all \
+            --key-file=/home/deployer/.ssh/id_rsa \
+            --become -u deployer \
+            -m copy \
+            -a "src=/opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml dest=/opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml"
+    fi
+
+    cd /opt/iri-playbook && git pull && ansible-playbook -i "$INVENTORY_FILE" site.yml -v --tags=py_docker,iri_ssl,consul_role,loadbalancer_role,certbot --skip-tags=consul_register_node -e lb_bind_address=0.0.0.0 -e overwrite=yes
     if [[ $? -ne 0 ]]; then
         pause "Enabling HTTPS failed!!! Check output above for errors."
         clear
@@ -444,7 +453,7 @@ ssl_bundle_cert: ${FULL_PATH}/fullchain.pem
 create_selfsigned_cert: False
 letsencrypt: True
 EOF
-
+        # We don't enable nginx with this common certificate in multi node setup!
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=configure_nginx_ssl
     fi
 
