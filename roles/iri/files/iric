@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.1
+VERSION=0.7.2
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -369,13 +369,6 @@ function enable_https() {
 
     # Enable haproxy https via variable override file
     echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
-    if [ -f /opt/iri-playbook/inventory-multi ]; then
-        ansible -i /opt/iri-playbook/inventory-multi all \
-            --key-file=/home/deployer/.ssh/id_rsa \
-            --become -u deployer \
-            -m copy \
-            -a "src=/opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml dest=/opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml"
-    fi
 
     cd /opt/iri-playbook && git pull && ansible-playbook -i "$INVENTORY_FILE" site.yml -v --tags=py_docker,iri_ssl,consul_role,loadbalancer_role,certbot --skip-tags=consul_register_node -e lb_bind_address=0.0.0.0 -e overwrite=yes
     if [[ $? -ne 0 ]]; then
@@ -434,14 +427,6 @@ function enable_https() {
     # Will ensure subsequent playbook runs will use haproxy.pem
     if [ -f "${FULL_PATH}/haproxy.pem" ]; then
         echo "ssl_certkey_file: ${FULL_PATH}/haproxy.pem" > /opt/iri-playbook/group_vars/all/z-ssl-override.yml
-        # Do the same for nodes in multi-node setup
-        if [ -f /opt/iri-playbook/inventory-multi ]; then
-            ansible -i /opt/iri-playbook/inventory-multi all \
-                --key-file=/home/deployer/.ssh/id_rsa \
-                --become -u deployer \
-                -m copy \
-                -a "src=/opt/iri-playbook/group_vars/all/z-ssl-override.yml dest=/opt/iri-playbook/group_vars/all/z-ssl-override.yml"
-        fi
     fi
 
     # Will configure nginx to use the let's encrypt certificates
