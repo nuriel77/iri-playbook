@@ -39,6 +39,7 @@
     - "{{ ssl_key_file }}"
     - "{{ ssl_cert_file }}"
     - "{{ ssl_certkey_file}}"
+    - "/home/{{ deployer_user | default('deployer') }}"
 
 - name: firewalld cleanup iri rules
   block:
@@ -114,9 +115,12 @@
 
 - name: remove the user for iri
   user:
-    name: "{{ iri_username }}"
+    name: "{{ item }}"
     state: absent
     remove: yes
+  with_items:
+    - "{{ iri_username }}"
+    - "{{ deployer_user | default('deployer') }}"
 
 - name: delete container
   docker_container:
