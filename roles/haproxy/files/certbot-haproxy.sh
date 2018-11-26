@@ -264,6 +264,25 @@ if [[ $exitcode -eq 0 ]]; then
             exit 1
         fi
         chmod 400 "${full_path}/haproxy.pem"
+
+        # Operate on multi node configuration
+        if [ -f /opt/iri-playbook/inventory-multi ]; then
+
+            # Create directory for letsencrypt certs
+            ansible -i /opt/iri-playbook/inventory-multi all \
+                --key-file=/home/deployer/.ssh/id_rsa \
+                --become -u deployer \
+                -m file \
+                -a "path=${full_path}"
+
+            # Cooy generated haproxy.pem certificate
+            ansible -i /opt/iri-playbook/inventory-multi all \
+                --key-file=/home/deployer/.ssh/id_rsa \
+                --become -u deployer \
+                -m copy \
+                -a "src=${full_path}/haproxy.pem dest=${full_path}/haproxy.pem mode=0400"
+        fi
+
     done
 
     grep -q "$DOMAIN_DIR/haproxy.pem" /etc/haproxy/haproxy.cfg
@@ -277,6 +296,15 @@ if [[ $exitcode -eq 0 ]]; then
     # Configure if haproxy template file exists
     if [[ -f "$HAPROXY_TMPL" ]]; then
         sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" "$HAPROXY_TMPL"
+    fi
+
+    # Apply haproxy.cfg configuration to multi node setup
+    if [ -f "${FULL_PATH}/haproxy.pem" ]; then
+        ansible -i /opt/iri-playbook/inventory-multi all \
+                --key-file=/home/deployer/.ssh/id_rsa \
+                --become -u deployer \
+                -m shell \
+                -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" /etc/haproxy/haproxy.cfg || sed -i \"s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${FULL_PATH}/haproxy.pem|\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy"
     fi
 
     # restart haproxy
