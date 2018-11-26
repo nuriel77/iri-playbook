@@ -2,6 +2,7 @@
   template:
     src: ../shared-files/haproxy.examples/service_this_node.json.j2
     dest: "{{ consul_config_dir }}/service_this_node.json"
+    force: "{{ overwrite | default('no') }}"
 
 - name: load service into consul
   shell: 'curl -H "X-Consul-Token: {{ consul_master_token.stdout }}" -X PUT -d@{{ consul_config_dir }}/service_this_node.json http://localhost:{{ consul_comm_port }}/v1/agent/service/register'
