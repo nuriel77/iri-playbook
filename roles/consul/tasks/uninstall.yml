@@ -51,6 +51,66 @@
     name: "{{ consul_username }}"
     state: absent
 
+- name: set ip variable if not set
+  set_fact:
+    ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+  when: ip is not defined
+
+- name: remove consul ports ufw
+  ufw:
+    rule: allow
+    direction: in
+    src: "{{ item[0] }}"
+    proto: "{{ item[1].proto }}"
+    port: "{{ item[1].port }}"
+    delete: yes
+  with_nested:
+    - "{{ groups['fullnode'] | map('extract', hostvars, ['ip']) | list | difference([ip]) }}"
+    - - {"port": 8600, "proto": "udp"}
+      - {"port": 8600, "proto": "tcp"}
+      - {"port": 8300, "proto": "tcp"}
+      - {"port": 8301, "proto": "tcp"}
+      - {"port": 8302, "proto": "tcp"}
+      - {"port": 8303, "proto": "tcp"}
+      - {"port": 8304, "proto": "tcp"}
+      - {"port": 8300, "proto": "udp"}
+      - {"port": 8301, "proto": "udp"}
+      - {"port": 8302, "proto": "udp"}
+      - {"port": 8303, "proto": "udp"}
+      - {"port": 8304, "proto": "udp"}
+      - {"port": '{{ consul_ssl_port }}', "proto": "tcp"}
+  when:
+    - groups['fullnode'] | length > 1
+    - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  ignore_errors: yes
+
+- name: remove consul ports firewalld
+  firewalld:
+    rich_rule: 'rule family="ipv4" source address="{{ item[0] }}" port port={{ item[1].port }} protocol={{ item[1].proto }} accept'
+    permanent: true
+    state: disabled
+    immediate: true
+    zone: public
+  with_nested:
+    - "{{ groups['fullnode'] | map('extract', hostvars, ['ip']) | list | difference([ip]) }}"
+    - - {"port": 8600, "proto": "udp"}
+      - {"port": 8600, "proto": "tcp"}
+      - {"port": 8300, "proto": "tcp"}
+      - {"port": 8301, "proto": "tcp"}
+      - {"port": 8302, "proto": "tcp"}
+      - {"port": 8303, "proto": "tcp"}
+      - {"port": 8304, "proto": "tcp"}
+      - {"port": 8300, "proto": "udp"}
+      - {"port": 8301, "proto": "udp"}
+      - {"port": 8302, "proto": "udp"}
+      - {"port": 8303, "proto": "udp"}
+      - {"port": 8304, "proto": "udp"}
+      - {"port": '{{ consul_ssl_port }}', "proto": "tcp"}
+  when:
+    - groups['fullnode'] | length > 1
+    - ansible_distribution == 'CentOS'
+  ignore_errors: yes
+
 - name: remove consul container
   docker_container:
     name: consul

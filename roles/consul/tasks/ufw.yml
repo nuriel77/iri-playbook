@@ -2,19 +2,22 @@
   ufw:
     rule: allow
     direction: in
-    proto: "{{ item.proto }}"
-    port: "{{ item.port }}"
-  with_items:
-    - {"port": 8600, "proto": "udp"}
-    - {"port": 8600, "proto": "tcp"}
-    - {"port": 8300, "proto": "tcp"}
-    - {"port": 8301, "proto": "tcp"}
-    - {"port": 8302, "proto": "tcp"}
-    - {"port": 8303, "proto": "tcp"}
-    - {"port": 8304, "proto": "tcp"}
-    - {"port": 8300, "proto": "udp"}
-    - {"port": 8301, "proto": "udp"}
-    - {"port": 8302, "proto": "udp"}
-    - {"port": 8303, "proto": "udp"}
-    - {"port": 8304, "proto": "udp"}
+    src: "{{ item[0] }}"
+    proto: "{{ item[1].proto }}"
+    port: "{{ item[1].port }}"
+  with_nested:
+    - "{{ groups['fullnode'] | map('extract', hostvars, ['ip']) | list | difference([ip]) }}"
+    - - {"port": 8600, "proto": "udp"}
+      - {"port": 8600, "proto": "tcp"}
+      - {"port": 8300, "proto": "tcp"}
+      - {"port": 8301, "proto": "tcp"}
+      - {"port": 8302, "proto": "tcp"}
+      - {"port": 8303, "proto": "tcp"}
+      - {"port": 8304, "proto": "tcp"}
+      - {"port": 8300, "proto": "udp"}
+      - {"port": 8301, "proto": "udp"}
+      - {"port": 8302, "proto": "udp"}
+      - {"port": 8303, "proto": "udp"}
+      - {"port": 8304, "proto": "udp"}
+      - {"port": '{{ consul_ssl_port }}', "proto": "tcp"}
   when: groups['fullnode'] | length > 1

@@ -1,28 +1,23 @@
-- name: firewall allow
-  block:
-
-    - name: allow consul members peering ports
-      firewalld:
-        port: "{{ item }}"
-        permanent: true
-        state: enabled
-        immediate: true
-        zone: public
-      with_items:
-        - "8300-8304/tcp"
-        - "8300-8304/udp"
-
-    - name: allow consul communication port
-      firewalld:
-        port: "{{ item }}"
-        permanent: true
-        state: enabled
-        immediate: true
-        zone: public
-      with_items:
-        - "{{ consul_comm_port }}/tcp"
-        - "{{ consul_ssl_port }}/tcp"
-        - "8600/tcp"
-        - "8600/udp"
-
+- name: allow consul members peering ports
+  firewalld:
+    rich_rule: 'rule family="ipv4" source address="{{ item[0] }}" port port={{ item[1].port }} protocol={{ item[1].proto }} accept'
+    permanent: true
+    state: enabled
+    immediate: true
+    zone: public
+  with_nested:
+    - "{{ groups['fullnode'] | map('extract', hostvars, ['ip']) | list | difference([ip]) }}"
+    - - {"port": 8600, "proto": "udp"}
+      - {"port": 8600, "proto": "tcp"}
+      - {"port": 8300, "proto": "tcp"}
+      - {"port": 8301, "proto": "tcp"}
+      - {"port": 8302, "proto": "tcp"}
+      - {"port": 8303, "proto": "tcp"}
+      - {"port": 8304, "proto": "tcp"}
+      - {"port": 8300, "proto": "udp"}
+      - {"port": 8301, "proto": "udp"}
+      - {"port": 8302, "proto": "udp"}
+      - {"port": 8303, "proto": "udp"}
+      - {"port": 8304, "proto": "udp"}
+      - {"port": '{{ consul_ssl_port }}', "proto": "tcp"}
   when: groups['fullnode'] | length > 1
