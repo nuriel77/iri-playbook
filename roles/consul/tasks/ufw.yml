@@ -17,3 +17,4 @@
     - {"port": 8302, "proto": "udp"}
     - {"port": 8303, "proto": "udp"}
     - {"port": 8304, "proto": "udp"}
+  when: groups['fullnode'] | length > 1
