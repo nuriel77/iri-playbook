@@ -156,12 +156,75 @@ function check_port_listen {
     lsof -Pni TCP:80|grep -q LISTEN
 }
 
+function set_nginx_redirect {
+    THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1)
+    VHOST="
+server {
+     listen 80;
+     server_name _;
+     return 301 http://${THIS_NODE};
+}
+"
+    logger_info "Apply nginx redirect"
+    ansible -i /opt/iri-playbook/inventory-multi 'all:!'$THIS_NODE'' \
+        --key-file=/home/deployer/.ssh/id_rsa \
+        --become -u deployer \
+        -m shell \
+        -a "echo \"$VHOST\" >/etc/nginx/conf.d/achme_verification.conf && /bin/systemctl reload nginx"
+    if [ $? -ne 0 ]; then
+        # ensure removed if any error
+        remove_nginx_redirect
+        logger_error "Failed to apply nginx redirect"
+        return 1
+    fi
+}
+
+function remove_nginx_redirect {
+    THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1)
+    logger_info "Remove nginx redirect"
+    ansible -i /opt/iri-playbook/inventory-multi 'all:!'$THIS_NODE'' \
+        --key-file=/home/deployer/.ssh/id_rsa \
+        --become -u deployer \
+        -m shell \
+        -a "rm -f /etc/nginx/conf.d/achme_verification.conf && /bin/systemctl reload nginx"
+}
+
 function enable_firewall {
-    /sbin/iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    if [ -f /opt/iri-playbook/inventory-multi ]; then
+        ansible -i /opt/iri-playbook/inventory-multi all \
+            --key-file=/home/deployer/.ssh/id_rsa \
+            --become -u deployer \
+            -m shell \
+            -a "/sbin/iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT"
+    else
+        /sbin/iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    fi
 }
 
 function disable_firewall {
-    /sbin/iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    if [ -f /opt/iri-playbook/inventory-multi ]; then
+        ansible -i /opt/iri-playbook/inventory-multi all \
+            --key-file=/home/deployer/.ssh/id_rsa \
+            --become -u deployer \
+            -m shell \
+            -a "/sbin/iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT"
+    else
+        /sbin/iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    fi
+}
+
+function cleanup {
+    if [ "$CLOSE_HTTP_AFTER" == "1" ]
+    then
+        logger_info "Disable HTTP in firewall"
+        disable_firewall
+    fi
+
+    if [ "$REMOVE_NGINX_REDIRECT" == "1" ]
+    then
+        logger_info "Remove nginx redirect"
+        remove_nginx_redirect
+    fi
 }
 
 ##################
@@ -201,6 +264,20 @@ else
     logger_info "Port 80 available in firewall."
 fi
 
+if [ -f /opt/iri-playbook/inventory-multi ]; then
+    logger_info "Setting nginx redirect for other nodes"
+    REMOVE_NGINX_REDIRECT=1
+    set_nginx_redirect
+    if [ $? -ne 0 ]
+    then
+        logger_error "Error creating nginx redirects"
+        exit 1
+    fi
+fi
+
+# Add trap for cleanup
+trap cleanup EXIT INT QUIT TERM
+
 le_cert_root="/etc/letsencrypt/live"
 renewed_certs=()
 exitcode=0
@@ -208,10 +285,6 @@ if [ -n "$DOMAIN" ]
 then
     newCert
     RC=$?
-    if [ "$CLOSE_HTTP_AFTER" == "1" ]
-    then
-        disable_firewall
-    fi
     if [ $RC -ne 0 ]
     then
         logger_error "Error requesting a new certificate for $DOMAIN"
@@ -272,8 +345,8 @@ if [[ $exitcode -eq 0 ]]; then
             ansible -i /opt/iri-playbook/inventory-multi all \
                 --key-file=/home/deployer/.ssh/id_rsa \
                 --become -u deployer \
-                -m file \
-                -a "path=${full_path}"
+                -m shell \
+                -a "mkdir -p ${full_path}"
 
             # Cooy generated haproxy.pem certificate
             ansible -i /opt/iri-playbook/inventory-multi all \
@@ -299,12 +372,12 @@ if [[ $exitcode -eq 0 ]]; then
     fi
 
     # Apply haproxy.cfg configuration to multi node setup
-    if [ -f "${FULL_PATH}/haproxy.pem" ]; then
+    if [ -f /opt/iri-playbook/inventory-multi ]; then
         ansible -i /opt/iri-playbook/inventory-multi all \
-                --key-file=/home/deployer/.ssh/id_rsa \
-                --become -u deployer \
-                -m shell \
-                -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" /etc/haproxy/haproxy.cfg || sed -i \"s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${FULL_PATH}/haproxy.pem|\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy"
+            --key-file=/home/deployer/.ssh/id_rsa \
+            --become -u deployer \
+            -m shell \
+            -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" /etc/haproxy/haproxy.cfg || sed -i \"s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy"
     fi
 
     # restart haproxy
