@@ -149,7 +149,7 @@ function add_renewal_crontab {
 }
 
 function check_firewall {
-    iptables -L -nv|grep -q "ACCEPT.*tcp dpt:80"
+    iptables -L -nv|egrep -q "ACCEPT.*tcp dpt:80$|ACCEPT.*tcp dpt:80 "
 }
 
 function check_port_listen {
@@ -197,9 +197,9 @@ function enable_firewall {
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "/sbin/iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT"
+            -a "/sbin/iptables -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT"
     else
-        /sbin/iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+        /sbin/iptables -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
     fi
 }
 
