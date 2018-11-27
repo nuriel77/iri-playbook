@@ -78,3 +78,5 @@ We configure ``my.iotacluster.io`` with 3 A records, each record with each nodeâ
 
 DNS uses round-robin by default (the associated IP address to the hostname are rotated in each reply from the DNS server).
 
+
+[More to follow, work in progress...]
