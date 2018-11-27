@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Based on https://github.com/janeczku/haproxy-acme-validation-plugin/blob/master/cert-renewal-haproxy.sh
 
 #### prerequisites
@@ -162,7 +162,7 @@ function set_nginx_redirect {
 server {
      listen 80;
      server_name _;
-     return 301 http://${THIS_NODE};
+     return 301 http://${THIS_NODE}\$request_uri;
 }
 "
     logger_info "Apply nginx redirect"
@@ -170,7 +170,7 @@ server {
         --key-file=/home/deployer/.ssh/id_rsa \
         --become -u deployer \
         -m shell \
-        -a "echo \"$VHOST\" >/etc/nginx/conf.d/achme_verification.conf && /bin/systemctl reload nginx"
+        -a "echo '$VHOST' >/etc/nginx/conf.d/acme_verification.conf && /bin/systemctl reload nginx"
     if [ $? -ne 0 ]; then
         # ensure removed if any error
         remove_nginx_redirect
@@ -182,11 +182,13 @@ server {
 function remove_nginx_redirect {
     THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1)
     logger_info "Remove nginx redirect"
-    ansible -i /opt/iri-playbook/inventory-multi 'all:!'$THIS_NODE'' \
+
+    ANSIBLE_ACTION_WARNINGS=False \
+      ansible -i /opt/iri-playbook/inventory-multi 'all:!'$THIS_NODE'' \
         --key-file=/home/deployer/.ssh/id_rsa \
         --become -u deployer \
         -m shell \
-        -a "rm -f /etc/nginx/conf.d/achme_verification.conf && /bin/systemctl reload nginx"
+        -a "rm -f /etc/nginx/conf.d/acme_verification.conf && /bin/systemctl reload nginx"
 }
 
 function enable_firewall {
