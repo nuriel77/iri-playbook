@@ -24,6 +24,12 @@
   changed_when: false
   register: nginx_uid
 
+- name: create nginx log directory
+  file:
+    path: /var/log/nginx
+    state: directory
+    mode: 0700
+
 - name: copy systemd service file
   template:
     src: templates/nginx.service.j2
