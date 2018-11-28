@@ -15,7 +15,7 @@
   tags:
     - prometheus_config
 
-- import_tasks: node_exporter.yml
+- import_tasks: node-exporter.yml
   tags:
     - node_exporter_config
 

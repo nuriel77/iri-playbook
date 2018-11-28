@@ -1,0 +1,141 @@
+- name: remove consul image
+  block:
+
+    - name: "stopping consul service, this might take a moment..."
+      systemd:
+        name: consul.service
+        state: stopped
+      ignore_errors: yes
+
+    - name: delete consul image
+      docker_image:
+        name: "{{ consul_image }}"
+        tag: "{{ consul_tag }}"
+        state: absent
+        force: yes
+
+  when:
+    - remove_consul_image is defined
+    - remove_consul_image|bool == True
+
+- name: check consul image exists
+  shell: "/usr/bin/docker images {{ consul_image }}:{{ consul_tag }} | grep -q ^consul"
+  changed_when: False
+  register: consul_image_stat
+  failed_when: "consul_image_stat.rc > 1"
+
+- name: docker build consul image (on master)
+  block:
+
+    - name: create temporary build directory
+      tempfile:
+        state: directory
+      register: tempdir
+
+    - name: copy Dockerfile
+      template:
+        src: templates/Dockerfile.j2
+        dest: "{{ tempdir.path }}/Dockerfile"
+
+    - name: build consul image
+      docker_image:
+        path: "{{ tempdir.path }}"
+        name: "{{ consul_image }}"
+        tag: "{{ consul_tag }}"
+      notify:
+        - restart consul
+
+    - name: remove temporary build dir
+      file:
+        state: absent
+        path: "{{ tempdir.path }}"
+
+  run_once: yes
+  delegate_to: "{{ groups['fullnode']|first }}"
+  when:
+    - consul_image_stat.rc == 1
+    - images_from_master is defined
+    - images_from_master|bool == True
+
+- name: docker build consul image
+  block:
+
+    - name: create temporary build directory
+      tempfile:
+        state: directory
+      register: tempdir
+
+    - name: copy Dockerfile
+      template:
+        src: templates/Dockerfile.j2
+        dest: "{{ tempdir.path }}/Dockerfile"
+
+    - name: build consul image
+      docker_image:
+        path: "{{ tempdir.path }}"
+        name: "{{ consul_image }}"
+        tag: "{{ consul_tag }}"
+      notify:
+        - restart consul
+
+    - name: remove temporary build dir
+      file:
+        state: absent
+        path: "{{ tempdir.path }}"
+
+  when: >
+        consul_image_stat.rc == 1 and
+        (images_from_master is not defined or
+         images_from_master|bool == False)
+
+- name: set image name and tag
+  set_fact:
+    this_tag: "{{ consul_tag }}"
+    this_image: "{{ consul_image }}"
+
+- name: set temporary image file name
+  set_fact:
+    this_file: "/tmp/image-consul-{{ this_tag }}.tar"
+
+- name: image export and load block
+  block:
+
+    - name: check image exists
+      shell: "/usr/bin/docker images {{ this_image }}:{{ this_tag }} | grep -q '^{{ this_image }}'"
+      changed_when: False
+      register: image_stat
+      failed_when: "image_stat.rc > 1"
+
+    - name: export the image to a file
+      delegate_to: "{{ groups['fullnode']|first }}"
+      docker_image:
+        name: "{{ this_image }}"
+        tag: "{{ this_tag }}"
+        archive_path: "{{ this_file }}"
+      when: "image_stat.rc == 1"
+
+    - name: copy the docker image from the first node
+      synchronize:
+        src: "{{ this_file }}"
+        dest: "{{ this_file }}"
+      when: image_stat.rc == 1
+      register: image_copied
+
+    - name: load the image into docker
+      docker_image:
+        name: "{{ this_image }}"
+        tag: "{{ this_tag }}"
+        load_path: "{{ this_file }}"
+      when:
+        - image_copied.changed
+      notify:
+        - restart consul
+
+  when:
+    - groups['fullnode'] | length > 1
+    - inventory_hostname != groups['fullnode']|first
+
+- name: remove image from temporary location
+  file:
+    path: "{{ this_file }}"
+    state: absent

@@ -64,19 +64,9 @@
   notify:
     - restart iota-prom-exporter
 
-- name: 'download iota-prom-exporter docker image, this can take a moment...'
-  docker_image:
-    name: "{{ iota_prom_exporter_image }}"
-    tag: "{{ iota_prom_exporter_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+- import_tasks: image-iota-prom-exporter.yml
   tags:
-    - download_iota_prom_exporter_image
-  notify:
-    - restart iota-prom-exporter
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5
+    - iota_prom_exporter_docker_image
 
 - name: flush handlers
   meta: flush_handlers

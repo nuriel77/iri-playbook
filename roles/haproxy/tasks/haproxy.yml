@@ -10,19 +10,9 @@
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: 'download haproxy docker image, this can take a moment...'
-  docker_image:
-    name: "{{ haproxy_image }}"
-    tag: "{{ haproxy_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+- import_tasks: image-haproxy.yml
   tags:
-    - haproxy_image
-  notify:
-    - restart haproxy
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5
+    - haproxy_docker_image
 
 - name: ensure etc haproxy dir
   file:

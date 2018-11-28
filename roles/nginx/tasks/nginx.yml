@@ -87,19 +87,9 @@
     mode: 0640
   no_log: true
 
-- name: 'download nginx docker image, this can take a moment...'
-  docker_image:
-    name: "{{ nginx_image }}"
-    tag: "{{ nginx_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+- import_tasks: image-nginx.yml
   tags:
     - nginx_docker_image
-  notify:
-    - restart nginx
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5
 
 - name: flush handlers
   meta: flush_handlers

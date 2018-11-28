@@ -83,23 +83,13 @@
   notify:
     - restart nelson-gui
 
-- name: 'download nelson images, this can take a moment...'
-  docker_image:
-    name: "{{ item.image }}"
-    tag: "{{ item.tag }}"
-    force: "{{ force_pull_image | default('no') }}"
-  with_items:
-    - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
-    - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }
+- import_tasks: image-nelson.yml
   tags:
     - nelson_docker_images
-  notify:
-    - restart nelson
-    - restart nelson-gui
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5
+
+- import_tasks: image-nelsongui.yml
+  tags:
+    - nelson_docker_images
 
 - name: flush handlers
   meta: flush_handlers

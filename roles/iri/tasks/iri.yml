@@ -191,19 +191,9 @@
   tags:
     - iri_network
 
-- name: 'download iri docker image, this can take a moment...'
-  docker_image:
-    name: "{{ iri_image }}"
-    tag: "{{ iri_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+- import_tasks: image-iri.yml
   tags:
     - iri_docker_image
-  notify:
-    - restart iri
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5 
 
 - name: flush handlers
   meta: flush_handlers

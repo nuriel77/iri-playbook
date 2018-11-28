@@ -1,16 +1,6 @@
-- name: 'download cadvisor docker image, this can take a moment...'
-  docker_image:
-    name: "{{ cadvisor_image }}"
-    tag: "{{ cadvisor_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+- import_tasks: image-cadvisor.yml
   tags:
     - cadvisor_docker_image
-  notify:
-    - restart cadvisor
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5
 
 - name: copy cadvisor sysconfig file
   template:

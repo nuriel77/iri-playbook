@@ -71,60 +71,9 @@
     - "{{ consul_config_dir }}/conf.d"
     - "{{ consul_data_dir }}"
 
-- name: remove consul image
-  block:
-
-    - name: "stopping consul service, this might take a moment..."
-      systemd:
-        name: consul.service
-        state: stopped
-      ignore_errors: yes
-
-    - name: delete consul image
-      docker_image:
-        name: "{{ consul_image }}"
-        tag: "{{ consul_tag }}"
-        state: absent
-        force: yes
-
-  when:
-    - remove_consul_image is defined
-    - remove_consul_image|bool == True
-
-- name: check consul image exists
-  shell: "/usr/bin/docker images {{ consul_image }}:{{ consul_tag }} | grep -q ^consul"
-  changed_when: False
-  register: consul_image_stat
-  failed_when: "consul_image_stat.rc > 1"
+- import_tasks: image-consul.yml
   tags:
-    - consul_image_build
-
-- name: docker build consul image
-  block:
-
-    - name: create temporary build directory
-      tempfile:
-        state: directory
-      register: tempdir
-
-    - name: copy Dockerfile
-      template:
-        src: templates/Dockerfile.j2
-        dest: "{{ tempdir.path }}/Dockerfile"
-
-    - name: build consul image
-      docker_image:
-        path: "{{ tempdir.path }}"
-        name: "{{ consul_image }}"
-        tag: "{{ consul_tag }}"
-
-    - name: remove temporary build dir
-      file:
-        state: absent
-        path: "{{ tempdir.path }}"
-  when: consul_image_stat.rc == 1
-  tags:
-    - consul_image_build
+    - consul_docker_image
 
 - name: copy consul sysconfig file
   template:

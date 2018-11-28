@@ -27,19 +27,9 @@
     - "{{ grafana_basedir }}"
     - "{{ grafana_dashboards_path }}"
 
-- name: 'download grafana docker image, this can take a moment...'
-  docker_image:
-    name: "{{ grafana_image }}"
-    tag: "{{ grafana_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+- import_tasks: image-grafana.yml
   tags:
     - grafana_docker_image
-  notify:
-    - restart grafana-server
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5
 
 - name: copy grafana sysconfig file
   template:

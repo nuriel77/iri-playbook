@@ -10,19 +10,9 @@
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
 
-- name: 'download field_exporter docker image, this can take a moment...'
-  docker_image:
-    name: "{{ field_exporter_image }}"
-    tag: "{{ field_exporter_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+- import_tasks: image-field-exporter.yml
   tags:
     - field_exporter_docker_image
-  notify:
-    - restart field-exporter
-  register: download_image_status
-  until: download_image_status is succeeded
-  retries: 2
-  delay: 5
 
 - name: install field-exporter config
   template:
