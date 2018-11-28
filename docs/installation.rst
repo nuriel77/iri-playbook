@@ -104,11 +104,17 @@ Hereby a one-liner to install Ansible on **Ubuntu**:
    apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git nano -y
 
 
-For **CentOS**, simply run:
+For **CentOS**, first install epel-release:
 
 .. code:: bash
 
-   yum install ansible git nano -y
+  yum install epel-release -y
+
+Then Ansible and some extra packages:
+
+.. code:: bash
+
+  yum install ansible git nano -y
 
 You will notice I've added 'git' which is required (at least on CentOS it doesn't have it pre-installed as in Ubuntu).
 In addition, I've added 'nano' which is helpful for beginners to edit files with (use vi or vim if you are adventurous).

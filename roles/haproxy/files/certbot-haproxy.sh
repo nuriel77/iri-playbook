@@ -181,8 +181,6 @@ server {
 
 function remove_nginx_redirect {
     THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1)
-    logger_info "Remove nginx redirect"
-
     ANSIBLE_ACTION_WARNINGS=False \
       ansible -i /opt/iri-playbook/inventory-multi 'all:!'$THIS_NODE'' \
         --key-file=/home/deployer/.ssh/id_rsa \
