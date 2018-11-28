@@ -103,7 +103,7 @@ function newCert {
       --preferred-challenges http \
       --email "${EMAIL}" \
       -d "${DOMAIN}" \
-      --agree-tos
+      --agree-tos ${STAGING}
     RC=$?
     /bin/systemctl start nginx
     return $RC
@@ -121,7 +121,7 @@ function issueCert {
       --standalone \
       --renew-by-default \
       --preferred-challenges http \
-      --agree-tos
+      --agree-tos ${STAGING}
     RC=$?
     /bin/systemctl start nginx
     return $RC
