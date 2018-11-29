@@ -10,8 +10,7 @@ The new release of IRI-playbook Docker version introduces a valuable feature: a 
 
 ``Consul`` is used in combination with ``Consul-template`` to provide HAProxy with a dynamic registry of backend nodes. This means that you can register multiple IRI nodes to Consul to benefit from HAProxy’s load balancing capability. Consul holds the database containing a registry of all the nodes you want added to the load balancer. In addition, Consul runs periodic health-checks on the nodes to ensure they are performing well.
 
-Please take a few moments to consider the following statement:
-.. note::
+Please take a few moments to consider the following statement::
 
   It is strongly recommended **NOT** to use the load balancer feature to register unknown nodes. Please make sure you only use the load balancer feature for your own cluster of nodes. There is no way to check whether unknown nodes are up to no good.
 
@@ -20,10 +19,9 @@ Disclaimer: I take no responsibility for any problems that might arise due to ig
 Overview
 ========
 
-
 Consul
 ------
-IRI node get deployed with HAProxy and Consul installed. If your deployment consistent of multiple nodes, Consul will forms a cluster. 
+The IRI docker playbook allows to deploy nodes with both HAProxy and Consul. If your deployment consisted of multiple nodes, Consul nodes will forms a cluster, offering a distributed configuration database for HAProxy.
 
 Consul nodes share a key/value database, distributed services and health-checks registry. A service, in our case, is an IRI node. The health-check associated with a service can be a simple bash script that run some validations on the service.
 
@@ -31,20 +29,22 @@ Each IRI node registers itself with its local Consul daemon. Subsequently, it be
 
 Let’s recap:
 
-HAProxy is a load balancer/proxy.
-Consul acts as a distributed key/value database, service registry (discovery) and able to initiate health-checks.
-Consul and HAProxy are installed by default, on a single or multiple node installation.
-Consul forms a cluster when installed on multiple nodes, offering distributed highly available registry.
-HAProxy configures its routes (aka backends) based on Consul’s registry.
-Based on Consul’s health-checks, backends become registered or de-registered from the load balancers (HAProxy).
-Because Consul is distributed, HAProxy on all nodes get configured similarly.
+* HAProxy is a load balancer/proxy.
+* Consul acts as a distributed key/value database, service registry (discovery) and able to initiate health-checks.
+* Consul and HAProxy are installed by default, on a single or multiple node installation.
+* Consul forms a cluster when installed on multiple nodes, offering distributed highly available registry.
+* HAProxy configures its routes (aka backends) based on Consul’s registry.
+* Based on Consul’s health-checks, backends become registered or de-registered from the load balancers (HAProxy).
+* Because Consul is distributed, HAProxy on all nodes get configured similarly.
 
 
+Server and Agent
+^^^^^^^^^^^^^^^^
 Consul is able to run in two modes: server and agent. Server mode in itself is also an agent, but is also able to become a cluster member forming a quorum with other server-mode Consul nodes. You can deploy 3 or more consul servers to form a highly available, fault-tolerant cluster (3 or more nodes are required to achieve quorum: always use an odd number equal to or larger than 3).
 
 In the most basic setup, the IRI Docker Playbook will install all IRI nodes with Consul in server mode. This will form a very robust cluster.
 
-An important note about Consul is: when you register a service, the node on which you have registered the service becomes its “parent”. If this node becomes unavailable, so does any service that has been registered on it.
+An important note about Consul: when you register a service, the node on which you have registered the service becomes its “parent”. If this node becomes unavailable, so does any service that has been registered on it.
 
 What this means is: the **recommended** way to add new nodes to your cluster is by installing them via the playbook: adding them into the ``inventory-multi`` file. This will configure everything out-of-the-box and is less error prone than any manual method.
 
@@ -77,7 +77,7 @@ There are two options:
 1. Single IRI node/load balancer
 2. Three or more IRI nodes/load balancers
 
-For the first option a single IRI node is required installed with the IRI Playbook Docker version. HAProxy, Consul and Consul-template will also be installed on it. This node registers its own IRI to its Consul and is available to receive API calls. It is also possible to manually register new services (IRI nodes) to it.
+For the first option -- a single IRI node is required -- installed with the IRI Playbook Docker version. HAProxy, Consul and Consul-template will also be installed on it. This node registers its own IRI to its Consul and is available to receive API calls. It is also possible to manually register new services (IRI nodes) to it.
 
 The disadvantage of a single node is being a single-point-of-failure (SPoF). If it is down, all the instances that are registered on it become unreachable through it.
 
@@ -146,7 +146,7 @@ Ubuntu
 
 Become root via:
 
-code:: bash
+.. code:: bash
 
   sudo su
 
@@ -154,19 +154,19 @@ code:: bash
 
 Install updates:
 
-code:: bash
+.. code:: bash
 
   apt update -qqy --fix-missing -y && apt-get upgrade -y && apt-get clean && apt-get autoremove -y --purge
 
 Check if reboot file exists. If it does, issue a reboot:
 
-code:: bash
+.. code:: bash
 
   test -f /var/run/reboot-required && reboot
 
 Install Ansible:
 
-code:: bash
+.. code:: bash
 
   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git screen nano -y
 
@@ -174,24 +174,25 @@ CentOS
 ------
 Update packages:
 
-code:: bash
+.. code:: bash
 
   yum update -y
 
 Ensure Selinux is enabled (this is recommended to run on each node in the cluster before running the playbook):
 
-code:: bash 
+.. code:: bash 
 
   grep '^SELINUX=enforcing' /etc/selinux/config || sed -i 's/SELINUX=.*$/SELINUX=enforcing/' /etc/selinux/config && echo "Selinux enabled, rebooting..." && reboot
 
 Install some useful packages:
 
-code:: bash
+.. code:: bash
+
   yum install epel-release -y && yum install ansible git nano vim screen curl lsof tcpdump yum-utils bind-utils nc -y
 
 If hasn’t been done already, check if the node needs a reboot due to new kernel packages:
 
-code:: bash
+.. code:: bash
 
   needs-restarting  -r
 
@@ -204,16 +205,16 @@ Both Ubuntu and Centos
 ----------------------
 Clone the repository, specifically the dockerized version:
 
-code:: bash
+.. code:: bash
 
   cd /opt && git clone -b "feat/docker" https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
 
 Configure a username and password and add some configuration options.
 **NOTE** make sure to configure your own username and password before pasting this command!
 
-code:: bash
+.. code:: bash
 
-    cat <<EOF >/opt/iri-playbook/group_vars/all/z-iri-override.yml
+  cat <<EOF >/opt/iri-playbook/group_vars/all/z-iri-override.yml
   fullnode_user: iotaadmin
   fullnode_user_password: 'AllTangle81'
   install_docker: true
@@ -224,12 +225,13 @@ code:: bash
 
 Chmod the file:
 
-code:: bash
+.. code:: bash
 
   chmod 600 group_vars/all/z-iri-override.yml
 
 Copy the example ``inventory-multi.example`` to ``inventory-multi``:
-code:: bash
+
+.. code:: bash
 
   cp inventory-multi.example inventory-multi
 
@@ -237,7 +239,7 @@ At this point you should edit the ``inventory-multi`` file manually. Here’s an
 
 **NOTE** that for Ubuntu and Debian you have to remove the ``#`` on the line of the ``ansible_python_interpreter`` !!!
 
-code:: bash
+.. code:: bash
   
   # Example configuration of multiple hosts
   [fullnode]
@@ -255,7 +257,7 @@ code:: bash
 
 Run the installation:
 
-code:: bash
+.. code:: bash
 
   ansible-playbook -i inventory-multi site.yml -v
 
