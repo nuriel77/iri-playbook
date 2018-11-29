@@ -157,7 +157,7 @@ function check_port_listen {
 }
 
 function set_nginx_redirect {
-    THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1)
+    [[ -z "$THIS_NODE" ]] && THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1 | awk {'print $1'})
     VHOST="
 server {
      listen 80;
@@ -180,7 +180,7 @@ server {
 }
 
 function remove_nginx_redirect {
-    THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1)
+    [[ -z "$THIS_NODE" ]] && THIS_NODE=$(grep -A1 "^\[fullnode\]$" /opt/iri-playbook/inventory-multi | tail -1 | awk {'print $1'})
     ANSIBLE_ACTION_WARNINGS=False \
       ansible -i /opt/iri-playbook/inventory-multi 'all:!'$THIS_NODE'' \
         --key-file=/home/deployer/.ssh/id_rsa \
