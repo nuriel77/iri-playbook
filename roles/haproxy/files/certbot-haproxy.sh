@@ -377,7 +377,7 @@ if [[ $exitcode -eq 0 ]]; then
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" /etc/haproxy/haproxy.cfg || sed -i \"s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy"
+            -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" /etc/haproxy/haproxy.cfg || sed -i \"s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy && systemctl restart consul-template"
     fi
 
     # restart haproxy
@@ -387,13 +387,21 @@ if [[ $exitcode -eq 0 ]]; then
         if [[ $RC_A -eq 3 ]]; then
             $HAPROXY_START_CMD
             RC_B=$?
+            systemctl restart consul-template
+            RC_C=$?
         elif [[ $RC_A -eq 0 ]]; then
             $HAPROXY_RESTART_CMD
             RC_B=$?
+            systemctl restart consul-template
+            RC_C=$?
         fi
 
         if [[ $RC_B -ne 0 ]]; then
             logger_error "failed to restart haproxy!"
+        fi
+
+        if [[ $RC_C -ne 0 ]]; then
+            logger_error "failed to restart consul-template!"
         fi
     fi
 fi
