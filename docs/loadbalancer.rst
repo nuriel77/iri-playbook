@@ -20,6 +20,9 @@ Please take a few moments to consider the following statement:
 
 Disclaimer: I take no responsibility for any problems that might arise due to ignoring the recommendation above.
 
+.. image:: https://github.com/nuriel77/iri-playbook/tree/feat/docker/docs/images/lb_consul.png
+   :alt: Load Balancer Setup
+
 Overview
 ========
 
