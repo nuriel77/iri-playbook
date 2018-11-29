@@ -20,13 +20,15 @@ Please consider the following:
 
 Disclaimer: I take no responsibility for any problems that might arise due to ignoring the recommendation above.
 
-.. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/docs/images/lb_consul.png
-      :alt: HA Load Balancer Diagram
-
 Overview
 ========
 
 For command examples for Consul, please refer to `this document <https://github.com/nuriel77/iri-playbook/blob/feat/docker/roles/consul/README.md>`_.
+
+The highly-available setup diagram:
+
+.. image:: https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/docs/images/lb_consul.png
+      :alt: HA Load Balancer Diagram
 
 Consul
 ------
