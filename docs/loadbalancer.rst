@@ -154,6 +154,10 @@ Below are the quick installation command for both Ubuntu and CentOS.
 * For sharing an SSL certificate for the load balancer, a single fully-qualified-domain-name in DNS pointing to all the node's IP addresses (multiple A records).
 * Only Centos 7.5 and Ubuntu 18.04 have been tested so far for this setup.
 
+.. note::
+
+  The configuration examples below are to be perform on one of the nodes in the cluster. Pick one of the nodes to be the "installer" node and make sure it is the first one listed in the inventory file (more about the inventory file below).
+
 
 Ubuntu
 ------
@@ -287,9 +291,9 @@ Run the installation:
 
   ansible-playbook -i inventory-multi site.yml -v -e images_from_master=yes
 
-If your connection to the server breaks (network timeout), you can return to the server and re-run the command above (make sure to be in the ``/opt/iri-playbook`` directory and run is as root).
+If your connection to the server breaks (network timeout), you can return to the server and re-run the command above (make sure to be in the ``/opt/iri-playbook`` directory and run it as root).
 
-**NOTE** that the option ``images_from_master=yes`` has been added. What it does is make sure that all Docker images are initially pulled to the main installation node and then copied to the other nodes. Sometimes having 3 nodes pull the same image from Dockerhub at the same time is rather slow.
+**NOTE** that the option ``images_from_master=yes`` has been added. This ensures that all Docker images are initially pulled to the main installation node and then copied to the other nodes. Sometimes having 3 nodes pull the same image from Dockerhub at the same time is rather slow.
 
 SSL Certificate
 ^^^^^^^^^^^^^^^
