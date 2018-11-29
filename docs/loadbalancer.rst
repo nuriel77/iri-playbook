@@ -10,14 +10,20 @@ The new release of IRI-playbook Docker version introduces a valuable feature: a 
 
 ``Consul`` is used in combination with ``Consul-template`` to provide HAProxy with a dynamic registry of backend nodes. This means that you can register multiple IRI nodes to Consul to benefit from HAProxy’s load balancing capability. Consul holds the database containing a registry of all the nodes you want added to the load balancer. In addition, Consul runs periodic health-checks on the nodes to ensure they are performing well.
 
-Please take a few moments to consider the following statement::
+Please take a few moments to consider the following statement:
 
-  It is strongly recommended **NOT** to use the load balancer feature to register unknown nodes. Please make sure you only use the load balancer feature for your own cluster of nodes. There is no way to check whether unknown nodes are up to no good.
+.. note::
+
+  It is strongly recommended **NOT** to use the load balancer feature to register unknown nodes.
+  Please make sure you only use the load balancer feature for your own cluster of nodes.
+  There is no way to check whether unknown nodes are up to no good.
 
 Disclaimer: I take no responsibility for any problems that might arise due to ignoring the recommendation above.
 
 Overview
 ========
+
+For command examples for Consul, please refer to `this document <https://github.com/nuriel77/iri-playbook/blob/feat/docker/roles/consul/README.md>`_.
 
 Consul
 ------
