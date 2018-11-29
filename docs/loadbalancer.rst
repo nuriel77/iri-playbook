@@ -147,6 +147,14 @@ Quick Installation Example for Multiple Nodes
 
 Below are the quick installation command for both Ubuntu and CentOS.
 
+**Prerequisite**:
+
+* At least 3 strong nodes (2 CPUs, 4GB RAM at least, though doube than that is recommended for smooth operation).
+* Configure each node with a unique fully-qualified-domain-name in DNS.
+* For sharing an SSL certificate for the load balancer, a single fully-qualified-domain-name in DNS pointing to all the node's IP addresses (multiple A records).
+* Only Centos 7.5 and Ubuntu 18.04 have been tested so far for this setup.
+
+
 Ubuntu
 ------
 
@@ -235,6 +243,18 @@ Chmod the file:
 
   chmod 600 group_vars/all/z-iri-override.yml
 
+To enable Consul for this installtion:
+
+.. code:: bash
+
+  grep -qir "^consul_enabled: [yes|true]" group_vars/all/z-consul-override.yml >/dev/null 2>&1 || echo "consul_enabled: yes" >> group_vars/all/z-consul-override.yml
+
+And:
+
+.. code:: bash
+
+  grep -qir "^api_port_remote: [yes|true]" group_vars/all/z-consul-override.yml >/dev/null 2>&1 || echo "api_port_remote: yes" >> group_vars/all/z-consul-override.yml
+
 Copy the example ``inventory-multi.example`` to ``inventory-multi``:
 
 .. code:: bash
@@ -265,9 +285,11 @@ Run the installation:
 
 .. code:: bash
 
-  ansible-playbook -i inventory-multi site.yml -v
+  ansible-playbook -i inventory-multi site.yml -v -e images_from_master=yes
 
 If your connection to the server breaks (network timeout), you can return to the server and re-run the command above (make sure to be in the ``/opt/iri-playbook`` directory and run is as root).
+
+**NOTE** that the option ``images_from_master=yes`` has been added. What it does is make sure that all Docker images are initially pulled to the main installation node and then copied to the other nodes. Sometimes having 3 nodes pull the same image from Dockerhub at the same time is rather slow.
 
 SSL Certificate
 ^^^^^^^^^^^^^^^
