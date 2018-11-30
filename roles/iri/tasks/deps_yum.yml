@@ -18,6 +18,7 @@
       - lsof
       - jq
       - pv
+      - rsync
       - nano
       - sysstat
       - atop
