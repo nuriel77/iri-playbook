@@ -39,6 +39,7 @@
       - curl
       - pv
       - rsync
+      - uuid-runtime
       - nano
       - sysstat
       #- atop Disabled due to kernel bug: https://github.com/Atoptool/atop/blob/master/README#L34
