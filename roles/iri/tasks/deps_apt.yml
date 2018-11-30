@@ -1,9 +1,13 @@
-# --- Ubuntu
-
 # Required, else jq and some other packages fail
 - name: Update all packages to the latest version
   apt:
     upgrade: dist
+
+- name: Add an apt key by id from a keyserver
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 93C4A3FD7BB9C367
+  when: ansible_distribution == 'Debian'
 
 - name: Install software-properties-common
   apt:
@@ -16,20 +20,10 @@
     repo: ppa:ansible/ansible
   when: ansible_distribution == 'Ubuntu'
 
-- name: Debian block
-  block:
-
-    - name: add ansible repository Debian
-      apt_repository:
-        repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
-        state: present
-
-    - name: Add an apt key by id from a keyserver
-      apt_key:
-        keyserver: keyserver.ubuntu.com
-        id: 93C4A3FD7BB9C367
-
-  when: ansible_distribution == 'Debian'
+- name: add ansible repository Debian
+  apt_repository:
+    repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main
+    state: present
 
 - name: Install some packages
   apt:
@@ -60,3 +54,4 @@
   tags:
     - deps
     - scripts
+
