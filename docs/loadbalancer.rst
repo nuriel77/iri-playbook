@@ -152,7 +152,7 @@ Quick Installation Example for Multiple Nodes
 
 Below are the quick installation command for both Ubuntu and CentOS.
 
-**Prerequisite**:
+**Prerequisites**:
 
 * At least 3 strong nodes (2 CPUs, 4GB RAM at least, though doube than that is recommended for smooth operation).
 * Configure each node with a unique fully-qualified-domain-name in DNS.
@@ -239,6 +239,7 @@ Clone the repository, specifically the dockerized version:
   cd /opt && git clone -b "feat/docker" https://github.com/nuriel77/iri-playbook.git && cd iri-playbook
 
 Configure a username and password and add some configuration options.
+
 **NOTE** make sure to configure your own username and password before pasting this command!
 
 .. code:: bash
@@ -258,13 +259,13 @@ Chmod the file:
 
   chmod 600 group_vars/all/z-iri-override.yml
 
-To enable Consul for this installtion:
+To enable Consul for this installation:
 
 .. code:: bash
 
   grep -qir "^consul_enabled: [yes|true]" group_vars/all/z-consul-override.yml >/dev/null 2>&1 || echo "consul_enabled: yes" >> group_vars/all/z-consul-override.yml
 
-And:
+And configure remote api port:
 
 .. code:: bash
 
