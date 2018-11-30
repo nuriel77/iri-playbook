@@ -128,7 +128,7 @@ In this documentation we don’t get into configuration of a virtual IP and keep
 
 We’ll be using simple DNS multiple A records. For example, the hostname ``mycluster.iota``. It is possible to configure in any DNS panel multiple A records for this hostname. An A record points a hostname (or hostnames) to an IP address.
 
-For example, take these 3 nodes::
+As seen in the previous section (Centralized Management for Multi-nodes), we provide an example of these 3 nodes::
 
   101.202.100.10 node01.mycluster.iota
   101.202.100.20 node02.mycluster.iota
@@ -157,15 +157,15 @@ Below are the quick installation command for both Ubuntu and CentOS.
 * At least 3 strong nodes (2 CPUs, 4GB RAM at least, though doube than that is recommended for smooth operation).
 * Configure each node with a unique fully-qualified-domain-name in DNS.
 * For sharing an SSL certificate for the load balancer, a single fully-qualified-domain-name in DNS pointing to all the node's IP addresses (multiple A records).
-* Only Centos 7.5 and Ubuntu 18.04 have been tested so far for this setup.
+* Centos 7.5, Ubuntu 18.04 and Debian 9.5 have been tested for this setup.
 
 .. note::
 
   The configuration examples below are to be perform on one of the nodes in the cluster. Pick one of the nodes to be the "installer" node and make sure it is the first one listed in the inventory file (more about the inventory file below).
 
 
-Ubuntu
-------
+Ubuntu/Debian
+-------------
 
 Become root via:
 
@@ -187,11 +187,17 @@ Check if reboot file exists. If it does, issue a reboot:
 
   test -f /var/run/reboot-required && reboot
 
-Install Ansible:
+Install Ansible on **Ubuntu**:
 
 .. code:: bash
 
   apt-get upgrade -y && apt-get clean && apt-get update -y && apt-get install software-properties-common -y && apt-add-repository ppa:ansible/ansible -y && apt-get update -y && apt-get install ansible git screen nano -y
+
+Install Ansible on **Debian**:
+
+.. code:: bash
+
+  echo 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main' >> /etc/apt/sources.list && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && apt-get update -y && apt-get install ansible git screen nano -y
 
 CentOS
 ------
@@ -224,8 +230,8 @@ This command will let you know if a reboot is required. You can reboot the node 
 
 **The next steps are the same for both CentOS and Ubuntu**
 
-Both Ubuntu and Centos
-----------------------
+Ubuntu/Debian and CentOS
+------------------------
 Clone the repository, specifically the dockerized version:
 
 .. code:: bash
