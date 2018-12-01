@@ -289,7 +289,7 @@ To add one or more neighbors use the ``-a`` option and specify the neighbors usi
 
    nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /etc/default/iri
 
-Note that the last options ``-f /etc/default/iri`` will also add the neighbors to the configuration file, but **make sure** you are pointing to the correct file. For example, in CentOS it is ``/etc/sysconfig/iri``, on other guides it is located in ``/home/iota/node/iota.ini``!!!
+Note that the last option ``-f /etc/default/iri`` will also add the neighbor(s) to the configuration file. **Make sure** you are pointing to the correct file. For example, in CentOS it is ``/etc/sysconfig/iri``, on other guides it is located in ``/home/iota/node/iota.ini``!!!
 
 In the example above note the IPv6 address: it is encapsulated in square brackets. This is the correct syntax for IPv6 addresses.
 
