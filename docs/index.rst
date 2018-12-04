@@ -19,6 +19,8 @@ IOTA Full Node Installation wiki
 
 For a "click-'n-go" installation (recommended) see :ref:`getting_started_quickly`.
 
+Watch `this video <https://youtu.be/oT0uuYK7lH8>`_ on how simple it is to install a node using the IRI playbook! (credits to discord user TangleAid)
+
 In this installation
 ====================
 
