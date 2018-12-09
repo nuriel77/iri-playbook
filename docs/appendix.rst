@@ -678,12 +678,12 @@ Please read the warning below and use the following command (as root) in order t
 
 For assistance and questions you can find help on IOTA's #fullnodes channel (discord).
 
-Upgrade IRI to the Local Snapshot Version (Release Candidate
-============================================================
+Upgrade IRI to the Local Snapshot Version
+=========================================
 
 At time of writing the database has grown to 51GB+ (compressed). It becomes harder to share the database copy with node operators.
 
-I decided to help iri-playbook users to upgrade their nodes to the 1.6.0-RC7 version of IRI which is not yet an official release.
+I decided to help iri-playbook users to upgrade their nodes to the 1.6.0-RC7 version of IRI that **isn't yet** an official release.
 
 This will allow nodes with smaller HDD space to keep their nodes up and running.
 
