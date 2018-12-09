@@ -84,7 +84,7 @@ function finish {
     /bin/systemctl start iri
     if [ $EXIT_CODE -eq 0 ]
     then
-        echo "Done. Please check iri's status with 'journal -u iri -e -f'"
+        echo "Done. Please check iri's status with 'journalctl -u iri -e -f'"
     else
         echo "Something went wrong ..."
         exit $EXIT_CODE
@@ -102,10 +102,14 @@ echo "Downloading iota snapshot meta/state files ..."
 wget -O /tmp/iota.snap.tgz https://snap.x-vps.com/iota.snap.tgz
 wget -O /tmp/iota.snap.tgz.sha256sum https://snap.x-vps.com/iota.snap.tgz.sha256sum
 
+echo "Downloading the pre-compiled IRI version $IRI_VERSION ..."
+wget -O "/var/lib/iri/target/iri-${IRI_VERSION}.jar" "https://snap.x-vps.com/iri-${IRI_VERSION}.jar"
+wget -O "/tmp/iri-${IRI_VERSION}.jar.sha256sum" "https://snap.x-vps.com/iri-${IRI_VERSION}.jar.sha256sum"
 echo "Verifying checksum ..."
 pushd /tmp
 sha256sum --check iota.snap.tgz.sha256sum
-echo "Checksum OK!"
+sha256sum --check "iri-${IRI_VERSION}.jar.sha256sum"
+echo "Checksums OK!"
 
 echo "Stopping iri ..."
 /bin/systemctl stop iri
