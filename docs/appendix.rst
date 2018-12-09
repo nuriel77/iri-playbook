@@ -677,3 +677,25 @@ Please read the warning below and use the following command (as root) in order t
 
 
 For assistance and questions you can find help on IOTA's #fullnodes channel (discord).
+
+Upgrade IRI to the Local Snapshot Version (Release Candidate
+============================================================
+
+At time of writing the database has grown to 51GB+ (compressed). It becomes harder to share the database copy with node operators.
+
+I decided to help iri-playbook users to upgrade their nodes to the 1.6.0-RC7 version of IRI which is not yet an official release.
+
+This will allow nodes with smaller HDD space to keep their nodes up and running.
+
+Please run the following command (become root) to get and run the upgrade script:
+
+.. code:: bash
+
+  bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/upgrade-iri-local-snapshots.sh)
+
+This should get the node configured, download the snapshot meta and state files and restart IRI.
+
+.. note::
+
+  The upgrade script does not support the dockerized version of the iri-playbook
+
