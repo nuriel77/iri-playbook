@@ -130,3 +130,13 @@ echo "Configuring files ..."
 [ -f "/etc/default/iri" ] && sed -i "s/^IRI_VERSION=.*/IRI_VERSION=$IRI_VERSION/" /etc/default/iri
 [ -f "/etc/sysconfig/iri" ] && sed -i "s/^IRI_VERSION=.*/IRI_VERSION=$IRI_VERSION/" /etc/sysconfig/iri
 [ -f "$HOME/.nbctl" ] && sed -i "s/^api_version:.*/api_version: $IRI_VERSION/" "$HOME/.nbctl"
+
+grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
+; Local Snapshots Settings
+LOCAL_SNAPSHOTS_ENABLED = true
+LOCAL_SNAPSHOTS_DEPTH = 100
+LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
+LOCAL_SNAPSHOTS_PRUNING_DELAY = 2000
+LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 10
+LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
+EOF
