@@ -683,7 +683,7 @@ Upgrade IRI to the Local Snapshot Version
 
 At time of writing the database has grown to 51GB+ (compressed). It becomes harder to share the database copy with node operators.
 
-I decided to help iri-playbook users to upgrade their nodes to the 1.6.0-RC7 version of IRI that **isn't yet** an official release.
+I decided to help iri-playbook users to upgrade their nodes to the ``1.6.0-RC7`` version of IRI that **isn't yet** an official release.
 
 This will allow nodes with smaller HDD space to keep their nodes up and running.
 
@@ -699,3 +699,11 @@ This should get the node configured, download the snapshot meta and state files 
 
   The upgrade script does not support the dockerized version of the iri-playbook
 
+
+Configure Local Snapshot Settings
+---------------------------------
+The default values should work fine. Nevertheless, if you would like to configure the settings ``iric`` can be used to edit the configuration file:
+
+Run ``iric`` and select ``n) Configure Files``, then ``b) IRI INI Config``.
+
+Under the line with ``; Local Snapshots Settings`` you will find the settings for local snapshots configuration.

@@ -132,6 +132,7 @@ echo "Configuring files ..."
 [ -f "$HOME/.nbctl" ] && sed -i "s/^api_version:.*/api_version: $IRI_VERSION/" "$HOME/.nbctl"
 
 grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
+
 ; Local Snapshots Settings
 LOCAL_SNAPSHOTS_ENABLED = true
 LOCAL_SNAPSHOTS_DEPTH = 150
