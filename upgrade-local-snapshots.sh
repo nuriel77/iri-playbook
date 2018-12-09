@@ -108,6 +108,8 @@ wget -O "/tmp/iri-${IRI_VERSION}.jar.sha256sum" "https://snap.x-vps.com/iri-${IR
 echo "Verifying checksum ..."
 pushd /tmp
 sha256sum --check iota.snap.tgz.sha256sum
+popd
+pushd /var/lib/iri/target
 sha256sum --check "iri-${IRI_VERSION}.jar.sha256sum"
 echo "Checksums OK!"
 
