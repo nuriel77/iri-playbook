@@ -123,7 +123,7 @@ rm -rf /var/lib/iri/target/mainnet*
 mkdir /var/lib/iri/target/mainnetdb
 
 cd /var/lib/iri/target
-tar zxvf /tmp/iota.snap.tgz --strip-components 1
+tar zxvf /tmp/iota.snap.tgz
 chown -R iri.iri /var/lib/iri/target
 
 echo "Configuring files ..."
