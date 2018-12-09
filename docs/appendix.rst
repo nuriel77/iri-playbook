@@ -691,7 +691,7 @@ Please run the following command (become root) to get and run the upgrade script
 
 .. code:: bash
 
-  bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/upgrade-iri-local-snapshots.sh)
+  bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/upgrade-local-snapshots.sh)
 
 This should get the node configured, download the snapshot meta and state files and restart IRI.
 
