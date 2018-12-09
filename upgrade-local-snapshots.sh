@@ -79,7 +79,7 @@ fi
 
 function finish {
     EXIT_CODE=$?
-    popd
+    cd "$CURRENT_DIR"
     rm -f /tmp/iota.snap.tgz /tmp/iota.snap.tgz.sha256sum "/tmp/iri-${IRI_VERSION}.jar.sha256sum" "/tmp/iri-${IRI_VERSION}.jar"
     /bin/systemctl start iri
     if [ $EXIT_CODE -eq 0 ]
@@ -98,6 +98,7 @@ then
     exit 1
 fi
 
+CURRENT_DIR="$(pwd)"
 echo "Downloading iota snapshot meta/state files ..."
 wget -O /tmp/iota.snap.tgz https://snap.x-vps.com/iota.snap.tgz
 wget -O /tmp/iota.snap.tgz.sha256sum https://snap.x-vps.com/iota.snap.tgz.sha256sum
@@ -106,10 +107,12 @@ echo "Downloading the pre-compiled IRI version $IRI_VERSION ..."
 wget -O "/tmp/iri-${IRI_VERSION}.jar" "https://snap.x-vps.com/iri-${IRI_VERSION}.jar"
 wget -O "/tmp/iri-${IRI_VERSION}.jar.sha256sum" "https://snap.x-vps.com/iri-${IRI_VERSION}.jar.sha256sum"
 echo "Verifying checksum ..."
-pushd /tmp
+cd /tmp
 sha256sum --check iota.snap.tgz.sha256sum
 sha256sum --check "iri-${IRI_VERSION}.jar.sha256sum"
 echo "Checksums OK!"
+
+echo "Move files to iri's directory location ..."
 mv "/tmp/iri-${IRI_VERSION}.jar" "/var/lib/iri/target/iri-${IRI_VERSION}.jar"
 
 echo "Stopping iri ..."
@@ -118,7 +121,10 @@ echo "Stopping iri ..."
 echo "Cleaning up old database files and extracting new files ..."
 rm -rf /var/lib/iri/target/mainnet*
 mkdir /var/lib/iri/target/mainnetdb
-tar zxvf /tmp/iota.snap.tgz -C /var/lib/iri/target
+
+cd /var/lib/iri/target
+tar zxvf /tmp/iota.snap.tgz --strip-components 1
+chown -R iri.iri /var/lib/iri/target
 
 echo "Configuring files ..."
 [ -f "/etc/default/iri" ] && sed -i "s/^IRI_VERSION=.*/IRI_VERSION=$IRI_VERSION/" /etc/default/iri
