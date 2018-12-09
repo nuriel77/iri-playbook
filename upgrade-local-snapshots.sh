@@ -80,7 +80,7 @@ fi
 function finish {
     EXIT_CODE=$?
     popd
-    rm -f /tmp/iota.snap.tgz
+    rm -f /tmp/iota.snap.tgz /tmp/iota.snap.tgz.sha256sum "/tmp/iri-${IRI_VERSION}.jar.sha256sum" "/tmp/iri-${IRI_VERSION}.jar"
     /bin/systemctl start iri
     if [ $EXIT_CODE -eq 0 ]
     then
