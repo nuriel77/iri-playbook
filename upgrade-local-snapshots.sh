@@ -61,7 +61,7 @@ EOF
 
 
 ### IRI VERSION
-IRI_VERSION="1.6.0-RC7"
+IRI_VERSION="1.6.0-RC8"
 
 cat <<EOF
 
