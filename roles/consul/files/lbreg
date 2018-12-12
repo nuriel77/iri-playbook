@@ -1,0 +1,279 @@
+#!/usr/bin/env python
+import argparse
+import urllib3
+import json
+import sys
+import os
+import re
+from argparse import RawTextHelpFormatter
+
+
+DEFAULT_HOST = 'http://127.0.0.1:8500'
+CONSUL_API_VERSION = 'v1'
+
+"""Script to add or remove backends
+   from Consul used to populate HAProxy
+   source: https://github.com/nuriel77/iri-playbook
+   Copyright (c) 2018 Nuriel Shem-Tov
+"""
+
+def parse_args():
+
+    parser = argparse.ArgumentParser(
+        formatter_class=RawTextHelpFormatter,
+        description='Add or remove HAProxy backends via Consul.',
+        epilog='Example: lbreg -a -b'
+               ' --check-args="-i,-n,3,-p,-u"'
+               ' http://1.2.3.4:14265'
+               ' -i https://localhost:8443.\n\n'
+               'Consul token can be supplied via'
+               ' file containing the token or via'
+               ' CONSUL_HTTP_TOKEN environment variable')
+
+    parser.add_argument('--backend', '-b', type=str,
+                        help='IRI backend to add or remove')
+
+    parser.add_argument('--remove', '-r', action='store_true',
+                        help='Removes the backend')
+
+    parser.add_argument('--add', '-a', action='store_true',
+                        help='Adds the backend')
+
+    parser.add_argument('--list', '-l', action='store_true',
+                        help='List all IRI backends')
+
+    parser.add_argument('--list-checks', '-c', action='store_true',
+                        help='List health-checks on host')
+
+    parser.add_argument('--short', '-s', action='store_true',
+                        help='Short list all IRI backends')
+
+    parser.add_argument('--tags', type=str,
+                        help="List of tags to add, delimited"
+                             " with commas")
+
+    parser.add_argument('--check-args', type=str,
+                        default='-i,-n,1',
+                        help="List of health check args to add,"
+                        " delimited with commas")
+
+    parser.add_argument('--host', '-i',
+                        default=DEFAULT_HOST,
+                        help='Consul API endpoint. Default: %s' %
+                        DEFAULT_HOST)
+
+    parser.add_argument('--timeout', '-t',
+                        help='Timeout. Default: %(default)s',
+                        type=int, default=5)
+
+    parser.add_argument('--insecure', '-k', action='store_true',
+                        help='Skip SSL verify for Consul endpoint')
+
+    parser.add_argument('--token-file', '-f', type=str,
+                        help='File to read Consul token from.')
+    
+    parser.add_argument('--ca', type=str,
+                        default=None,
+                        help='CA file for Consul SSL.')
+
+    parser.add_argument('--cert', type=str,
+                        default=None,
+                        help='Cert file for Consul SSL.')
+
+    return parser
+
+
+class Consul:
+
+    def __init__(self, args):
+        self.host = args['host']
+        self.timeout = args['timeout']
+
+        """ Set headers """
+        self.headers = {'content-type': 'application/json'}
+        if args['token'] is not None:
+            self.headers['X-Consul-Token'] = args['token'].rstrip()
+
+        ssl = None if args['insecure'] is True else 'CERT_REQUIRED'
+        self.http = urllib3.PoolManager(cert_reqs=ssl,
+                                        ca_certs=args['ca'],
+                                        cert_file=args['cert'])
+
+    def _do_request(self, url, data=None, method='GET'):
+        res = self.http.request(method,
+                                url,
+                                headers=self.headers,
+                                body=data)
+
+        if res.status == 200:
+            return res.data
+        else:
+            sys.stderr.write("Error: returned code %d and"
+                             " data: '%s'\n" % (res.status, res.data))
+            sys.exit(1)
+
+        return return_data
+
+    def remove_backend(self, backend):
+        port = int(backend.split(':')[2])
+        address = backend.split('//')[1].split(':')[0]
+        _id = "%s:%s" % (address, port)
+
+        url = "%s/%s/%s/%s" % (self.host, CONSUL_API_VERSION,
+                            'agent/service/deregister',
+                            _id)
+        self._do_request(url, data=None, method='PUT')
+        return {'status': 'removed'}
+
+    def add_backend(self, backend, args):
+        url = "%s/%s/%s" % (self.host, CONSUL_API_VERSION,
+                            'agent/service/register')
+
+        scheme = backend.split('//')[0]
+        port = int(backend.split(':')[2])
+        address = backend.split('//')[1].split(':')[0]
+        _id = "%s:%s" % (address, port)
+
+        if 'tags' not in args or args['tags'] is None:
+            tags = self._get_default_tags
+        else:
+            tags = self._parse_tags(args['tags'])
+
+        to_send = json.dumps({
+            "ID": _id,
+            "name": "iri",
+            "tags": tags,
+            "Address": address,
+            "Port": port,
+            "EnableTagOverride": False,
+            "Check": self._prepare_check(backend, _id, args['check_args'])})
+
+        print("Adding service data: '%s'" % to_send)
+
+        self._do_request(url, data=to_send, method='PUT')
+        return {'status': 'added'}
+
+    @property
+    def get_backends(self):
+        url = "%s/%s/%s" % (self.host, CONSUL_API_VERSION,
+                            'catalog/service/iri')
+        return self._do_request(url)
+
+    @property
+    def get_checks(self):
+        url = "%s/%s/%s" % (self.host, CONSUL_API_VERSION,
+                            'agent/checks')
+        return self._do_request(url)
+
+    def _parse_tags(self, tags):
+        return [tag for tag in tags.split(',')]
+
+    @property
+    def _get_default_tags(self):
+        return ["haproxy.pow=true",
+                "haproxy.maxconn=5",
+                "haproxy.maxconnpow=1"]
+
+    def _prepare_check(self, backend, _id, _args):
+        check_args = ["/bin/bash",
+                      "/scripts/node_check.sh",
+                      "-a",
+                      backend]
+
+        _parsed = [arg for arg in _args.split(',')]
+        check_args.extend(_parsed)
+        return {"name": backend,
+                "args": check_args,
+                "Interval": "30s",
+                "timeout": "5s",
+                "DeregisterCriticalServiceAfter": "24h"}
+
+
+def is_valid_url(url):
+    regex = re.compile(
+        r'^https?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    return url is not None and regex.search(url)
+
+
+def run():
+
+    try:
+        parser = parse_args()
+        args = parser.parse_args()
+    except Exception as e:
+        sys.stderr.write("Error parsing arguments: %s\n" % e)
+        sys.exit(1)
+
+    """ Validate args """
+    if args.add and args.remove:
+        sys.stderr.write("You can either select `--add` or `--remove`"
+                         ", not both.\n")
+        sys.exit(1)
+
+    if (args.add or args.remove) and args.backend is None:
+        sys.stderr.write("Error: argument --backend/-b is required\n")
+        sys.exit(1)
+
+    if args.add or args.remove and args.backend:
+        if is_valid_url(args.backend) is None:
+            sys.stderr.write("Error: invalid backend URL\n")
+            sys.exit(1)
+
+    """ Get consul token """
+    if args.token_file is not None:
+        try:
+            with open(args.token_file) as fp:  
+               token = fp.readline()
+        except Exception as e:
+             sys.stderr.write("Error reading token from file: %s" % e)
+             sys.exit(1)
+    else:
+        token = os.getenv('CONSUL_HTTP_TOKEN', None)
+
+    """ Instantiate Consul class """
+    consul = Consul({
+      'host': args.host,
+      'timeout': args.timeout,
+      'token': token,
+      'ca': args.ca,
+      'cert': args.cert,
+      'insecure': args.insecure
+    })
+
+    """ Run corresponding method """
+    if args.add is True:
+        params = {
+          'tags': args.tags,
+          'check_args': args.check_args
+        }
+        response = consul.add_backend(args.backend, params)
+        print(json.dumps(response))
+    elif args.remove is True:
+        response = consul.remove_backend(args.backend)
+        print(json.dumps(response))
+    elif args.list is True or args.short is True:
+        response = consul.get_backends
+        json_data = json.loads(response)
+        if args.short is True:
+            for backend in json_data:
+                print("%s: %s:%s" % (backend['Node'],
+                      backend['ServiceAddress'], backend['ServicePort']))
+        else:
+            print(json.dumps(json_data, indent=4, sort_keys=True))
+    elif args.list_checks is True:
+        response = consul.get_checks
+        json_data = json.loads(response)
+        print(json.dumps(json_data, indent=4, sort_keys=True))
+    else:
+        sys.stderr.write("You need to specify a command:\n\n")
+        parser.print_help()
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    run()
