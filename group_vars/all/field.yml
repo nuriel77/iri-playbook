@@ -29,7 +29,7 @@ field_configdir: /etc/field
 # Check the resulting /etc/field/field.iri
 # config file on how to supply a seed
 # from which addresses will be generated for you.
-field_address: CSSFHHDBUQDGAUGYUHTENLBJ9JMTUFFLYLJZKTLRZVLLDCZZOQHOUXJOVDKXOLXGCJEMXJOULDIKADBHWMGVALMAUW
+field_address: JFYIHZQOPCRSLKIYHTWRSIR9RZELTZKHNZFHGWXAPCQIEBNJSZFIWMSBGAPDKZZGFNTAHBLGNPRRQIZHDFNPQPPWGC
 
 # Where to find IRI
 field_iri_host: iri
