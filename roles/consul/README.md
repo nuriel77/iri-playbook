@@ -42,6 +42,7 @@ Consul-template uses a haproxy.cfg.tmpl file -- this file is configured on the f
 
 ### Commands
 
+#### Stats
 Example view stats from admin TCP socket:
 
 ```sh
@@ -55,6 +56,22 @@ show-stat
 or
 ```sh
 show-stat services
+```
+
+#### IP Stick Table
+HAProxy supports IP stick table on which it tracks client IP addresses for rate limiting policies and more.
+
+When setup with multiple nodes, all HAProxy peers share the stick table.
+
+You can watch the table's status, example:
+
+```sh
+echo 'show table iri_back' | socat stdio tcp4-connect:127.0.0.1:9999
+```
+
+Or to watch it live:
+```sh
+watch -n.5 "echo 'show table iri_back' | socat stdio tcp4-connect:127.0.0.1:9999"
 ```
 
 ## Consul

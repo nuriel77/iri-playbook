@@ -32,6 +32,9 @@
   tags:
     - expose_api_for_lb
     - consul_role
+    - haproxy_ufw
+    - haproxy_firewalld
+    - loadbalancer_role
 
 - import_tasks: firewalld.yml
   tags:

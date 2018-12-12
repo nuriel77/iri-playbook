@@ -18,3 +18,15 @@
   when:
     - ufw_limit_iri_api is defined
     - ufw_limit_iri_api|bool == True
+
+- name: allow haporxy peering port in firewall
+  ufw:
+    rule: allow
+    direction: in
+    src: "{{ item[0] }}"
+    proto: "{{ item[1].proto }}"
+    port: "{{ item[1].port }}"
+  with_nested:
+    - "{{ groups['fullnode'] | map('extract', hostvars, ['ip']) | list | difference([ip]) }}"
+    - - {"port": '{{ haproxy_peer_port }}', "proto": "tcp"}
+  when: groups['fullnode'] | length > 1

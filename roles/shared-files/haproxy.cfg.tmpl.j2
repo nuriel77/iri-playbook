@@ -43,6 +43,13 @@ defaults
 
     stats hide-version
 
+{% if groups['fullnode'] | length > 1 %}
+peers haproxy-peers
+{% for host in groups['fullnode'] %}
+    peer {{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['ip'] | default(hostvars[host]['ansible_default_ipv4']['address']) }}:{{ haproxy_peer_port }}
+{% endfor %}
+{% endif %}
+
 {% if fullnode_user_password is defined and fullnode_user_password is defined %}
 # Can be used for various authentications
 # in case user wants to add more backends
@@ -162,7 +169,7 @@ backend iri_pow_back
     #acl is_bad lua.check_post -m str somestr
     #http-request deny if is_bad
 
-    balance roundrobin
+    balance {{ haproxy_iri_back_pow_algo | default('leastconn')  }}
 
     compression algo gzip
     compression type application/json text/html text/plain text/xml text/json text/css text/javascript application/javascript
@@ -185,7 +192,9 @@ backend iri_back
     # Define source whitelist
     acl whitelist src {{ haproxy_whitelist | join(" ") }}
 
-    stick-table type ip size 200k expire 30s store conn_rate(3s),http_req_rate(10s),conn_cur,sess_rate(3s)
+    stick-table type ip size 200k expire 30s store conn_rate(3s),http_req_rate(10s),conn_cur,sess_rate(3s){% if groups['fullnode'] | length > 1 %} peers haproxy-peers{% endif %}
+
+    stick on src
 
     # dynamic stuff for frontend + raise gpc0 counter
     tcp-request content  track-sc2 src
@@ -202,7 +211,7 @@ backend iri_back
     #acl is_bad lua.check_post -m str badstr
     #http-request deny if is_bad
 
-    balance roundrobin
+    balance {{ haproxy_iri_back_algo | default('source') }}
 
     compression algo gzip
     compression type application/json text/html text/plain text/xml text/json text/css text/javascript application/javascript

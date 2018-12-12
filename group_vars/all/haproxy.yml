@@ -39,6 +39,9 @@ haproxy_stats_port: 9292
 # Stats bind to address
 haproxy_stats_address: 127.0.0.1
 
+# Peering port for haproxy stick table
+haproxy_peer_port: 11024
+
 haproxy_dir: '/opt/haproxy'
 haproxy_username: haproxy
 haproxy_base_version: 1.8
