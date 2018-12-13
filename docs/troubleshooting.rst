@@ -295,3 +295,36 @@ You can verify it is working via:
 
 It should be active.
 
+
+Cannot Connect with Trinity to the Node
+=======================================
+
+There are several things that could prevent Trinity from establishing a connection to your node.
+
+Most importantly, you need to make sure you have configured the node with a valid SSL certificate and enabled HAProxy. This can be done using ``iric`` (enable HAProxy and then Enable HTTPS / Certificate). Make sure the process completes successfully.
+
+A simple validation to see if your node is still serving a valid certificate is to open the URL on the browser, for example: ``https://mynode.io:14267``. If you get a green padlock and no security warning, all should be fine (ignore the fact that the page shows "403 Forbidden", that is expected when a browser is talking to the IRI port).
+
+No Green Padlock
+----------------
+
+If you don't get the green padlock that indicates that the certificate is invalid. A good place to start is to issue the following command to see which certificate is configured on HAProxy:
+
+.. code:: bash
+
+  grep "bind 0.0.0.0.*ssl" /etc/haproxy/haproxy.cfg
+
+You should see something like:
+
+.. code:: bash
+
+  bind 0.0.0.0:14267 ssl crt /etc/letsencrypt/live/cluster0.x-vps.com/haproxy.pem
+
+Note the ``/etc/letsencrypt/live/DOMAINNAME`` <- the domain name should match the one that points to your node's IP address.
+
+If there is a different certificate configured (e.g. ``/etc/ssl/private/fullnode.crt.key``) you will have to re-run the process in ``iric`` to configure HTTPS. If this issue is recurring without you having done anything to modify the configuration, please contact ``nuriel77`` on discord.
+
+Secure Connection Failed
+------------------------
+
+If you don't get the green padlock and see a message in the browser containing the words: "Secure Connection Failed" and/or "SSL_ERROR_RX_RECORD_TOO_LONG", your node was probably not configured with HTTPS. Please re-run the process in ``iric`` to configure HTTPS. If this issue is recurring without you having done anything to modify the configuration, please contact ``nuriel77`` on discord.
