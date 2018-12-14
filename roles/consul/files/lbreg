@@ -22,9 +22,9 @@ def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=RawTextHelpFormatter,
         description='Add or remove HAProxy backends via Consul.',
-        epilog='Example: lbreg -a -b'
+        epilog='Example: lbreg -a'
                ' --check-args="-i,-n,3,-p,-u"'
-               ' http://1.2.3.4:14265'
+               ' -b http://1.2.3.4:14265'
                ' -i https://localhost:8443.\n\n'
                'Consul token can be supplied via'
                ' file containing the token or via'
