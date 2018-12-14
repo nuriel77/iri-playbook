@@ -2,7 +2,9 @@
 
 This role will enable consul and consul-template to control HAProxy.
 
-Some information from https://github.com/nuriel77/iri-lb-haproxy
+For more information please read: `Load Balancer Documentation <https://iri-playbook.readthedocs.io/en/feat-docker/loadbalancer.html#load-balancer>`_
+
+Quick installation instructions for a multi-node IRI-Haproxy cluster: `Quick Installation <https://iri-playbook.readthedocs.io/en/feat-docker/loadbalancer.html#quick-installation-example-for-multiple-nodes>`_
 
 ## Table of contents
 
