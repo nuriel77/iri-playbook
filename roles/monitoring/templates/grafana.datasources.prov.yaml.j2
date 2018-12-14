@@ -1,4 +1,16 @@
 apiVersion: 1
+{% if multi_datasource_enabled is defined and multi_datasource_enabled|bool == True %}
+datasources:
+{% for item in multi_datasource %}
+  - name: {{ item.name }}
+    type: {{ item.type }}
+    url: {{ item.url }}
+    access: proxy
+    editable: false
+    user: {{ item.user }}
+    password: {{ item.password }}
+{% endfor%}
+{% else %}
 datasources:
   - name: Prometheus
     type: prometheus
@@ -6,3 +18,4 @@ datasources:
     access: proxy
     isDefault: true
     editable: false
+{% endif %}
