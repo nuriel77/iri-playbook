@@ -157,36 +157,6 @@ The directory containing all variable files are in ``group_vars/all/*.yml``. You
   To edit files you can use ``nano`` which is a simple editor. See :ref:`usingNano` for instructions.
 
 
-Configure Memory Limits
-------------------------
-
-You can choose to let the playbook configure the memory automatically by setting ``memory_autoset: true`` in a variable override file, and skip this section.
-
-Alternatively, you can choose to configure the values manually in a variable-override file as shown below:
-
-In **group_vars/all/iri.yml** (don't forget to copy the file to ``group_vars/all/z-iri-override.yml`` and edit values there):
-
-The options ``iri_java_mem`` and ``iri_init_java_mem`` in the configuration files can determine what are the memory usage limits for IRI.
-
-Depending on how much RAM your server has, you should set these accordingly.
-
-For example, if your server has 4096MB (4GB memory), a good setting would be:
-
-.. code:: bash
-
-   iri_java_mem: 3072m
-   iri_init_java_mem: 256m
-
-Just leave some room for the operating system and other processes.
-You will also be able to tweak this after the installation, so don't worry about it too much.
-
-.. note::
-
-  For the click-'n-go installation, these values are automatically configured. You can choose to auto-configure those values:
-  When running the playbook (later in this guide) you can add ``-e "memory_autoset=true"`` to the ansible-playbook command.
-
-
-
 Set Access Password
 -------------------
 
