@@ -9,7 +9,7 @@
   no_log: true
 
 - name: install lbreg script
-  file:
+  copy:
     src: files/lbreg
     dest: /usr/bin/lbreg
     mode: 0755
