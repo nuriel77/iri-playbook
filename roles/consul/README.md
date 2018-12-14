@@ -193,14 +193,14 @@ Consul-template makes use of these tags in order to configure a backend.
 Here is a list of the available tags and what they mean:
 
 
-NAME                     | DESCRIPTION                                            | OPTIONS      | DEFAULT
--------------------------|--------------------------------------------------------------------------------
-haproxy.maxconn          | Maximum allowed concurrent connections to this backend | integer      | 1
-haproxy.maxconnpow       | Maximum allowed concurrent connections to this backend's PoW | integer | 1
-haproxy.scheme           | The scheme used by this node                           | http, https  | http
-haproxy.pow              | Whether this backend supports PoW                      | false, true, only | false
-haproxy.sslverify        | Verify SSL of this backend (not yet implemented)       | 0, false | false
-haproxy.weight           | Load balancer backend weight                           | integer | 1
+NAME                     | DESCRIPTION                                                  | OPTIONS      | DEFAULT
+-------------------------|--------------------------------------------------------------|--------------|------------
+haproxy.maxconn          | Maximum allowed concurrent connections to this backend       | integer      | 1
+haproxy.maxconnpow       | Maximum allowed concurrent connections to this backend's PoW | integer      | 1
+haproxy.scheme           | The scheme used by this node                                 | http, https  | http
+haproxy.pow              | Whether this backend supports PoW                            | false, true, only | false
+haproxy.sslverify        | Verify SSL of this backend (not yet implemented)             | 0, false     | false
+haproxy.weight           | Load balancer backend weight                                 | integer      | 1
 
 ## Healthcheck Options
 

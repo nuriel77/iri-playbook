@@ -1,6 +1,6 @@
 # IOTA IRI Fullnode Ansible Playbook
 
-[![Documentation Status](https://readthedocs.org/projects/iri-playbook/badge/?version=master)](http://iri-playbook.readthedocs.io/en/master/?badge=master)
+[![Documentation Status](https://readthedocs.org/projects/iri-playbook/badge/?version=feat-docker)](http://iri-playbook.readthedocs.io/en/master/?badge=feat-docker)
 
 This playbook will install and configure the IOTA full node. In addition:
 
@@ -14,7 +14,7 @@ This playbook will install and configure the IOTA full node. In addition:
 - Optional: [Nelson](https://gitlab.com/semkodev/nelson.cli) and [DevIOTA Field](https://gitlab.com/semkodev/field.cli)
 - Monitoring for IRI + Graphs amazing work of [Chris Holliday](https://github.com/crholliday/iota-prom-exporter)
 
-For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/master/getting-started-quickly.html#getting-started-quickly)
+For a "click-'n-go" installation see: [Getting Started Quickly](https://iri-playbook.readthedocs.io/en/feat-docker/getting-started-quickly.html#getting-started-quickly)
 
 For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/master/index.html)*
 
@@ -34,7 +34,7 @@ Latest Ansible installation for your distribution (http://docs.ansible.com/ansib
 Playbook was tested with:
   - Ansible>=2.4
   - Ubuntu 16.04
-  - Ubuntu 17.04
+  - Ubuntu 18.04
   - Debian 9.5
   - CentOS 7.4 and 7.5
 
