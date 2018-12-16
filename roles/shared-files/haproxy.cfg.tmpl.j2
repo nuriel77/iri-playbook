@@ -118,7 +118,7 @@ frontend iri_front
 
     # Check denied commands
     acl command_exists req.body -m sub -i command
-    acl invalid_command req.body -m reg {{ haproxy_deny_regex }}
+    acl invalid_command req.body -m reg "${REMOTE_LIMIT_API}"
     acl bad_command req.body -m reg {{ haproxy_bad_command }}
     http-request deny if bad_command
     http-request deny if !command_exists !options_method
