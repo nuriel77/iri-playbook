@@ -72,8 +72,8 @@
     mode: 750
 
 - name: copy haproxy sysconfig file
-  copy:
-    src: files/haproxy.sysconfig
+  template:
+    src: templates/haproxy.sysconfig.j2
     dest: "/etc/{{ etc_config_dir }}/haproxy"
   notify:
     - restart haproxy
