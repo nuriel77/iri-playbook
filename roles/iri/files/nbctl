@@ -19,7 +19,7 @@ DEFAULT_API_VERSION = '1.4'
 DEFAULT_HOST = 'http://127.0.0.1:14265'
 
 """Script to add or remove neighbors
-   from IRI API and configutaion file
+   from IRI API and confuguration file
    source: https://github.com/nuriel77/iri-playbook
    Copyright (c) 2017 Nuriel Shem-Tov
 """
@@ -176,7 +176,7 @@ def run():
     if newfile != irifile:
         copyfile(args.file, args.file + '.nbctl.bak')
         copyfile(tmpfile.name, args.file)
-        print("Backed up configutaion file in %s" %
+        print("Backed up confuguration file in %s" %
               args.file + '.nbctl.bak')
     else:
         print("No changes in configuration file")
