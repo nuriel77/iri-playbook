@@ -276,7 +276,7 @@ For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
 Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
         "ENABLE_NELSON"       "Enable Nelson auto-peering" OFF \
-        "ENABLE_FIELD"        "Enable CarrIOTA Field"      OFF \
+        "ENABLE_FIELD"        "Enable DevIOTA Field"      OFF \
         "ENABLE_HAPROXY"      "Enable HAProxy"             OFF \
         "DISABLE_MONITORING"  "Disable node monitoring"    OFF \
         "DISABLE_ZMQ_METRICS" "Disable ZMQ metrics"        OFF \

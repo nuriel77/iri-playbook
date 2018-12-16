@@ -7,7 +7,7 @@ It is possible to remove the services and configuration files installed by the p
 
 .. warning::
 
-  It is not possible to remove everything installed by the playbook. For example, some packages might have already been installed by the user prior to running the playbook. In addition, enabling of firewalls, main nginx file, CarrIOTA Field configuration files and some additional essentials are not reverted/removed.
+  It is not possible to remove everything installed by the playbook. For example, some packages might have already been installed by the user prior to running the playbook. In addition, enabling of firewalls, main nginx file, DevIOTA Field configuration files and some additional essentials are not reverted/removed.
 
 
 1. In order to run the uninstaller, please become root via ``sudo su -``.

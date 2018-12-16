@@ -431,7 +431,7 @@ Or ``journalctl --no-pager -n50 -u nelson`` to view 50 last lines of Nelson's lo
 Install Field
 =============
 
-Please visit `Carriota Field on Github <https://github.com/SemkoDev/field.cli>`_ to learn more about what it is.
+Please visit `DevIOTA Field on Github <https://github.com/SemkoDev/field.cli>`_ to learn more about what it is.
 
 Field has been added to the playbook as an optional add-on. The recommended way to install it is using the ``iric`` configuration tool.
 
@@ -481,6 +481,6 @@ Again, the recommended way to enable, upgrade and manage Field is via the ``iric
 
 .. note::
 
-  For more information and support with Carriota Field please join IOTA's Discord and find "#deviota" channel.
+  For more information and support with DevIOTA Field please join IOTA's Discord and find "#deviota" channel.
 
 
