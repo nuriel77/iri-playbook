@@ -335,7 +335,7 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 9 \
         "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
         "SKIP_FIREWALL_CONFIG"  "Skip configuring firewall" OFF \
         "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
-        "ENABLE_FIELD"             "Enable CarrIOTA Field"      OFF \
+        "ENABLE_FIELD"             "Enable DevIOTA Field"      OFF \
         "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
         "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
         "DISABLE_ZMQ_METRICS"      "Disable ZMQ metrics"        OFF \
