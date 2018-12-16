@@ -23,6 +23,7 @@ ExecStart=/usr/bin/docker run \
   --net=host \
   --pid=host \
   --ulimit nofile={{ haproxy_nofile_limit }}:{{ haproxy_nofile_limit }} \
+  -e REMOTE_LIMIT_API="${REMOTE_LIMIT_API}" \
 {% for mount in haproxy_mounts %}
   -v {{ mount }} \
 {% endfor %}
