@@ -61,7 +61,7 @@ EOF
 
 
 ### IRI VERSION
-IRI_VERSION="1.6.0-RC9"
+IRI_VERSION="1.6.0-RC10"
 
 cat <<EOF
 
@@ -131,6 +131,7 @@ echo "Configuring files ..."
 [ -f "/etc/sysconfig/iri" ] && sed -i "s/^IRI_VERSION=.*/IRI_VERSION=$IRI_VERSION/" /etc/sysconfig/iri
 [ -f "$HOME/.nbctl" ] && sed -i "s/^api_version:.*/api_version: $IRI_VERSION/" "$HOME/.nbctl"
 
+# Apply first time
 grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
 
 ; Local Snapshots Settings
@@ -140,4 +141,8 @@ LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
 LOCAL_SNAPSHOTS_PRUNING_DELAY = 2000
 LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 20
 LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
+TIP_SOLIDIFIER_ENABLED = false
 EOF
+
+# Apply/upgrade to RC10 from existing configs
+grep -q '^TIP_SOLIDIFIER_ENABLED' /var/lib/iri/iri.ini || echo "TIP_SOLIDIFIER_ENABLED = false" >> /var/lib/iri/iri.ini
