@@ -20,7 +20,7 @@ Also, a good advice is not to take a contract for a year, but try to find hostin
 
 The minimum recommendation is to have a node with at least 4GB RAM, 2 cores and minimum 60GB harddrive (SSD preferably).
 
-For better performance, at least 6GB RAM and 4 cores are necessary.
+For better performance, at least 6GB RAM and 4 cores are necessary (for example when running consul and consul-haproxy-template for load balancing)
 
 .. _operatingSystem:
 
