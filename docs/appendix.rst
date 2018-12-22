@@ -683,7 +683,7 @@ Upgrade IRI to the Local Snapshot Version
 
 At time of writing the database has grown to 51GB+ (compressed). It becomes harder to share the database copy with node operators.
 
-I decided to help iri-playbook users to upgrade their nodes to the ``1.6.0-RC10`` version of IRI. (note that it **is not** an official release).
+I decided to help iri-playbook users to upgrade their nodes to the ``1.6.0-RC11`` version of IRI. (note that it **is not** an official release).
 
 This will allow nodes with smaller HDD space to keep their nodes up and running.
 
