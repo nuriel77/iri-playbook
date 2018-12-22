@@ -6,6 +6,7 @@
 
 function haproxy_check() {
     /usr/bin/docker run --name haproxy-test \
+      --hostname $(hostname -f) \
       --rm \
 {% for mount in haproxy_mounts %}
       -v {{ mount }} \
