@@ -61,7 +61,7 @@ EOF
 
 
 ### IRI VERSION
-IRI_VERSION="1.6.0-RC10"
+IRI_VERSION="1.6.0-RC11"
 
 cat <<EOF
 
@@ -138,7 +138,7 @@ grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var
 LOCAL_SNAPSHOTS_ENABLED = true
 LOCAL_SNAPSHOTS_DEPTH = 150
 LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
-LOCAL_SNAPSHOTS_PRUNING_DELAY = 2000
+LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000
 LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 20
 LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
 TIP_SOLIDIFIER_ENABLED = false
@@ -146,3 +146,10 @@ EOF
 
 # Apply/upgrade to RC10 from existing configs
 grep -q '^TIP_SOLIDIFIER_ENABLED' /var/lib/iri/iri.ini || echo "TIP_SOLIDIFIER_ENABLED = false" >> /var/lib/iri/iri.ini
+
+# check pruning delay on already existing configuration
+if [[ "$(grep '^LOCAL_SNAPSHOTS_PRUNING_DELAY' /var/lib/iri/iri.ini | awk -F= {'print $2'} | tr -d ' ')" -lt 40000 ]]
+then
+    echo "Adjusting LOCAL_SNAPSHOTS_PRUNING_DELAY to minimum required 40000"
+    sed -i 's/^LOCAL_SNAPSHOTS_PRUNING_DELAY.*$/LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000/' /var/lib/iri/iri.ini
+fi
