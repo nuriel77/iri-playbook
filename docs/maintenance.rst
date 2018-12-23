@@ -18,7 +18,9 @@ Upgrade IRI
 
 Latest IRI release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
 
-If a new version has been announced, you can follow this guide to get the new version.
+If a new version has been announced, you can follow this guide to get the new version or use the menu-driven tool ``iric`` to get the latest IRI version.
+
+If using ``iric``, make sure to update it to the latest version before using it to upgrade IRI.
 
 In the following example we assume that the new version is **1.5.0**.
 
@@ -40,6 +42,8 @@ Make sure you are running all the commands as 'root' (run ``sudo su`` first). Th
 
    export IRIVER=1.5.0 ; curl -L "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" --output "/var/lib/iri/target/iri-${IRIVER}.jar"
 
+
+(Note than for version 1.5.6 the file name has changed to iri-1.5.6-RELEASE.jar!)
 
 Then update the IRI configuration file in place using ``sed``:
 
