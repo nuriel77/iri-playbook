@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.0
+VERSION=0.6.1
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -300,12 +300,12 @@ function upgrade_nelson() {
 
 ### IRI ###
 function get_latest_iri_release {
-    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest  | awk '/tag_name/{print $2}' | tr -d '"v,'
+    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest | awk '/tag_name/{print $2}' | tr -d '"v,'
 }
 
 function upgrade_iri() {
     echo "Checking for updates..."
-    local IRI_LATEST=$(get_latest_iri_release)
+    local IRI_LATEST="$(get_latest_iri_release)"
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
                  --msgbox "ERROR: Failed to get IRI latest version\n${IRI_LATEST}" \
@@ -320,8 +320,9 @@ function upgrade_iri() {
                  8 $WIDTH
         return 1
     fi
-    
-    if (( $(awk 'BEGIN {print ("'$IRI_VERSION'" >= "'$IRI_LATEST'")}') )); then
+
+    IRI_LATEST_CLEAN="$(echo $IRI_LATEST | tr -d '\-RELEASE')"    
+    if (( $(awk 'BEGIN {print ("'$IRI_VERSION'" >= "'$IRI_LATEST_CLEAN'")}') )); then
         if ! (whiptail --title "No Updates" \
                  --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
                  --defaultno \
@@ -334,7 +335,7 @@ function upgrade_iri() {
 
     if [ -z "$NO_CONFIRM" ]; then
         if ! (whiptail --title "Upgrade IRI" \
-                     --yesno "Are you sure you want to upgrade IRI from ${IRI_VERSION} to ${IRI_LATEST}?\nWARNING: only do this if you know what your are doing!" \
+                     --yesno "Are you sure you want to upgrade IRI from ${IRI_VERSION} to ${IRI_LATEST_CLEAN}?\nWARNING: only do this if you know what your are doing!" \
                      --defaultno \
                      8 $WIDTH) then
             return
@@ -349,9 +350,8 @@ function upgrade_iri() {
         return 1
     fi
     echo "Downloading new version..."
-    IRIVER=${IRI_LATEST}
-    TFILE=$(mktemp /tmp/iri-${IRIVER}.XXXXXXXXX)
-    wget "https://github.com/iotaledger/iri/releases/download/v${IRIVER}/iri-${IRIVER}.jar" -O "$TFILE"
+    TFILE=$(mktemp /tmp/iri-${IRI_LATEST_CLEAN}.XXXXXXXXX)
+    wget "https://github.com/iotaledger/iri/releases/download/v${IRI_LATEST_CLEAN}/iri-${IRI_LATEST}.jar" -O "$TFILE"
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
                   --msgbox "ERROR: Failed upgrading IRI." \
@@ -359,12 +359,12 @@ function upgrade_iri() {
          rm -f "$TFILE"
          return 1
     fi
-    echo "Move '$TFILE' to '/var/lib/iri/target/iri-${IRIVER}.jar' ..."
-    mv "$TFILE" "/var/lib/iri/target/iri-${IRIVER}.jar" && chmod 644 "/var/lib/iri/target/iri-${IRIVER}.jar"
+    echo "Move '$TFILE' to '/var/lib/iri/target/iri-${IRI_LATEST_CLEAN}.jar' ..."
+    mv "$TFILE" "/var/lib/iri/target/iri-${IRI_LATEST_CLEAN}.jar" && chmod 644 "/var/lib/iri/target/iri-${IRI_LATEST_CLEAN}.jar"
     echo "Update iri configuration files..."
-    IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
-    sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST/" $IRI_CONFIG
-    sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
+    IRI_CONFIG="$(grep ^file /root/.nbctl | cut -d: -f2)"
+    sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST_CLEAN/" "$IRI_CONFIG"
+    sed -i "s/^api_version.*$/api_version: $IRI_LATEST_CLEAN/" "$HOME/.nbctl"
     echo "Restart IRI, this can take a few moments..."
     systemctl restart iri
     pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press ENTER to return to menu."
