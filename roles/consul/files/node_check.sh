@@ -116,7 +116,7 @@ APP_NAME=$(echo "$DATA" | jq -r .appName)
 DURATION=$(echo "$DATA" | jq -r .duration)
 
 # check node info
-if (( $(awk 'BEGIN {print ("'$MIN_API_VERSON'" > "'$APP_VERSION'")}') )); then
+if (( $(awk 'BEGIN {print ("'$MIN_API_VERSION'" > "'$APP_VERSION'")}') )); then
     echo "Host app version should be minimum '$MIN_API_VERSION' but is '$APP_VERSION'"
     exit 2
 elif [[ "$APP_NAME" != "$REQUIRED_APP_NAME" ]]; then
@@ -134,23 +134,30 @@ elif [[ $NEIGHBORS -lt $MINIMUM_NEIGHBORS ]]; then
 fi
 
 if [[ $CHECK_POW -eq 1 ]]; then
-    PAYLOAD="{\"command\": \"attachToTangle\"}"
-    CODE=$(curl $TLS_SKIP_VERIFY --retry 2 -m $TIMEOUT -s "$ADDRESS" -w "%{http_code}" -H "X-IOTA-API-Version: $API_VERSION" -H 'Content-Type: application/json' -d "$PAYLOAD" -o /dev/null)
-    RC=$?
-    if [[ $RC -ne 0 ]]; then
-        if [[ $RC -eq 28 ]]; then
-            echo "Operation timed out"
-            exit 2
-        elif [[ $RC -eq 7 ]]; then
-            echo "Connection refused"
-            exit 2
-        else
-            echo "Error contacting host, exited $RC: '$DATA'"
+    if (( $(awk 'BEGIN {print ("'$API_VERSION'" > "1.5.6")}') )); then
+        if [[ $(echo "$DATA" | jq -r '.features' | jq 'contains(["RemotePOW"])') != "true" ]]; then
+            echo "PoW disabled"
             exit 2
         fi
-    elif [[ $CODE -eq 401 ]]; then
-        echo "PoW disabled"
-        exit 2
+    else
+        PAYLOAD="{\"command\": \"attachToTangle\"}"
+        CODE=$(curl $TLS_SKIP_VERIFY --retry 2 -m $TIMEOUT -s "$ADDRESS" -w "%{http_code}" -H "X-IOTA-API-Version: $API_VERSION" -H 'Content-Type: application/json' -d "$PAYLOAD" -o /dev/null)
+        RC=$?
+        if [[ $RC -ne 0 ]]; then
+            if [[ $RC -eq 28 ]]; then
+                echo "Operation timed out"
+                exit 2
+            elif [[ $RC -eq 7 ]]; then
+                echo "Connection refused"
+                exit 2
+            else
+                echo "Error contacting host, exited $RC: '$DATA'"
+                exit 2
+            fi
+        elif [[ $CODE -eq 401 ]]; then
+            echo "PoW disabled"
+            exit 2
+        fi
     fi
 fi
 
