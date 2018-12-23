@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.2
+VERSION=0.6.3
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -367,8 +367,8 @@ function upgrade_iri() {
     mv "$TFILE" "/var/lib/iri/target/iri-${IRI_LATEST_CLEAN}.jar" && chmod 644 "/var/lib/iri/target/iri-${IRI_LATEST_CLEAN}.jar"
     echo "Update iri configuration files..."
     IRI_CONFIG="$(grep ^file /root/.nbctl | cut -d: -f2)"
-    sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST_CLEAN/" "$IRI_CONFIG"
-    sed -i "s/^api_version.*$/api_version: $IRI_LATEST_CLEAN/" "$HOME/.nbctl"
+    sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST_CLEAN/" $IRI_CONFIG
+    sed -i "s/^api_version.*$/api_version: $IRI_LATEST_CLEAN/" $HOME/.nbctl
     echo "Restart IRI, this can take a few moments..."
     systemctl restart iri
     pause "Update finished successfully. Nevertheless, it is recommended to check the status of IRI. Press ENTER to return to menu."
