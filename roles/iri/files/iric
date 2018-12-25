@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.2
+VERSION=0.7.3
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -871,7 +871,7 @@ function get_node_info() {
         return
     fi
 
-    HEIGHT=$(expr $(echo "$NODE_INFO"|wc -l) + 7)
+    HEIGHT=$(expr $(echo "$NODE_INFO"|wc -l) + 13)
     whiptail --title "Node Info" \
              --msgbox "$NODE_INFO" \
              $HEIGHT $WIDTH
