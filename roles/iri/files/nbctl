@@ -47,6 +47,10 @@ def parse_args():
                         help='Neighbors to process. Can be specified'
                              ' multiple times.')
 
+    parser.add_argument('--remove-reverse', '-x', action='store_true',
+                        default=False,
+                        help='Attempt to remove reverse DNS')
+
     parser.add_argument('--remove', '-r', action='store_true',
                         help='Removes neighbors')
 
@@ -67,7 +71,7 @@ def parse_args():
                         help='Timeout. Default: %(default)s',
                         type=int, default=5)
 
-    parser.add_argument('--api-version', '-x',
+    parser.add_argument('--api-version', '-v',
                         help='IRI API Version. Default: %s' %
                         DEFAULT_API_VERSION)
 
@@ -107,7 +111,7 @@ def run():
     # Append a reverse DNS if IPv4 as IRI tends to register
     # an IPv4's reverse address as an additional neighbor
     reversed_dns_list = []
-    if args.remove is True:
+    if args.remove and args.remove_reverse:
         for neighbor in args.neighbors:
             LOG.debug("Check reverse DNS for %s" % neighbor)
             reverse = get_reverse(neighbor)
