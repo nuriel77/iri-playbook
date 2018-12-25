@@ -80,12 +80,12 @@ fi
 
 : ${TIMEOUT:=3}
 : ${MINIMUM_NEIGHBORS:=2}
-: ${MIN_API_VERSION:=1.4.2.1}
-: ${API_DURATION:=1}
+: ${MIN_API_VERSION:=1.5.0}
+: ${API_DURATION:=3}
 : ${CHECK_POW:=0}
 : ${REQUIRED_APP_NAME:=IRI}
 
-API_VERSION=1.4.2.1
+API_VERSION=1.5.6
 PAYLOAD='{"command": "getNodeInfo"}'
 REMOTE_LIMIT_API=(getNeighbors addNeighbors removeNeighbors attachToTangle interruptAttachingToTangle)
 
@@ -116,7 +116,7 @@ APP_NAME=$(echo "$DATA" | jq -r .appName)
 DURATION=$(echo "$DATA" | jq -r .duration)
 
 # check node info
-if (( $(awk 'BEGIN {print ("'$MIN_API_VERSION'" > "'$APP_VERSION'")}') )); then
+if (( $(awk 'BEGIN {print ("'$MIN_API_VERSION'" >= "'$APP_VERSION'")}') )); then
     echo "Host app version should be minimum '$MIN_API_VERSION' but is '$APP_VERSION'"
     exit 2
 elif [[ "$APP_NAME" != "$REQUIRED_APP_NAME" ]]; then
