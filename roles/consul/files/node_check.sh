@@ -111,12 +111,15 @@ fi
 LMI=$(echo "$DATA"| jq -r .latestMilestoneIndex)
 LSSMI=$(echo "$DATA"| jq -r .latestSolidSubtangleMilestoneIndex)
 NEIGHBORS=$(echo "$DATA"| jq -r .neighbors)
-APP_VERSION=$(echo "$DATA"| jq -r .appVersion)
+APP_VERSION_FULL=$(echo "$DATA"| jq -r .appVersion)
 APP_NAME=$(echo "$DATA" | jq -r .appName)
 DURATION=$(echo "$DATA" | jq -r .duration)
 
+# Clean app version
+APP_VERSION=$(echo "$APP_VERSION_FULL" | cut -d'-' -f1 | sed 's/[A-Za-z]*//g')
+
 # check node info
-if (( $(awk 'BEGIN {print ("'$MIN_API_VERSION'" >= "'$APP_VERSION'")}') )); then
+if (( $(awk 'BEGIN {print ("'$MIN_API_VERSION'" > "'$APP_VERSION'")}') )); then
     echo "Host app version should be minimum '$MIN_API_VERSION' but is '$APP_VERSION'"
     exit 2
 elif [[ "$APP_NAME" != "$REQUIRED_APP_NAME" ]]; then
@@ -134,7 +137,7 @@ elif [[ $NEIGHBORS -lt $MINIMUM_NEIGHBORS ]]; then
 fi
 
 if [[ $CHECK_POW -eq 1 ]]; then
-    if (( $(awk 'BEGIN {print ("'$API_VERSION'" > "1.5.6")}') )); then
+    if (( $(awk 'BEGIN {print ("'$APP_VERSION'" >= "1.5.6")}') )); then
         if [[ $(echo "$DATA" | jq -r '.features' | jq 'contains(["RemotePOW"])') != "true" ]]; then
             echo "PoW disabled"
             exit 2
