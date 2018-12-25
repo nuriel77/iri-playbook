@@ -2,6 +2,7 @@
 import argparse
 import tempfile
 import urllib2
+import logging
 import hashlib
 import socket
 import yaml
@@ -15,13 +16,14 @@ from ipaddress import ip_address
 from argparse import RawTextHelpFormatter
 
 
-DEFAULT_API_VERSION = '1.4'
+LOG = logging.getLogger(__name__)
+DEFAULT_API_VERSION = '1.5'
 DEFAULT_HOST = 'http://127.0.0.1:14265'
 
-"""Script to add or remove neighbors
-   from IRI API and confuguration file
+"""Script to list, add or remove neighbors
+   from IRI API and the configuration file
    source: https://github.com/nuriel77/iri-playbook
-   Copyright (c) 2017 Nuriel Shem-Tov
+   Copyright (c) 2018 Nuriel Shem-Tov
 """
 
 def parse_args():
@@ -35,6 +37,10 @@ def parse_args():
                '--host and --api-version can be placed in a file in the home directory ~/.nbctl:\n'
                'api_version: 1.4.2.4\n'
                'host: http://127.0.0.1:12345')
+
+    parser.add_argument('--debug', '-d', action='store_true',
+                        default=False,
+                        help='Set debug on')
 
     parser.add_argument('--neighbors', '-n',
                         action='append',
@@ -74,13 +80,14 @@ def run():
         parser = parse_args()
         args = parser.parse_args()
     except Exception as e:
-        sys.stderr.write("Error parsing arguments: %s\n" % e)
+        sys.stderr.write("Failed to parse arguments: %s\n" % e)
         sys.exit(1)
 
     if args.add and args.remove:
-        sys.stderr.write("You can either select `--add` or `--remove`"
-                         ", not both.\n")
+        sys.stderr.write("You can either select `--add` or `--remove`, not both.\n")
         sys.exit(1)
+
+    set_logger(debug=args.debug)
 
     if args.add:
         command = 'addNeighbors'
@@ -89,19 +96,34 @@ def run():
     elif args.list:
         command = 'getNeighbors'
     else:
-        sys.stderr.write("You need to specify a command:\n\n")
+        sys.stderr.write("Error: You need to specify a command:\n\n")
         parser.print_help()
         sys.exit(1)
 
     if (args.add or args.remove) and args.neighbors is None:
-        sys.stderr.write("Error: argument --neighbors/-n is required\n")
+        sys.stderr.write("Error: Argument --neighbors/-n is required.\n")
         sys.exit(1)
 
+    # Append a reverse DNS if IPv4 as IRI tends to register
+    # an IPv4's reverse address as an additional neighbor
+    reversed_dns_list = []
+    if args.remove is True:
+        for neighbor in args.neighbors:
+            LOG.debug("Check reverse DNS for %s" % neighbor)
+            reverse = get_reverse(neighbor)
+            if reverse is not None:
+                reversed_dns_list.append(reverse)
+
+    if len(reversed_dns_list):
+        args.neighbors.extend(reversed_dns_list)
+
+    # Prepare headers
     headers = {
         'content-type': 'application/json',
         'X-IOTA-API-Version': args.api_version
     }
 
+    # Prepare body
     to_send = json.dumps({
         'command': command,
         'uris': args.neighbors
@@ -128,23 +150,22 @@ def run():
         return_data = urllib2.urlopen(request, timeout=args.timeout)
     except urllib2.HTTPError as e:
         msg = e.read()
-        sys.stderr.write('Request failed with code: %d, response: %s\n' % 
-                         (e.code, msg))
+        LOG.error('Request failed with code: %d, response: %s' % (e.code, msg))
         if 'hostname can\u0027t be null' in msg:
-            sys.stderr.write('Probably invalid hostname/ip\n')
+            LOG.error('Probably invalid hostname/ip.')
         sys.exit(1)
     except urllib2.URLError as e:
-        sys.stderr.write('Request failed: %s\n' % e)
+        LOG.error('Request failed: %s' % e)
         sys.exit(1)
     except socket.timeout as e:
-        sys.stderr.write('Socket timeout: %s\n' % e)
+        LOG.error('Socket timeout: %s' % e)
         sys.exit(1)
     except Exception as e:
-        sys.stderr.write('Unknown failure: %s\n' % e)
+        LOG.error('Unknown failure: %s' % e)
         sys.exit(1)
 
     json_data = json.loads(return_data.read())
-    print (json.dumps(json_data, indent=4, sort_keys=True))
+    print(json.dumps(json_data, indent=4, sort_keys=True))
 
     if args.file is None:
         sys.exit()
@@ -165,7 +186,7 @@ def run():
                                                          args.neighbors) + '\n')
 
     except IOError as e:
-        sys.stderr.write('Operation failed: %s\n' % e.strerror)
+        LOG.error('Operation failed: %s' % e.strerror)
         sys.exit(1)
 
     tmpfile.close()
@@ -176,11 +197,52 @@ def run():
     if newfile != irifile:
         copyfile(args.file, args.file + '.nbctl.bak')
         copyfile(tmpfile.name, args.file)
-        print("Backed up confuguration file in %s" %
-              args.file + '.nbctl.bak')
+        LOG.debug("Backed up configutaion file in %s" %
+                  args.file + '.nbctl.bak')
     else:
-        print("No changes in configuration file")
+        LOG.debug("No changes in configuration file")
 
+
+def set_logger(debug=False):
+    if debug is True:
+        LOG.setLevel(logging.DEBUG)
+    else:
+        LOG.setLevel(logging.INFO)
+
+    ch = logging.StreamHandler(sys.stderr)
+    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    ch.setFormatter(formatter)
+    LOG.addHandler(ch)
+    LOG.debug('Debug on')
+
+
+def get_reverse(neighbor):
+    # Extract address
+    m = re.search(r"^((?:tcp|udp))://\[{0,1}(.+?)\]{0,1}:(?!.*:)([0-9]+)",
+                  neighbor)
+
+    if m is None:
+        LOG.debug("No match in get_reverse() for %s" % neighbor)
+        return None
+
+    try:
+        ip = ip_address(u''+m.group(2))
+    except TypeError:
+        LOG.debug("Not a valid IP address in get_reverse(), skip ...")
+        return None
+    except ValueError:
+        LOG.debug("Not a valid IP address in get_reverse(), skip ...")
+        return None
+
+    try:
+        reversed_dns = socket.gethostbyaddr(str(ip))
+    except socket.herror as e:
+        return None
+
+    if len(reversed_dns):
+        new_address = "%s://%s:%s" % (m.group(1), reversed_dns[0], m.group(3))
+        LOG.debug("Got reverse for %s: %s" % (neighbor, new_address))
+        return new_address
 
 def process_neighbors_line(command, line, neighbors_to_process):
     file_type = 'sysconfig'
@@ -198,19 +260,19 @@ def process_neighbors_line(command, line, neighbors_to_process):
             else:
                 m = re.search(r"""^NEIGHBORS = (.*)$""", line)
                 if m is None:
-                    sys.stderr.write("Error: Neigbors line seems invalid: '%s'\n" % line)
+                    LOG.error("Neighbors line seems invalid: '%s'" % line)
                     sys.exit(1)
                 neighbors = m.group(1).split(" ")
         else:
-            # Store neigbor URIs in a list
+            # Store neighbor URIs in a list
             neighbors = m.group(1).split(" ")
 
     # Validate syntax in existing file and provided neighbors list
     if validate_uris(neighbors) is False:
-        sys.stderr.write("Error detected in neighbors syntax in config file\n")
+        LOG.error("Error detected in neighbors syntax in config file\n")
         sys.exit(1)
     elif validate_uris(neighbors_to_process) is False:
-        sys.stderr.write("Error detected in user provided neighbors syntax\n")
+        LOG.error("Error detected in user provided neighbors syntax\n")
         sys.exit(1)
 
     if command == 'removeNeighbors':
@@ -239,19 +301,19 @@ def validate_uris(neighbors):
         m = re.search(r"^(?:tcp|udp)://\[{0,1}(.+?)\]{0,1}:(?!.*:)([0-9]+)",
                       neighbor)
         if m is None:
-            sys.stderr.write("Error: invalid neighbor syntax: '%s'\n" % neighbor)
+            LOG.warning("Invalid neighbor syntax: '%s'\n" % neighbor)
             return False
 
         # Check valid port range
         if int(m.group(2)) > 65535 or int(m.group(2)) < 1:
-            sys.stderr.write("Error: neighbor '%s' has invalid port range"
-                             " (1-65535)\n" % neighbor)
+            LOG.warning("Neighbor '%s' has invalid port range"
+                        " (1-65535)\n" % neighbor)
             return False
 
         # Check neighbor address is valid hostname or IP
         if valid_address(m.group(1), neighbor) is not True:
-            sys.stderr.write("Error: address '%s' in URI '%s' seems invalid\n" %
-                             (m.group(1), neighbor))
+            LOG.warning("Address '%s' in URI '%s' seems invalid\n" %
+                        (m.group(1), neighbor))
             return False
 
 
@@ -273,9 +335,9 @@ def valid_address(address, uri):
         ip = ip_address(u''+address)
         # If IPv6, check valid brackets in URI
         if ip.version == 6 and re.match(r'^.*/\[.*\]:.*', uri) is None:
-            sys.stderr.write("Error: IPv6 address '%s' missing one or more"
-                             " square brackets.\nE.g.:"
-                             " tcp://[xx:xx:xx:xx]:15600\n" % uri)
+            LOG.warning("IPv6 address '%s' missing one or more"
+                        " square brackets.\nE.g.:"
+                        " tcp://[xx:xx:xx:xx]:15600\n" % uri)
             return False
     except ValueError:
         # Check if valid hostname
@@ -293,8 +355,8 @@ def get_homedir_nbctl():
         try:
             data = yaml.load(stream)
         except yaml.YAMLError as e:
-            sys.stderr("Error reading '%s': %s" %
-                       (config_file, e))
+            LOG.error("Failed to read '%s': %s" %
+                      (config_file, e))
 
     if data is None:
         return {}
