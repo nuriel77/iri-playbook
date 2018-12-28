@@ -69,7 +69,15 @@
     mode: 0700
     owner: "{{ iri_username }}"
     group: "{{ iri_username }}"
-                               
+
+# Fix for recent addition of -RELEASE
+# to file name on github :( 
+# In the future the tag might move to the 
+# tag portion of the URL ...
+- name: set extra version tag for versions >= 1.5.6
+  set_fact:
+    iri_download_file_version: "{{ iri_version }}{{ '-RELEASE' if iri_version is version_compare('1.5.6', '>=') else '' }}"
+
 - name: "Downloading iri jar from github. This can take a while ..."
   get_url:
     url: "https://github.com/iotaledger/iri/releases/download/v{{ iri_version }}/iri-{{ iri_download_file_version }}.jar"
