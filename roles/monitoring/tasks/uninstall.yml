@@ -67,7 +67,6 @@
     - alertmanager
     - iota-prom-exporter
     - node-exporter
-    - field-exporter
     - cadvisor
 
 - name: remove monitoring service files
@@ -80,7 +79,6 @@
     - '{{ systemd_dir }}/prometheus.service'
     - '{{ systemd_dir }}/node-exporter.service'
     - '{{ systemd_dir }}/alertmanager.service'
-    - "{{ systemd_dir }}/field-exporter.service"
     - '{{ systemd_dir }}/iota-prom-exporter.service'
     - '{{ systemd_dir }}/grafana-server.service'
     - '{{ systemd_dir }}/cadvisor.service'
@@ -89,7 +87,6 @@
     - "{{ config_dir }}/alertmanager"
     - "{{ config_dir }}/node-exporter"
     - "{{ config_dir }}/grafana-server"
-    - "{{ config_dir }}/field-exporter"
     - "{{ config_dir }}/cadvisor"
 
 - name: remove monitoring related files and paths
@@ -129,7 +126,6 @@
     - "alertmanager"
     - "iota-prom-exporter"
     - "node-exporter"
-    - "field-exporter"
     - "cadvisor"
 
 - name: 'remove monitoring images...'
@@ -145,5 +141,4 @@
     - { "image": "{{ grafana_image }}", "tag": "{{ grafana_tag }}" }
     - { "image": "{{ exporter_image }}", "tag": "{{ exporter_tag }}" }
     - { "image": "{{ iota_prom_exporter_image }}", "tag": "{{ iota_prom_exporter_tag }}" }
-    - { "image": "{{ field_exporter_image }}", "tag": "{{ field_exporter_tag }}" }
     - { "image": "{{ cadvisor_image }}", "tag": "{{ cadvisor_tag }}" }

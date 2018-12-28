@@ -13,5 +13,4 @@
     - consul
     - haproxy
     - nelson
-    - field
     - cleanup

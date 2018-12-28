@@ -335,7 +335,6 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 9 \
         "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
         "SKIP_FIREWALL_CONFIG"  "Skip configuring firewall" OFF \
         "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
-        "ENABLE_FIELD"             "Enable DevIOTA Field"      OFF \
         "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
         "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
         "DISABLE_ZMQ_METRICS"      "Disable ZMQ metrics"        OFF \
@@ -369,7 +368,7 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 9 \
                 echo "configure_firewall: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_MONITORING"')
-                SKIP_TAGS+=",monitoring_role,field_exporter"
+                SKIP_TAGS+=",monitoring_role"
                 echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_ZMQ_METRICS"')
@@ -379,10 +378,6 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 9 \
             '"ENABLE_NELSON"')
                 INSTALL_OPTIONS+=" -e nelson_enabled=true"
                 echo "nelson_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
-                ;;
-            '"ENABLE_FIELD"')
-                INSTALL_OPTIONS+=" -e field_enabled=true"
-                echo "field_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_HAPROXY"')
                 INSTALL_OPTIONS+=" -e lb_bind_address=0.0.0.0"
@@ -513,11 +508,6 @@ EOF
     # Calling set_primary_ip
     set_primary_ip
 
-    # Add notice to set payout address for Field
-    if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]] || grep -q '^field_enabled: true' /opt/iri-playbook/group_vars/all/z-installer-override.yml; then
-        FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/config.ini'"
-    fi
-
     OUTPUT=$(cat <<EOF
 * A log of this installation has been saved to: $LOGFILE
 
@@ -528,8 +518,6 @@ https://${PRIMARY_IP}:8811 and https://${PRIMARY_IP}:5555
 * Note that your IP might be different as this one has been auto-detected in best-effort.
 
 * Log in with username ${ADMIN_USER} and the password you have entered during the installation.
-
-${FIELD_NOTICE}
 
 Please refer to the wiki for post-installation information:
 https://iri-playbook.readthedocs.io/en/feat-docker

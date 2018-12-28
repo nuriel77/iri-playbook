@@ -22,13 +22,6 @@ scrape_configs:
     static_configs:
       - targets: ['cadvisor:{{ cadvisor_port }}']
 
-{% if field_enabled is defined and field_enabled|bool == True %}
-  - job_name: 'field_exporter'
-    scrape_interval: 30s
-    static_configs:
-      - targets: ['field-exporter:{{ field_exporter_bind_port }}']
-{% endif %}
-
 alerting:
   alertmanagers:
     - scheme: http

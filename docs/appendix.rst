@@ -564,16 +564,6 @@ If Nelson is not used, neighbors have to be manually maintained (default).
 
 You can read more about it `here <https://github.com/SemkoDev/nelson.cli>`_.
 
-Field
------
-Field is a proxy for your IRI node that sends regular statistics to the `Field server <http://field.deviota.com>`_.
-
-You can read more about it `here <https://github.com/SemkoDev/field.cli>`_.
-
-In addition to field, field-exporter is installed which provides metrics about the node's performance in the Field and other stats from the Field server.
-
-You can read more about it `here <https://github.com/DaveRingelnatz/field_exporter>`_.
-
 HAproxy
 -------
 HAProxy is a proxy/load-balancer. In the context of this installation it can be enabled to serve the IRI API port.
