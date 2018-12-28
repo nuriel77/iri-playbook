@@ -11,7 +11,7 @@ This playbook will install and configure the IOTA full node. In addition:
 - Configure firewalls
 - `iric` configuration tool
 - HAProxy for Wallet/API connections
-- Optional: [Nelson](https://gitlab.com/semkodev/nelson.cli) and [DevIOTA Field](https://gitlab.com/semkodev/field.cli)
+- Optional: [Nelson](https://gitlab.com/semkodev/nelson.cli)
 - Monitoring for IRI + Graphs amazing work of [Chris Holliday](https://github.com/crholliday/iota-prom-exporter)
 
 For a "click-'n-go" installation see: [Getting Started Quickly](https://iri-playbook.readthedocs.io/en/feat-docker/getting-started-quickly.html#getting-started-quickly)
