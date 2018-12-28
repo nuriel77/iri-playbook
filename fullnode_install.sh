@@ -11,9 +11,9 @@ set -o pipefail
 set -e
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as user root"
-   echo "Please change to root using: 'sudo su -' and re-run the script"
-   exit 1
+    echo "This script must be run as user root"
+    echo "Please change to root using: 'sudo su -' and re-run the script"
+    exit 1
 fi
 
 export NEWT_COLORS='
@@ -98,7 +98,9 @@ if echo "$yn" | grep -v -iq "^y"; then
     exit 1
 fi
 
-
+#################
+### Functions ###
+#################
 function set_dist() {
     if [ -f /etc/os-release ]; then
         # freedesktop.org and systemd
@@ -200,7 +202,7 @@ function init_debian(){
 }
 
 function inform_reboot() {
-cat <<EOF >/etc/motd
+    cat <<EOF >/etc/motd
 ======================== IRI PLAYBOOK ========================
 
 To proceed with the installation, please re-run:
@@ -532,6 +534,10 @@ EOF
              --msgbox "$OUTPUT" \
              $HEIGHT 78
 }
+
+#####################
+### End Functions ###
+#####################
 
 # Incase we call a re-run
 if [[ -n "$1" ]] && [[ "$1" == "rerun" ]]; then
