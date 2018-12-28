@@ -7,6 +7,9 @@ iri_basedir: /var/lib/iri
 # The iri version to install
 iri_version: 1.5.6
 
+# Hack to compensate on the changed in introduces in 1.5.6 which broke filename :(
+iri_download_file_version: "{{ iri_version }}-RELEASE"
+
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
 iri_api_port: 14265
 
