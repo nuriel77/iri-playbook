@@ -274,7 +274,7 @@ function set_selections()
         "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
 For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
-Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
+Select/unselect options using space and click Enter to proceed.\n" 24 78 4 \
         "ENABLE_NELSON"       "Enable Nelson auto-peering" OFF \
         "ENABLE_HAPROXY"      "Enable HAProxy"             OFF \
         "DISABLE_MONITORING"  "Disable node monitoring"    OFF \
