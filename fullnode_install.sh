@@ -95,7 +95,9 @@ if echo "$yn" | grep -v -iq "^y"; then
     exit 1
 fi
 
-
+#################
+### Functions ###
+#################
 function set_dist() {
     if [ -f /etc/os-release ]; then
         # freedesktop.org and systemd
@@ -176,7 +178,7 @@ function init_ubuntu(){
 }
 
 function inform_reboot() {
-cat <<EOF
+    cat <<EOF
 
 
 ======================== PLEASE REBOOT AND RE-RUN THIS SCRIPT =========================
@@ -327,14 +329,14 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 4 \
 # Get primary IP from ICanHazIP, if it does not validate, fallback to local hostname
 function set_primary_ip()
 {
-  echo "Getting external IP address..."
-  local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
-  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-    echo "Got IP $ip"
-    PRIMARY_IP=$ip
-  else
-    PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
-    echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
+    echo "Getting external IP address..."
+    local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
+    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        echo "Got IP $ip"
+        PRIMARY_IP=$ip
+    else
+        PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+        echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
   fi
 }
 
@@ -363,6 +365,9 @@ function set_ssh_port() {
         set_ssh_port
     fi
 }
+#####################
+### End Functions ###
+#####################
 
 # Get OS and version
 set_dist
