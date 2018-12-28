@@ -11,12 +11,12 @@ This playbook will install and configure the IOTA full node. In addition:
 - Configure firewalls
 - `iric` configuration tool
 - HAProxy for Wallet/API connections
-- Optional: [Nelson](https://gitlab.com/semkodev/nelson.cli) and [DevIOTA Field](https://gitlab.com/semkodev/field.cli)
+- Optional: [Nelson](https://gitlab.com/semkodev/nelson.cli)
 - Monitoring for IRI + Graphs amazing work of [Chris Holliday](https://github.com/crholliday/iota-prom-exporter)
 
 For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playbook.readthedocs.io/en/master/getting-started-quickly.html#getting-started-quickly)
 
-For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/master/index.html)*
+For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/master/index.html)
 
 ## Screenshots Monitoring
 ![graph_a](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/top_new.png)
@@ -33,9 +33,10 @@ Latest Ansible installation for your distribution (http://docs.ansible.com/ansib
 
 Playbook was tested with:
   - Ansible>=2.4
-  - Ubuntu 16.04
+  - Ubuntu 18.04
   - Ubuntu 17.04
-  - CentOS 7.4
+  - Ubuntu 16.04
+  - CentOS>=7.4
 
 
 

@@ -22,13 +22,6 @@
   tags:
     - iota_prom_exporter
 
-- import_tasks: field-exporter.yml
-  tags:
-    - field_exporter
-  when: >
-        field_enabled is defined and
-        field_enabled|bool == true
-
 - import_tasks: grafana.yml
   tags:
     - grafana_config
