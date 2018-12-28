@@ -52,10 +52,3 @@ Nelson configuration file::
 
   /etc/nelson/config.ini
 
-Field configuration file::
-
-  /etc/field/config.ini
-
-Field Exporter configuration file::
-
-  /etc/field-exporter/config.js
