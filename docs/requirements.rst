@@ -28,7 +28,7 @@ Operating System
 ----------------
 When you purchase a VPS you are often given the option which operating system (Linux of course) and which distribution to install on it.
 
-The installer was tested on Ubuntu, CentOS and Debian versions:
+The installer was tested on Ubuntu (LTS only), CentOS and Debian versions:
 
 * `Ubuntu 16.04 (amd64) Server Cloud Image (Xenial) <https://cloud-images.ubuntu.com/xenial/current/>`_
 * `Ubuntu 17.04 (amd64) Server Cloud Image (Zesty) <https://cloud-images.ubuntu.com/zesty/current/>`_
@@ -37,6 +37,7 @@ The installer was tested on Ubuntu, CentOS and Debian versions:
 * `Debian 9.5 x86_64 image for OpenStack <http://cdimage.debian.org/cdimage/openstack/current-9>`_
 * `CentOS 7.4 x86_64 Generic Cloud Image <http://cloud.centos.org/centos/7/images/>`_ or `CentOS Minimal ISO <http://isoredirect.centos.org/centos/7/isos/x86_64/>`_
 
+As mentioned above only LTS versions of Ubuntu are supported (e.g. 18.04 and not 18.10)
 
 .. note::
 
