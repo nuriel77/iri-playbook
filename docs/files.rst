@@ -52,10 +52,3 @@ Nelson configuration file::
 
   /etc/nelson/nelson.ini
 
-Field configuration file::
-
-  /etc/field/field.ini
-
-Field Exporter configuration file::
-
-  /opt/prometheus/field_exporter/config.js

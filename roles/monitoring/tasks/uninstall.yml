@@ -100,7 +100,6 @@
     - iota-prom-exporter
     - prom-am-executor
     - node-exporter
-    - field-exporter
 
 - name: remove monitoring service files
   file:
@@ -112,7 +111,6 @@
     - '/etc/systemd/system/prometheus.service'
     - '/etc/systemd/system/node-exporter.service'
     - '/etc/systemd/system/alertmanager.service'
-    - "{{ systemd_dir }}/field-exporter.service"
     - '/etc/systemd/system/prom-am-executor.service'
     - '/etc/systemd/system/iota-prom-exporter.service'
 

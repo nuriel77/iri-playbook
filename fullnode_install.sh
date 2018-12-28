@@ -276,7 +276,6 @@ For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/master/appendix.html#options\n\n\
 Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
         "ENABLE_NELSON"       "Enable Nelson auto-peering" OFF \
-        "ENABLE_FIELD"        "Enable DevIOTA Field"      OFF \
         "ENABLE_HAPROXY"      "Enable HAProxy"             OFF \
         "DISABLE_MONITORING"  "Disable node monitoring"    OFF \
         "DISABLE_ZMQ_METRICS" "Disable ZMQ metrics"        OFF \
@@ -293,7 +292,7 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
     do
         case $CHOICE in
             '"DISABLE_MONITORING"')
-                SKIP_TAGS+=",monitoring_role,field_exporter"
+                SKIP_TAGS+=",monitoring_role"
                 echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_ZMQ_METRICS"')
@@ -303,10 +302,6 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 5 \
             '"ENABLE_NELSON"')
                 INSTALL_OPTIONS+=" -e nelson_enabled=true"
                 echo "nelson_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
-                ;;
-            '"ENABLE_FIELD"')
-                INSTALL_OPTIONS+=" -e field_enabled=true"
-                echo "field_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_HAPROXY"')
                 INSTALL_OPTIONS+=" -e lb_bind_address=0.0.0.0"
@@ -477,11 +472,6 @@ fi
 # Calling set_primary_ip
 set_primary_ip
 
-# Add notice to set payout address for Field
-if [[ "$INSTALL_OPTIONS" =~ field_enabled=true ]]; then
-    FIELD_NOTICE="* Don't forget to set your payout address for Field in '/etc/field/field.ini'"
-fi
-
 OUTPUT=$(cat <<EOF
 * A log of this installation has been saved to: $LOGFILE
 
@@ -496,8 +486,6 @@ http://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
 * Note that your IP might be different as this one has been auto-detected in best-effort.
 
 * You can use the username 'iotapm' and the password you entered during the installation.
-
-${FIELD_NOTICE}
 
 Please refer to the tutorial for post-installation information:
 http://iri-playbook.readthedocs.io/en/master/post-installation.html
