@@ -125,7 +125,7 @@ function enable_nelson() {
 }
 
 function get_latest_nelson_release {
-    curl -H 'Cache-Control: no-cache' -s -m 5 -f -X GET "https://gitlab.com/api/v4/projects/semkodev%2Fnelson.cli/repository/tags" | jq -r '.[].name' | tr -d '^v'
+    curl -H 'Cache-Control: no-cache' -s -m 5 -f -X GET "https://gitlab.com/api/v4/projects/semkodev%2Fnelson.cli/repository/tags" | jq -r -c '.[0].name' | tr -d '^v'
 }
 
 function upgrade_nelson() {
