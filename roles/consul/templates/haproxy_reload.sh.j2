@@ -5,8 +5,9 @@
 : ${HAPROXY_CONFIG_DIR:=/etc/haproxy}
 
 function haproxy_check() {
-    /usr/bin/docker run --name haproxy-test \
-      --hostname $(hostname -f) \
+    local RAND_NAME="$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 7 | head -n 1)"
+    /usr/bin/docker run --name "haproxy-${RAND_NAME}" \
+      --hostname "$(hostname -f)-${RAND_NAME}" \
       --rm \
 {% for mount in haproxy_mounts %}
       -v {{ mount }} \
