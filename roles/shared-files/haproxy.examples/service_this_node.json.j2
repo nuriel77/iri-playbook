@@ -13,7 +13,7 @@
     "id": "{{ ip | default(consul_bind_ip) }}:{{ iri_api_port }}",
     "name": "API {{ ip | default(consul_bind_ip) }}:{{ iri_api_port }}",
     "args": ["/bin/bash", "/scripts/node_check.sh", "-a", "http://{{ ip | default(consul_bind_ip) }}:{{ iri_api_port }}", "-i", "-n", "1"],
-    "Interval": "30s",
+    "Interval": "10s",
     "timeout": "5s",
     "DeregisterCriticalServiceAfter": "24h"
   }
