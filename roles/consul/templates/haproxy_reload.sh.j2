@@ -7,7 +7,7 @@
 function haproxy_check() {
     local RAND_NAME="$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 7 | head -n 1)"
     /usr/bin/docker run --name "haproxy-${RAND_NAME}" \
-      --hostname "$(hostname -f)-${RAND_NAME}" \
+      --hostname "$(hostname -f)" \
       --rm \
 {% for mount in haproxy_mounts %}
       -v {{ mount }} \
