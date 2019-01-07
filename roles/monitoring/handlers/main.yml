@@ -32,3 +32,8 @@
     daemon_reload: yes
     state: restarted
     enabled: yes
+
+- name: yum-clean-metadata
+  command: yum clean metadata
+  args:
+    warn: no

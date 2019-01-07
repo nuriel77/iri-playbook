@@ -104,14 +104,24 @@
 # Apt installs for Ubuntu
 - block:
 
-    - name: Add an Apt signing key for grafana repo
+    - name: remove Apt signing key for grafana repo
       apt_key:
         url: https://packagecloud.io/gpg.key
+        state: absent
+
+    - name: remove old grafana apt repository
+      apt_repository:
+        repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
+        state: absent
+
+    - name: add apt signing key for grafana repo
+      apt_key:
+        url: https://packages.grafana.com/gpg.key
         state: present
 
     - name: add grafana apt repository
       apt_repository:
-        repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
+        repo: deb https://packages.grafana.com/oss/deb stable main
         state: present 
 
     - name: Install grafana and postfix
@@ -136,16 +146,22 @@
         state: latest
         name: epel-release
 
+    - name: remove old grafana repository
+      yum_repository:
+        name: grafana
+        state: absent
+      notify: yum-clean-metadata
+
     - name: add grafana repository
       yum_repository:
         name: grafana
         description: grafana
-        baseurl: https://packagecloud.io/grafana/stable/el/6/$basearch
+        baseurl: https://packages.grafana.com/oss/rpm
         gpgcheck: yes
         enabled: yes
         sslcacert: /etc/pki/tls/certs/ca-bundle.crt
         repo_gpgcheck: yes
-        gpgkey: 'https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana'
+        gpgkey: 'https://packages.grafana.com/gpg.key'
 
     - name: Install grafana and postfix
       yum:
