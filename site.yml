@@ -2,11 +2,11 @@
 - hosts: localhost
   gather_facts: false
   tasks:
-    - name: "Check ansible version >=2.6.5"
+    - name: "Check ansible version >=2.6.1"
       assert:
-        msg: "Ansible version 2.6.5 or above is required to run this playbook"
+        msg: "Ansible version 2.6.1 or above is required to run this playbook"
         that:
-          - ansible_version.string is version("2.6.5", ">=")
+          - ansible_version.string is version("2.6.1", ">=")
       tags:
         - always
         - check_version
