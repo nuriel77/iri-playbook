@@ -104,11 +104,6 @@
 # Apt installs for Ubuntu
 - block:
 
-    - name: remove Apt signing key for grafana repo
-      apt_key:
-        url: https://packagecloud.io/gpg.key
-        state: absent
-
     - name: remove old grafana apt repository
       apt_repository:
         repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
