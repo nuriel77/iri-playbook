@@ -109,6 +109,11 @@
         repo: deb https://packagecloud.io/grafana/stable/debian/ jessie main
         state: absent
 
+    - name: remove faulty grafana apt repository
+      apt_repository:
+        repo: 'deb https://packages.grafana.com/oss/deb stable main'
+        state: absent
+
     - name: add apt signing key for grafana repo
       apt_key:
         url: https://packages.grafana.com/gpg.key
@@ -116,7 +121,7 @@
 
     - name: add grafana apt repository
       apt_repository:
-        repo: deb https://packages.grafana.com/oss/deb stable main
+        repo: 'deb [arch=amd64] https://packages.grafana.com/oss/deb stable main'
         state: present 
 
     - name: Install grafana and postfix
