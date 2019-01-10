@@ -61,7 +61,7 @@ EOF
 
 
 ### IRI VERSION
-IRI_VERSION="1.6.0-RC13"
+IRI_VERSION="1.6.0-RC18"
 
 cat <<EOF
 
@@ -85,6 +85,7 @@ function finish {
     if [ $EXIT_CODE -eq 0 ]
     then
         echo "Done. Please check iri's status with 'journalctl -u iri -e -f'"
+        echo "Note! Since version RC15 older databases will no longer work. You should stop iri and delete the database. You can download a new database from any 1.5.6 node (using iric for example). The snapshot state files can be downloaded from https://snap.x-vps.com/iota.snap.tgz and extracted to /var/lib/iri/target directory".
     else
         echo "Something went wrong ..."
         exit $EXIT_CODE
@@ -150,6 +151,6 @@ grep -q '^TIP_SOLIDIFIER_ENABLED' /var/lib/iri/iri.ini || echo "TIP_SOLIDIFIER_E
 # check pruning delay on already existing configuration
 if [[ "$(grep '^LOCAL_SNAPSHOTS_PRUNING_DELAY' /var/lib/iri/iri.ini | awk -F= {'print $2'} | tr -d ' ')" -lt 40000 ]]
 then
-    echo "Adjusting LOCAL_SNAPSHOTS_PRUNING_DELAY to minimum required 40000"
-    sed -i 's/^LOCAL_SNAPSHOTS_PRUNING_DELAY.*$/LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000/' /var/lib/iri/iri.ini
+    echo "Adjusting LOCAL_SNAPSHOTS_PRUNING_DELAY to minimum required 10000"
+    sed -i 's/^LOCAL_SNAPSHOTS_PRUNING_DELAY.*$/LOCAL_SNAPSHOTS_PRUNING_DELAY = 10000/' /var/lib/iri/iri.ini
 fi
