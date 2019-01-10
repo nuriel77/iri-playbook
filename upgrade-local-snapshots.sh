@@ -151,6 +151,6 @@ grep -q '^TIP_SOLIDIFIER_ENABLED' /var/lib/iri/iri.ini || echo "TIP_SOLIDIFIER_E
 # check pruning delay on already existing configuration
 if [[ "$(grep '^LOCAL_SNAPSHOTS_PRUNING_DELAY' /var/lib/iri/iri.ini | awk -F= {'print $2'} | tr -d ' ')" -lt 40000 ]]
 then
-    echo "Adjusting LOCAL_SNAPSHOTS_PRUNING_DELAY to minimum required 10000"
+    echo "Adjusting LOCAL_SNAPSHOTS_PRUNING_DELAY to minimum required 10000. (Note that IF recommends 40000 as a minimum)."
     sed -i 's/^LOCAL_SNAPSHOTS_PRUNING_DELAY.*$/LOCAL_SNAPSHOTS_PRUNING_DELAY = 10000/' /var/lib/iri/iri.ini
 fi
