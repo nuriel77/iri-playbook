@@ -85,7 +85,8 @@ function finish {
     if [ $EXIT_CODE -eq 0 ]
     then
         echo "Done. Please check iri's status with 'journalctl -u iri -e -f'"
-        echo "Note! Since version RC15 older databases will no longer work. You should stop iri and delete the database. You can download a new database from any 1.5.6 node (using iric for example). The snapshot state files can be downloaded from https://snap.x-vps.com/iota.snap.tgz and extracted to /var/lib/iri/target directory".
+        echo "Since version RC18 you should obtain a fully synced database from a 1.5.6 (or other RC18 node) to get the node in sync."
+        echo "Note! Since version RC15 older databases will no longer work. You should stop iri and delete the database. You can download a new database from any 1.5.6 node (using iric for example)."
     else
         echo "Something went wrong ..."
         exit $EXIT_CODE
@@ -100,9 +101,9 @@ then
 fi
 
 CURRENT_DIR="$(pwd)"
-echo "Downloading iota snapshot meta/state files ..."
-wget -O /tmp/iota.snap.tgz https://snap.x-vps.com/iota.snap.tgz
-wget -O /tmp/iota.snap.tgz.sha256sum https://snap.x-vps.com/iota.snap.tgz.sha256sum
+#echo "Downloading iota snapshot meta/state files ..."
+#wget -O /tmp/iota.snap.tgz https://snap.x-vps.com/iota.snap.tgz
+#wget -O /tmp/iota.snap.tgz.sha256sum https://snap.x-vps.com/iota.snap.tgz.sha256sum
 
 echo "Downloading the pre-compiled IRI version $IRI_VERSION ..."
 wget -O "/tmp/iri-${IRI_VERSION}.jar" "https://snap.x-vps.com/iri-${IRI_VERSION}.jar"
@@ -139,7 +140,7 @@ grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var
 LOCAL_SNAPSHOTS_ENABLED = true
 LOCAL_SNAPSHOTS_DEPTH = 150
 LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
-LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000
+LOCAL_SNAPSHOTS_PRUNING_DELAY = 10000
 LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 20
 LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
 TIP_SOLIDIFIER_ENABLED = false
