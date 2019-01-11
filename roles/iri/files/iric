@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.4
+VERSION=0.7.5
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -208,7 +208,7 @@ function upgrade_iri() {
     sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
 
     # Update to support snapshots from v1.6.0 onwards
-    if (( $(awk 'BEGIN {print ("'$IRI_LATEST_CLEAN'" >= "1.6.0")}') ))
+    if (( $(awk 'BEGIN {print ("'$IRI_LATEST'" >= "1.6.0")}') ))
     then
         grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
 ; Local Snapshots Settings

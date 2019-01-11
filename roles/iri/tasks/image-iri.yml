@@ -26,7 +26,7 @@
 - name: 'download iri docker image, this can take a moment...'
   docker_image:
     name: "{{ iri_image }}"
-    tag: "{{ iri_tag }}"
+    tag: "{{ iri_download_tag_version }}"
     force: "{{ force_pull_image | default('no') }}"
   notify:
     - restart iri
@@ -37,6 +37,11 @@
   when: >
         images_from_master is not defined or
         images_from_master|bool == False
+
+- name: remove annoying RELEASE tag!
+  shell: "/usr/bin/docker tag {{ iri_image }}:{{ iri_download_tag_version }} {{ iri_image }}:{{ iri_tag }}"
+  when: iri_version is version_compare('1.5.6', '>=')
+  changed_when: False
 
 - name: set image name and tag
   set_fact:
