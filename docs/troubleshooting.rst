@@ -328,3 +328,21 @@ Secure Connection Failed
 ------------------------
 
 If you don't get the green padlock and see a message in the browser containing the words: "Secure Connection Failed" and/or "SSL_ERROR_RX_RECORD_TOO_LONG", your node was probably not configured with HTTPS. Please re-run the process in ``iric`` to configure HTTPS. If this issue is recurring without you having done anything to modify the configuration, please contact ``nuriel77`` on discord.
+
+
+Apt cache Error When Upgrading Iric
+===================================
+
+On Ubuntu, when trying to upgrade ``iric`` you get an error containing something like::
+
+  fatal: [localhost]: FAILED! => {"changed": false, "msg": "Failed to update apt cache: "}  
+
+
+Solution is to upgrade the Grafana repositories via this command:
+
+.. code:: bash
+
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=monitoring_deps
+
+
+Afterwards try to run the ``iric`` upgrade once more.
