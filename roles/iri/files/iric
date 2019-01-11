@@ -144,6 +144,10 @@ function get_latest_iri_release {
 function upgrade_iri() {
     echo "Checking for updates..."
     local IRI_LATEST=$(get_latest_iri_release)
+
+    # Remove that weird -RELEASE tag
+    IRI_LATEST="$(echo $IRI_LATEST | tr -d '\-RELEASE')"
+
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
                  --msgbox "ERROR: Failed to get IRI latest version\n${IRI_LATEST}" \
@@ -202,6 +206,22 @@ function upgrade_iri() {
     IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
     sed -i "s/^TAG=.*$/TAG=v${IRI_LATEST}/" $IRI_CONFIG
     sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
+
+    # Update to support snapshots from v1.6.0 onwards
+    if (( $(awk 'BEGIN {print ("'$IRI_LATEST_CLEAN'" >= "1.6.0")}') ))
+    then
+        grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
+; Local Snapshots Settings
+LOCAL_SNAPSHOTS_ENABLED = true
+LOCAL_SNAPSHOTS_DEPTH = 150
+LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
+LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000
+LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 20
+LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
+TIP_SOLIDIFIER_ENABLED = true
+EOF
+
+    fi
 
     echo "Upgrading IRI Docker image.... (IRI will automatically restart if image gets updated)"
     cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_docker_image -e "iri_tag=v$IRI_LATEST" -e "force_pull_image=yes"
