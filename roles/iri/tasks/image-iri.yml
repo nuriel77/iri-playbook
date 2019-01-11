@@ -1,7 +1,15 @@
+# Fix for recent addition of -RELEASE
+# to file name on github :( 
+# In the future the tag might move to the 
+# tag portion of the URL ...
+- name: set extra version tag for versions >= 1.5.6
+  set_fact:
+    iri_download_tag_version: "{{ iri_tag }}{{ '-RELEASE' if iri_version is version_compare('1.5.6', '>=') else '' }}"
+
 - name: 'download iri docker image (on master), this can take a moment...'
   docker_image:
     name: "{{ iri_image }}"
-    tag: "{{ iri_tag }}"
+    tag: "{{ iri_download_tag_version }}"
     force: "{{ force_pull_image | default('no') }}"
   notify:
     - restart iri
