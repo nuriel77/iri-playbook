@@ -80,7 +80,7 @@
 
 - name: "Downloading iri jar from github. This can take a while ..."
   get_url:
-    url: "https://github.com/iotaledger/iri/releases/download/v{{ iri_version }}/iri-{{ iri_download_file_version }}.jar"
+    url: "https://github.com/iotaledger/iri/releases/download/v{{ iri_download_file_version }}/iri-{{ iri_download_file_version }}.jar"
     dest: "{{ iri_workdir }}/iri-{{ iri_version }}.jar"
     owner: root
     group: "{{ iri_username }}"

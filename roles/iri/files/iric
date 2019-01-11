@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.5
+VERSION=0.6.6
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -226,7 +226,7 @@ function upgrade_iri() {
 
     TFILE=$(mktemp /tmp/iri-${IRI_LATEST_CLEAN}.XXXXXXXXX)
     # TODO: remove RELEASE in next versions
-    wget "https://github.com/iotaledger/iri/releases/download/v${IRI_LATEST_CLEAN}/iri-${IRI_LATEST}-RELEASE.jar" -O "$TFILE"
+    wget "https://github.com/iotaledger/iri/releases/download/v${IRI_LATEST}/iri-${IRI_LATEST}.jar" -O "$TFILE"
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
                   --msgbox "ERROR: Failed upgrading IRI." \
