@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.7
+VERSION=0.6.8
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -853,6 +853,22 @@ function view_ps_mem() {
     ps_mem 2>/dev/null|less
 }
 
+### IRITop ###
+function view_ps_mem() {
+    which iritop >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Missing iritop" \
+         --msgbox "Error: cannot find 'iritop' utility!" \
+         8 $WIDTH
+         return 1
+    fi
+
+    whiptail --title "iri utility" \
+             --msgbox "This utility shows IRI node and neighbor information.\nUse q to exit." \
+             8 $WIDTH
+    iritop
+}
+
 ### Services ###
 function service_status() {
     local SERVICE
@@ -1217,8 +1233,9 @@ function main_menu() {
     "k)" "Get Fully Synced DB" \
     "l)" "Configure Files" \
     "m)" "View Per Processes Memory Usage" \
-    "n)" "Enable HTTPS / Certificate" \
-    "o)" "Update IRIC" \
+    "n)" "View IRITop" \
+    "o)" "Enable HTTPS / Certificate" \
+    "p)" "Update IRIC" \
     "Z)" "Configure this Script" \
     3>&1 1>&2 2>&3
 }
@@ -1303,11 +1320,16 @@ function run_main_menu() {
             ;;
 
         "n)")
+            view_iritop
+            run_main_menu
+            ;;
+
+        "o)")
             enable_https
             run_main_menu
 	    ;;
 
-        "o)")
+        "p)")
             update_iric
             run_main_menu
             ;;

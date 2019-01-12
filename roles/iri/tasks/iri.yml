@@ -129,6 +129,16 @@
   tags:
     - nbctl_config
 
+- name: configure ~/.iritop
+  copy:
+    dest: "{{ ansible_env.HOME }}/.iritop"
+    content: "node: http://127.0.0.1:{{ iri_mgmt_api_port|default('14266') }}"
+    force: "{{ overwrite | default('no') }}"
+    backup: yes
+  tags:
+    - iritop_config
+    - scripts
+
 - name: copy iri systemd file
   template:
     src: templates/iri.service.j2
