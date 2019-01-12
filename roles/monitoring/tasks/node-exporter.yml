@@ -25,6 +25,8 @@
     dest: "{{ config_dir }}/node-exporter"
   notify:
     - restart node-exporter
+  tags:
+    - prometheus_config
 
 - name: copy exporter systemd service file
   template:
@@ -33,7 +35,7 @@
   notify:
     - restart node-exporter
   tags:
-    - monitoring_deps
+    - prometheus_config
 
 - name: copy db size custom script
   copy:
@@ -43,14 +45,14 @@
   with_items:
     - get_db_size.sh
   tags:
-    - monitoring_deps
+    - prometheus_config
 
 - name: cronjob to get mainnetdb size
   cron:
     name: "get-mainnet-db-size"
     job: "/usr/local/bin/get_db_size.sh {{ collector_textfiles_dir }}/mainnetdb_size.prom {{ iri_basedir }}/target/mainnetdb"
   tags:
-    - monitoring_deps
+    - prometheus_config
 
 - name: flush handlers
   meta: flush_handlers
