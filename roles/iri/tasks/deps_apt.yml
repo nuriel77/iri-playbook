@@ -89,6 +89,8 @@
       - openssl
       - bsdmainutils
       - whiptail
+      - python-pip
+      - python3-pip
   tags:
     - deps
     - scripts

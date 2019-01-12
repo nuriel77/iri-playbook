@@ -143,7 +143,7 @@
 - name: configure ~/.iritop
   copy:
     dest: "{{ ansible_env.HOME }}/.iritop"
-    content: "node: http://127.0.0.1:{{ iri_mgmt_api_port|default('14266') }}"
+    content: "node: http://127.0.0.1:{{ iri_api_port }}"
     force: "{{ overwrite | default('no') }}"
     backup: yes
   tags:

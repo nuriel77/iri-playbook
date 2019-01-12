@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.6.8
+VERSION=0.6.9
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -854,7 +854,7 @@ function view_ps_mem() {
 }
 
 ### IRITop ###
-function view_ps_mem() {
+function view_iritop() {
     which iritop >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
          whiptail --title "Missing iritop" \
