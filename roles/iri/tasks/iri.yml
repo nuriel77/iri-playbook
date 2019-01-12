@@ -121,11 +121,22 @@
         mode: 0755
       ignore_errors: yes
 
+    - name: download iritop requirements
+      get_url:
+        url: https://raw.githubusercontent.com/maeck70/iritop/master/requirements.txt
+        dest: /tmp/iritop-requirements.txt
+      ignore_errors: yes
+
     - name: download iritop
       get_url:
         url: https://raw.githubusercontent.com/maeck70/iritop/master/iritop.py
         dest: /usr/bin/iritop
         mode: 0755
+      ignore_errors: yes
+
+    - name: install iritop requirements
+      pip:
+        requirements: /tmp/iritop-requirements.txt
       ignore_errors: yes
 
   tags:

@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.5
+VERSION=0.7.6
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -824,6 +824,22 @@ function view_ps_mem() {
     ps_mem 2>/dev/null|less
 }
 
+### IRITop ###
+function view_iritop() {
+    which iritop >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Missing iritop" \
+         --msgbox "Error: cannot find 'iritop' utility!" \
+         8 $WIDTH
+         return 1
+    fi
+
+    whiptail --title "iri utility" \
+             --msgbox "This utility shows IRI node and neighbor information.\nUse q to exit." \
+             8 $WIDTH
+    iritop
+}
+
 ### Services ###
 function service_status() {
     local SERVICE
@@ -1274,11 +1290,16 @@ function run_main_menu() {
             ;;
 
         "n)")
+            view_iritop
+            run_main_menu
+            ;;
+
+        "o)")
             enable_https
             run_main_menu
 	    ;;
 
-        "o)")
+        "p)")
             update_iric
             run_main_menu
             ;;
