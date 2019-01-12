@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.5
+VERSION=0.7.6
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -878,9 +878,6 @@ function view_iritop() {
          return 1
     fi
 
-    whiptail --title "iri utility" \
-             --msgbox "This utility shows IRI node and neighbor information.\nUse q to exit." \
-             8 $WIDTH
     iritop
 }
 
