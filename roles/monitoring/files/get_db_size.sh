@@ -18,7 +18,7 @@ else
 fi
 
 PROM_DIR=$(dirname "${PROMFILE}")
-DB_SIZE=$(/bin/du -s -b "${DB_DIR}"| awk {'print $1'})
+DB_SIZE=$(du -s -b "${DB_DIR}"| awk {'print $1'})
 
 [[ ! -d "$PROM_DIR" ]] && mkdir -p "$PROM_DIR"
 

@@ -4,6 +4,8 @@
     state: directory
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
+  tags:
+    - monitoring_deps
 
 - name: ensure ownership in exporter basedir
   file:
@@ -20,13 +22,17 @@
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
   notify:
     - restart rsyslog
+  tags:
+    - monitoring_deps
 
 - name: copy exporter systemd service file
   template:
     src: templates/node-exporter.service.j2
     dest: /etc/systemd/system/node-exporter.service
   notify:
-    - reload systemd
+    - restart node-exporter
+  tags:
+    - monitoring_deps
 
 - name: copy db size custom script
   copy:
@@ -35,11 +41,15 @@
     mode: 0755
   with_items:
     - get_db_size.sh
+  tags:
+    - monitoring_deps
 
 - name: cronjob to get mainnetdb size
   cron:
     name: "get-mainnet-db-size"
     job: "/usr/local/bin/get_db_size.sh {{ collector_textfiles_dir }}/mainnetdb_size.prom {{ iri_basedir }}/target/mainnetdb"
+  tags:
+    - monitoring_deps
 
 - name: flush handlers
   meta: flush_handlers

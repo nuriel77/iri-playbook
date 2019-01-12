@@ -33,6 +33,13 @@
     state: restarted
     enabled: yes
 
+- name: restart node-exporter
+  systemd:
+    name: node-exporter.service
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+
 - name: yum-clean-metadata
   command: yum clean metadata
   args:
