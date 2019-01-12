@@ -7,6 +7,7 @@ After=network.target
 WorkingDirectory={{ exporter_basedir }}
 Restart=on-failure
 ExecStart={{ exporter_basedir }}/node_exporter --web.listen-address={{ exporter_bind_address }}:{{ exporter_port }} --collector.filesystem.ignored-mount-points ^/(sys|proc|dev|run|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/var/lib/docker/aufs)($$|/){% if collector_textfiles_dir is defined %} --collector.textfile.directory={{ collector_textfiles_dir }}{% endif %}
+
 Type=simple
 
 # No need that exporter messes with /dev
