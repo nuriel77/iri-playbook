@@ -1,3 +1,10 @@
+- name: create collector text files directory
+  file:
+    path: "{{ collector_textfiles_dir }}"
+    state: directory
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+
 - name: ensure ownership in exporter basedir
   file:
     path: "{{ exporter_basedir }}"

@@ -12,6 +12,7 @@ exporter_version: 0.15.2
 exporter_basedir: /opt/prometheus/node_exporter
 exporter_port: 9100
 exporter_bind_address: 127.0.0.1
+collector_textfiles_dir: /var/run/prometheus
 
 nodesource_version: 8
 # Here path provided and full path constructed in task
