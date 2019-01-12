@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.7
+VERSION=0.8.0
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -52,6 +52,21 @@ function get_admin_user() {
                  --msgbox "Username can only contain alphanumeric characters and underscores." \
                  8 $WIDTH
         get_admin_user
+    fi
+}
+
+function compare_versions() {
+    local FIRST_VERSION=$1
+    local EVAL_STR=$2
+    local SECOND_VERSION=$3
+
+    local GET_BOOL=$(python -c "from distutils.version import StrictVersion; print StrictVersion('$FIRST_VERSION') $EVAL_STR StrictVersion('$SECOND_VERSION')")
+    if [[ "$GET_BOOL" == "True" ]]
+    then
+        return 0
+    elif [[ "$GET_BOOL" == "False" ]]
+    then
+        return 1
     fi
 }
 
@@ -163,8 +178,8 @@ function upgrade_iri() {
                  8 $WIDTH
         return 1
     fi
-    
-    if (( $(awk 'BEGIN {print ("'$IRI_VERSION'" >= "'$IRI_LATEST'")}') )); then
+
+    if compare_versions $IRI_VERSION '>=' $IRI_LATEST; then
         if ! (whiptail --title "No Updates" \
                  --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway?" \
                  --defaultno \
@@ -208,7 +223,7 @@ function upgrade_iri() {
     sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
 
     # Update to support snapshots from v1.6.0 onwards
-    if (( $(awk 'BEGIN {print ("'$IRI_LATEST'" >= "1.6.0")}') ))
+    if compare_versions $IRI_LATEST '>=' 1.6.0
     then
         grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
 ; Local Snapshots Settings
@@ -637,7 +652,7 @@ function check_new_iric() {
         return 1
     fi
 
-    if (( $(awk 'BEGIN {print ("'$CURR_VERSION'" >= "'$IRIC_VERSION'")}') )); then
+    if compare_versions $CURR_VERSION '>=' $IRIC_VERSION; then
         return 1
     else
         return 0
@@ -654,7 +669,7 @@ function update_iric() {
         return 1
     fi
 
-    if (( $(awk 'BEGIN {print ("'$CURR_VERSION'" >= "'$IRIC_VERSION'")}') )); then
+    if compare_versions $CURR_VERSION '>=' $IRIC_VERSION; then
         if ! (whiptail --title "No Updates" \
                      --yesno "You already have the latest version: ${CURR_VERSION}.\nDo you want to proceed anyway?" \
                      --defaultno \
