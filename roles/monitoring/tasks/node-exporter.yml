@@ -1,3 +1,12 @@
+- name: create collector text files directory
+  file:
+    path: "{{ collector_textfiles_dir }}"
+    state: directory
+    owner: "{{ prom_username }}"
+    group: "{{ prom_username }}"
+  tags:
+    - monitoring_deps
+
 - import_tasks: image-node-exporter.yml
   tags:
     - node_exporter_docker_image
@@ -23,6 +32,25 @@
     dest: "{{ systemd_dir }}/node-exporter.service"
   notify:
     - restart node-exporter
+  tags:
+    - monitoring_deps
+
+- name: copy db size custom script
+  copy:
+    src: "roles/monitoring/files/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+  with_items:
+    - get_db_size.sh
+  tags:
+    - monitoring_deps
+
+- name: cronjob to get mainnetdb size
+  cron:
+    name: "get-mainnet-db-size"
+    job: "/usr/local/bin/get_db_size.sh {{ collector_textfiles_dir }}/mainnetdb_size.prom {{ iri_basedir }}/target/mainnetdb"
+  tags:
+    - monitoring_deps
 
 - name: flush handlers
   meta: flush_handlers
