@@ -90,24 +90,33 @@
   notify:
     - restart iri
 
-- name: copy utility scripts
-  copy:
-    src: "files/{{ item }}"
-    dest: "/usr/bin/{{ item }}"
-    mode: 0755
-  with_items:
-    - nbctl
-    - reattach
-    - iric
-  tags:
-    - scripts
+- name: install scripts
+  block:
 
-- name: download ps_mem
-  get_url:
-    url: https://raw.githubusercontent.com/pixelb/ps_mem/master/ps_mem.py
-    dest: /usr/bin/ps_mem
-    mode: 0755
-  ignore_errors: yes
+    - name: copy utility scripts
+      copy:
+        src: "files/{{ item }}"
+        dest: "/usr/bin/{{ item }}"
+        mode: 0755
+      with_items:
+        - nbctl
+        - reattach
+        - iric
+
+    - name: download ps_mem
+      get_url:
+        url: https://raw.githubusercontent.com/pixelb/ps_mem/master/ps_mem.py
+        dest: /usr/bin/ps_mem
+        mode: 0755
+      ignore_errors: yes
+
+    - name: download iritop
+      get_url:
+        url: https://raw.githubusercontent.com/maeck70/iritop/master/iritop.py
+        dest: /usr/bin/iritop
+        mode: 0755
+      ignore_errors: yes
+
   tags:
     - scripts
 
