@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.4
+VERSION=0.7.3
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -50,21 +50,6 @@ function get_admin_user() {
                  --msgbox "Username can only contain alphanumeric characters and underscores." \
                  8 $WIDTH
         get_admin_user
-    fi
-}
-
-function compare_versions() {
-    local FIRST_VERSION=$1
-    local EVAL_STR=$2
-    local SECOND_VERSION=$3
-
-    local GET_BOOL=$(python -c "from packaging import version; print version.parse('$FIRST_VERSION') $EVAL_STR version.parse('$SECOND_VERSION')")
-    if [[ "$GET_BOOL" == "True" ]]
-    then
-        return 0
-    elif [[ "$GET_BOOL" == "False" ]]
-    then
-        return 1
     fi
 }
 
@@ -161,7 +146,7 @@ function upgrade_nelson() {
         return 1
     fi
 
-    if compare_versions $NELSON_VERSION '>=' $NELSON_LATEST; then
+    if (( $(awk 'BEGIN {print ("'$NELSON_VERSION'" >= "'$NELSON_LATEST'")}') )); then
         whiptail --title "No Updates" \
                  --msgbox "You already have the latest version: ${NELSON_VERSION}\n\nOr, latest version detection failed. You can proceed to force install the latest version if it exists." \
                  8 $WIDTH
@@ -209,7 +194,7 @@ function upgrade_iri() {
 
     ## TODO: FIX no need for RELEASE removal here
     IRI_LATEST_CLEAN="$(echo $IRI_LATEST | tr -d '\-RELEASE')"
-    if compare_versions $IRI_VERSION '>=' $IRI_LATEST_CLEAN; then
+    if (( $(awk 'BEGIN {print ("'$IRI_VERSION'" >= "'$IRI_LATEST_CLEAN'")}') )); then
         if ! (whiptail --title "No Updates" \
                  --yesno "You already have the latest version: ${IRI_VERSION}.\nDo you want to proceed anyway? (will re-download)" \
                  --defaultno \
@@ -257,7 +242,7 @@ function upgrade_iri() {
     sed -i "s/^api_version.*$/api_version: $IRI_LATEST_CLEAN/" $HOME/.nbctl
 
     # Update to support snapshots from v1.6.0 onwards
-    if compare_versions $IRI_LATEST_CLEAN '>=' 1.6.0
+    if (( $(awk 'BEGIN {print ("'$IRI_LATEST_CLEAN'" >= "1.6.0")}') ))
     then
         grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
 
@@ -681,7 +666,7 @@ function check_new_iric() {
         return 1
     fi
 
-    if compare_versions $CURR_VERSION '>=' $IRIC_VERSION; then
+    if (( $(awk 'BEGIN {print ("'$CURR_VERSION'" >= "'$IRIC_VERSION'")}') )); then
         return 1
     else
         return 0
@@ -698,7 +683,7 @@ function update_iric() {
         return 1
     fi
 
-    if compare_versions $CURR_VERSION '>=' $IRIC_VERSION; then
+    if (( $(awk 'BEGIN {print ("'$CURR_VERSION'" >= "'$IRIC_VERSION'")}') )); then
         if ! (whiptail --title "No Updates" \
                      --yesno "You already have the latest version: ${CURR_VERSION}.\nDo you want to proceed anyway?" \
                      --defaultno \
