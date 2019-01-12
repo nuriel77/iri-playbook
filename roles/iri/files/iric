@@ -11,9 +11,10 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
+echo "Loading iric and checking for iric updates ..."
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.0
+VERSION=0.7.1
 CUR_DIR=$(pwd)
 WIDTH=78
 export NEWT_COLORS='
@@ -243,7 +244,6 @@ function upgrade_iri() {
 
     # Update to support snapshots from v1.6.0 onwards
     if ansible all -i 'localhost,' -m assert -a "that=\"'$IRI_LATEST_CLEAN' is version('1.6.0', '>=')\""; then
-    then
         grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
 
 ; Local Snapshots Settings
