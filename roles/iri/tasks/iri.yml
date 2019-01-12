@@ -114,6 +114,7 @@
       get_url:
         url: https://raw.githubusercontent.com/maeck70/iritop/master/requirements.txt
         dest: /tmp/iritop-requirements.txt
+        force: yes
       ignore_errors: yes
 
     - name: download iritop
@@ -121,6 +122,7 @@
         url: https://raw.githubusercontent.com/maeck70/iritop/master/iritop.py
         dest: /usr/bin/iritop
         mode: 0755
+        force: yes
       ignore_errors: yes
 
     - name: install iritop requirements
