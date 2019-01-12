@@ -346,3 +346,16 @@ Solution is to upgrade the Grafana repositories via this command:
 
 
 Afterwards try to run the ``iric`` upgrade once more.
+
+
+Can't Load Spent-Addresses-db Folder
+====================================
+
+This error may appear after having upgraded a node to 1.6.0-RELEASE:
+
+.. code:: bash
+
+  com.iota.iri.IRI$IRILauncher - Welcome to IRI 1.6.0-RELEASE
+  Jan 12 00:45:26 ubuntu-4gb-nbg1-dc3-2 iri[5181]: Exception in thread "main" com.iota.iri.service.spentaddresses.SpentAddressesException: Can't load spent-addresses-db folder
+
+Solution should be to download a fully synced DB.
