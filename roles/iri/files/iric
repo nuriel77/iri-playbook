@@ -14,25 +14,43 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.3
+VERSION=0.8.4
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
+PID_FILE=/var/run/iric.pid
 WIDTH=78
 export NEWT_COLORS='
 window=,
 '
 
-function pause(){
-   read -p "$*"
-   clear
-}
+# Check if another process of iric is already running.
+if [ -e "$PID_FILE" ]
+then
+    PID_FROM_FILE=$(cat "$PID_FILE")
+    if ps -fq $PID_FROM_FILE | grep -q "$(basename $0)$"
+    then
+        echo "ERROR: another instance of $(basename $0) is already running with pid ${PID_FROM_FILE}."
+        exit 1
+    fi
+fi
 
+# Cleanup function
 function cleanup() {
+    rm -f "$PID_FILE"
     cd "$CUR_DIR"
     clear
 }
 
+# Write pid to pidfile
+echo -n $$ >"$PID_FILE"
+
+# Set exit trap
 trap cleanup INT TERM EXIT
+
+function pause(){
+   read -p "$*"
+   clear
+}
 
 # Experimental Admin settings
 function set_admin_user() {
@@ -619,9 +637,9 @@ function get_db() {
     # Try to get the file size before download
     [ -z "$FILE_SIZE" ] && { FILE_SIZE=$(wget --spider "$DB_SOURCE" 2>&1 | grep "^Length: " | sed 's/^.* (\(.*\)) .*$/\1/'); }
 
-    if (whiptail --title "Confirm DB" \
-                 --yesno "Download new database from '$DB_SOURCE'?\n\nupdated: ${LAST_UPDATED}, size: ${FILE_SIZE}" \
-                 12 $WIDTH) then
+    if (whiptail --title "Confirm DB Download" \
+                 --yesno "Download new database from '$DB_SOURCE'?\n\nUpdated: ${LAST_UPDATED}, size: ${FILE_SIZE}\n\n(TIP: for long running tasks consider running iric in a screen session)" \
+                 16 $WIDTH) then
         # This command will stop iri, remove older database directories,
         # extract the database (on the fly) set correct user ownership and start IRI up again.
         echo "Stopping iri first, removing old database files and commencing download/extract of database files ..."
