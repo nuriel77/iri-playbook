@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.2
+VERSION=0.8.3
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 WIDTH=78
@@ -624,6 +624,7 @@ function get_db() {
                  12 $WIDTH) then
         # This command will stop iri, remove older database directories,
         # extract the database (on the fly) set correct user ownership and start IRI up again.
+        echo "Stopping iri first, removing old database files and commencing download/extract of database files ..."
         systemctl stop iri && rm -rf /var/lib/iri/target/{mainnetdb*,mainnet.snapshot*,spent-addresses-*} && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
         if [[ $? -ne 0 ]]; then
             whiptail --title "New DB Failed!" \
@@ -631,6 +632,7 @@ function get_db() {
                      8 $WIDTH
             # Cleanup any leftovers
             rm -rf /var/lib/iri/target/mainnetdb*
+            clear
             return 1
         else
             pause "Done! Please check IRI's status and logs to verify it is error free."
