@@ -22,9 +22,9 @@ ZMQ_PORT = {{ iri_zmq_port }}
 
 ; Local Snapshots Settings
 LOCAL_SNAPSHOTS_ENABLED = {{ iri_local_snapshots_enabled | default('true') }}
-LOCAL_SNAPSHOTS_DEPTH = {{ iri_local_snapshots_depth | default('200') }}
+LOCAL_SNAPSHOTS_DEPTH = {{ iri_local_snapshots_depth | default('100') }}
 LOCAL_SNAPSHOTS_PRUNING_ENABLED = {{ iri_local_shapshots_pruning_enabled | default('true') }}
 LOCAL_SNAPSHOTS_PRUNING_DELAY = {{ iri_local_shapshots_pruning_delay | default('40000') }}
-LOCAL_SNAPSHOTS_INTERVAL_SYNCED = {{ iri_local_shapshots_interval_synced | default('20') }}
+LOCAL_SNAPSHOTS_INTERVAL_SYNCED = {{ iri_local_shapshots_interval_synced | default('10') }}
 LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = {{ iri_local_shapshots_interval_unsynced | default('1000') }}
-TIP_SOLIDIFIER_ENABLED = {{ iri_tip_solidifier_enabled | default('true') }}
+TIP_SOLIDIFIER_ENABLED = {{ iri_tip_solidifier_enabled | default('false') }}
