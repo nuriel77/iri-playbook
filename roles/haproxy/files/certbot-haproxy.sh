@@ -400,7 +400,7 @@ if [[ $exitcode -eq 0 ]]; then
             logger_error "failed to restart haproxy!"
         fi
 
-        if [[ $RC_C -ne 0 ]]; then
+        if [[ $RC_C -ne 0 ]] && [[ $RC_C -ne 4 ]]; then
             logger_error "failed to restart consul-template!"
         fi
     fi
