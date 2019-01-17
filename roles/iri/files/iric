@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.5
+VERSION=0.8.6
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -721,7 +721,7 @@ function update_iric() {
     clear
 
     # Remove current pid file and restart
-    rm -f /var/run/iric
+    rm -f $PID_FILE
     exec "$0"
 }
 
