@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.9
+VERSION=0.7.10
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
 WIDTH=78
@@ -750,7 +750,7 @@ function update_iric() {
     clear
 
     # Remove current pid file and restart
-    rm -f /var/run/iric
+    rm -f $PID_FILE
     exec "$0"
 }
 
