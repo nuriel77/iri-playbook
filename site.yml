@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: false
+  gather_facts: true
   tasks:
     - name: "Check ansible version >=2.6.1"
       assert:
@@ -11,8 +11,14 @@
         - always
         - check_version
       run_once: yes
+      ignore_errors: "{{ ignore_assert_errors }}"
   vars:
     ansible_connection: local
+
+- hosts: all
+  gather_facts: true
+  roles:
+    - common
 
 - hosts: fullnode
   gather_facts: true
