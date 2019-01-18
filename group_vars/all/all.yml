@@ -1,0 +1,11 @@
+# Set to true to ignore preflight checks
+ignore_assert_errors: false
+
+# Minimum required memory on node
+min_required_memtotal_mb: 2048
+
+# Supported distributions
+supported_distributions:
+  - RedHat
+  - CentOS
+  - Ubuntu

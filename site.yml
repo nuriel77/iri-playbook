@@ -10,8 +10,15 @@
       tags:
         - always
         - check_version
+      run_once: yes
+      ignore_errors: "{{ ignore_assert_errors }}"
   vars:
     ansible_connection: local
+
+- hosts: all
+  gather_facts: true
+  roles:
+    - common
 
 - hosts: fullnode
   gather_facts: true

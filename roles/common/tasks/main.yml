@@ -1,0 +1,23 @@
+- name: stop if no systemd support
+  assert:
+    that: ansible_service_mgr == "systemd"
+  tags:
+    - always
+    - check_service_mgr
+  ignore_errors: "{{ ignore_assert_errors }}"
+
+- name: stop if unknown distribution
+  assert:
+    that: ansible_distribution in supported_distributions
+  tags:
+    - always
+    - check_dist
+  ignore_errors: "{{ ignore_assert_errors }}"
+
+- name: stop if memory is too small
+  assert:
+    that: ansible_memtotal_mb >= min_required_memtotal_mb
+  ignore_errors: "{{ ignore_assert_errors }}"
+  tags:
+    - always
+    - check_memory
