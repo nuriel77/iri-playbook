@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.10
+VERSION=0.7.11
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
 WIDTH=78
@@ -1270,7 +1270,7 @@ function main_menu() {
     "m)" "View Per Processes Memory Usage" \
     "n)" "View IRITop" \
     "o)" "Enable HTTPS / Certificate" \
-    "p)" "Update IRIC" \
+    "p)" "Update IRIC and node scripts" \
     "Z)" "Configure this Script" \
     3>&1 1>&2 2>&3
 }
