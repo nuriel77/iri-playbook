@@ -5,6 +5,7 @@
     mode: 0755
   tags:
     - certbot
+    - scripts
 
 - name: 'download certbot images, this can take a moment...'
   docker_image:
