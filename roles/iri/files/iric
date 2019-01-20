@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.6
+VERSION=0.8.7
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -1241,7 +1241,7 @@ function main_menu() {
     "m)" "View Per Processes Memory Usage" \
     "n)" "View IRITop" \
     "o)" "Enable HTTPS / Certificate" \
-    "p)" "Update IRIC" \
+    "p)" "Update IRIC and node scripts" \
     "Z)" "Configure this Script" \
     3>&1 1>&2 2>&3
 }
