@@ -277,7 +277,7 @@ fi
 if [[ $exitcode -eq 0 ]]; then
     # create haproxy.pem file(s)
     for domain in ${renewed_certs[@]}; do
-        full_path=$(find "${le_cert_root}" -type d -name "${DOMAIN}*" -print -quit)
+        full_path=$(find "${le_cert_root}" -type d -name "${domain}*" -print -quit)
         cat "${full_path}/fullchain.pem" "${full_path}/privkey.pem" | tee "${full_path}/haproxy.pem" >/dev/null
         if [ $? -ne 0 ]; then
             logger_error "failed to create haproxy.pem file!"
