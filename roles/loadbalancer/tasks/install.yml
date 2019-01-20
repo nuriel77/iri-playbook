@@ -14,6 +14,7 @@
     mode: 0755
   tags:
     - certbot
+    - scripts
 
 - name: lua code block
   block:
