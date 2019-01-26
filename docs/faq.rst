@@ -151,6 +151,8 @@ If a large "used" value appears for Swap, it might be a good idea to lower the v
 What are the revalidate and rescan options for
 ==============================================
 
+NOTE: This information is probably no loner valid for IRI version 1.6.0 and above.
+
 Here's a brief explanation what each does, courtesy of Alon Elmaliah:
 
 | **Revalidate** "drops" the stored solid milestone "table". So all the milestones are revalidated once the node starts (checks signatures, balances etc). This is used it you take a DB from someone else, or have an issue with solid milestones acting out.
@@ -185,7 +187,7 @@ and restart IRI to take effect: ``systemctl restart iri``
 Where can I get a fully synced database to help kick start my node
 ==================================================================
 
-For the sake of the community, I regularly create a copy of a fully synced database. 
+For the sake of the community, I regularly create a copy of the database snapshot files. NOTE: The current database only contains the snapshot files. The full DB is no longer available since IRI version 1.6.0.
 
 You can use the ``iric`` tool to download and install the database :ref:`iric`, or update manually using the following instructions:
 
@@ -194,18 +196,12 @@ You can use the ``iric`` tool to download and install the database :ref:`iric`, 
 
 .. code:: bash
 
-  systemctl stop iri && rm -rf /var/lib/iri/target/mainnetdb* && mkdir /var/lib/iri/target/mainnetdb && cd /var/lib/iri/target/mainnetdb && wget -O - https://x-vps.com/iota.db.tgz | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
+  systemctl stop iri && rm -rf /var/lib/iri/target/{mainnetdb*,mainnet.snapshot*,spent-addresses-*} && mkdir -p /var/lib/iri/target && cd /var/lib/iri/target && wget -O - https://x-vps.com/iota.db.tgz | tar zxv && chown iri.iri /var/lib/iri -R && systemctl start iri
 
 .. raw:: html
 
   <iframe width="700" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
 
-
-.. note::
-
-  There was some debate on the slack channel whether after having imported a foreign database if it is required to run IRI with the ``--revalidate`` or ``--rescan`` flags. Some said they got fully synced without any of these.
-
-To shed some light on what these options actually do, you can read about it in `What are the revalidate and rescan options for`_
 
 .. _lightWalletConnectionRefused:
 
