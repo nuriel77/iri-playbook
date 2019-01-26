@@ -148,7 +148,7 @@ To remove an existing database:
 
 1. stop IRI: ``systemctl stop iri``.
 
-2. delete the database: ``rm -rf /var/lib/iri/target/mainnet*``
+2. delete the database: ``rm -rf /var/lib/iri/target/{mainnetdb*,mainnet.snapshot*,spent-addresses-*}``
 
 3. start IRI: ``systemctl start iri``
 
