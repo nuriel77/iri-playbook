@@ -29,7 +29,9 @@ For **Ubuntu/Debian** if ``curl`` isi missing you can install it by running: ``s
 Original IRI Playbook
 ---------------------
 
-To install the original playbook version:
+First make sure you are user root (run ``whoami`` to get the current user name). If you need to become root run: ``sudo su``.
+
+To install the **original playbook** version:
 
 .. code:: bash
 
@@ -38,7 +40,7 @@ To install the original playbook version:
 Dockerized IRI Playbook (beta)
 ------------------------------
 
-For the "Dockerized" version (containers) run:
+For the **"Dockerized" version** (containers) run:
 
 .. code:: bash
 
