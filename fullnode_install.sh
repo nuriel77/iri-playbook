@@ -276,7 +276,7 @@ function get_admin_password() {
     # Ensure we escape single quotes (using single quotes) because we need to
     # encapsulate the password with single quotes for the Ansible variable file
     PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
-    echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-installer-override.yml
+    echo "iotapm_nginx_password: '${PASSWORD_A}'" >> group_vars/all/z-installer-override.yml
     chmod 400 group_vars/all/z-installer-override.yml
 }
 
@@ -297,7 +297,7 @@ function set_admin_username() {
             ;;
     esac
 
-    echo "iotapm_nginx_user: '${ADMIN_USER}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
+    echo "iotapm_nginx_user: '${ADMIN_USER}'" > /opt/iri-playbook/group_vars/all/z-installer-override.yml
 
 }
 
