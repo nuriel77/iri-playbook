@@ -20,6 +20,10 @@ export NEWT_COLORS='
 window=,
 '
 
+if grep -q 'IRI PLAYBOOK' /etc/motd; then
+    :>/etc/motd
+fi
+
 declare -g INSTALL_OPTIONS
 
 clear
@@ -178,6 +182,17 @@ function init_ubuntu(){
 }
 
 function inform_reboot() {
+    cat <<EOF >/etc/motd
+======================== IRI PLAYBOOK ========================
+
+To proceed with the installation, please re-run:
+
+bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
+
+(make sure to run it as user root)
+
+EOF
+
     cat <<EOF
 
 
@@ -189,7 +204,7 @@ and allow the node installer to proceed with the installation.
 *** Please reboot this machine and re-run this script ***
 
 
->>> To reboot run: 'shutdown -r now', when back online:
+>>> To reboot run: 'reboot', and when back online:
 bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
 !! Remember to re-run this script as root !!
@@ -261,8 +276,29 @@ function get_admin_password() {
     # Ensure we escape single quotes (using single quotes) because we need to
     # encapsulate the password with single quotes for the Ansible variable file
     PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
-    echo "iotapm_nginx_password: '${PASSWORD_A}'" > group_vars/all/z-override-iotapm.yml
-    chmod 400 group_vars/all/z-override-iotapm.yml
+    echo "iotapm_nginx_password: '${PASSWORD_A}'" >> group_vars/all/z-installer-override.yml
+    chmod 400 group_vars/all/z-installer-override.yml
+}
+
+function set_admin_username() {
+    ADMIN_USER=$(whiptail --inputbox "Choose an administrator's username.\nOnly valid ASCII characters are allowed:" 10 $WIDTH "$ADMIN_USER" --title "Choose Admin Username" 3>&1 1>&2 2>&3)
+    if [[ $? -ne 0 ]]; then
+        echo "Installation cancelled"
+    fi
+
+    local LC_CTYPE=C
+    case "${ADMIN_USER}" in
+        *[![:cntrl:][:print:]]*)
+            whiptail --title "Invalid characters!!" \
+                     --msgbox "Only ASCII characters are allowed:\n\n!\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_\`abcdefghijklmnopqrstuvwxyz{|}~" \
+                     12 78
+            set_admin_username
+            return
+            ;;
+    esac
+
+    echo "iotapm_nginx_user: '${ADMIN_USER}'" > /opt/iri-playbook/group_vars/all/z-installer-override.yml
+
 }
 
 # Installation selection menu
@@ -365,9 +401,108 @@ function set_ssh_port() {
         set_ssh_port
     fi
 }
+
+function run_playbook(){
+    # Ansible output log file
+    LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
+
+    # Override ssh_port
+    [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
+
+    # Run the playbook
+    echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
+    set +e
+    unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
+    RC=$?
+    if [ $RC -ne 0 ]; then
+        echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
+        exit $RC
+    fi
+    set -e
+
+    # Check playbook needs reboot
+    if [ -f "/var/run/playbook_reboot" ]; then
+        cat <<EOF >/etc/motd
+-------------------- IRI PLAYBOOK --------------------
+
+It seems you have rebooted the node. You can proceed with
+the installation by running the command:
+
+/opt/iri-playbook/rerun.sh
+
+(make sure you are user root before you run it)
+
+-------------------- IRI PLAYBOOK --------------------
+
+EOF
+
+        cat <<EOF
+-------------------- NOTE --------------------
+
+The installer detected that the playbook requires a reboot,
+most probably to enable a functionality which requires the reboot.
+
+You can reboot the server using the command 'reboot'.
+
+Once the server is back online you can use the following command
+to proceed with the installation (become user root first):
+
+/opt/iri-playbook/rerun.sh
+
+-------------------- NOTE --------------------
+EOF
+
+        rm -f "/var/run/playbook_reboot"
+        exit
+    fi
+
+    # Calling set_primary_ip
+    set_primary_ip
+
+     # Get configured username if missing.
+     # This could happen on script re-run
+     # due to reboot, therefore the variable is empty
+     if [ -z "$ADMIN_USER" ]; then
+         ADMIN_USER=$(grep ^iotapm_nginx_user /opt/iri-playbook/group_vars/all/z-installer-override.yml | awk {'print $2'})
+     fi
+
+    OUTPUT=$(cat <<EOF
+* A log of this installation has been saved to: $LOGFILE
+
+* You should be able to connect to IOTA Peer Manager pointing your browser to:
+
+https://${PRIMARY_IP}:8811
+
+* You can reach the monitoring (grafana) graphs at:
+
+https://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
+
+* Note that your IP might be different as this one has been auto-detected in best-effort.
+
+* Log in with username ${ADMIN_USER} and the password you have entered during the installation.
+
+Please refer to the tutorial for post-installation information:
+http://iri-playbook.readthedocs.io/en/master/post-installation.html
+
+Thank you for installing an IOTA node with the IRI-playbook!
+
+EOF
+)
+
+HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
+whiptail --title "Installation Done" \
+         --msgbox "$OUTPUT" \
+         $HEIGHT 78
+}
 #####################
 ### End Functions ###
 #####################
+
+# Incase we call a re-run
+if [[ -n "$1" ]] && [[ "$1" == "rerun" ]]; then
+    run_playbook
+    exit
+fi
 
 # Get OS and version
 set_dist
@@ -434,72 +569,11 @@ cd iri-playbook
 # Let user choose installation add-ons
 set_selections
 
+# Get the administrators username
+set_admin_username
+
 # web access (ipm, haproxy and grafana)
 get_admin_password
+
 echo -e "\nRunning playbook..."
-
-# Ansible output log file
-LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
-
-# Override ssh_port
-[[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
-
-# Run the playbook
-echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
-set +e
-unbuffer ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS | tee -a "$LOGFILE"
-RC=$?
-if [ $RC -ne 0 ]; then
-    echo "ERROR! The playbook exited with failure(s). A log has been save here '$LOGFILE'"
-    exit $RC
-fi
-set -e
-
-# Check playbook needs reboot
-if [ -f "/var/run/playbook_reboot" ]; then
-    cat <<EOF
--------------------- NOTE --------------------
-
-The installer detected that the playbook requires a reboot,
-most probably to enable a functionality which requires the reboot.
-
-You can reboot the server using 'shutdown -r now'.
-
-Please note that you will have to re-run this script once the server is back on.
-Unfortunately, this also requires that you go through the first steps all over again.
-
-EOF
-
-    rm -f "/var/run/playbook_reboot"
-    exit
-fi
-
-# Calling set_primary_ip
-set_primary_ip
-
-OUTPUT=$(cat <<EOF
-* A log of this installation has been saved to: $LOGFILE
-
-* You should be able to connect to IOTA Peer Manager pointing your browser to:
-
-http://${PRIMARY_IP}:8811
-
-* You can reach the monitoring (grafana) graphs at:
-
-http://${PRIMARY_IP}:5555/dashboard/db/iota?refresh=30s&orgId=1
-
-* Note that your IP might be different as this one has been auto-detected in best-effort.
-
-* You can use the username 'iotapm' and the password you entered during the installation.
-
-Please refer to the tutorial for post-installation information:
-http://iri-playbook.readthedocs.io/en/master/post-installation.html
-
-EOF
-)
-
-HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
-whiptail --title "Installation Done" \
-         --msgbox "$OUTPUT" \
-         $HEIGHT 78
-
+run_playbook
