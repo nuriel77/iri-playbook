@@ -126,7 +126,7 @@ mkdir /var/lib/iri/target/mainnetdb
 
 cd /var/lib/iri/target
 tar zxvf /tmp/iota.snap.tgz
-chown -R iri.iri /var/lib/iri/target/
+chown -RL iri.iri /var/lib/iri/target
 
 echo "Configuring files ..."
 [ -f "/etc/default/iri" ] && sed -i "s/^IRI_VERSION=.*/IRI_VERSION=$IRI_VERSION/" /etc/default/iri
