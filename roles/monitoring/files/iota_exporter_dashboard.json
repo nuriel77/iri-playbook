@@ -1157,7 +1157,7 @@
           "format": "time_series",
           "instant": false,
           "intervalFactor": 1,
-          "legendFormat": "{{mainnetdb_dir_size_bytes}}",
+          "legendFormat": "{{db_size}}",
           "refId": "A"
         }
       ],
