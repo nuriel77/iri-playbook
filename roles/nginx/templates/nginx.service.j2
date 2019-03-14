@@ -24,7 +24,7 @@ ExecStart=/usr/bin/docker run \
   {{ nginx_image }}:${TAG}
 
 ExecStop=/usr/bin/docker stop %p
-ExecReload=/usr/bin/docker kill -s HUP %p
+ExecReload=/usr/bin/docker exec %p nginx -s reload
 
 [Install]
 WantedBy=multi-user.target
