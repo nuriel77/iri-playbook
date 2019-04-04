@@ -110,6 +110,7 @@ function newCert {
 }
 
 function issueCert {
+    local DOMAINS=$1
     local RC
     /bin/systemctl stop nginx
     /usr/bin/docker run \
@@ -121,7 +122,7 @@ function issueCert {
       --standalone \
       --renew-by-default \
       --preferred-challenges http \
-      --agree-tos ${STAGING}
+      --agree-tos ${STAGING} ${DOMAINS}
     RC=$?
     /bin/systemctl start nginx
     return $RC
@@ -303,6 +304,8 @@ else
         if ! openssl x509 -noout -checkend $((4*7*86400)) -in "${cert}"; then
             subject="$(openssl x509 -noout -subject -in "${cert}" | grep -o -E 'CN=[^ ,]+' | tr -d 'CN=')"
             subjectaltnames="$(openssl x509 -noout -text -in "${cert}" | sed -n '/X509v3 Subject Alternative Name/{n;p}' | sed 's/\s//g' | tr -d 'DNS:' | sed 's/,/ /g')"
+            echo "Certificate's CN/subject: '$subject'"
+            echo "Certificates subjectAltNames: '$subjectaltnames'"
             if [ "$subject" != "" ]
             then
                 domains="-d ${subject}"
@@ -312,6 +315,7 @@ else
                     domains="${domains} -d ${name}"
                 fi
             done
+            echo "IssueCert ${domains}"
             issueCert "${domains}"
             if [ $? -ne 0 ]
             then
