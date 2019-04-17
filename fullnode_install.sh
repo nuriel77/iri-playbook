@@ -20,7 +20,7 @@ export NEWT_COLORS='
 window=,
 '
 
-if grep -q 'IRI PLAYBOOK' /etc/motd; then
+if [ -f /etc/motd ] && grep -q 'IRI PLAYBOOK' /etc/motd; then
     :>/etc/motd
 fi
 
