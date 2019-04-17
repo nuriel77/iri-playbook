@@ -42,11 +42,3 @@ iri_remote_limit_api: "removeNeighbors, addNeighbors, interruptAttachingToTangle
 # `true` is necessary in order to allow external wallets/APIs to connect without tunneling.
 # If set to `false` it will only bind to localhost (127.0.0.1)
 api_port_remote: false
-
-# The RPM version to download, check http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-oracle_java_rpm: 'https://download.oracle.com/otn/java/jdk/8u211-b12/478a62b7d4e34b78b671c754eaaf38ab/jdk-8u211-linux-x64.rpm'
-
-# The version to download for Ubuntu
-oracle_java_tar: 'https://download.oracle.com/otn/java/jdk/8u211-b12/478a62b7d4e34b78b671c754eaaf38ab/jdk-8u211-linux-x64.tar.gz'
-# Java oracle directory
-oracle_java_dir: jdk1.8.0_211

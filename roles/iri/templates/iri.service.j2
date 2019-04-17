@@ -5,7 +5,7 @@ After=network-online.target
 [Service]
 WorkingDirectory={{ iri_workdir }}
 EnvironmentFile=-{{ config_dir }}/iri
-ExecStart=/usr/bin/java{% if prefer_ipv4_stack is defined and prefer_ipv4_stack|bool %} -Djava.net.preferIPv4Stack=true{% endif %} -Xmx${JAVA_MEM} -Xms${JAVA_INIT_MEM} -Xmn${JAVA_HEAP_MEM} -Xss1024k -XX:InitiatingHeapOccupancyPercent=0 -XX:MaxMetaspaceSize=512m -XX:CodeCacheMinimumFreeSpace=100k -XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5 -XX:+UseCompressedOops -Djava.awt.headless=true -jar iri-${IRI_VERSION}.jar -c ${IRI_CONFIG_FILE} -p ${IRI_API_PORT} -u ${IRI_UDP_PORT} -t ${IRI_TCP_PORT} -n "${IRI_NEIGHBORS}" --remote-limit-api "${REMOTE_LIMIT_API}" $OPTIONS
+ExecStart=/usr/bin/java{% if prefer_ipv4_stack is defined and prefer_ipv4_stack|bool %} -Djava.net.preferIPv4Stack=true{% endif %} -Xmx${JAVA_MEM} -Xms${JAVA_INIT_MEM} -Xmn${JAVA_HEAP_MEM} -Xss1024k -Djava.awt.headless=true -jar iri-${IRI_VERSION}.jar -c ${IRI_CONFIG_FILE} -p ${IRI_API_PORT} -u ${IRI_UDP_PORT} -t ${IRI_TCP_PORT} -n "${IRI_NEIGHBORS}" --remote-limit-api "${REMOTE_LIMIT_API}" $OPTIONS
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure
