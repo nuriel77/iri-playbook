@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.10
+VERSION=0.8.11
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -632,6 +632,17 @@ function get_db() {
         LAST_UPDATED=$(echo "$JSON_OUTPUT" | jq -r .last_updated)
     elif [ "$DB_SOURCE" == "Custom" ]; then
         DB_SOURCE=$(whiptail --inputbox "Choose a source where to download the snapshot state DB from:" 8 $WIDTH "" --title "Select Custom Database Source" 3>&1 1>&2 2>&3)
+        if [ $? -eq 1 ]; then
+            return
+        fi
+    fi
+
+    if [[ "x${DB_SOURCE}" == "x" ]]
+    then
+        whiptail --title "Empty source!" \
+                 --msgbox "You didn't supply any source!" \
+                 8 $WIDTH
+        return
     fi
 
     # Try to get the file size before download
