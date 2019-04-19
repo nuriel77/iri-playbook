@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.14
+VERSION=0.7.15
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
 WIDTH=78
@@ -661,6 +661,17 @@ function get_db() {
         LAST_UPDATED=$(echo "$JSON_OUTPUT" | jq -r .last_updated)
     elif [ "$DB_SOURCE" == "Custom" ]; then
         DB_SOURCE=$(whiptail --inputbox "Choose a source where to download the database from:" 8 $WIDTH "" --title "Select Custom Database Source" 3>&1 1>&2 2>&3)
+        if [ $? -eq 1 ]; then
+            return
+        fi
+    fi
+
+    if [[ "${DB_SOURCE}" =~ [^a-zA-Z] ]] || [[ "x${DB_SOURCE}" == "x" ]]
+    then
+        whiptail --title "Empty source!" \
+                 --msgbox "You didn't supply any source!" \
+                 8 $WIDTH
+        return
     fi
 
     # Try to get the file size before download
