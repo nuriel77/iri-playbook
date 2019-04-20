@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.11
+VERSION=0.8.12
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -654,7 +654,7 @@ function get_db() {
         # This command will stop iri, remove older database directories,
         # extract the database (on the fly) set correct user ownership and start IRI up again.
         echo "Stopping iri first, removing old database files and commencing download/extract of database files ..."
-        systemctl stop iri && rm -rf /var/lib/iri/target/{mainnetdb*,mainnet.snapshot*,spent-addresses-*} && mkdir -p /var/lib/iri/target && cd /var/lib/iri/target/ && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -RL && systemctl start iri
+        systemctl stop iri && rm -rf /var/lib/iri/target/{testnet*,mainnetdb*,mainnet.snapshot*,spent-addresses-*} && mkdir -p /var/lib/iri/target && cd /var/lib/iri/target/ && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -RL && systemctl start iri
         if [[ $? -ne 0 ]]; then
             whiptail --title "New DB Failed!" \
                      --msgbox "Well this is embarrassing. Downloading the new DB failed..." \

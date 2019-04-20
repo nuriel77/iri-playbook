@@ -1,6 +1,9 @@
 # IRI image tag (=version)
 TAG={{ iri_tag }}
 
+# IRI base image
+IRI_IMAGE={{ iri_image }}
+
 # Java initial mem usage
 JAVA_MIN_MEMORY={{ iri_init_java_mem }}
 
@@ -42,6 +45,8 @@ IRI_NEIGHBORS=""
 
 # Optional OPTIONS can contain multiple values e.g.
 #OPTIONS="--rescan --revalidate"
+# or
+#OPTIONS="--milestone-start 0 --milestone-keys 16 --max-depth 1000 --testnet"
 OPTIONS=""
 
 # Optional options for Docker
