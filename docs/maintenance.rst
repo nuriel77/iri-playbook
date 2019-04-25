@@ -141,15 +141,4 @@ Alternatively, omit the ``-f`` and use ``--no-pager`` to view the logs.
 
 Replace Database
 ================
-At any time you can remove the existing database and start sync all over again.
-This is required if you know your database is corrupt (don't assume, use the community's help to verify such suspicion) or if you want your node to sync more quickly.
-
-To remove an existing database:
-
-1. stop IRI: ``systemctl stop iri``.
-
-2. delete the database: ``rm -rf /var/lib/iri/target/{mainnetdb*,mainnet.snapshot*,spent-addresses-*}``
-
-3. start IRI: ``systemctl start iri``
-
-If you want to import an already existing database, check :ref:`getFullySyncedDB`.
+If you want to re-download a fully synced database please refer to :ref:`getFullySyncedDB` on how to get this done.
