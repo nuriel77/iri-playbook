@@ -195,11 +195,13 @@ You can use the ``iric`` tool to download and install the database :ref:`iric`, 
 
 .. code:: bash
 
-  systemctl stop iri && rm -rf /var/lib/iri/target/{mainnetdb*,mainnet.snapshot*,spent-addresses-*} && mkdir -p /var/lib/iri/target && cd /var/lib/iri/target && wget -O - https://x-vps.com/iota.db.tgz | tar zxv && chown iri.iri /var/lib/iri -RL && systemctl start iri
+  systemctl stop iri && rm -rf /var/lib/iri/target/{mainnetdb*,mainnet.snapshot*} && mkdir -p /var/lib/iri/target && cd /var/lib/iri/target && wget -O - https://x-vps.com/iota.db.tgz | tar zxv && chown iri.iri /var/lib/iri -RL && systemctl start iri
 
 .. raw:: html
 
   <iframe width="700" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
+
+**NOTE** If there has been a corruption in the ``spent-addresses-db`` directory, you might also like to first run the command ``rm -rf /var/lib/iri/target/spent-addresses-*`` before running the above command.
 
 
 .. _lightWalletConnectionRefused:
