@@ -637,7 +637,7 @@ function get_db() {
         fi
     fi
 
-    if [[ "x${DB_SOURCE}" == "x" ]]
+    if [[ -z "${DB_SOURCE// }" ]] || [[ "x${DB_SOURCE}" == "x" ]]
     then
         whiptail --title "Empty source!" \
                  --msgbox "You didn't supply any source!" \
