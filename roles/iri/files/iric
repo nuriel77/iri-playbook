@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.15
+VERSION=0.7.16
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
 WIDTH=78
@@ -637,7 +637,7 @@ function get_db() {
     XVPS_SOURCE="https://x-vps.com/iota.db.tgz"
 
     # Create array of available DB resources
-    SOURCES_ARRAY=("$XVPS_SOURCE" "https://database.iotatoken.nl/iota.db.tgz" "Custom")
+    SOURCES_ARRAY=("$XVPS_SOURCE" "Custom")
 
     # Create an indexed array for building the menu
     SOURCES_ARRAY_INDEXED=($(printf "%s\n" "${SOURCES_ARRAY[@]}"| awk -F, '!/^ / && NF { print NR")"; print $1}'))
@@ -656,7 +656,7 @@ function get_db() {
     local FILE_SIZE
     local LAST_UPDATED="unknown"
     if [ "$DB_SOURCE" == "$XVPS_SOURCE" ]; then
-        local JSON_OUTPUT=$(curl -H "Content-Type: application/json" -m 4 -f -s https://x-vps.com/index.php 2>/dev/null)
+        local JSON_OUTPUT=$(curl -k -H "Content-Type: application/json" -m 4 -f -s https://x-vps.com/index.php 2>/dev/null)
         FILE_SIZE=$(echo "$JSON_OUTPUT" | jq -r .file_size)
         LAST_UPDATED=$(echo "$JSON_OUTPUT" | jq -r .last_updated)
     elif [ "$DB_SOURCE" == "Custom" ]; then
@@ -666,7 +666,7 @@ function get_db() {
         fi
     fi
 
-    if [[ "${DB_SOURCE}" =~ [^a-zA-Z] ]] || [[ "x${DB_SOURCE}" == "x" ]]
+    if [[ -z "${DB_SOURCE// }" ]] || [[ "x${DB_SOURCE}" == "x" ]]
     then
         whiptail --title "Empty source!" \
                  --msgbox "You didn't supply any source!" \
@@ -676,6 +676,7 @@ function get_db() {
 
     # Try to get the file size before download
     [ -z "$FILE_SIZE" ] && { FILE_SIZE=$(wget --spider "$DB_SOURCE" 2>&1 | grep "^Length: " | sed 's/^.* (\(.*\)) .*$/\1/'); }
+    [ -z "$FILE_SIZE" ] && FILE_SIZE="unknown"
 
     if (whiptail --title "Confirm DB Download" \
                  --yesno "Download new database from '$DB_SOURCE'?\n\nUpdated: ${LAST_UPDATED}, size: ${FILE_SIZE}\n\n(TIP: for long running tasks consider running iric in a screen session)" \
