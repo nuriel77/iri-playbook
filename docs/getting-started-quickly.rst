@@ -26,6 +26,19 @@ For **Ubuntu/Debian** if ``curl`` isi missing you can install it by running: ``s
 
 **The installation command will pull a script and kick off the installation. Make sure you read the warning above!**
 
+Dockerized IRI Playbook (recommended)
+-------------------------------------
+
+For the **"Dockerized" version** (containers) run:
+
+.. code:: bash
+
+  GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
+
+Please don't use UDP for peering neighbors anymore, as it just causes unnecessary overhead on the node. UDP chances for packets to get lost and re-requested by your node from other neighbors.
+
+Documentation for the "Dockerized" version can be `found here <https://iri-playbook.readthedocs.io/en/feat-docker/>`_.
+
 Original IRI Playbook
 ---------------------
 
@@ -37,16 +50,6 @@ To install the **original playbook** version:
 
    bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/master/fullnode_install.sh)
 
-Dockerized IRI Playbook (beta)
-------------------------------
-
-For the **"Dockerized" version** (containers) run:
-
-.. code:: bash
-
-  GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
-
-Documentation for the "Dockerized" version can be `found here <https://iri-playbook.readthedocs.io/en/feat-docker/>`_.
 
 
 Additional Information
