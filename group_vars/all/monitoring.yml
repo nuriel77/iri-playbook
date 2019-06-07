@@ -14,7 +14,7 @@ exporter_port: 9100
 exporter_bind_address: 127.0.0.1
 collector_textfiles_dir: /var/run/prometheus
 
-nodesource_version: 8
+nodesource_version: 9
 # Here path provided and full path constructed in task
 iota_prom_exporter_basedir: iota-prom-exporter
 iota_prom_exporter_port: 9311
