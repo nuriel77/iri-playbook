@@ -37,13 +37,6 @@
     name: epel-release
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-# NPM update
-- name: Update npm, this might take a while...
-  npm:
-    name: npm
-    state: latest
-    global: yes
-
 - name: Install some packages
   yum:
     name: "{{ packages }}"
@@ -88,6 +81,13 @@
 - name: install pip requirements, to support remote installations
   pip:
     name: passlib
+
+# NPM update
+- name: Update npm, this might take a while...
+  npm:
+    name: npm
+    state: latest
+    global: yes
 
 - name: Install nginx packages
   apt:
