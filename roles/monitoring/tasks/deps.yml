@@ -130,6 +130,12 @@
         update_cache: yes
       vars:
         packages:
+          - build-essential
+          - gcc
+          - make
+          - g++
+          - libc6-dev
+          - libzmq3-dev
           - grafana
           - postfix
           - mutt
