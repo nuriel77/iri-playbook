@@ -104,6 +104,13 @@
 - name: install scripts
   block:
 
+    - name: generate required locale
+      locale_gen:
+        name: "{{ add_locale | default('en_US.UTF-8') }}"
+        state: present
+      ignore_errors: yes
+      tags: gen_locale
+
     - name: copy utility scripts
       copy:
         src: "files/{{ item }}"
