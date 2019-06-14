@@ -302,7 +302,7 @@ else
     while IFS= read -r -d '' cert; do
         DOMAIN_DIR=$(dirname "${cert}")
         if ! openssl x509 -noout -checkend $((4*7*86400)) -in "${cert}"; then
-            subject="$(openssl x509 -noout -subject -in "${cert}" | grep -o -E 'CN=[^ ,]+' | tr -d 'CN=')"
+            subject="$(openssl x509 -noout -subject -in "${cert}" | grep -o -E 'CN ?= ?[^ ,]+' | tr -d 'CN= ?')"
             subjectaltnames="$(openssl x509 -noout -text -in "${cert}" | sed -n '/X509v3 Subject Alternative Name/{n;p}' | sed 's/\s//g' | tr -d 'DNS:' | sed 's/,/ /g')"
             echo "Certificate's CN/subject: '$subject'"
             echo "Certificates subjectAltNames: '$subjectaltnames'"
@@ -326,11 +326,26 @@ else
                 logger_info "renewed certificate for ${subject}"
             fi
         else
+            # If all certificates seem okay, check whether the haproxy.pem
+            # has already been updated, else add the name to be processed
+            # so that haproxy.pem gets updated.
+            HAPROXY_CERT=$(find "${DOMAIN_DIR}" -type f -name haproxy.pem)
+            if [ $? -eq 0 ] && [[ "${HAPROXY_CERT}x" != "x" ]]; then
+                echo $cert
+                if ! openssl x509 -noout -checkend $((4*7*86400)) -in "${HAPROXY_CERT}"; then
+                    subject="$(openssl x509 -noout -subject -in "${cert}" | grep -o -E 'CN ?= ?[^ ,]+' | tr -d 'CN= ?')"
+                    renewed_certs+=("$subject")
+                    logger_info "${HAPROXY_CERT} older than ${cert}, mark for update from certificates."
+                fi
+            fi
             logger_info "none of the certificates requires renewal"
         fi
     done < <(find "${le_cert_root}" -name cert.pem -print0)
 fi
 
+# At this stage, the above has exited 0
+# If any domains in the renewed_certs array
+# the following code will create/refresh the haproxy.pem
 if [[ $exitcode -eq 0 ]]; then
     # create haproxy.pem file(s)
     for domain in ${renewed_certs[@]}; do
