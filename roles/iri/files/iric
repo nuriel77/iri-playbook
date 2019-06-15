@@ -126,6 +126,19 @@ function verify_playbook() {
         cd /opt && git clone -b "$IRI_BRANCH" https://github.com/nuriel77/iri-playbook.git
     fi
     cd /opt/iri-playbook
+
+    # Check if iri_net_name was enabled in iri.yml.
+    # If it was enabled before we perform a pull,
+    # make sure to write it to the override file.
+    # This way we avoid changing configuration on
+    # an installation already using bridged network.
+    if grep -q "^iri_net_name: .*" group_vars/all/iri.yml; then
+        # Another grep from override file to make sure we are only
+        # adding the option once. Then take the existing value from
+        # iri.yml and move it to the override file.
+        grep -q "^iri_net_name: .*" group_vars/all/z-installer-override.yml || grep "^iri_net_name: .*" group_vars/all/iri.yml >> group_vars/all/z-installer-override.yml
+    fi
+
     OUTPUT=$(git pull 2>&1)
     RC=$?
     HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
