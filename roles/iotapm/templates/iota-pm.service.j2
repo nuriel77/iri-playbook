@@ -18,7 +18,8 @@ ExecStart=/usr/bin/docker run \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
 {% endif %}
   -e IOTA_NODE=${IRI_ADDRESS} \
-  -e HTTP_PORT={{ '0.0.0.0' if iri_net_name is defined else '${BIND_ADDRESS}' }}:${BIND_PORT} \
+  -e HTTP_ADDRESS={{ '0.0.0.0' if iri_net_name is defined else '${BIND_ADDRESS}' }} \
+  -e HTTP_PORT=${BIND_PORT} \
   -e HOME=/opt/iota-pm \
   -e REFRESH=${REFRESH} \
   $DOCKER_OPTS \
