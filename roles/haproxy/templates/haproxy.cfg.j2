@@ -154,7 +154,7 @@ backend iri_back
     option httpchk POST /
     http-check expect status 400
     default-server inter 10s fall 4 rise 2
-    server iri 127.0.0.1:{{ iri_mgmt_api_port|default('14266') }} maxconn {{ iri_api_max_connections }} check
+    server iri 127.0.0.1:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }} maxconn {{ iri_api_max_connections }} check
 
 listen stats
     bind {{ haproxy_stats_address }}:{{ haproxy_stats_port }} ssl crt {{ ssl_certkey_file }}

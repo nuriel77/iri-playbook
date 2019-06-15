@@ -10,15 +10,17 @@ EnvironmentFile=-{{ config_dir }}/grafana-server
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname %p \
   --user {{ grafana_uid.stdout }} \
-  --net={{ iri_net_name }} \
+  --net={{ iri_net_name | default('host') }} \
   --cap-drop=ALL \
   -v /etc/localtime:/etc/localtime:ro,Z \
   -v ${CONFIG_FILE}:${CONFIG_FILE}:ro,Z \
   -v ${BASE_DIR}:${BASE_DIR}:Z \
   -v ${PROV_DIR}:${PROV_DIR}:ro,Z \
+{% if iri_net_name is defined %}
+  --hostname %p \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+{% endif %}
   -e GF_SERVER_PROTOCOL=http \
   $DOCKER_OPTS \
   {{ grafana_image }}:${TAG} \

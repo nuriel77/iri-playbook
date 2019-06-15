@@ -35,7 +35,7 @@ provisioning = {{ grafana_provisioning_path }}
 ;protocol = http
 
 # The ip address to bind to, empty will bind to all interfaces
-http_addr = 0.0.0.0
+http_addr = {% if iri_net_name is defined %}0.0.0.0{% else %}127.0.0.1{% endif %} 
 
 # The http port  to use
 http_port = {{ grafana_port }}

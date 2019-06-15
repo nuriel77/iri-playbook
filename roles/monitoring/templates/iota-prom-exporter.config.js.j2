@@ -3,15 +3,15 @@ global.rootPath = path.normalize(path.join(__dirname, '..', '..'))
 
 module.exports = {
     // url and port of your IRI node
-    iota_node_url: 'http://iri:{{ iri_mgmt_api_port|default('14266') }}',
+    iota_node_url: 'http://{{ 'iri' if iri_net_name is defined else '127.0.0.1' }}:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }}',
 
     // address and port where the exporter will be bound
-    bind_address: '0.0.0.0',
+    bind_address: '{{ '0.0.0.0' if iri_net_name is defined else '127.0.0.1' }}',
     bind_port: '{{ iota_prom_exporter_port }}',
 
     // address where zmq is being served (example: '127.0.0.1:5556')
     // *** Leave blank if ZMQ is not enabled on IRI ***
-    zmq_url: '{% if iri_zmq_enabled is defined and iri_zmq_enabled %}iri:{{ iri_zmq_port }}{% endif %}',
+    zmq_url: '{% if iri_zmq_enabled is defined and iri_zmq_enabled|bool %}{{ 'iri' if iri_net_name is defined else '127.0.0.1' }}:{{ iri_zmq_port }}{% endif %}',
 
     // the frequency that this application will seek for new messages
     // and force a reconnect to the zmq queue if one is not found
