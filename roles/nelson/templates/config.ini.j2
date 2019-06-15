@@ -9,7 +9,10 @@ IRIHostname = {{ nelson_iri_host }}
 IRIProtocol = any
 IRIPort = 14266
 TCPPort = {{ iri_tcp_port }}
-UDPPort = {{ iri_udp_port }}
+
+; No longer in use in IRI:
+UDPPort = 14600
+
 dataPath = {{ nelson_datadir }}/data/neighbors.db
 ; maximal incoming connections. Please do not set below this limit:
 incomingMax = 5

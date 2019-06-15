@@ -11,13 +11,6 @@
     state: enabled
     immediate: yes
 
-- name: allow iri udp port in firewall
-  firewalld:
-    port: "{{ iri_udp_port }}/udp"
-    permanent: true
-    state: enabled
-    immediate: yes
-
 # Allow direct access to IRI API port
 # from other nodes in the cluster.
 # This is only done when deploying

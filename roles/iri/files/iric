@@ -456,7 +456,7 @@ function add_neighbors() {
     fi
 
     ADD_LIST=$(echo "$NEIGHBORS" | sed 's/  */ /g' | sed 's/ / -n /g' | sed 's/^\(.*\)/-n \1/')
-    if ! (echo "$ADD_LIST" | egrep -q "tcp|udp"); then
+    if ! (echo "$ADD_LIST" | egrep -q "tcp"); then
         whiptail --title "Invalid Input" \
                  --msgbox "Invalid input provided. Please check the syntax you provided is valid." \
                   8 $WIDTH

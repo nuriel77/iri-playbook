@@ -22,9 +22,6 @@ iri_testnet: false
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
 iri_api_port: 14265
 
-# The UDP neighbor peering port
-iri_udp_port: 14600
-
 # The TCP neighbor peering port
 iri_tcp_port: 15600
 
