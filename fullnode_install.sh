@@ -407,11 +407,11 @@ function set_primary_ip()
   echo "Getting external IP address..."
   local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
   if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-    echo "Got IP $ip"
-    PRIMARY_IP=$ip
+      echo "Got IP $ip"
+      PRIMARY_IP=$ip
   else
-    PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
-    echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
+      PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+      echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
   fi
 }
 
@@ -513,7 +513,7 @@ EOF
     # This could happen on script re-run
     # due to reboot, therefore the variable is empty
     if [ -z "$ADMIN_USER" ]; then
-        ADMIN_USER=$(grep ^iotapm_nginx_user /opt/iri-playbook/group_vars/all/z-installer-override.yml | awk {'print $2'})
+        ADMIN_USER=$(grep "^fullnode_user:" /opt/iri-playbook/group_vars/all/z-installer-override.yml | awk {'print $2'})
     fi
 
     OUTPUT=$(cat <<EOF
