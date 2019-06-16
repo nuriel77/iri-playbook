@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.14
+VERSION=0.8.15
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -1047,6 +1047,8 @@ function services_menu() {
     "h)" "HAProxy" \
     "i)" "Nelson" \
     "j)" "Nelson GUI" \
+    "k)" "Node Exporter" \
+    "l)" "CAdvisor" \
     3>&1 1>&2 2>&3
 }
 
@@ -1106,6 +1108,16 @@ function services() {
 
         "j)")
            service nelson-gui
+           services
+           ;;
+
+        "k)")
+           service node-exporter
+           services
+           ;;
+
+        "l)")
+           service cadvisor
            services
            ;;
 
