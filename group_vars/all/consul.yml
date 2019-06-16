@@ -5,8 +5,8 @@ consul_tag: 1.2.2
 consul_username: consul
 consul_config_dir: /etc/consul
 consul_data_dir: /var/lib/consul
-consul_comm_port: 8500
-consul_ssl_port: 8443
+consul_comm_port: "8500"
+consul_ssl_port: "8443"
 consul_key_file: consul.key
 consul_master_token_file: consul_master_token
 consul_agent_token_file: consul_agent_token

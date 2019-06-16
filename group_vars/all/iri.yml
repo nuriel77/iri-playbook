@@ -20,20 +20,20 @@ iri_tag: "v{{ iri_version }}"
 iri_testnet: false
 
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
-iri_api_port: 14265
+iri_api_port: "14265"
 
 # Will be used when IRI runs in bridged network mode
 # i.e. when iri_net_name is defined and enabled
-iri_mgmt_api_port: 14266
+iri_mgmt_api_port: "14266"
 
 # The UDP neighbor peering port
-iri_udp_port: 14600
+iri_udp_port: "14600"
 
 # The TCP neighbor peering port
-iri_tcp_port: 15600
+iri_tcp_port: "15600"
 
 # IRI ZMQ port
-iri_zmq_port: 5556
+iri_zmq_port: "5556"
 
 # IRI ZMQ bind address
 iri_zmq_bind: 127.0.0.1
