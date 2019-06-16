@@ -131,14 +131,13 @@
 - name: 'remove monitoring images...'
   docker_image:
     name: "{{ item.image }}"
-    tag: "{{ item.tag }}"
     state: absent
-    force: yes
+    force_absent: yes
   ignore_errors: yes
   with_items:
-    - { "image": "{{ prom_image }}", "tag": "{{ prom_tag }}" }
-    - { "image": "{{ alertmanager_image }}", "tag": "{{ alertmanager_tag }}" }
-    - { "image": "{{ grafana_image }}", "tag": "{{ grafana_tag }}" }
-    - { "image": "{{ exporter_image }}", "tag": "{{ exporter_tag }}" }
-    - { "image": "{{ iota_prom_exporter_image }}", "tag": "{{ iota_prom_exporter_tag }}" }
-    - { "image": "{{ cadvisor_image }}", "tag": "{{ cadvisor_tag }}" }
+    - "{{ prom_image }}"
+    - "{{ alertmanager_image }}"
+    - "{{ grafana_image }}"
+    - "{{ exporter_image }}"
+    - "{{ iota_prom_exporter_image }}"
+    - "{{ cadvisor_image }}"

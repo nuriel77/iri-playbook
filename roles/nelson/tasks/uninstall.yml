@@ -94,11 +94,10 @@
 
 - name: 'remove nelson images...'
   docker_image:
-    name: "{{ item.image }}"
-    tag: "{{ item.tag }}"
+    name: "{{ item }}"
     state: absent
-    force: yes
+    force_absent: yes
   ignore_errors: yes
   with_items:
-    - { "image": "{{ nelson_image }}", "tag": "{{ nelson_tag }}" }
-    - { "image": "{{ nelsongui_image }}", "tag": "{{ nelsongui_tag }}" }
+    - "{{ nelson_image }}"
+    - "{{ nelsongui_image }}"

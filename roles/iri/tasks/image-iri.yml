@@ -10,7 +10,8 @@
   docker_image:
     name: "{{ iri_image }}"
     tag: "{{ iri_download_tag_version }}"
-    force: "{{ force_pull_image | default('no') }}"
+    force_source: "{{ force_pull_image | default('no') }}"
+    source: pull
   notify:
     - restart iri
   register: download_image_status
@@ -27,7 +28,8 @@
   docker_image:
     name: "{{ iri_image }}"
     tag: "{{ iri_download_tag_version }}"
-    force: "{{ force_pull_image | default('no') }}"
+    force_source: "{{ force_pull_image | default('no') }}"
+    source: pull
   notify:
     - restart iri
   register: download_image_status
@@ -38,7 +40,7 @@
         images_from_master is not defined or
         images_from_master|bool == False
 
-- name: remove annoying RELEASE tag!
+- name: remove -RELEASE from tag
   shell: "/usr/bin/docker tag {{ iri_image }}:{{ iri_download_tag_version }} {{ iri_image }}:{{ iri_tag }}"
   when: iri_version is version_compare('1.5.6', '>=')
   changed_when: False
@@ -81,6 +83,7 @@
         name: "{{ this_image }}"
         tag: "{{ this_tag }}"
         load_path: "{{ this_file }}"
+        source: load
       when:
         - image_copied.changed
       notify:

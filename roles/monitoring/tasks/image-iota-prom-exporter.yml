@@ -2,7 +2,8 @@
   docker_image:
     name: "{{ iota_prom_exporter_image }}"
     tag: "{{ iota_prom_exporter_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+    force_source: "{{ force_pull_image | default('no') }}"
+    source: pull
   notify:
     - restart iota-prom-exporter
   register: download_image_status
@@ -19,7 +20,8 @@
   docker_image:
     name: "{{ iota_prom_exporter_image }}"
     tag: "{{ iota_prom_exporter_tag }}"
-    force: "{{ force_pull_image | default('no') }}"
+    force_source: "{{ force_pull_image | default('no') }}"
+    source: pull
   notify:
     - restart iota-prom-exporter
   register: download_image_status
@@ -68,6 +70,7 @@
         name: "{{ this_image }}"
         tag: "{{ this_tag }}"
         load_path: "{{ this_file }}"
+        source: load
       when:
         - image_copied.changed
       notify:

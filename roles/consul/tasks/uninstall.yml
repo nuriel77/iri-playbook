@@ -119,8 +119,7 @@
 
 - name: remove consul image
   docker_image:
-    force: yes
+    force_absent: yes
     state: absent
     name: "{{ consul_image }}"
-    tag: "{{ consul_tag }}"
   ignore_errors: yes

@@ -12,7 +12,7 @@
         name: "{{ consul_image }}"
         tag: "{{ consul_tag }}"
         state: absent
-        force: yes
+        force_absent: yes
 
   when:
     - remove_consul_image is defined
@@ -42,6 +42,7 @@
         path: "{{ tempdir.path }}"
         name: "{{ consul_image }}"
         tag: "{{ consul_tag }}"
+        source: build
       notify:
         - restart consul
 
@@ -75,6 +76,7 @@
         path: "{{ tempdir.path }}"
         name: "{{ consul_image }}"
         tag: "{{ consul_tag }}"
+        source: build
       notify:
         - restart consul
 
@@ -126,6 +128,7 @@
         name: "{{ this_image }}"
         tag: "{{ this_tag }}"
         load_path: "{{ this_file }}"
+        source: load
       when:
         - image_copied.changed
       notify:
