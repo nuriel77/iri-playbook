@@ -10,16 +10,18 @@ EnvironmentFile=-{{ config_dir }}/nelson-gui
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname nelsongui \
   --user {{ nelson_uid.stdout }} \
-  --net={{ iri_net_name }} \
+  --net={{ iri_net_name | default('host') }} \
   --cap-drop=ALL \
   -v /etc/localtime:/etc/localtime:ro,Z \
+{% if iri_net_name is defined %}
+  --hostname nelsongui \
   -p ${GUI_BIND_ADDRESS}:${GUI_PORT}:${GUI_PORT} \
+{% endif %}
   $DOCKER_OPTS \
   {{ nelsongui_image }}:${TAG} \
   --port $GUI_PORT \
-  --apiHostname nelson \
+  --apiHostname {{ 'nelson' if iri_net_name is defined else '127.0.0.1' }} \
   --apiPort $NELSON_API_PORT
 
 ExecStop=/usr/bin/docker stop %p
