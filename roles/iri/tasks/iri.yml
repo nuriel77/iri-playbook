@@ -8,9 +8,7 @@
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
   when: ansible_distribution == 'CentOS'
-  tags:
-    - nbctl_config
-    - always
+  tags: always
 
 - name: set variables ubuntu
   set_fact:
@@ -19,7 +17,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags:
     - nbctl_config
-    - always
+    - scripts
 
 - name: allow IPv4 forwarding in kernel
   sysctl:
@@ -107,12 +105,30 @@
 - name: install scripts
   block:
 
-    - name: generate required locale
+    - set_fact:
+        system_settings_locale: "{{ add_locale | default('en_US.UTF-8') }}"
+
+    - name: generate required locale Ubuntu/Debian
       locale_gen:
-        name: "{{ add_locale | default('en_US.UTF-8') }}"
+        name: "{{ system_settings_locale }}"
         state: present
       ignore_errors: yes
       tags: gen_locale
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: check if locale exists
+      shell: "/usr/bin/locale -a | grep -i {{ system_settings_locale | regex_replace('-', '') | quote }}"
+      register: found_locale
+      changed_when: no
+      failed_when: no
+      when: ansible_distribution == 'CentOS'
+
+    - name: create locale
+      command: "localedef -i {{ system_settings_locale | regex_replace('(.*)\\..*', '\\1') | quote }} -f {{ system_settings_locale | regex_replace('.*\\.(.*)', '\\1') | quote }} {{ system_settings_locale | quote }}"
+      ignore_errors: yes
+      when:
+        - ansible_distribution == 'CentOS'
+        - found_locale.rc != 0
 
     - name: copy utility scripts
       copy:
