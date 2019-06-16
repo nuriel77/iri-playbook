@@ -36,6 +36,8 @@
     src: templates/grafana.sysconfig.j2
     dest: "{{ config_dir }}/grafana-server"
     force: "{{ overwrite | default('no') }}"
+  notify:
+      - restart grafana-server
 
 - name: copy grafana systemd service file
   template:
