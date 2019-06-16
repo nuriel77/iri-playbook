@@ -488,8 +488,8 @@ EOF
         cat <<EOF
 -------------------- NOTE --------------------
 
-The installer detected that the playbook requires a reboot,
-most probably to enable a functionality which requires the reboot.
+The installer detected that the server requires a reboot,
+most probably to enable a functionality required for the playbook.
 
 You can reboot the server using the command 'reboot'.
 
