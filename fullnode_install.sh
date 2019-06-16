@@ -334,8 +334,8 @@ http://iri-playbook.readthedocs.io/en/feat-docker/appendix.html#options\n\n\
 Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
         "INSTALL_DOCKER"           "Install Docker runtime (recommended)" ON \
         "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
-        "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
-        "SKIP_FIREWALL_CONFIG"  "Skip configuring firewall" OFF \
+        "USE_BRIDGED_NETWORK"      "Use Docker bridged network (less performance)" OFF \
+        "SKIP_FIREWALL_CONFIG"     "Skip configuring firewall" OFF \
         "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
         "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
         "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
@@ -360,10 +360,9 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
                 INSTALL_OPTIONS+=" -e install_nginx=true"
                 echo "install_nginx: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
-            '"DISABLE_SYS_DEPS"')
-                INSTALL_OPTIONS+=" -e install_system_deps=false"
-                DISABLE_SYS_DEPS=1
-                echo "install_system_deps: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+            '"USE_BRIDGED_NETWORK"')
+                INSTALL_OPTIONS+=" -e iri_net_name=iri_net"
+                echo "iri_net_name: iri_net" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"SKIP_FIREWALL_CONFIG"')
                 INSTALL_OPTIONS+=" -e configure_firewall=false"
@@ -458,7 +457,7 @@ function run_playbook(){
     LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
 
     # Override ssh_port
-    [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
+    [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: \"${SSH_PORT}\"" > group_vars/all/z-ssh-port.yml
 
     # Run the playbook
     echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"

@@ -10,24 +10,24 @@ scrape_configs:
   - job_name: 'node_exporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['node-exporter:{{ exporter_port }}']
+      - targets: ['{{ 'node-exporter' if iri_net_name is defined else '127.0.0.1' }}:{{ exporter_port }}']
 
   - job_name: 'iota_exporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['iota-prom-exporter:{{ iota_prom_exporter_port }}']
+      - targets: ['{{ 'iota-prom-exporter' if iri_net_name is defined else '127.0.0.1' }}:{{ iota_prom_exporter_port }}']
 
   - job_name: 'cadvisor'
     scrape_interval: 5s
     static_configs:
-      - targets: ['cadvisor:{{ cadvisor_port }}']
+      - targets: ['{{ 'cadvisor' if iri_net_name is defined else '127.0.0.1' }}:{{ cadvisor_port }}']
 
 alerting:
   alertmanagers:
     - scheme: http
       static_configs:
       - targets:
-        - "alertmanager:{{ alertmanager_port }}"
+        - "{{ 'alertmanager' if iri_net_name is defined else '127.0.0.1' }}:{{ alertmanager_port }}"
 
 rule_files:
   - "{{ prom_configdir }}/alert.rules.yml"

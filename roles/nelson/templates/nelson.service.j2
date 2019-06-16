@@ -10,15 +10,17 @@ EnvironmentFile=-{{ config_dir }}/nelson
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname nelson \
   --user {{ nelson_uid.stdout }} \
-  --net={{ iri_net_name }} \
+  --net={{ iri_net_name | default('host') }} \
   --cap-drop=ALL \
   -v {{ nelson_datadir }}:/var/lib/nelson/data:Z \
   -v {{ nelson_configdir }}:/etc/nelson:ro,Z \
   -v /etc/localtime:/etc/localtime:ro,Z \
+{% if iri_net_name is defined %}
+  --hostname nelson \
   -p ${NELSON_API_HOST}:${API_PORT}:${API_PORT} \
   -p ${TCP_PORT}:${TCP_PORT}  \
+{% endif %}
   -e NELSON_CONFIG=${NELSON_CONFIG} \
   $DOCKER_OPTS \
   {{ nelson_image }}:${TAG}

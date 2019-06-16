@@ -8,14 +8,17 @@ EnvironmentFile=-{{ config_dir }}/iota-pm
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname %p \
   --user {{ iotapm_uid.stdout }} \
-  --net={{ iri_net_name }} \
+  --net={{ iri_net_name | default('host') }} \
   --cap-drop=ALL \
   -v /etc/localtime:/etc/localtime:ro,Z \
   -v /var/spool/iotapm/iota-pm.conf:/opt/iota-pm/iota-pm.conf \
+{% if iri_net_name is defined %}
+  --hostname %p \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+{% endif %}
   -e IOTA_NODE=${IRI_ADDRESS} \
+  -e HTTP_ADDRESS={{ '0.0.0.0' if iri_net_name is defined else '${BIND_ADDRESS}' }} \
   -e HTTP_PORT=${BIND_PORT} \
   -e HOME=/opt/iota-pm \
   -e REFRESH=${REFRESH} \

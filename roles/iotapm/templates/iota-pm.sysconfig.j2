@@ -7,5 +7,5 @@ REFRESH=5
 # IRI network access values
 BIND_ADDRESS={{ iotapm_bind_address }}
 BIND_PORT={{ iotapm_port }}
-IRI_ADDRESS="http://iri:{{ iri_mgmt_api_port|default('14266') }}"
+IRI_ADDRESS="http://{{ 'iri' if iri_net_name is defined else '127.0.0.1' }}:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }}"
 DOCKER_OPTS=""

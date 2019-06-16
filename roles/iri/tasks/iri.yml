@@ -21,7 +21,7 @@
 - name: allow IPv4 forwarding in kernel
   sysctl:
     name: net.ipv4.ip_forward
-    value: 1
+    value: "1"
     sysctl_set: yes
     state: present
     reload: yes
@@ -154,7 +154,7 @@
 - name: config default ~/.nbctl
   copy:
     dest: "{{ ansible_env.HOME }}/.nbctl"
-    content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_mgmt_api_port|default('14266') }}\nfile: {{ config_dir }}/iri\n"
+    content: "api_version: {{ iri_version }}\nhost: http://127.0.0.1:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }}\nfile: {{ config_dir }}/iri\n"
     force: "{{ overwrite | default('no') }}"
     backup: yes
   tags:
@@ -164,7 +164,7 @@
 - name: configure ~/.iritop
   copy:
     dest: "{{ ansible_env.HOME }}/.iritop"
-    content: "node: http://127.0.0.1:{{ iri_mgmt_api_port|default('14266') }}"
+    content: "node: http://127.0.0.1:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }}"
     force: "{{ overwrite | default('no') }}"
     backup: yes
   tags:
@@ -228,6 +228,7 @@
       com.docker.network.bridge.host_binding_ipv4: '0.0.0.0'
       com.docker.network.bridge.enable_icc: 'true'
       com.docker.network.bridge.name: 'br-iri0'
+  when: iri_net_name is defined
   tags:
     - iri_network
 

@@ -20,16 +20,20 @@ iri_tag: "v{{ iri_version }}"
 iri_testnet: false
 
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
-iri_api_port: 14265
+iri_api_port: "14265"
+
+# Will be used when IRI runs in bridged network mode
+# i.e. when iri_net_name is defined and enabled
+iri_mgmt_api_port: "14266"
 
 # The UDP neighbor peering port
-iri_udp_port: 14600
+iri_udp_port: "14600"
 
 # The TCP neighbor peering port
-iri_tcp_port: 15600
+iri_tcp_port: "15600"
 
 # IRI ZMQ port
-iri_zmq_port: 5556
+iri_zmq_port: "5556"
 
 # IRI ZMQ bind address
 iri_zmq_bind: 127.0.0.1
@@ -49,8 +53,11 @@ iri_init_java_mem: 1024m
 # IRI memory heap size Xmn
 iri_java_heap_mem: 1024m
 
-# A network will be created in docker for iri
-iri_net_name: iri_net
+# Enabling this option will create a network in docker for
+# iri with the value set as the network's name. The general
+# recommendation for iri is to keep this disabled thereby
+# using the host's network which has better performance.
+#iri_net_name: iri_net
  
 # Exclude the commands below from the API.
 # Applied only to connections other than localhost/127.0.0.1
