@@ -45,6 +45,7 @@
     dest: "{{ iota_prom_exporter_basedir }}/config.js"
     owner: "{{ prom_username }}"
     group: "{{ prom_username }}"
+    force: "{{ overwrite | default('no') }}"
   notify:
     - restart iota-prom-exporter
 

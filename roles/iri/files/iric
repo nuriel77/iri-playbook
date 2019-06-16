@@ -127,16 +127,24 @@ function verify_playbook() {
     fi
     cd /opt/iri-playbook
 
-    # Check if iri_net_name was enabled in iri.yml.
+    # Check if bridged network is enabled for iri.
     # If it was enabled before we perform a pull,
     # make sure to write it to the override file.
     # This way we avoid changing configuration on
     # an installation already using bridged network.
-    if grep -q "^iri_net_name: .*" group_vars/all/iri.yml; then
-        # Another grep from override file to make sure we are only
-        # adding the option once. Then take the existing value from
-        # iri.yml and move it to the override file.
-        grep -q "^iri_net_name: .*" group_vars/all/z-installer-override.yml || grep "^iri_net_name: .*" group_vars/all/iri.yml >> group_vars/all/z-installer-override.yml
+    # First get the unit file:
+    IRI_SERVICE_FILE=$(/bin/systemctl show -p FragmentPath iri | cut -d= -f2)
+    if [[ "${IRI_SERVICE_FILE}x" != "x" ]]; then
+        # If host network is not enabled
+        if ! grep -q '\-\-net=host' "${IRI_SERVICE_FILE}"; then
+            # Get current bridged network name
+            NET_NAME=$(grep '\-\-net=' "${IRI_SERVICE_FILE}" | cut -d= -f2 | tr -d ' \\')
+            # Ensure we have such a network in docker
+            if /usr/bin/docker network ls --format "{{lower .Name}}" | grep -q "^${NET_NAME}"; then
+                # Make sure we add the bridged network name in override file, only once
+                grep -q "^iri_net_name: ${NET_NAME}" group_vars/all/z-installer-override.yml || echo "iri_net_name: ${NET_NAME}" >> group_vars/all/z-installer-override.yml
+            fi
+        fi
     fi
 
     OUTPUT=$(git pull 2>&1)
