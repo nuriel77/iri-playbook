@@ -8,16 +8,16 @@ iri_basedir: /var/lib/iri
 iri_version: 1.7.0
 
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
-iri_api_port: 14265
+iri_api_port: "14265"
 
 # The UDP neighbor peering port
-iri_udp_port: 14600
+iri_udp_port: "14600"
 
 # The TCP neighbor peering port
-iri_tcp_port: 14600
+iri_tcp_port: "15600"
 
 # IRI ZMQ port
-iri_zmq_port: 5556
+iri_zmq_port: "5556"
 
 # IRI ZMQ enabled (extra metrics from IRI)
 iri_zmq_enabled: true

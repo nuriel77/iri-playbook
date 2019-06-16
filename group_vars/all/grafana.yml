@@ -1,5 +1,5 @@
-grafana_port: 3000
+grafana_port: "3000"
 grafana_bind_address: 127.0.0.1
-grafana_nginx_port: 5555
+grafana_nginx_port: "5555"
 grafana_provisioning_path: /etc/grafana/provisioning
 grafana_dashboards_path: /var/lib/grafana/dashboards

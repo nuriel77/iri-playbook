@@ -2,7 +2,7 @@
 lb_bind_address: 127.0.0.1
 
 # This will be the external accessible port
-iri_api_port_remote: 14267
+iri_api_port_remote: "14267"
 
 # Max connections to API
 iri_api_max_connections: 12
@@ -14,7 +14,7 @@ iri_remote_auth: false
 lb_max_connections: 24
 
 # Stats port for haproxy
-haproxy_stats_port: 9292
+haproxy_stats_port: "9292"
 
 # Stats bind to address
 haproxy_stats_address: 127.0.0.1

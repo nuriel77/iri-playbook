@@ -4,20 +4,20 @@ prom_basedir: /opt/prometheus
 prom_datadir: /var/lib/prometheus
 prom_configdir: /etc/prometheus
 prom_config: prometheus.yaml
-prom_port: 9090
+prom_port: "9090"
 prom_bind_address: 127.0.0.1
-prom_nginx_port: 8999
+prom_nginx_port: "8999"
 
 exporter_version: 0.15.2
 exporter_basedir: /opt/prometheus/node_exporter
-exporter_port: 9100
+exporter_port: "9100"
 exporter_bind_address: 127.0.0.1
 collector_textfiles_dir: /var/run/prometheus
 
 nodesource_version: 9
 # Here path provided and full path constructed in task
 iota_prom_exporter_basedir: iota-prom-exporter
-iota_prom_exporter_port: 9311
+iota_prom_exporter_port: "9311"
 iota_prom_exporter_bind: 127.0.0.1
 iota_prom_exporter_market_data: true
 iota_prom_exporter_db_days_retention: 14
@@ -25,13 +25,13 @@ iota_prom_exporter_db_days_retention: 14
 # Here (legacy) has been provided the full path
 alertmanager_basedir: /opt/prometheus/alertmanager
 alertmanager_version: 0.12.0
-alertmanager_port: 9093
-alertmanager_nginx_port: 9993
+alertmanager_port: "9093"
+alertmanager_nginx_port: "9993"
 alertmanager_bind: 127.0.0.1
 alertmanager_email_from: alertmanager
 alertmanager_email_to: root@localhost
 alertmanager_loglevel: info
 smtp_host: localhost
-smtp_port: 25
+smtp_port: "25"
 
-prom_am_executor_port: 9158
+prom_am_executor_port: "9158"

@@ -18,16 +18,16 @@ nelson_iri_host: 127.0.0.1
 nelson_bind_address: 127.0.0.1
 
 # Nelson API port
-nelson_api_port: 18600
+nelson_api_port: "18600"
 
 # Nelson communication TCP port
-nelson_tcp_port: 16600
+nelson_tcp_port: "16600"
 
 # Nelson gui port
-nelson_gui_port_internal: 6611
+nelson_gui_port_internal: "6611"
 
 # Nelson gui port
-nelson_gui_port: 6600
+nelson_gui_port: "6600"
 
 # Nelson gui fallback version to install
 # If latest version fails, this is the latest
