@@ -13,7 +13,7 @@ fi
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.16
+VERSION=0.7.17
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
 WIDTH=78
@@ -331,7 +331,7 @@ function enable_https() {
     local ENABLE_NGINX_CERT
 
     if ! (whiptail --title "Enable HTTPS" \
-	    --yesno "This option will enable HTTPS on IRI API port via HAProxy (port 14267 by default).\nAny previous configuration to HAProxy configuration will be overwritten.\nDo you want to proceed?" \
+                 --yesno "This option will enable HTTPS on IRI API port via HAProxy (port 14267 by default).\nAny previous configuration to HAProxy configuration will be overwritten.\nDo you want to proceed?" \
                  --defaultno \
                  12 $WIDTH) then
         return 1
@@ -358,7 +358,7 @@ function enable_https() {
     if [[ "$POW" == "enabled" ]]; then
         echo "haproxy_deny_regex: '(get|remove|add)Neighbors'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
     else
-	echo "haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
+        echo "haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
     fi
 
     # Enable haproxy https via variable override file
@@ -371,7 +371,7 @@ function enable_https() {
     else
         clear
         if ! (whiptail --title "Request SSL Certificate" \
-		--yesno "HTTPS/SSL was enabled successfully. If you haven't done so yet, you can proceed in the next step to request a valid certificate for your domain. You must have a fully qualified domain name pointing to the IP address of your server.\n\nDo you want to proceed?" \
+                 --yesno "HTTPS/SSL was enabled successfully. If you haven't done so yet, you can proceed in the next step to request a valid certificate for your domain. You must have a fully qualified domain name pointing to the IP address of your server.\n\nDo you want to proceed?" \
                  --defaultno \
                  18 $WIDTH) then
             return
@@ -390,8 +390,8 @@ function enable_https() {
 
     if (whiptail --title "Configure Nginx" \
         --yesno "Do you also want to configure this certificate for nginx (IOTA Peer Manager, Grafana etc.) ?" \
-	--defaultno \
-	12 $WIDTH) then
+        --defaultno \
+        12 $WIDTH) then
         ENABLE_NGINX_CERT=yes
     else
         ENABLE_NGINX_CERT=false
@@ -1055,6 +1055,7 @@ function services_menu() {
     "h)" "HAProxy" \
     "i)" "Nelson" \
     "j)" "Nelson GUI" \
+    "k)" "Node Exporter" \
     3>&1 1>&2 2>&3
 }
 
@@ -1114,6 +1115,11 @@ function services() {
 
         "j)")
            service nelson-gui
+           services
+           ;;
+
+        "k)")
+           service node-exporter
            services
            ;;
 
