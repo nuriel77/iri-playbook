@@ -11,6 +11,8 @@
   docker_image:
     name: "{{ certbot_image }}"
     tag: "{{ certbot_tag }}"
+    force_source: "{{ force_pull_image | default('no') }}"
+    source: pull
   tags:
     - certbot_docker_image
   register: download_image_status

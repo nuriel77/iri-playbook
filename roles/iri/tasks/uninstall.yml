@@ -131,7 +131,6 @@
 - name: remove iri image
   docker_image:
     state: absent
-    force: yes
+    force_absent: yes
     name: "{{ iri_image }}"
-    tag: "{{ iri_tag }}"
   ignore_errors: yes

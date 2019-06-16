@@ -1,6 +1,7 @@
 - name: set iri variables
   set_fact:
     iri_workdir: "{{ iri_basedir }}/target"
+  tags: always
 
 - name: set variables centos
   set_fact:
@@ -9,6 +10,7 @@
   when: ansible_distribution == 'CentOS'
   tags:
     - nbctl_config
+    - always
 
 - name: set variables ubuntu
   set_fact:
@@ -17,6 +19,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags:
     - nbctl_config
+    - always
 
 - name: allow IPv4 forwarding in kernel
   sysctl:

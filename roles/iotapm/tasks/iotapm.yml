@@ -2,12 +2,14 @@
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
+  tags: always
   when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
+  tags: always
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: add user to run iota-pm as

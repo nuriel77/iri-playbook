@@ -1,11 +1,13 @@
 - name: set etc config dir debian/ubuntu
   set_fact:
     config_dir: /etc/default
+  tags: always
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: set etc config dir centos
   set_fact:
     config_dir: /etc/sysconfig
+  tags: always
   when: ansible_distribution == 'CentOS'
 
 - name: ensure etc haproxy dir
@@ -18,7 +20,7 @@
   stat:
     path: /etc/haproxy/haproxy.cfg
   register: haproxy_file
-  
+
 - name: back up original haproxy.cfg file
   block:
 
@@ -62,7 +64,7 @@
 
 - name: consul-template install
   block:
-  
+
     - name: create consul-template directory
       file:
         path: "{{ consul_template_basedir }}"

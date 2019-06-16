@@ -26,9 +26,8 @@
 - name: 'remove nginx images...'
   docker_image:
     name: "{{ nginx_image }}"
-    tag: "{{ nginx_tag }}"
     state: absent
-    force: yes
+    force_absent: yes
   ignore_errors: yes
 
 - name: remove playbook related nginx vhosts files
