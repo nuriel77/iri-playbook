@@ -5,6 +5,7 @@
     nodejs_bin: /usr/bin/node
     nelson_bin: /bin/nelson
     nelson_gui_bin: /usr/bin/nelson.gui
+  tags: always
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: set variables debian/ubuntu
@@ -14,6 +15,7 @@
     nodejs_bin: /usr/bin/nodejs
     nelson_bin: /usr/bin/nelson
     nelson_gui_bin: /usr/bin/nelson.gui
+  tags: always
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: add user to run nelson as

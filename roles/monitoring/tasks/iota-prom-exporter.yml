@@ -2,12 +2,14 @@
   set_fact:
     iota_prom_fulldir: "{{ prom_basedir }}/{{ iota_prom_exporter_basedir }}"
     iota_prom_tempdir: "/tmp/iota-prom-exporter_{{ ansible_date_time.epoch }}"
+  tags: always
 
 - name: set variables centos/redhat
   set_fact:
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
     nodejs_bin: /usr/bin/node
+  tags: always
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: set variables debian/ubuntu
@@ -15,12 +17,14 @@
     systemd_dir: /etc/systemd/system
     config_dir: /etc/default
     nodejs_bin: /usr/bin/nodejs
+  tags: always
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: stat iota-prom-exporter basedir for git updates
   stat:
     path: "{{ iota_prom_fulldir }}"
   register: iota_prom_fulldir_git
+  tags: always
 
 - name: check iota-prom-exporter requires updates
   shell: "cd {{ iota_prom_fulldir }} && [ $(git rev-parse HEAD) = $(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\\// /g') | cut -f1) ] && echo -n 'up to date' || echo -n 'not up to date'"

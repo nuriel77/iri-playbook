@@ -1,11 +1,13 @@
 - name: set etc config dir ubuntu
   set_fact:
     etc_config_dir: default
+  tags: always
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: set etc config dir centos
   set_fact:
     etc_config_dir: sysconfig
+  tags: always
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: ensure chroot dir
