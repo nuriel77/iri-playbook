@@ -11,7 +11,7 @@ iri_configdir: /etc/iri
 iri_image: iotaledger/iri
 
 # The iri version to install
-iri_version: 1.7.0
+iri_version: 1.7.1
 
 # IRI Docker image tag/version
 iri_tag: "v{{ iri_version }}"
