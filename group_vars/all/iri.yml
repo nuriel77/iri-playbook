@@ -5,7 +5,7 @@ iri_username: iri
 iri_basedir: /var/lib/iri
 
 # The iri version to install
-iri_version: 1.7.0
+iri_version: 1.7.1
 
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
 iri_api_port: "14265"
