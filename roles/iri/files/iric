@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.15
+VERSION=0.8.16
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -265,14 +265,15 @@ function upgrade_iri() {
     if compare_versions $IRI_LATEST '>=' 1.6.0
     then
         grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
+
 ; Local Snapshots Settings
 LOCAL_SNAPSHOTS_ENABLED = true
-LOCAL_SNAPSHOTS_DEPTH = 150
+LOCAL_SNAPSHOTS_DEPTH = 100
 LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
 LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000
-LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 20
+LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 10
 LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
-TIP_SOLIDIFIER_ENABLED = true
+TIP_SOLIDIFIER_ENABLED = false
 EOF
 
     fi
