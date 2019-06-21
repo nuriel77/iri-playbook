@@ -22,6 +22,16 @@ window=,
 
 if [ -f /etc/motd ] && grep -q 'IRI PLAYBOOK' /etc/motd; then
     :>/etc/motd
+else
+    if [ -f "/opt/iri-playbook/group_vars/all/z-installer-override.yml" ] && [ "$1" != "rerun" ]
+    then
+        if ! (whiptail --title "Confirmation" \
+                 --yesno "It looks like a previous installation already exists.\n\nRunning the installaer on an already working node is not recommended.\n\nIf you want to re-run only the playbook check the documentation or ask for assistance on Discord #fullnodes channel.\n\nPlease confirm you want to proceed with the installation?" \
+                 --defaultno \
+                 16 78); then
+            exit 1
+        fi
+    fi
 fi
 
 declare -g INSTALL_OPTIONS
