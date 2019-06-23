@@ -36,7 +36,7 @@ ExecStart=/usr/bin/docker run \
   -u ${UDP_RECEIVER_PORT} \
   -t ${TCP_RECEIVER_PORT} \
   -c /iri/conf/iri.ini $OPTIONS{% if iri_testnet is defined and iri_testnet %} \
-  --testnet
+  --testnet true
 {% endif %}
 
 ExecStop=/usr/bin/docker stop %p
