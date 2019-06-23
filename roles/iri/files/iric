@@ -230,10 +230,25 @@ function upgrade_nelson() {
 }
 
 function network_rewrite_update() {
+
+    # Set config file and firewall
     if [[ "$OS" =~ ^(CentOS|Red) ]]; then
         SYSCONFIG_FILE=/etc/sysconfig/iri
+        if [ -x /bin/firewall-cmd ]; then
+            if ! /bin/firewall-cmd --list-ports --permanent | grep -q '15600/tcp'; then
+                # Try to open the port but don't fail the script if it fails.
+                echo "Open peering port 15600/tcp"
+                /bin/firewall-cmd --add-port=15600/tcp --permanent || /bin/true
+                /bin/firewall-cmd --reload
+            fi
+        fi
     elif [[ "$OS" =~ ^(Ubuntu|Debian) ]]; then
         SYSCONFIG_FILE=/etc/default/iri
+        if [ -x /usr/sbin/ufw ]; then
+            # Try to open the port but don't fail the script if it fails.
+            echo "Open peering port 15600/tcp"
+            /usr/sbin/ufw allow 15600/tcp || /bin/true
+        fi
     fi
 
     # Check config file exists. Will just throw an error to the user if not found.
