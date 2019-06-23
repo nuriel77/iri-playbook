@@ -328,7 +328,7 @@ This is usually port 14265.
 
 Note that in those two steps we are configurinig the variables files directly. Please consider using an override-file to only edit those parameters you need. This will avoid conflicts when updating new versions of the playbook. See :ref:`overrideFile`.
 
-1. Edit ``edit group_vars/all/iri.yml`` and make sure the ``iri_api_port:`` option points to the correct IRI API port. In addition, ensure that ``iri_udp_port`` and ``iri_tcp_port`` match the ports your IRI is using for neighbor peering.
+1. Edit ``edit group_vars/all/iri.yml`` and make sure the ``iri_api_port:`` option points to the correct IRI API port. In addition, ensure that ``iri_tcp_port`` matches the ports your IRI is using for neighbor peering.
 
 2. Edit ``group_vars/all/iotapm.yml``. Find ``install_nginx: true`` and set it to ``false`` if you don't want to install nginx to serve these services via webserver. If you choose to install nginx, leave it as ``true`` (if you already have nginx installed, just leave it as ``true``).
 

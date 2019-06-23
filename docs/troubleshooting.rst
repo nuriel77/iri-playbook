@@ -265,7 +265,7 @@ Make sure all neighbors adhere to the format examples:
 .. code:: bash
 
   tcp://some-node.myserver.com:15600
-  udp://10.20.30.40:14600
+  tcp://10.20.30.40:14600
   tcp://[2xxx:7xx:aaaf:111:2222:ff:ffff:xxxx]:12345
 
 

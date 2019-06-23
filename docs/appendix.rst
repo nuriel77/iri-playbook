@@ -491,7 +491,7 @@ Next, you can use nano to create a new file or edit an existing one. For example
 
 Nano opens the file and we can start writing. Let's add the following lines::
 
-  IRI_NEIGHBORS="tcp://just-testing.com:13000 udp://testing:15600"
+  IRI_NEIGHBORS="tcp://just-testing.com:13000 tcp://testing:15600"
 
 Instead of writing this, you can copy paste it. Pasting can be done using right mouse click or **SHIFT-INSERT**.
 

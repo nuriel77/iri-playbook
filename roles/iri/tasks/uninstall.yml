@@ -50,13 +50,6 @@
         state: disabled
         immediate: yes
 
-    - name: remove iri udp port in firewall
-      firewalld:
-        port: "{{ iri_udp_port }}/udp"
-        permanent: true
-        state: disabled
-        immediate: yes
-
     - name: remove rate limit api port in firewall
       firewalld:
         rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="24/m" accept'
@@ -82,14 +75,6 @@
         direction: in
         proto: tcp
         port: "{{ iri_tcp_port }}"
-        delete: yes
-
-    - name: reemove iri udp port in firewall
-      ufw:
-        rule: allow
-        direction: in
-        proto: udp
-        port: "{{ iri_udp_port }}"
         delete: yes
 
     - name: remove iri api port in firewall
