@@ -22,6 +22,10 @@ DOCKER_IRI_MONITORING_API_PORT_ENABLE={% if iri_net_name is defined %}1{% else %
 # To enable PoW on your node, remove attachToTangle and interruptAttachingToTangle
 DOCKER_IRI_REMOTE_LIMIT_API="{{ iri_remote_limit_api }}"
 
+# TCP neighboring port listens on this address on the node.
+# The value 0.0.0.0 means "all interfaces".
+NEIGHBORING_SOCKET_ADDRESS={{ iri_tcp_port_bind_address }}
+
 # TCP peering port
 NEIGHBORING_SOCKET_PORT={{ iri_tcp_port }}
 

@@ -30,9 +30,10 @@ ExecStart=/usr/bin/docker run \
   -e DOCKER_IRI_MONITORING_API_PORT_DESTINATION=${API_PORT} \
   $DOCKER_OPTS \
   ${IRI_IMAGE}:${TAG} \
-  -n "${IRI_NEIGHBORS}" \
-  -p ${API_PORT} \
-  -t ${NEIGHBORING_SOCKET_PORT} \
+  --neighbors "${IRI_NEIGHBORS}" \
+  --port ${API_PORT} \
+  --neighboring-socket-address ${NEIGHBORING_SOCKET_ADDRESS} \
+  --neighboring-socket-port ${NEIGHBORING_SOCKET_PORT} \
   -c /iri/conf/iri.ini $OPTIONS{% if iri_testnet is defined and iri_testnet %} \
   --testnet true
 {% endif %}

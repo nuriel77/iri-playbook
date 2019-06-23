@@ -203,6 +203,8 @@
   template:
     src: templates/iri.service.j2
     dest: "{{ systemd_dir }}/iri.service"
+  tags:
+    - iri_service_file
   notify:
     - restart iri
 
