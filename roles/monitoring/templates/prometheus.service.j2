@@ -10,19 +10,21 @@ EnvironmentFile=-{{ config_dir }}/prometheus
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname %p \
   --user {{ promuser_uid.stdout }} \
-  --net={{ iri_net_name }} \
+  --net={{ iri_net_name | default('host') }} \
   --cap-drop=ALL \
   -v /etc/localtime:/etc/localtime:ro,Z \
   -v /etc/prometheus:/etc/prometheus:ro,Z \
   -v ${DATA_DIR}:/data:Z \
+{% if iri_net_name is defined %}
+  --hostname %p \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+{% endif %}
   $DOCKER_OPTS \
   {{ prom_image }}:${TAG} \
   --config.file=${CONFIG_FILE} \
   --storage.tsdb.path=/data/ \
-  --web.listen-address=:${BIND_PORT}
+  --web.listen-address={% if iri_net_name is not defined %}127.0.0.1{% endif %}:${BIND_PORT}
 
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker kill -s HUP %p

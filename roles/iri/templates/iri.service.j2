@@ -10,21 +10,24 @@ EnvironmentFile=-{{ config_dir }}/iri
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname iri \
   --user {{ iri_uid.stdout }} \
-  --net={{ iri_net_name }} \
+  --net={{ iri_net_name | default('host') }} \
   --cap-drop=ALL \
   -v {{ iri_configdir }}:/iri/conf:ro,Z \
   -v {{ iri_workdir }}:/iri/data:Z \
   -v /etc/localtime:/etc/localtime:ro,Z \
+{% if iri_net_name is defined %}
+  --hostname iri \
   -p ${API_PORT}:${API_PORT} \
   -p ${NEIGHBORING_SOCKET_PORT}:${NEIGHBORING_SOCKET_PORT} \
   -p ${ZMQ_BIND}:${ZMQ_PORT}:${ZMQ_PORT} \
-  -p 127.0.0.1:14266:14266 \
+  -p 127.0.0.1:{{ iri_mgmt_api_port }}:{{ iri_mgmt_api_port }} \
+{% endif %}
   -e JAVA_MIN_MEMORY=${JAVA_MIN_MEMORY} \
   -e JAVA_MAX_MEMORY=${JAVA_MAX_MEMORY} \
   -e DOCKER_IRI_REMOTE_LIMIT_API=${DOCKER_IRI_REMOTE_LIMIT_API} \
   -e DOCKER_IRI_MONITORING_API_PORT_ENABLE=${DOCKER_IRI_MONITORING_API_PORT_ENABLE} \
+  -e DOCKER_IRI_MONITORING_API_PORT_DESTINATION=${API_PORT} \
   $DOCKER_OPTS \
   ${IRI_IMAGE}:${TAG} \
   -n "${IRI_NEIGHBORS}" \

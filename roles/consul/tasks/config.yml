@@ -1,11 +1,13 @@
 - name: set variables centos
   set_fact:
     config_dir: /etc/sysconfig
+  tags: always
   when: ansible_distribution == 'CentOS'
 
 - name: set variables debian/ubuntu
   set_fact:
     config_dir: /etc/default
+  tags: always
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 # If running a cluster of Consul, use default interface's IP

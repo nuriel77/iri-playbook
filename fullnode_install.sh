@@ -22,6 +22,16 @@ window=,
 
 if grep -q 'IRI PLAYBOOK' /etc/motd; then
     :>/etc/motd
+else
+    if [ -f "/opt/iri-playbook/group_vars/all/z-installer-override.yml" ] && [ "$1" != "rerun" ]
+    then
+        if ! (whiptail --title "Confirmation" \
+                 --yesno "It looks like a previous installation already exists.\n\nRunning the installaer on an already working node is not recommended.\n\nIf you want to re-run only the playbook check the documentation or ask for assistance on Discord #fullnodes channel.\n\nPlease confirm you want to proceed with the installation?" \
+                 --defaultno \
+                 16 78); then
+            exit 1
+        fi
+    fi
 fi
 
 declare -g INSTALL_OPTIONS
@@ -334,8 +344,8 @@ http://iri-playbook.readthedocs.io/en/feat-docker/appendix.html#options\n\n\
 Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
         "INSTALL_DOCKER"           "Install Docker runtime (recommended)" ON \
         "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
-        "DISABLE_SYS_DEPS"         "Skip installing system dependencies" OFF \
-        "SKIP_FIREWALL_CONFIG"  "Skip configuring firewall" OFF \
+        "USE_BRIDGED_NETWORK"      "Use Docker bridged network (less performance)" OFF \
+        "SKIP_FIREWALL_CONFIG"     "Skip configuring firewall" OFF \
         "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
         "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
         "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
@@ -360,10 +370,9 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
                 INSTALL_OPTIONS+=" -e install_nginx=true"
                 echo "install_nginx: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
-            '"DISABLE_SYS_DEPS"')
-                INSTALL_OPTIONS+=" -e install_system_deps=false"
-                DISABLE_SYS_DEPS=1
-                echo "install_system_deps: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+            '"USE_BRIDGED_NETWORK"')
+                INSTALL_OPTIONS+=" -e iri_net_name=iri_net"
+                echo "iri_net_name: iri_net" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"SKIP_FIREWALL_CONFIG"')
                 INSTALL_OPTIONS+=" -e configure_firewall=false"
@@ -408,11 +417,11 @@ function set_primary_ip()
   echo "Getting external IP address..."
   local ip=$(curl -s -f --max-time 10 --retry 2 -4 'https://icanhazip.com')
   if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-    echo "Got IP $ip"
-    PRIMARY_IP=$ip
+      echo "Got IP $ip"
+      PRIMARY_IP=$ip
   else
-    PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
-    echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
+      PRIMARY_IP=$(hostname -I|tr ' ' '\n'|head -1)
+      echo "Failed to get external IP... using local IP $PRIMARY_IP instead"
   fi
 }
 
@@ -458,7 +467,7 @@ function run_playbook(){
     LOGFILE=/var/log/iri-playbook-$(date +%Y%m%d%H%M).log
 
     # Override ssh_port
-    [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: ${SSH_PORT}" > group_vars/all/z-ssh-port.yml
+    [[ $SSH_PORT -ne 22 ]] && echo "ssh_port: \"${SSH_PORT}\"" > group_vars/all/z-ssh-port.yml
 
     # Run the playbook
     echo "*** Running playbook command: ansible-playbook -i inventory -v site.yml -e "memory_autoset=true" $INSTALL_OPTIONS" | tee -a "$LOGFILE"
@@ -489,8 +498,8 @@ EOF
         cat <<EOF
 -------------------- NOTE --------------------
 
-The installer detected that the playbook requires a reboot,
-most probably to enable a functionality which requires the reboot.
+The installer detected that the server requires a reboot,
+most probably to enable a functionality required for the playbook.
 
 You can reboot the server using the command 'reboot'.
 
@@ -514,7 +523,7 @@ EOF
     # This could happen on script re-run
     # due to reboot, therefore the variable is empty
     if [ -z "$ADMIN_USER" ]; then
-        ADMIN_USER=$(grep ^iotapm_nginx_user /opt/iri-playbook/group_vars/all/z-installer-override.yml | awk {'print $2'})
+        ADMIN_USER=$(grep "^fullnode_user:" /opt/iri-playbook/group_vars/all/z-installer-override.yml | awk {'print $2'})
     fi
 
     OUTPUT=$(cat <<EOF

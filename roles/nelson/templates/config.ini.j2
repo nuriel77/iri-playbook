@@ -3,11 +3,11 @@ name = My Nelson Node
 cycleInterval = 60
 epochInterval = 300
 apiPort = {{ nelson_api_port }}
-apiHostname = 0.0.0.0
+apiHostname = {{ '0.0.0.0' if iri_net_name is defined else '127.0.0.1' }}
 port = {{ nelson_tcp_port }}
-IRIHostname = {{ nelson_iri_host }}
+IRIHostname = {{ nelson_iri_host if iri_net_name is defined else '127.0.0.1'}}
 IRIProtocol = any
-IRIPort = 14266
+IRIPort = {{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }}
 TCPPort = {{ iri_tcp_port }}
 
 ; No longer in use in IRI:

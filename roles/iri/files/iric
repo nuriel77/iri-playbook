@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.14
+VERSION=0.8.16
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -126,6 +126,27 @@ function verify_playbook() {
         cd /opt && git clone -b "$IRI_BRANCH" https://github.com/nuriel77/iri-playbook.git
     fi
     cd /opt/iri-playbook
+
+    # Check if bridged network is enabled for iri.
+    # If it was enabled before we perform a pull,
+    # make sure to write it to the override file.
+    # This way we avoid changing configuration on
+    # an installation already using bridged network.
+    # First get the unit file:
+    IRI_SERVICE_FILE=$(/bin/systemctl show -p FragmentPath iri | cut -d= -f2)
+    if [[ "${IRI_SERVICE_FILE}x" != "x" ]]; then
+        # If host network is not enabled
+        if ! grep -q '\-\-net=host' "${IRI_SERVICE_FILE}"; then
+            # Get current bridged network name
+            NET_NAME=$(grep '\-\-net=' "${IRI_SERVICE_FILE}" | cut -d= -f2 | tr -d ' \\')
+            # Ensure we have such a network in docker
+            if /usr/bin/docker network ls --format "{{lower .Name}}" | grep -q "^${NET_NAME}"; then
+                # Make sure we add the bridged network name in override file, only once
+                grep -q "^iri_net_name: ${NET_NAME}" group_vars/all/z-installer-override.yml || echo "iri_net_name: ${NET_NAME}" >> group_vars/all/z-installer-override.yml
+            fi
+        fi
+    fi
+
     OUTPUT=$(git pull 2>&1)
     RC=$?
     HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
@@ -244,14 +265,15 @@ function upgrade_iri() {
     if compare_versions $IRI_LATEST '>=' 1.6.0
     then
         grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
+
 ; Local Snapshots Settings
 LOCAL_SNAPSHOTS_ENABLED = true
-LOCAL_SNAPSHOTS_DEPTH = 150
+LOCAL_SNAPSHOTS_DEPTH = 100
 LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
 LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000
-LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 20
+LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 10
 LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
-TIP_SOLIDIFIER_ENABLED = true
+TIP_SOLIDIFIER_ENABLED = false
 EOF
 
     fi
@@ -285,7 +307,7 @@ function upgrade_monitoring() {
         fi
 
         # Upgrade iota-prom-exporter and dashboards
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image -e monitoring_enabled=yes -e overwrite=yes
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config -e monitoring_enabled=yes -e overwrite=yes
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press ENTER to return to menu."
         clear
@@ -1026,6 +1048,8 @@ function services_menu() {
     "h)" "HAProxy" \
     "i)" "Nelson" \
     "j)" "Nelson GUI" \
+    "k)" "Node Exporter" \
+    "l)" "CAdvisor" \
     3>&1 1>&2 2>&3
 }
 
@@ -1085,6 +1109,16 @@ function services() {
 
         "j)")
            service nelson-gui
+           services
+           ;;
+
+        "k)")
+           service node-exporter
+           services
+           ;;
+
+        "l)")
+           service cadvisor
            services
            ;;
 

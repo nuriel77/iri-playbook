@@ -19,7 +19,7 @@ haproxy_admin_socket: /var/run/hapee-lb.sock
 lb_bind_address: 127.0.0.1
 
 # This will be the external accessible port
-iri_api_port_remote: 14267
+iri_api_port_remote: "14267"
 
 # Loadbalancer administrative name
 lb_service_name: my.loadbalancer.io
@@ -34,13 +34,13 @@ iri_remote_auth: false
 lb_max_connections: 24
 
 # Stats port for haproxy
-haproxy_stats_port: 9292
+haproxy_stats_port: "9292"
 
 # Stats bind to address
 haproxy_stats_address: 127.0.0.1
 
 # Peering port for haproxy stick table
-haproxy_peer_port: 11024
+haproxy_peer_port: "11024"
 
 haproxy_dir: '/opt/haproxy'
 haproxy_username: haproxy

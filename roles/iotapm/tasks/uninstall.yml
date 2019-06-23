@@ -70,7 +70,6 @@
 - name: remove iotapm image
   docker_image:
     state: absent
-    force: yes
+    force_absent: yes
     name: "{{ iotapm_image }}"
-    tag: "{{ iotapm_tag }}"
   ignore_errors: yes

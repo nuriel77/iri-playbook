@@ -103,10 +103,9 @@
 - name: remove haproxy image
   docker_image:
     state: absent
-    force: yes
+    force_absent: yes
     name: "{{ item.image }}"
-    tag: "{{ item.tag }}"
   ignore_errors: yes
   with_items:
-    - { "image": "{{ haproxy_image }}", "tag": "{{ haproxy_tag }}" }
-    - { "image": "{{ certbot_image }}", "tag": "{{ certbot_tag }}" }
+    - "{{ haproxy_image }}"
+    - "{{ certbot_image }}"

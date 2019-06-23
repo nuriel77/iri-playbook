@@ -10,19 +10,21 @@ EnvironmentFile=-{{ config_dir }}/alertmanager
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
-  --hostname %p \
   --user {{ promuser_uid.stdout }} \
-  --net={{ iri_net_name }} \
+  --net={{ iri_net_name | default('host') }} \
   --cap-drop=ALL \
   -v /etc/localtime:/etc/localtime:ro,Z \
   -v ${CONFIG_FILE}:/etc/config.yml:ro,Z \
   -v ${WORK_DIR}:/alertmanager:Z \
   -v ${TEMPLATE_DIR}:/etc/alertmanager/template:ro,Z \
+{% if iri_net_name is defined %}
+  --hostname %p \
   -p ${BIND_ADDRESS}:${BIND_PORT}:${BIND_PORT} \
+{% endif %}
   $DOCKER_OPTS \
   {{ alertmanager_image }}:${TAG} \
   --config.file=/etc/config.yml \
-  --web.listen-address=:${BIND_PORT} \
+  --web.listen-address={% if iri_net_name is not defined %}127.0.0.1{% endif %}:${BIND_PORT} \
   --web.external-url=${WEB_EXTERNAL_ADDRESS} \
   --log.level ${LOG_LEVEL} \
   --storage.path=/alertmanager/
