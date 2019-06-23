@@ -238,9 +238,10 @@ function network_rewrite_update() {
 
     # Check config file exists. Will just throw an error to the user if not found.
     if  [ ! -f "$SYSCONFIG_FILE" ]; then
-         whiptail --title "Error!" \
+        whiptail --title "Error!" \
              --msgbox "ERROR: Failed to find configuration file ${SYSCONFIG_FILE}\n\nSetting options for network rewrite failed." \
              12 $WIDTH
+        return 1
     fi
 
     # If this variable doesn't exist in the config file, this node
@@ -267,7 +268,10 @@ EOF
 
     if [ ! -e /var/lib/iri/iri.ini ]; then
         # Weirdly, no config file?
-        return
+        whiptail --title "Error!" \
+             --msgbox "ERROR: Failed to find configuration file /var/lib/iri/iri.ini\n\nSetting options for network rewrite failed." \
+             12 $WIDTH
+        return 1
     fi
 
     # Update the iri.ini without overwriting anything
@@ -368,8 +372,15 @@ function upgrade_iri() {
     # Network rewrite, update old nodes.
     #
     # Based on OS/Dist, set config file
-    echo "Check required detwork rewrite"
+    echo "Apply network rewrite changes if needed"
     network_rewrite_update
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Error!" \
+                  --msgbox "ERROR: Failed updating node for network rewrite!" \
+                  8 $WIDTH
+         rm -f "$TFILE"
+         return 1
+    fi
 
     echo "Upgrading IRI Docker image.... (IRI will automatically restart if image gets updated)"
     cd /opt/iri-playbook && ansible-playbook -i inventory \
