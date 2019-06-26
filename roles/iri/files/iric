@@ -281,7 +281,7 @@ function network_rewrite_update() {
 NEIGHBORING_SOCKET_ADDRESS=0.0.0.0
 # TCP peering port
 NEIGHBORING_SOCKET_PORT=15600
-EOF        
+EOF
     fi
 
     # Remove UDP configuration
@@ -302,6 +302,7 @@ EOF
     # Update the iri.ini without overwriting anything
     if ! grep -q "Network rewrite options" /var/lib/iri/iri.ini; then
         cat <<EOF >> /var/lib/iri/iri.ini
+
 ; *Network rewrite options*
 # Defines the interval at which to try to reconnect/disconnect wanted neighbors.
 #RECONNECT_ATTEMPT_INTERVAL_SECONDS = 60
@@ -405,7 +406,7 @@ function upgrade_iri() {
     # Network rewrite, update old nodes.
     #
     # Based on OS/Dist, set config file
-    echo "Apply network rewrite changes if needed"
+    echo "[[[ * Apply network rewrite changes if needed * ]]]"
     network_rewrite_update
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
