@@ -275,11 +275,11 @@ EOF
     fi
 
     # Remove UDP configuration
-    sed -i '/UDP/d' "SYSCONFIG_FILE"
+    sed -i '/UDP/d' "$SYSCONFIG_FILE"
 
     # Remove old TCP peering port configuration 
-    sed -i '/TCP_RECEIVER_PORT/d' "SYSCONFIG_FILE"
-    sed -i '/TCP peering port/d' "SYSCONFIG_FILE"
+    sed -i '/TCP_RECEIVER_PORT/d' "$SYSCONFIG_FILE"
+    sed -i '/TCP peering port/d' "$SYSCONFIG_FILE"
 
     if [ ! -e /var/lib/iri/iri.ini ]; then
         # Weirdly, no config file?
