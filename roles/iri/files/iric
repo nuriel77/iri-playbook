@@ -400,7 +400,7 @@ function upgrade_iri() {
     echo "Upgrading IRI Docker image.... (IRI will automatically restart if image gets updated)"
     cd /opt/iri-playbook && ansible-playbook -i inventory \
                                 -v site.yml \
-                                --tags=iri_docker_image,iri_service_file \
+                                --tags=iri_docker_image,iri_service_file,get_iri_uid \
                                 -e "iri_tag=v$IRI_LATEST" \
                                 -e "force_pull_image=yes"
     if [[ $? -ne 0 ]]; then

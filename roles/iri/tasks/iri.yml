@@ -63,6 +63,7 @@
   register: iri_uid
   tags:
     - iri_create_container
+    - get_iri_uid
 
 - name: delete iri data basedir
   block:
