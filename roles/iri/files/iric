@@ -271,7 +271,7 @@ NEIGHBORING_SOCKET_ADDRESS=0.0.0.0
 
 # TCP peering port
 NEIGHBORING_SOCKET_PORT=15600
-EOF        
+EOF
     fi
 
     # Remove UDP configuration
