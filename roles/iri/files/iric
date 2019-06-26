@@ -16,7 +16,7 @@ clear
 OS=unknown
 VER=unknown
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.0
+__VERSION__=0.8.0
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
 WIDTH=78
@@ -588,7 +588,7 @@ function enable_haproxy() {
 
 ### Notice ###
 function how_to_setup() {
-    whiptail --title "IRIC v${VERSION} - Instructions" \
+    whiptail --title "IRIC v${__VERSION__} - Instructions" \
              --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.4\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
              15 $WIDTH
 }
@@ -831,7 +831,7 @@ function get_latest_iric_version() {
 }
 
 function check_new_iric() {
-    local CURR_VERSION=$VERSION
+    local CURR_VERSION="$__VERSION__"
     local IRIC_VERSION=$(get_latest_iric_version 2>&1)
     if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
         return 1
@@ -846,7 +846,7 @@ function check_new_iric() {
 
 function update_iric() {
     local IRIC_VERSION=$(get_latest_iric_version 2>&1)
-    local CURR_VERSION=$VERSION
+    local CURR_VERSION="$__VERSION__"
     if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
         whiptail --title "IRIC Update Failed" \
                  --msgbox "Failed to get IRIC version from github." \
@@ -867,7 +867,7 @@ function update_iric() {
 
     if [ -z "$NO_CONFIRM" ]; then
         if ! (whiptail --title "Confirm Update" \
-                     --yesno "Are you sure you want to update IRIC from '$VERSION' to '$IRIC_VERSION'?" \
+                     --yesno "Are you sure you want to update IRIC from '$__VERSION__' to '$IRIC_VERSION'?" \
                      8 $WIDTH) then
             return
         fi
@@ -1098,7 +1098,7 @@ function service_log() {
 function service_menu() {
     local SERVICE
     SERVICE=$1
-    whiptail --title "IRIC v${VERSION} - $SERVICE Service" \
+    whiptail --title "IRIC v${__VERSION__} - $SERVICE Service" \
              --menu "For logs use SHIFT-g to skip to end of log, or q to exit." \
              --cancel-button "Back" \
              25 $WIDTH 16 \
@@ -1165,7 +1165,7 @@ function service() {
 }
 
 function services_menu() {
-    whiptail --title "IRIC v${VERSION} - Node Services" \
+    whiptail --title "IRIC v${__VERSION__} - Node Services" \
              --menu "Choose an option" \
              --cancel-button "Back" \
              25 $WIDTH 16 \
@@ -1255,7 +1255,7 @@ function services() {
 
 ### Configure files ###
 function configure_files_menu() {
-    whiptail --title "IRIC v${VERSION} - Configure Files" \
+    whiptail --title "IRIC v${__VERSION__} - Configure Files" \
              --menu "Choose an option" \
              --cancel-button "Back" \
               22 48 12 \
@@ -1341,7 +1341,7 @@ function configure_files() {
 
 ### Neighbors ###
 function neighbors_menu(){
-    whiptail --title "IRIC v${VERSION} - Neighbors" \
+    whiptail --title "IRIC v${__VERSION__} - Neighbors" \
              --menu "Choose an option" \
              --cancel-button "Back" \
               12 48 4 \
@@ -1381,19 +1381,13 @@ function neighbors(){
     esac
 }
 
-function fill_in_survey() {
-    whiptail --title "IRIC v${VERSION} - Survey" \
-             --msgbox "If you haven't already, please take five minutes of your time to fill in the full nodes survey: https://goo.gl/forms/EBRhsGLho1o39bEb2\nOr check #fullnodes channel pinned messages." \
-             15 $WIDTH
-}
-
 function main_menu() {
     local MENU="Choose an option"
     if check_new_iric; then
         MENU="${MENU}\n(*IRIC update available)"
     fi
 
-    whiptail --title "IRIC v${VERSION} - IRI Configuration Menu" \
+    whiptail --title "IRIC v${__VERSION__} - IRI Configuration Menu" \
              --menu "$MENU" \
              --cancel-button "Exit" \
               32 $WIDTH 22 \
