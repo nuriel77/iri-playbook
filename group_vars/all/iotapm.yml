@@ -2,14 +2,14 @@
 iotapm_version: 1.2.0
 
 # The tcp port on which iota-pm will be served
-iotapm_port: 8011
+iotapm_port: "8011"
 
 # The address on which iota-pm will served
 # Use 0.0.0.0 for all interfaces
 iotapm_bind_address: 127.0.0.1
 
 # The port to serve iota PM on the webserver
-iotapm_nginx_port: 8811
+iotapm_nginx_port: "8811"
 
 # The username to use when accessing iota-pm
 # though the webserver
