@@ -306,7 +306,9 @@ if [[ $exitcode -eq 0 ]]; then
 
     if [[ $HAPROXY_RESTART -eq 1 ]]; then
         # Match certificate name for haproxy
-        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" $HAPROXY_CONFIG
+        # Search for any lines beginning with bind to any interface with HAPROXY defined port.
+        # Replace the existing certificate with the new certificate for the requested domain.
+        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g" "$HAPROXY_CONFIG"
     fi
 
     # restart haproxy
