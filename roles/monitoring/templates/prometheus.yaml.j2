@@ -17,6 +17,14 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:{{ iota_prom_exporter_port }}']
 
+  - job_name: 'haproxy_exporter'
+    scrape_interval: 10s
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets: ['localhost:{{ haproxy_stats_port }}']
+
 alerting:
   alertmanagers:
     - scheme: http
