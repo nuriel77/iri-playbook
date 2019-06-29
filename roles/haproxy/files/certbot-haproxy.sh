@@ -382,14 +382,14 @@ if [[ $exitcode -eq 0 ]]; then
 
     if [[ $HAPROXY_RESTART -eq 1 ]]; then
         # Match certificate name for haproxy
-        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}|g" "$HAPROXY_CONFIG"
+        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g" "$HAPROXY_CONFIG"
     fi
 
     # Configure if haproxy template file exists
     if [[ -f "$HAPROXY_TMPL" ]]; then
         # Search for any lines beginning with bind to any interface with HAPROXY defined port.
         # Replace the existing certificate with the new certificate for the requested domain.
-        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}|g" "$HAPROXY_CONFIG"
+        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g" "$HAPROXY_CONFIG"
     fi
 
     # Apply haproxy.cfg configuration to multi node setup
@@ -398,7 +398,7 @@ if [[ $exitcode -eq 0 ]]; then
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" \"$HAPROXY_CONFIG\" || sed -i \"\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}|g\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy && systemctl restart consul-template || /bin/true"
+            -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" \"$HAPROXY_CONFIG\" || sed -i \"\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy && systemctl restart consul-template || /bin/true"
     fi
 
     # restart haproxy
