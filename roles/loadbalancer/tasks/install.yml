@@ -57,7 +57,9 @@
       file:
         path: "{{ haproxy_dir }}"
         state: absent
-      when: remove_haproxy_dir is defined and remove_haproxy_dir
+      when:
+        - remove_haproxy_dir is defined
+        - remove_haproxy_dir|bool
 
     # Re-download haproxy?
     - name: stat haproxy dir
@@ -75,7 +77,9 @@
 
     - name: move temporary extracted haproxy directory to its dir
       shell: "mv /tmp/haproxy-{{ haproxy_base_version }}.{{ haproxy_min_version }} {{ haproxy_dir }}"
-      when: haproxy_downloaded and haproxy_downloaded.changed
+      when:
+        - haproxy_downloaded is defined
+        - haproxy_downloaded.changed
 
     - name: ensure haproxy dir ownership and permissions
       file:
@@ -86,8 +90,10 @@
         group: "{{ haproxy_username }}"
 
     - name: make haproxy compile and install
-      shell: "cd {{ haproxy_dir }} && make clean && make TARGET=linux2628 CPU=native USE_PCRE=1 USE_LIBCRYPT=1 USE_LINUX_SPLICE=1 USE_LINUX_TPROXY=1 USE_OPENSSL=1 USE_ZLIB=1 USE_LUA=1 LUA_LIB=/usr/local/lib LUA_INC=/usr/local/include LDFLAGS=-ldl && make install"
-      when: haproxy_downloaded is defined and haproxy_downloaded.changed
+      shell: "cd {{ haproxy_dir }} && make clean && make TARGET=linux-glibc CPU=generic USE_PCRE=1 USE_LIBCRYPT=1 USE_LINUX_SPLICE=1 USE_LINUX_TPROXY=1 USE_OPENSSL=1 USE_ZLIB=1 USE_LUA=1 LUA_LIB=/usr/local/lib LUA_INC=/usr/local/include LDFLAGS=-ldl EXTRA_OBJS=\"contrib/prometheus-exporter/service-prometheus.o\" && make install"
+      when:
+        - haproxy_downloaded is defined
+        - haproxy_downloaded.changed
 
   tags:
     - haproxy_install

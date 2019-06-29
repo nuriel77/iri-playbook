@@ -109,11 +109,11 @@ frontend iri_front
     http-request deny if invalid_command !whitelist
 
     # Enable these two lines for SSL to IRI
-    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}reqadd X-Forwarded-Proto:\ https
-    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} ssl crt {{ ssl_certkey_file }}
+    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}http-request add-header X-Forwarded-Proto https
+    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} tfo alpn h2,http/1.1 ssl crt {{ ssl_certkey_file }}
 
     # Disable this line and use line above for SSL
-    {% if haproxy_https is defined and haproxy_https|bool == True %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }}
+    {% if haproxy_https is defined and haproxy_https|bool == True %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} tfo alpn h2,http/1.1
 
     use_backend iri_back
 
@@ -156,18 +156,21 @@ backend iri_back
     option log-health-checks
     option httpchk POST /
     http-check expect status 400
+    retry-on all-retryable-errors
+    http-request disable-l7-retry if METH_POST
     default-server inter 10s fall 4 rise 2
-    server iri 127.0.0.1:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check
+    server iri 127.0.0.1:{{ iri_api_port }} maxconn {{ iri_api_max_connections }} check tfo alpn h2,http/1.1
 
 listen stats
     bind {{ haproxy_stats_address }}:{{ haproxy_stats_port }} ssl crt {{ ssl_certkey_file }}
-    reqadd X-Forwarded-Proto:\ https
+    http-request add-header X-Forwarded-Proto https
     mode http
     timeout client 1h
     stats enable
     stats refresh 5s
     stats hide-version
     stats uri /
+    http-request use-service prometheus-exporter if { path /metrics }
 
     # Lock with password
     acl lb_allow http_auth(lb_auth)
