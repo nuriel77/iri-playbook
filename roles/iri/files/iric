@@ -427,14 +427,15 @@ function enable_https() {
 
     # Will configure nginx to use the let's encrypt certificates
     if [[ $ENABLE_NGINX_CERT == "yes" ]] && [ -f "${FULL_PATH}/cert.pem" ]; then
-        cat <<EOF > /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+        if ! grep -q "^ssl_cert_file: ${FULL_PATH}/fullchain.pem" /opt/iri-playbook/group_vars/all/z-ssl-override.yml; then
+            cat <<EOF >> /opt/iri-playbook/group_vars/all/z-ssl-override.yml
 ssl_cert_file: ${FULL_PATH}/cert.pem
 ssl_key_file: ${FULL_PATH}/privkey.pem
 ssl_bundle_cert: ${FULL_PATH}/fullchain.pem
 create_selfsigned_cert: False
 letsencrypt: True
 EOF
-
+        fi
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=configure_nginx_ssl
     fi
 
