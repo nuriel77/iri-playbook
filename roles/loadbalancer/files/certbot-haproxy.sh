@@ -41,6 +41,9 @@ HAPROXY_RESTART_CMD="systemctl restart haproxy"
 HAPROXY_START_CMD="systemctl start haproxy"
 WEBROOT="/var/lib/haproxy"
 
+# Enable test only
+[[ -n "$TEST_CERT" ]] && TEST_CERT="--test-cert"
+
 # Enable to redirect output to logfile (for silent cron jobs)
 LOGFILE="/var/log/certrenewal.log"
 
@@ -114,19 +117,32 @@ function set_dist() {
 }
 
 function newCert {
-    $LE_CLIENT certonly --standalone --email ${EMAIL} -d ${DOMAIN} -n --preferred-challenges http --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --agree-tos
-    return $?
+    $LE_CLIENT certonly \
+               --standalone \
+               --email "${EMAIL}" \
+               -d "${DOMAIN}" \
+               -n \
+               --preferred-challenges http \
+               --pre-hook "systemctl stop nginx" \
+               --post-hook "systemctl start nginx" \
+               --agree-tos ${TEST_CERT}
 }
 
 function issueCert {
-    $LE_CLIENT certonly --standalone --renew-by-default --preferred-challenges http --agree-tos --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --email ${EMAIL} $1
-    return $?
+    $LE_CLIENT certonly \
+               --standalone \
+               --renew-by-default \
+               --preferred-challenges http \
+               --agree-tos \
+               --pre-hook "systemctl stop nginx" \
+               --post-hook "systemctl start nginx" \
+               --email "${EMAIL}" "$1" ${TEST_CERT}
 }
 
 function logger_error {
     if [ -n "${LOGFILE}" ]
     then
-        echo "[error] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> ${LOGFILE}
+        echo "[error] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> "${LOGFILE}"
     fi
     >&2 echo "[error] ${1}"
 }
@@ -134,7 +150,7 @@ function logger_error {
 function logger_info {
     if [ -n "${LOGFILE}" ]
     then
-        echo "[info] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> ${LOGFILE}
+        echo "[info] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> "${LOGFILE}"
     else
         echo "[info] ${1}"
     fi
@@ -144,20 +160,25 @@ function add_renewal_crontab {
     echo "5 8 * * 6 root /bin/bash /usr/local/bin/certbot-haproxy.sh ${EMAIL}" | tee /etc/cron.d/cert_renew > /dev/null
 }
 
-function check_firewall {
-    iptables -L -nv|grep -q "ACCEPT.*tcp dpt:80"
-}
-
 function check_port_listen {
     lsof -Pni TCP:80|grep -q LISTEN
 }
 
+function check_firewall {
+    local IP_BIN=$1
+    /sbin/$IP_BIN -L -nv|grep -q "ACCEPT.*tcp dpt:80"
+}
+
 function enable_firewall {
-    /sbin/iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    local IP_BIN=$1
+    echo "Enabling $IP_BIN firewall allowed port 80"
+    /sbin/$IP_BIN -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
 }
 
 function disable_firewall {
-    /sbin/iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    local IP_BIN=$1
+    echo "Disabling $IP_BIN firewall port 80"
+    /sbin/$IP_BIN -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
 }
 
 ##################
@@ -206,20 +227,25 @@ elif [[ "$OS" =~ ^Ubuntu ]]; then
 fi
 
 # Check firewall open for 80/tcp
-check_firewall
-if [ $? -ne 0 ]
-then
-    logger_info "Port 80 not open in firewall. Opening..."
-    CLOSE_HTTP_AFTER=1
-    enable_firewall
-    if [ $? -ne 0 ]
-    then
-        logger_error "Error opening port 80 in iptables"
-        exit 1
+for ip_bin in iptables ip6tables; do
+    #echo "PROCESS $ip_bin"
+    if [ -x "/sbin/$ip_bin" ]; then
+        check_firewall "$ip_bin"
+        if [ $? -ne 0 ]
+        then
+            logger_info "Port 80 not open in firewall. Opening..."
+            CLOSE_HTTP_AFTER=1
+            enable_firewall "$ip_bin"
+            if [ $? -ne 0 ]
+            then
+                logger_error "Error opening port 80 in iptables"
+                exit 1
+            fi
+        else
+            logger_info "Port 80 available in $ip_bin firewall."
+        fi
     fi
-else
-    logger_info "Port 80 available in firewall."
-fi
+done
 
 le_cert_root="/etc/letsencrypt/live"
 renewed_certs=()
@@ -230,7 +256,11 @@ then
     RC=$?
     if [ "$CLOSE_HTTP_AFTER" == "1" ]
     then
-        disable_firewall
+        for ip_bin in iptables ip6tables; do
+            if [ -x "/sbin/$ip_bin" ]; then
+                disable_firewall "$ip_bin"
+            fi
+        done
     fi
     if [ $RC -ne 0 ]
     then
