@@ -23,7 +23,9 @@
       file:
         path: "{{ lua_dir }}"
         state: absent
-      when: remove_lua_dir is defined and remove_lua_dir
+      when:
+        - remove_lua_dir is defined
+        - remove_lua_dir|bool
 
     # Re-download lua?
     - name: stat lua dir
@@ -31,21 +33,49 @@
         path: "{{ lua_dir }}"
       register: lua_dir_stat
 
+    - name: check current lua version
+      shell: "/opt/lua/src/lua -v | awk {'print $2'}"
+      register: current_lua_version
+      ignore_errors: yes
+      changed_when: false
+      when: lua_dir_stat.stat.exists == True
+
+    - name: default no upgrade for lua
+      set_fact:
+        upgrade_lua: False
+
+    - name: compare current lua to configured playbook variable version
+      set_fact:
+        upgrade_lua: '{{ True if current_lua_version.stdout is version(lua_version, "<") else False }}'
+      when:
+        - lua_dir_stat.stat.exists == True
+        - current_lua_version is defined
+
+    - name: remove existing lua dir
+      file:
+        path: "{{ lua_dir }}"
+        state: absent
+      when: upgrade_lua|bool
+
     - name: download and unarchive lua
       unarchive:
         src: "https://www.lua.org/ftp/lua-{{ lua_version }}.tar.gz"
         dest: /tmp
         remote_src: True
-      when: not lua_dir_stat.stat.exists
+      when: not lua_dir_stat.stat.exists or upgrade_lua|bool
       register: lua_downloaded
 
     - name: move temporary extracted lua directory to its dir
       shell: "mv /tmp/lua-{{ lua_version }} {{ lua_dir }}"
-      when: lua_downloaded and lua_downloaded.changed
+      when:
+        - lua_downloaded is defined
+        - lua_downloaded.changed
 
     - name: make lua install
       shell: "cd {{ lua_dir }} && make linux && make install"
-      when: lua_downloaded and lua_downloaded.changed   
+      when:
+        - lua_downloaded is defined
+        - lua_downloaded.changed
 
   tags:
     - lua_install
@@ -67,12 +97,36 @@
         path: "{{ haproxy_dir }}"
       register: haproxy_dir_stat
 
+    - name: check current haproxy version
+      shell: "/usr/local/sbin/haproxy -v | head -1 | awk {'print $3'} | cut -d- -f1"
+      register: current_haproxy_version
+      ignore_errors: yes
+      changed_when: false
+      when: haproxy_dir_stat.stat.exists == True
+
+    - name: default no upgrade for haproxy
+      set_fact:
+        upgrade_haproxy: False
+
+    - name: compare current haproxy version to configured playbook variable version
+      set_fact:
+        upgrade_haproxy: '{{ True if current_haproxy_version.stdout is version(haproxy_base_version|string + "." + haproxy_min_version|string, "<") else False }}'
+      when:
+        - haproxy_dir_stat.stat.exists == True
+        - current_haproxy_version is defined
+
+    - name: remove existing haproxy dir
+      file:
+        path: "{{ haproxy_dir }}"
+        state: absent
+      when: upgrade_haproxy|bool
+
     - name: download and unarchive haproxy release
       unarchive:
         src: "http://www.haproxy.org/download/{{ haproxy_base_version }}/src/haproxy-{{ haproxy_base_version }}.{{ haproxy_min_version }}.tar.gz"
         dest: /tmp
         remote_src: True
-      when: not haproxy_dir_stat.stat.exists
+      when: not haproxy_dir_stat.stat.exists or upgrade_haproxy|bool
       register: haproxy_downloaded
 
     - name: move temporary extracted haproxy directory to its dir
@@ -94,6 +148,8 @@
       when:
         - haproxy_downloaded is defined
         - haproxy_downloaded.changed
+      notify:
+        - restart haproxy
 
   tags:
     - haproxy_install
