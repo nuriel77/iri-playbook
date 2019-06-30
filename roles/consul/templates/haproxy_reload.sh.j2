@@ -45,7 +45,7 @@ echo "$0 check has diff: int $CHECK" | logger -t haproxy-reload
 # we trigger a reload only when backends have been removed or added
 if [ ${CHECK} -gt 0 ]; then
     echo "$0: Backend(s) has(ve) been added or removed, need to reload the configuration" | logger -t haproxy-reload
-    haproxy_check rollback    
+    haproxy_check rollback
     systemctl reload haproxy
 fi
 

@@ -108,3 +108,4 @@
     - "prometheus_dashboard.json"
     - "node_exporter_dashboard.json"
     - "cadvisor_dashboard.json"
+    - "haproxy_exporter.json"
