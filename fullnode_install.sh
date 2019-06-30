@@ -352,8 +352,8 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 4 \
                 echo "nelson_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_HAPROXY"')
-                INSTALL_OPTIONS+=" -e lb_bind_address=0.0.0.0"
-                echo "lb_bind_address: 0.0.0.0" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                INSTALL_OPTIONS+=" -e '{\"lb_bind_addresses\": [\"0.0.0.0\"]}'"
+                echo "lb_bind_addresses: ['0.0.0.0']" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             *)
                 ;;

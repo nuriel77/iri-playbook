@@ -6,7 +6,7 @@
 # - Node installed by iri-playbook with HAProxy enabled
 # - HTTPS enabled on HAProxy (will default to a self-signed certificate)
 # To enable HTTPS run:
-# cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e haproxy_https=yes -e overwrite=yes
+# cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e '{"lb_bind_addresses": ["0.0.0.0"]}' -e haproxy_https=yes -e overwrite=yes
 
 # This script will automate certificate creation and renewal for let's encrypt and haproxy
 # - checks all certificates under /etc/letsencrypt/live and renews

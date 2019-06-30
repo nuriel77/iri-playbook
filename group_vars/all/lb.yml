@@ -1,5 +1,7 @@
 # Change to 0.0.0.0 to bind to all interfaces (expose remotely)
-lb_bind_address: 127.0.0.1
+# Additional addresses can be added to the list (e.g. IPv6 address)
+lb_bind_addresses:
+  - 127.0.0.1
 
 # This will be the external accessible port
 iri_api_port_remote: "14267"

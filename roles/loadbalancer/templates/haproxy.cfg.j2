@@ -110,11 +110,13 @@ frontend iri_front
 
     # Enable these two lines for SSL to IRI
     {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}http-request add-header X-Forwarded-Proto https
+{% for lb_bind_address in lb_bind_addresses %}
     {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} tfo alpn h2,http/1.1 ssl crt {{ ssl_certkey_file }}
-
+{% endfor %}
     # Disable this line and use line above for SSL
+{% for lb_bind_address in lb_bind_addresses %}
     {% if haproxy_https is defined and haproxy_https|bool == True %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} tfo alpn h2,http/1.1
-
+{% endfor %}
     use_backend iri_back
 
 backend iri_back
