@@ -211,6 +211,15 @@ if [[ "$OS" =~ ^(CentOS|Red) ]]; then
         logger_info "Start installation of certbot ..."
         yum install epel-release -y
         yum install certbot -y
+        # Temporary fix for pyOpenSSL error on CentOS
+        # src: https://www.getpagespeed.com/troubleshooting/fix-importerror-pyopenssl-module-missing-required-functionality-try-upgrading-to-v0-14-or-newer
+        echo y | pip uninstall requests --disable-pip-version-check -q
+        echo y | pip uninstall six --disable-pip-version-check -q
+        echo y | pip uninstall urllib3 --disable-pip-version-check -q
+        yum -y reinstall \
+            python-requests \
+            python-six \
+            python-urllib3
     fi
     LE_CLIENT="/bin/certbot"
 elif [[ "$OS" =~ ^Ubuntu ]]; then
