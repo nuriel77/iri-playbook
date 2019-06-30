@@ -38,7 +38,7 @@ fi
 # Otherwise the port will try to get set from iri-playbook configuration
 if [[ -z "$HAPROXY_PORT" ]]; then
     # Get the configured haproxy iri api port
-    HAPROXY_PORT=$(ls /opt/iri-playbook/group_vars/all/*.yml | sort -n | xargs -d '\n' grep ^iri_api_port_remote | tail -1 | awk {'print $2'})
+    HAPROXY_PORT=$(ls /opt/iri-playbook/group_vars/all/*.yml | sort -n | xargs -d '\n' grep ^iri_api_port_remote | tail -1 | awk {'print $2'} | tr -d \'\")
     if [ $? -ne 0 ]; then
         HAPROXY_PORT=14267
     fi
