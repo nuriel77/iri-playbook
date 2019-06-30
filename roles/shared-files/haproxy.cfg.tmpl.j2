@@ -128,12 +128,14 @@ frontend iri_front
     acl wants_pow req.body -m reg attachToTangle|interruptAttachingToTangle
 
     # Enable these two lines for SSL to IRI
-    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}reqadd X-Forwarded-Proto:\ https
+    {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}http-request add-header X-Forwarded-Proto https
+{% for lb_bind_address in lb_bind_addresses %}
     {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} ssl crt {{ ssl_certkey_file }}
-
+{% endfor %}
     # Disable this line and use line above for SSL
+{% for lb_bind_address in lb_bind_addresses %}
     {% if haproxy_https is defined and haproxy_https|bool == True %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }}
-
+{% endfor %}
     use_backend iri_pow_back if wants_pow
     use_backend iri_back
 
@@ -174,6 +176,8 @@ backend iri_pow_back
     compression algo gzip
     compression type application/json text/html text/plain text/xml text/json text/css text/javascript application/javascript
 
+    retry-on all-retryable-errors
+    http-request disable-l7-retry if METH_POST
     option log-health-checks
     option httpchk POST / HTTP/1.1\r\nHost:\ ha.example.com\r\nX-IOTA-API-VERSION:\ 1.4\r\nContent-Type:\ application/json\r\nContent-Length:\ 25\r\n\r\n{\"command\":\"getNodeInfo\"}
     http-check expect rstring transactionsToRequest
@@ -216,6 +220,8 @@ backend iri_back
     compression algo gzip
     compression type application/json text/html text/plain text/xml text/json text/css text/javascript application/javascript
 
+    retry-on all-retryable-errors
+    http-request disable-l7-retry if METH_POST
     option log-health-checks
     option external-check
     option httpchk POST / HTTP/1.1\r\nHost:\ ha.example.com\r\nX-IOTA-API-VERSION:\ 1.4\r\nContent-Type:\ application/json\r\nContent-Length:\ 25\r\n\r\n{\"command\":\"getNodeInfo\"}
@@ -226,7 +232,7 @@ backend iri_back
 
 listen stats
     bind {{ haproxy_stats_address }}:{{ haproxy_stats_port }}{% if haproxy_stats_https is defined and haproxy_stats_https|bool %}ssl crt {{ ssl_certkey_file }}
-    reqadd X-Forwarded-Proto:\ https
+    http-request add-header X-Forwarded-Proto https
 {% endif %}
 
     mode http
@@ -235,6 +241,7 @@ listen stats
     stats refresh 5s
     stats hide-version
     stats uri /
+    http-request use-service prometheus-exporter if { path /metrics }
 
 {% if fullnode_user_password is defined and fullnode_user is defined %}
     # Lock with password
