@@ -363,19 +363,15 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
     do
         case $CHOICE in
             '"INSTALL_DOCKER"')
-                INSTALL_OPTIONS+=" -e install_docker=true"
                 echo "install_docker: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"INSTALL_NGINX"')
-                INSTALL_OPTIONS+=" -e install_nginx=true"
                 echo "install_nginx: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"USE_BRIDGED_NETWORK"')
-                INSTALL_OPTIONS+=" -e iri_net_name=iri_net"
                 echo "iri_net_name: iri_net" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"SKIP_FIREWALL_CONFIG"')
-                INSTALL_OPTIONS+=" -e configure_firewall=false"
                 echo "configure_firewall: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_MONITORING"')
@@ -383,15 +379,12 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
                 echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_ZMQ_METRICS"')
-                INSTALL_OPTIONS+=" -e iri_zmq_enabled=false"
                 echo "iri_zmq_enabled: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_NELSON"')
-                INSTALL_OPTIONS+=" -e nelson_enabled=true"
                 echo "nelson_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_HAPROXY"')
-                INSTALL_OPTIONS+=" -e '{\"lb_bind_addresses\": [\"0.0.0.0\"]}'"
                 echo "lb_bind_addresses: ['0.0.0.0']" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             *)
