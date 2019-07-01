@@ -55,3 +55,7 @@
     state: enabled
     direction: incoming
     policy: deny
+
+- name: Set ufw logging
+  ufw:
+    logging: "{{ ufw_logging }}"

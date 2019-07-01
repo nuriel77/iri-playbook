@@ -9,3 +9,6 @@ supported_distributions:
   - RedHat
   - CentOS
   - Ubuntu
+
+# UFW logging: on, off, low, medium, high or full.
+ufw_logging: off
