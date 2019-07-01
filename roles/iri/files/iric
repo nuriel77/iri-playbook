@@ -14,7 +14,7 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 EDITOR="${EDITOR:-nano}"
-VERSION=0.8.18
+VERSION=0.8.19
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
@@ -314,7 +314,8 @@ function upgrade_monitoring() {
               --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config \
               -e monitoring_enabled=yes \
               -e overwrite=yes \
-              -e wait_for_alert_manager=false
+              -e wait_for_alertmanager=false \
+              -e wait_for_grafana=false
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press ENTER to return to menu."
         clear
