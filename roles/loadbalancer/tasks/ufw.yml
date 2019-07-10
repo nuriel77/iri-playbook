@@ -8,6 +8,10 @@
     - "{{ iri_api_port_remote }}"
     - "{{ haproxy_stats_port }}"
 
+- name: Set ufw logging
+  ufw:
+    logging: "{{ ufw_logging }}"
+
 - name: rate limit iri api port in firewall
   ufw:
     rule: limit
@@ -15,4 +19,6 @@
     proto: tcp
     port: "{{ iri_api_port_remote }}"
     log: yes
-  when: ufw_limit_iri_api is defined and ufw_limit_iri_api
+  when:
+    - ufw_limit_iri_api is defined
+    - ufw_limit_iri_api|bool

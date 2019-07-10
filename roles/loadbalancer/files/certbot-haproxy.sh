@@ -6,7 +6,7 @@
 # - Node installed by iri-playbook with HAProxy enabled
 # - HTTPS enabled on HAProxy (will default to a self-signed certificate)
 # To enable HTTPS run:
-# cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e haproxy_https=yes -e overwrite=yes
+# cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e '{"lb_bind_addresses": ["0.0.0.0"]}' -e haproxy_https=yes -e overwrite=yes
 
 # This script will automate certificate creation and renewal for let's encrypt and haproxy
 # - checks all certificates under /etc/letsencrypt/live and renews
@@ -40,6 +40,9 @@ HAPROXY_CONFIG=${HAPROXY_CONFIG:-/etc/haproxy/haproxy.cfg}
 HAPROXY_RESTART_CMD="systemctl restart haproxy"
 HAPROXY_START_CMD="systemctl start haproxy"
 WEBROOT="/var/lib/haproxy"
+
+# Enable test only
+[[ -n "$TEST_CERT" ]] && TEST_CERT="--test-cert"
 
 # Enable to redirect output to logfile (for silent cron jobs)
 LOGFILE="/var/log/certrenewal.log"
@@ -114,19 +117,32 @@ function set_dist() {
 }
 
 function newCert {
-    $LE_CLIENT certonly --standalone --email ${EMAIL} -d ${DOMAIN} -n --preferred-challenges http --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --agree-tos
-    return $?
+    $LE_CLIENT certonly \
+               --standalone \
+               --email "${EMAIL}" \
+               -d "${DOMAIN}" \
+               -n \
+               --preferred-challenges http \
+               --pre-hook "systemctl stop nginx" \
+               --post-hook "systemctl start nginx" \
+               --agree-tos ${TEST_CERT}
 }
 
 function issueCert {
-    $LE_CLIENT certonly --standalone --renew-by-default --preferred-challenges http --agree-tos --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx" --email ${EMAIL} $1
-    return $?
+    $LE_CLIENT certonly \
+               --standalone \
+               --renew-by-default \
+               --preferred-challenges http \
+               --agree-tos \
+               --pre-hook "systemctl stop nginx" \
+               --post-hook "systemctl start nginx" \
+               --email "${EMAIL}" "$1" ${TEST_CERT}
 }
 
 function logger_error {
     if [ -n "${LOGFILE}" ]
     then
-        echo "[error] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> ${LOGFILE}
+        echo "[error] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> "${LOGFILE}"
     fi
     >&2 echo "[error] ${1}"
 }
@@ -134,7 +150,7 @@ function logger_error {
 function logger_info {
     if [ -n "${LOGFILE}" ]
     then
-        echo "[info] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> ${LOGFILE}
+        echo "[info] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> "${LOGFILE}"
     else
         echo "[info] ${1}"
     fi
@@ -144,20 +160,25 @@ function add_renewal_crontab {
     echo "5 8 * * 6 root /bin/bash /usr/local/bin/certbot-haproxy.sh ${EMAIL}" | tee /etc/cron.d/cert_renew > /dev/null
 }
 
-function check_firewall {
-    iptables -L -nv|grep -q "ACCEPT.*tcp dpt:80"
-}
-
 function check_port_listen {
     lsof -Pni TCP:80|grep -q LISTEN
 }
 
+function check_firewall {
+    local IP_BIN=$1
+    /sbin/$IP_BIN -L -nv|grep -q "ACCEPT.*tcp dpt:80"
+}
+
 function enable_firewall {
-    /sbin/iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    local IP_BIN=$1
+    echo "Enabling $IP_BIN firewall allowed port 80"
+    /sbin/$IP_BIN -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
 }
 
 function disable_firewall {
-    /sbin/iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    local IP_BIN=$1
+    echo "Disabling $IP_BIN firewall port 80"
+    /sbin/$IP_BIN -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
 }
 
 ##################
@@ -190,6 +211,15 @@ if [[ "$OS" =~ ^(CentOS|Red) ]]; then
         logger_info "Start installation of certbot ..."
         yum install epel-release -y
         yum install certbot -y
+        # Temporary fix for pyOpenSSL error on CentOS
+        # src: https://www.getpagespeed.com/troubleshooting/fix-importerror-pyopenssl-module-missing-required-functionality-try-upgrading-to-v0-14-or-newer
+        echo y | pip uninstall requests --disable-pip-version-check -q
+        echo y | pip uninstall six --disable-pip-version-check -q
+        echo y | pip uninstall urllib3 --disable-pip-version-check -q
+        yum -y reinstall \
+            python-requests \
+            python-six \
+            python-urllib3
     fi
     LE_CLIENT="/bin/certbot"
 elif [[ "$OS" =~ ^Ubuntu ]]; then
@@ -206,20 +236,25 @@ elif [[ "$OS" =~ ^Ubuntu ]]; then
 fi
 
 # Check firewall open for 80/tcp
-check_firewall
-if [ $? -ne 0 ]
-then
-    logger_info "Port 80 not open in firewall. Opening..."
-    CLOSE_HTTP_AFTER=1
-    enable_firewall
-    if [ $? -ne 0 ]
-    then
-        logger_error "Error opening port 80 in iptables"
-        exit 1
+for ip_bin in iptables ip6tables; do
+    #echo "PROCESS $ip_bin"
+    if [ -x "/sbin/$ip_bin" ]; then
+        check_firewall "$ip_bin"
+        if [ $? -ne 0 ]
+        then
+            logger_info "Port 80 not open in firewall. Opening..."
+            CLOSE_HTTP_AFTER=1
+            enable_firewall "$ip_bin"
+            if [ $? -ne 0 ]
+            then
+                logger_error "Error opening port 80 in iptables"
+                exit 1
+            fi
+        else
+            logger_info "Port 80 available in $ip_bin firewall."
+        fi
     fi
-else
-    logger_info "Port 80 available in firewall."
-fi
+done
 
 le_cert_root="/etc/letsencrypt/live"
 renewed_certs=()
@@ -230,7 +265,11 @@ then
     RC=$?
     if [ "$CLOSE_HTTP_AFTER" == "1" ]
     then
-        disable_firewall
+        for ip_bin in iptables ip6tables; do
+            if [ -x "/sbin/$ip_bin" ]; then
+                disable_firewall "$ip_bin"
+            fi
+        done
     fi
     if [ $RC -ne 0 ]
     then
@@ -306,7 +345,9 @@ if [[ $exitcode -eq 0 ]]; then
 
     if [[ $HAPROXY_RESTART -eq 1 ]]; then
         # Match certificate name for haproxy
-        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" $HAPROXY_CONFIG
+        # Search for any lines beginning with bind to any interface with HAPROXY defined port.
+        # Replace the existing certificate with the new certificate for the requested domain.
+        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g" "$HAPROXY_CONFIG"
     fi
 
     # restart haproxy

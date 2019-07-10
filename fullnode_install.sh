@@ -344,16 +344,13 @@ Select/unselect options using space and click Enter to proceed.\n" 24 78 4 \
                 echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"DISABLE_ZMQ_METRICS"')
-                INSTALL_OPTIONS+=" -e iri_zmq_enabled=false"
                 echo "iri_zmq_enabled: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_NELSON"')
-                INSTALL_OPTIONS+=" -e nelson_enabled=true"
                 echo "nelson_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_HAPROXY"')
-                INSTALL_OPTIONS+=" -e lb_bind_address=0.0.0.0"
-                echo "lb_bind_address: 0.0.0.0" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "lb_bind_addresses: ['0.0.0.0']" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             *)
                 ;;

@@ -1,5 +1,7 @@
 # Change to 0.0.0.0 to bind to all interfaces (expose remotely)
-lb_bind_address: 127.0.0.1
+# Additional addresses can be added to the list (e.g. IPv6 address)
+lb_bind_addresses:
+  - 127.0.0.1
 
 # This will be the external accessible port
 iri_api_port_remote: "14267"
@@ -19,12 +21,12 @@ haproxy_stats_port: "9292"
 # Stats bind to address
 haproxy_stats_address: 127.0.0.1
 
-lua_version: 5.3.4
+lua_version: 5.3.5
 lua_dir: '/opt/lua'
 haproxy_dir: '/opt/haproxy'
 haproxy_username: haproxy
-haproxy_base_version: 1.8
-haproxy_min_version: 3
+haproxy_base_version: 2.0
+haproxy_min_version: 1
 
 # Enable haproxy https
 haproxy_https: false

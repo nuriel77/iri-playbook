@@ -11,6 +11,11 @@
     name: software-properties-common
     update_cache: yes
 
+- name: Install python-api
+  apt:
+    name: python-apt
+    state: present
+
 - name: Install some packages
   apt:
     name: "{{ packages }}"
