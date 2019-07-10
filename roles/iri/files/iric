@@ -12,8 +12,12 @@ fi
 
 clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
+
+OS=unknown
+VER=unknown
 EDITOR="${EDITOR:-nano}"
-VERSION=0.7.20
+VERSION_TEMP=0.8.0
+__VERSION__=$VERSION_TEMP
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
 WIDTH=78
@@ -36,6 +40,7 @@ fi
 function cleanup() {
     rm -f "$PID_FILE"
     cd "$CUR_DIR"
+    trap "" EXIT
     clear
 }
 
@@ -50,7 +55,42 @@ function pause(){
    clear
 }
 
-# Experimental Admin settings
+# Get OS and Dist
+function set_dist() {
+    if [ -f /etc/os-release ]; then
+        # freedesktop.org and systemd
+        . /etc/os-release
+        OS=$NAME
+        VER=$VERSION_ID
+    elif type lsb_release >/dev/null 2>&1; then
+        # linuxbase.org
+        OS=$(lsb_release -si)
+        VER=$(lsb_release -sr)
+    elif [ -f /etc/lsb-release ]; then
+        # For some versions of Debian/Ubuntu without lsb_release command
+        . /etc/lsb-release
+        OS=$DISTRIB_ID
+        VER=$DISTRIB_RELEASE
+    elif [ -f /etc/debian_version ]; then
+        # Older Debian/Ubuntu/etc.
+        OS=Debian
+        VER=$(cat /etc/debian_version)
+    elif [ -f /etc/SuSe-release ]; then
+        # Older SuSE/etc.
+        echo "Unsupported OS."
+        exit 1
+    elif [ -f /etc/redhat-release ]; then
+        # Older Red Hat, CentOS, etc.
+        echo "Old OS version. Minimum required is 7."
+        exit 1
+    else
+        # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+        OS=$(uname -s)
+        VER=$(uname -r)
+    fi
+}
+
+# Admin settings
 function set_admin_user() {
     USER_CHOICE=$(whiptail --inputbox "Pick a name for the administrator account:" 8 $WIDTH ${ADMIN_USER} --title "Username (allowed regex: a-zA-Z0-9_)" 3>&1 1>&2 2>&3)
     RC=$?
@@ -202,6 +242,95 @@ function upgrade_nelson() {
     fi
 }
 
+function network_rewrite_update() {
+
+    # Set config file and firewall
+    if [[ "$OS" =~ ^(CentOS|Red) ]]; then
+        SYSCONFIG_FILE=/etc/sysconfig/iri
+        if [ -x /bin/firewall-cmd ]; then
+            if ! /bin/firewall-cmd --list-ports --permanent | grep -q '15600/tcp'; then
+                # Try to open the port but don't fail the script if it fails.
+                echo "Open peering port 15600/tcp"
+                /bin/firewall-cmd --add-port=15600/tcp --permanent || /bin/true
+                /bin/firewall-cmd --reload
+            fi
+        fi
+    elif [[ "$OS" =~ ^(Ubuntu|Debian) ]]; then
+        SYSCONFIG_FILE=/etc/default/iri
+        if [ -x /usr/sbin/ufw ]; then
+            # Try to open the port but don't fail the script if it fails.
+            echo "Open peering port 15600/tcp"
+            /usr/sbin/ufw allow 15600/tcp || /bin/true
+        fi
+    fi
+
+    # Check config file exists. Will just throw an error to the user if not found.
+    if  [ ! -f "$SYSCONFIG_FILE" ]; then
+        whiptail --title "Error!" \
+             --msgbox "ERROR: Failed to find configuration file ${SYSCONFIG_FILE}\n\nSetting options for network rewrite failed." \
+             12 $WIDTH
+        return 1
+    fi
+
+    # If this variable doesn't exist in the config file, this node
+    # should be updated with the new options.
+    if ! grep -q "^NEIGHBORING_SOCKET_ADDRESS" "$SYSCONFIG_FILE"; then
+       cat <<EOF >> "$SYSCONFIG_FILE"
+# *** Network rewrite added options
+# TCP neighboring port listens on this address on the node.
+# The value 0.0.0.0 means "all interfaces".
+NEIGHBORING_SOCKET_ADDRESS=0.0.0.0
+# TCP peering port
+NEIGHBORING_SOCKET_PORT=15600
+EOF
+    fi
+
+    # Remove UDP configuration
+    sed -i '/UDP/d' "$SYSCONFIG_FILE"
+
+    # Remove old TCP peering port configuration 
+    sed -i '/TCP_RECEIVER_PORT/d' "$SYSCONFIG_FILE"
+    sed -i '/TCP peering port/d' "$SYSCONFIG_FILE"
+
+    if [ ! -e /var/lib/iri/iri.ini ]; then
+        # Weirdly, no config file?
+        whiptail --title "Error!" \
+             --msgbox "ERROR: Failed to find configuration file /var/lib/iri/iri.ini\n\nSetting options for network rewrite failed." \
+             12 $WIDTH
+        return 1
+    fi
+
+    # Update the iri.ini without overwriting anything
+    if ! grep -q "Network rewrite options" /var/lib/iri/iri.ini; then
+        cat <<EOF >> /var/lib/iri/iri.ini
+
+; *Network rewrite options*
+# Defines the interval at which to try to reconnect/disconnect wanted neighbors.
+#RECONNECT_ATTEMPT_INTERVAL_SECONDS = 60
+# Controls auto-tethering, this was previously controlled via TESTNET true,
+# default is false (also in testnet mode).
+#AUTO_TETHERING_ENABLED = false
+# Rename of MAX_PEERS, defines the max number of connected neighbors.
+#MAX_NEIGHBORS = 3
+# These two values are configured elsewhere in the iri-playbook's installtion:
+# Debian/Ubuntu: /etc/default/iri. Centos: /etc/sysconfig/iri
+#NEIGHBORING_SOCKET_ADDRESS
+#NEIGHBORING_SOCKET_PORT
+EOF
+    fi
+
+    # Update the service file
+    cd /opt/iri-playbook && ansible-playbook -i inventory \
+                                -v site.yml \
+                                --tags=iri_service_file
+    if [[ $? -ne 0 ]]; then
+        whiptail --title "Error!" \
+                  --msgbox "ERROR: Failed upgrading IRI." \
+                  8 $WIDTH
+        return 1
+    fi 
+}
+
 ### IRI ###
 function get_latest_iri_release {
     curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest | awk '/tag_name/{print $2}' | tr -d '"v,'
@@ -274,21 +403,18 @@ function upgrade_iri() {
     sed -i "s/^IRI_VERSION=.*$/IRI_VERSION=$IRI_LATEST_CLEAN/" $IRI_CONFIG
     sed -i "s/^api_version.*$/api_version: $IRI_LATEST_CLEAN/" $HOME/.nbctl
 
-    # Update to support snapshots from v1.6.0 onwards
-    if compare_versions $IRI_LATEST_CLEAN '>=' 1.6.0
-    then
-        grep -q '^; Local Snapshots Settings' /var/lib/iri/iri.ini || cat <<'EOF' >>/var/lib/iri/iri.ini
-
-; Local Snapshots Settings
-LOCAL_SNAPSHOTS_ENABLED = true
-LOCAL_SNAPSHOTS_DEPTH = 100
-LOCAL_SNAPSHOTS_PRUNING_ENABLED = true
-LOCAL_SNAPSHOTS_PRUNING_DELAY = 40000
-LOCAL_SNAPSHOTS_INTERVAL_SYNCED = 10
-LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = 1000
-TIP_SOLIDIFIER_ENABLED = false
-EOF
-
+    #
+    # Network rewrite, update old nodes.
+    #
+    # Based on OS/Dist, set config file
+    echo "[[[ * Apply network rewrite changes if needed * ]]]"
+    network_rewrite_update
+    if [[ $? -ne 0 ]]; then
+         whiptail --title "Error!" \
+                  --msgbox "ERROR: Failed updating node for network rewrite!" \
+                  8 $WIDTH
+         rm -f "$TFILE"
+         return 1
     fi
 
     echo "Restart IRI, this can take a few moments..."
@@ -485,7 +611,7 @@ function enable_haproxy() {
 
 ### Notice ###
 function how_to_setup() {
-    whiptail --title "IRIC v${VERSION} - Instructions" \
+    whiptail --title "IRIC v${__VERSION__} - Instructions" \
              --msgbox "Check that you have the .nbctl file in your home folder (ls -l ~/.nbctl).\nExample of the file's contents:\n\napi_version: 1.4.2.4\nhost: http://127.0.0.1:14265\nfile: /etc/default/iri\n\nThis will allow this script to use the nbctl utility to manage neighbors and get the node's data." \
              15 $WIDTH
 }
@@ -506,7 +632,7 @@ function add_neighbors() {
     fi
 
     ADD_LIST=$(echo "$NEIGHBORS" | sed 's/  */ /g' | sed 's/ / -n /g' | sed 's/^\(.*\)/-n \1/')
-    if ! (echo "$ADD_LIST" | egrep -q "tcp|udp"); then
+    if ! (echo "$ADD_LIST" | egrep -q "tcp"); then
         whiptail --title "Invalid Input" \
                  --msgbox "Invalid input provided. Please check the syntax you provided is valid." \
                   8 $WIDTH
@@ -728,7 +854,7 @@ function get_latest_iric_version() {
 }
 
 function check_new_iric() {
-    local CURR_VERSION=$VERSION
+    local CURR_VERSION="$__VERSION__"
     local IRIC_VERSION=$(get_latest_iric_version 2>&1)
     if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
         return 1
@@ -743,7 +869,7 @@ function check_new_iric() {
 
 function update_iric() {
     local IRIC_VERSION=$(get_latest_iric_version 2>&1)
-    local CURR_VERSION=$VERSION
+    local CURR_VERSION="$__VERSION__"
     if [[ $? -ne 0 ]] || [[ "$IRIC_VERSION" == "" ]]; then
         whiptail --title "IRIC Update Failed" \
                  --msgbox "Failed to get IRIC version from github." \
@@ -764,7 +890,7 @@ function update_iric() {
 
     if [ -z "$NO_CONFIRM" ]; then
         if ! (whiptail --title "Confirm Update" \
-                     --yesno "Are you sure you want to update IRIC from '$VERSION' to '$IRIC_VERSION'?" \
+                     --yesno "Are you sure you want to update IRIC from '$__VERSION__' to '$IRIC_VERSION'?" \
                      8 $WIDTH) then
             return
         fi
@@ -995,7 +1121,7 @@ function service_log() {
 function service_menu() {
     local SERVICE
     SERVICE=$1
-    whiptail --title "IRIC v${VERSION} - $SERVICE Service" \
+    whiptail --title "IRIC v${__VERSION__} - $SERVICE Service" \
              --menu "For logs use SHIFT-g to skip to end of log, or q to exit." \
              --cancel-button "Back" \
              25 $WIDTH 16 \
@@ -1062,7 +1188,7 @@ function service() {
 }
 
 function services_menu() {
-    whiptail --title "IRIC v${VERSION} - Node Services" \
+    whiptail --title "IRIC v${__VERSION__} - Node Services" \
              --menu "Choose an option" \
              --cancel-button "Back" \
              25 $WIDTH 16 \
@@ -1152,7 +1278,7 @@ function services() {
 
 ### Configure files ###
 function configure_files_menu() {
-    whiptail --title "IRIC v${VERSION} - Configure Files" \
+    whiptail --title "IRIC v${__VERSION__} - Configure Files" \
              --menu "Choose an option" \
              --cancel-button "Back" \
               22 48 12 \
@@ -1238,7 +1364,7 @@ function configure_files() {
 
 ### Neighbors ###
 function neighbors_menu(){
-    whiptail --title "IRIC v${VERSION} - Neighbors" \
+    whiptail --title "IRIC v${__VERSION__} - Neighbors" \
              --menu "Choose an option" \
              --cancel-button "Back" \
               12 48 4 \
@@ -1278,19 +1404,13 @@ function neighbors(){
     esac
 }
 
-function fill_in_survey() {
-    whiptail --title "IRIC v${VERSION} - Survey" \
-             --msgbox "If you haven't already, please take five minutes of your time to fill in the full nodes survey: https://goo.gl/forms/EBRhsGLho1o39bEb2\nOr check #fullnodes channel pinned messages." \
-             15 $WIDTH
-}
-
 function main_menu() {
     local MENU="Choose an option"
     if check_new_iric; then
         MENU="${MENU}\n(*IRIC update available)"
     fi
 
-    whiptail --title "IRIC v${VERSION} - IRI Configuration Menu" \
+    whiptail --title "IRIC v${__VERSION__} - IRI Configuration Menu" \
              --menu "$MENU" \
              --cancel-button "Exit" \
               32 $WIDTH 22 \
@@ -1414,4 +1534,8 @@ function run_main_menu() {
     esac
 }
 
+# Get OS and version
+set_dist
+
+# Run main menu
 run_main_menu

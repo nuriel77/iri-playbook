@@ -24,7 +24,7 @@ except ImportError:
     sys.exit(1)
 
 
-__VERSION__ = '0.2.0'
+__VERSION__ = '0.2.1'
 
 LOG = logging.getLogger(__name__)
 DEFAULT_API_VERSION = '1.6'
@@ -42,7 +42,7 @@ def parse_args():
         formatter_class=RawTextHelpFormatter,
         description='Add or remove full node neighbors.',
         epilog='Example: nbctl -a -n'
-               ' udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321'
+               ' tcp://1.2.3.4:12345 -n tcp://4.3.2.1:4321'
                ' -f /etc/default/iri\n'
                '--host and --api-version can be placed in a file in the home directory ~/.nbctl:\n'
                'api_version: 1.4.2.4\n'
@@ -228,7 +228,7 @@ def set_logger(debug=False):
 
 def get_reverse(neighbor):
     # Extract address
-    m = re.search(r"^((?:tcp|udp))://\[{0,1}(.+?)\]{0,1}:(?!.*:)([0-9]+)",
+    m = re.search(r"^((?:tcp))://\[{0,1}(.+?)\]{0,1}:(?!.*:)([0-9]+)",
                   neighbor)
 
     if m is None:
@@ -308,7 +308,7 @@ def validate_uris(neighbors):
     for neighbor in neighbors:
 
         # Check valid neighbor URI
-        m = re.search(r"^(?:tcp|udp)://\[{0,1}(.+?)\]{0,1}:(?!.*:)([0-9]+)",
+        m = re.search(r"^(?:tcp)://\[{0,1}(.+?)\]{0,1}:(?!.*:)([0-9]+)",
                       neighbor)
         if m is None:
             LOG.warning("Invalid neighbor syntax: '%s'\n" % neighbor)

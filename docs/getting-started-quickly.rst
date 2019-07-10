@@ -35,8 +35,6 @@ For the **"Dockerized" version** (containers) run:
 
   GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
 
-Please don't use UDP for peering neighbors anymore, as it just causes unnecessary overhead on the node. UDP chances for packets to get lost and re-requested by your node from other neighbors.
-
 Documentation for the "Dockerized" version can be `found here <https://iri-playbook.readthedocs.io/en/feat-docker/>`_.
 
 Original IRI Playbook

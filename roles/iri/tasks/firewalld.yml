@@ -11,13 +11,6 @@
     state: enabled
     immediate: yes
 
-- name: allow iri udp port in firewall
-  firewalld:
-    port: "{{ iri_udp_port }}/udp"
-    permanent: true
-    state: enabled
-    immediate: yes
-
 - name: allow and rate limit api port in firewall
   firewalld:
     rich_rule: 'rule port port={{ iri_api_port }} protocol=tcp limit value="24/m" accept'

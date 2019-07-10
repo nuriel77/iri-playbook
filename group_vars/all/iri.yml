@@ -10,8 +10,9 @@ iri_version: 1.7.1
 # The TCP port on which IRI listens for API calls and allows for light wallets to connect to
 iri_api_port: "14265"
 
-# The UDP neighbor peering port
-iri_udp_port: "14600"
+# The address to bind on (interface on your node)
+# 0.0.0.0 means all interfaces
+iri_tcp_port_bind_address: "0.0.0.0"
 
 # The TCP neighbor peering port
 iri_tcp_port: "15600"

@@ -67,8 +67,6 @@ Alternatively, use python::
 
 If you have problems getting in sync after a very long time, consider downloading a fully synced database as described here: :ref:`getFullySyncedDB`
 
-If the issue still persists, perhaps difficulties syncing are related to this: :ref:`whyAmISeeingUDPBadLength`
-
 
 .. _howDoITellIfIamSyncing:
 

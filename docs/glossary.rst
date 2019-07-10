@@ -25,7 +25,7 @@ This is the nbctl script that shipped with this installation (use it with -h to 
 
 .. code:: bash
 
-   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321
+   nbctl -a -n tcp://1.2.3.4:12345 -n tcp://4.3.2.1:4321
 
 
 Remove neighbors
@@ -35,7 +35,7 @@ This is the nbctl script that shipped with this installation (use it with -h to 
 
 .. code:: bash
 
-   nbctl -r -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321
+   nbctl -r -n tcp://1.2.3.4:12345 -n tcp://4.3.2.1:4321
 
 
 Check iri and iota-pm ports listening
