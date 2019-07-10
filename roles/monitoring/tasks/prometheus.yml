@@ -58,6 +58,7 @@
   wait_for:
     timeout: 45
     port: "{{ alertmanager_port }}"
+  when: wait_for_alertmanager|default(true)|bool
 
 - name: flush handlers
   meta: flush_handlers

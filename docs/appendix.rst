@@ -459,7 +459,7 @@ The IRI API port can be configured to be accessible via HAProxy. The benefits in
 
 To get it configured and installed you can use ``iric`` or run::
 
-  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
+  cd /opt/iri-playbook && git pull && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e '{"lb_bind_addresses": ["0.0.0.0"]}' -e overwrite=yes
 
 
 Please read this **important information**:

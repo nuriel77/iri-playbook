@@ -73,7 +73,7 @@
   template:
     src: ../shared-files/ssl.cfg.j2
     dest: /etc/nginx/conf.d/ssl.cfg
-    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d ssl.conf"
+    validate: "/usr/local/bin/validate_nginx_config.sh -t %s -d ssl.cfg"
   notify:
     - restart nginx
   tags:

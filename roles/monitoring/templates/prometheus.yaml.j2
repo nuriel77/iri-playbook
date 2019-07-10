@@ -22,6 +22,14 @@ scrape_configs:
     static_configs:
       - targets: ['{{ 'cadvisor' if iri_net_name is defined else '127.0.0.1' }}:{{ cadvisor_port }}']
 
+  - job_name: 'haproxy_exporter'
+    scrape_interval: 10s
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets: ['localhost:{{ haproxy_stats_port }}']
+
 alerting:
   alertmanagers:
     - scheme: http

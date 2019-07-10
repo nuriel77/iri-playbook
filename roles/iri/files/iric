@@ -431,13 +431,28 @@ function upgrade_monitoring() {
         fi
 
         # Upgrade iota-prom-exporter and dashboards
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config -e monitoring_enabled=yes -e overwrite=yes
+        cd /opt/iri-playbook && \
+            ansible-playbook \
+              -i inventory \
+              -v site.yml \
+              --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config \
+              -e monitoring_enabled=yes \
+              -e overwrite=yes \
+              -e wait_for_alertmanager=false \
+              -e wait_for_grafana=false
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press ENTER to return to menu."
         clear
     fi
 }
 
+function haproxy_listen_all() {
+    # Expect to find 0.0.0.0 on same line or max 2 after var declaration.
+    # If not found, add bind to all interfaces to override file.
+    if ! grep ^lb_bind_addresses /opt/iri-playbook/group_vars/all/z-installer-override.yml -A2 | grep -q '0.0.0.0'; then
+        echo "lb_bind_addresses: ['0.0.0.0']" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
+    fi
+}
 
 ### Haproxy ###
 function enable_https() {
@@ -477,10 +492,13 @@ function enable_https() {
         echo "haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
     fi
 
+    # Make sure we configure haproxy to listen on all interfaces, thereby enabling it.
+    haproxy_listen_all
+
     # Enable haproxy https via variable override file
     echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
 
-    cd /opt/iri-playbook && git pull && ansible-playbook -i "$INVENTORY_FILE" site.yml -v --tags=py_docker,iri_ssl,consul_role,loadbalancer_role,certbot --skip-tags=consul_register_node -e lb_bind_address=0.0.0.0 -e overwrite=yes
+    cd /opt/iri-playbook && git pull && ansible-playbook -i "$INVENTORY_FILE" site.yml -v --tags=py_docker,iri_ssl,consul_role,loadbalancer_role,certbot --skip-tags=consul_register_node -e overwrite=yes
     if [[ $? -ne 0 ]]; then
         pause "Enabling HTTPS failed!!! Check output above for errors."
         clear
@@ -541,13 +559,15 @@ function enable_https() {
 
     # Will configure nginx to use the let's encrypt certificates
     if [[ "$ENABLE_NGINX_CERT" == "yes" ]] && [ -f "${FULL_PATH}/cert.pem" ]; then
-        cat <<EOF >> /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+        if ! grep -q "^ssl_cert_file: ${FULL_PATH}/fullchain.pem" /opt/iri-playbook/group_vars/all/z-ssl-override.yml; then
+            cat <<EOF >> /opt/iri-playbook/group_vars/all/z-ssl-override.yml
 ssl_cert_file: ${FULL_PATH}/cert.pem
 ssl_key_file: ${FULL_PATH}/privkey.pem
 ssl_bundle_cert: ${FULL_PATH}/fullchain.pem
 create_selfsigned_cert: False
 letsencrypt: True
 EOF
+        fi
         # We don't enable nginx with this common certificate in multi node setup!
         cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=configure_nginx_ssl
     fi
@@ -571,7 +591,10 @@ function enable_haproxy() {
              return 1
         fi
 
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e overwrite=yes
+        # Make sure we configure haproxy to listen on all interfaces, thereby enabling it.
+        haproxy_listen_all
+
+        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e overwrite=yes
         [[ $? -ne 0 ]] && MSG="Enabling HAProxy failed!!! Check output above for errors." || MSG="Installation finished successfully!"
         pause "$MSG Press ENTER to return to menu."
     fi
@@ -1450,7 +1473,7 @@ function run_main_menu() {
             ;;
 
         "f)")
-            enable_haproxy "This will update the haproxy.cfg file to the latest version. Continue?"
+            enable_haproxy "This will update haproxy and the haproxy.cfg file to the latest version. Continue?"
             run_main_menu
             ;;
 

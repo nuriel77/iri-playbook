@@ -29,10 +29,19 @@
 
   when: ansible_distribution == 'CentOS'
 
-- name: allow iotapm proxy port in firewall
-  ufw:
-    rule: allow
-    direction: in
-    proto: tcp
-    port: "{{ iotapm_proxy_port }}"
+
+- name: ufw block
+  block:
+
+    - name: allow iotapm proxy port in firewall
+      ufw:
+        rule: allow
+        direction: in
+        proto: tcp
+        port: "{{ iotapm_proxy_port }}"
+
+    - name: Set ufw logging
+      ufw:
+        logging: "{{ ufw_logging }}"
+
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

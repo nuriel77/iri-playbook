@@ -74,6 +74,7 @@
   wait_for:
     timeout: 90
     port: "{{ grafana_port }}"
+  when: wait_for_grafana|default(true)|bool
 
 - name: create provisioning, datasources and dashboards directories
   file:
@@ -108,3 +109,4 @@
     - "prometheus_dashboard.json"
     - "node_exporter_dashboard.json"
     - "cadvisor_dashboard.json"
+    - "haproxy_exporter.json"

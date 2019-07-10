@@ -6,7 +6,7 @@
 # - Node installed by iri-playbook with HAProxy enabled
 # - HTTPS enabled on HAProxy (will default to a self-signed certificate)
 # To enable HTTPS run:
-# cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e lb_bind_address=0.0.0.0 -e haproxy_https=yes -e overwrite=yes
+# cd /opt/iri-playbook && git pull && ansible-playbook -i inventory site.yml -v --tags=iri_ssl,loadbalancer_role -e '{"lb_bind_addresses": ["0.0.0.0"]}' -e haproxy_https=yes -e overwrite=yes
 
 # This script will automate certificate creation and renewal for let's encrypt and haproxy
 # - checks all certificates under /etc/letsencrypt/live and renews
@@ -38,7 +38,7 @@ fi
 # Otherwise the port will try to get set from iri-playbook configuration
 if [[ -z "$HAPROXY_PORT" ]]; then
     # Get the configured haproxy iri api port
-    HAPROXY_PORT=$(ls /opt/iri-playbook/group_vars/all/*.yml | sort -n | xargs -d '\n' grep ^iri_api_port_remote | tail -1 | awk {'print $2'})
+    HAPROXY_PORT=$(ls /opt/iri-playbook/group_vars/all/*.yml | sort -n | xargs -d '\n' grep ^iri_api_port_remote | tail -1 | awk {'print $2'} | tr -d \'\")
     if [ $? -ne 0 ]; then
         HAPROXY_PORT=14267
     fi
@@ -51,6 +51,9 @@ fi
 HAPROXY_RESTART_CMD="/bin/systemctl restart haproxy"
 HAPROXY_START_CMD="/bin/systemctl start haproxy"
 WEBROOT="/var/lib/haproxy"
+
+# Enable test only
+[[ -n "$TEST_CERT" ]] && STAGING="--test-cert"
 
 # Enable to redirect output to logfile (for silent cron jobs)
 LOGFILE="/var/log/certrenewal.log"
@@ -131,7 +134,7 @@ function issueCert {
 function logger_error {
     if [ -n "${LOGFILE}" ]
     then
-        echo "[error] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> ${LOGFILE}
+        echo "[error] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> "${LOGFILE}"
     fi
     >&2 echo "[error] ${1}"
 }
@@ -139,7 +142,7 @@ function logger_error {
 function logger_info {
     if [ -n "${LOGFILE}" ]
     then
-        echo "[info] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> ${LOGFILE}
+        echo "[info] [$(date +'%d.%m.%y - %H:%M')] ${1}" >> "${LOGFILE}"
     else
         echo "[info] ${1}"
     fi
@@ -147,10 +150,6 @@ function logger_info {
 
 function add_renewal_crontab {
     echo "5 8 * * 6 root /bin/bash /usr/local/bin/certbot-haproxy.sh ${EMAIL}" | tee /etc/cron.d/cert_renew > /dev/null
-}
-
-function check_firewall {
-    iptables -L -nv|egrep -q "ACCEPT.*tcp dpt:80$|ACCEPT.*tcp dpt:80 "
 }
 
 function check_port_listen {
@@ -190,27 +189,36 @@ function remove_nginx_redirect {
         -a "rm -f /etc/nginx/conf.d/acme_verification.conf && /bin/systemctl reload nginx"
 }
 
+function check_firewall {
+    local IP_BIN=$1
+    /sbin/$IP_BIN -L -nv|egrep -q "ACCEPT.*tcp dpt:80$|ACCEPT.*tcp dpt:80 "
+}
+
 function enable_firewall {
+    local IP_BIN=$1
+    echo "Enabling $IP_BIN firewall allowed port 80"
     if [ -f /opt/iri-playbook/inventory-multi ]; then
         ansible -i /opt/iri-playbook/inventory-multi all \
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "/sbin/iptables -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT"
+            -a "test -x /sbin/$IP_BIN && /sbin/$IP_BIN -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT"
     else
-        /sbin/iptables -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+        /sbin/$IP_BIN -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
     fi
 }
 
 function disable_firewall {
+    local IP_BIN=$1
+    echo "Disabling $IP_BIN firewall port 80"
     if [ -f /opt/iri-playbook/inventory-multi ]; then
         ansible -i /opt/iri-playbook/inventory-multi all \
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "/sbin/iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT"
+            -a "test -x /sbin/$IP_BIN && /sbin/$IP_BIN -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT"
     else
-        /sbin/iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+        /sbin/$IP_BIN -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
     fi
 }
 
@@ -218,7 +226,11 @@ function cleanup {
     if [ "$CLOSE_HTTP_AFTER" == "1" ]
     then
         logger_info "Disable HTTP in firewall"
-        disable_firewall
+        for ip_bin in iptables ip6tables; do
+            if [ -x "/sbin/$ip_bin" ]; then
+                disable_firewall "$ip_bin"
+            fi
+        done
     fi
 
     if [ "$REMOVE_NGINX_REDIRECT" == "1" ]
@@ -250,20 +262,24 @@ then
 fi
 
 # Check firewall open for 80/tcp
-check_firewall
-if [ $? -ne 0 ]
-then
-    logger_info "Port 80 not open in firewall. Opening..."
-    CLOSE_HTTP_AFTER=1
-    enable_firewall
-    if [ $? -ne 0 ]
-    then
-        logger_error "Error opening port 80 in iptables"
-        exit 1
+for ip_bin in iptables ip6tables; do
+    if [ -x "/sbin/$ip_bin" ]; then
+        check_firewall "$ip_bin"
+        if [ $? -ne 0 ]
+        then
+            logger_info "Port 80 not open in firewall. Opening..."
+            CLOSE_HTTP_AFTER=1
+            enable_firewall "$ip_bin"
+            if [ $? -ne 0 ]
+            then
+                logger_error "Error opening port 80 in iptables"
+                exit 1
+            fi
+        else
+            logger_info "Port 80 available in $ip_bin firewall."
+        fi
     fi
-else
-    logger_info "Port 80 available in firewall."
-fi
+done
 
 if [ -f /opt/iri-playbook/inventory-multi ]; then
     logger_info "Setting nginx redirect for other nodes"
@@ -382,12 +398,14 @@ if [[ $exitcode -eq 0 ]]; then
 
     if [[ $HAPROXY_RESTART -eq 1 ]]; then
         # Match certificate name for haproxy
-        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" "$HAPROXY_CONFIG"
+        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g" "$HAPROXY_CONFIG"
     fi
 
     # Configure if haproxy template file exists
     if [[ -f "$HAPROXY_TMPL" ]]; then
-        sed -i "s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|" "$HAPROXY_TMPL"
+        # Search for any lines beginning with bind to any interface with HAPROXY defined port.
+        # Replace the existing certificate with the new certificate for the requested domain.
+        sed -i "\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g" "$HAPROXY_CONFIG"
     fi
 
     # Apply haproxy.cfg configuration to multi node setup
@@ -396,7 +414,7 @@ if [[ $exitcode -eq 0 ]]; then
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" /etc/haproxy/haproxy.cfg || sed -i \"s|bind 0.0.0.0:${HAPROXY_PORT} ssl crt .*|bind 0.0.0.0:${HAPROXY_PORT} ssl crt ${DOMAIN_DIR}/haproxy.pem|\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy && systemctl restart consul-template || /bin/true"
+            -a "grep -q \"$DOMAIN_DIR/haproxy.pem\" \"$HAPROXY_CONFIG\" || sed -i \"\|^[ \t]*bind[ \t]*.*:${HAPROXY_PORT}|s|^\(.* \)crt[ \t]*.*|\1crt ${DOMAIN_DIR}/haproxy.pem|g\" \"$HAPROXY_CONFIG\" \"$HAPROXY_TMPL\" && systemctl reload haproxy && systemctl restart consul-template || /bin/true"
     fi
 
     # restart haproxy

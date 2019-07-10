@@ -21,3 +21,7 @@
       - {"port": 8304, "proto": "udp"}
       - {"port": '{{ consul_ssl_port }}', "proto": "tcp"}
   when: groups['fullnode'] | length > 1
+
+- name: Set ufw logging
+  ufw:
+    logging: "{{ ufw_logging }}"
