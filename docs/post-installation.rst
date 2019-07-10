@@ -118,11 +118,10 @@ Restart:
 Checking Ports
 ==============
 
-IRI uses 3 ports by default:
+IRI uses 2 ports by default:
 
-1. UDP neighbor peering port
-2. TCP neighbor peering port
-3. TCP API port (this is where a light wallet would connect to, unless using HAProxy in which case the default port is 14267 TCP)
+1. TCP neighbor peering port
+2. TCP API port (this is where a light wallet would connect to, unless using HAProxy in which case the default port is 14267 TCP)
 
 You can check if IRI is "listening" on the ports when you run:
 
@@ -131,7 +130,6 @@ You can check if IRI is "listening" on the ports when you run:
 Here is the output you should expect::
 
   # lsof -Pni|egrep "iri|iotapm"
-  java     2297    iri   19u  IPv6  20331      0t0  UDP *:14600
   java     2297    iri   21u  IPv6  20334      0t0  TCP *:15600 (LISTEN)
   java     2297    iri   32u  IPv6  20345      0t0  TCP 127.0.0.1:14265 (LISTEN)
 
@@ -139,12 +137,8 @@ Here is the output you should expect::
 
 What does this tell us?
 
-1. ``*:<port number>`` means this port is listening on all interfaces - from the example above we see that IRI is listening on ports TCP and UDP no. 15600 and 14600 respectively
+1. ``*:<port number>`` means this port is listening on all interfaces - from the example above we see that IRI is listening on port TCP 15600
 2. IRI is listening for API (or wallet connections) on a local interface (not accessible from "outside") no. 14265
-
-To peer with neighbors we need to choose whether to let them connect to TCP 15600 or UDP 14600 port.
-
-You can have a mix of TCP and UDP neighbors. In some cases, if UDP isn't working well, you can switch to TCP or vice-versa.
 
 
 Here's how to check your IP address:
@@ -170,7 +164,7 @@ See the IP address on ``eth0``? (10.50.0.24) this is the IP address of the serve
 
 **Yes** - for those of you who've noticed, this example is a **private** address. But if you have a VPS you should have a public IP.
 
-I could have a neighbor connect to my UDP port: ``udp://10.50.0.14:14600`` or to my TCP port: ``tcp://10.50.0.14:15600``.
+I could have a neighbor connect to my TCP port: ``tcp://10.50.0.14:15600``.
 
 If you are behind a home or office router, you will probably have to forward ports from your router to this IP (as this IP will be "internal" and the router have thexternal IP).
 
@@ -254,7 +248,7 @@ You can run ``nbctl`` with ``-h`` to get help on all the options::
     --api-version API_VERSION, -x API_VERSION
                           IRI API Version. Default: 1.4
 
-  Example: nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
+  Example: nbctl -a -n tcp://4.3.2.1:4321 -f /etc/default/iri
 
 
 The nice thing about ``nbctl`` is that it communicates with IRI to add/remove neighbors and also updates the configuration file.
@@ -287,7 +281,7 @@ To add one or more neighbors use the ``-a`` option and specify the neighbors usi
 
 .. code:: bash
 
-   nbctl -a -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -n udp://[2a01:a0a0:c0c0:1234::1]:14600 -f /etc/default/iri
+   nbctl -a -n tcp://4.3.2.1:4321 -n tcp://[2a01:a0a0:c0c0:1234::1]:15600 -f /etc/default/iri
 
 Note that the last option ``-f /etc/default/iri`` will also add the neighbor(s) to the configuration file. **Make sure** you are pointing to the correct file. For example, in CentOS it is ``/etc/sysconfig/iri``, on other guides it is located in ``/home/iota/node/iota.ini``!!!
 
@@ -299,7 +293,7 @@ To remove one or more neighbors use the ``-r`` option and specify the neighbors 
 
 .. code:: bash
 
-  nbctl -r -n udp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
+  nbctl -r -n tcp://1.2.3.4:12345 -n tcp://4.3.2.1:4321 -f /etc/default/iri
 
 Note that the last options ``-f /etc/default/iri`` will remove the neighbors from the configuration file, but **make sure** you are pointing to the correct file. For example, in CentOS it is ``/etc/sysconfig/iri``, on other guides it is located in ``/home/iota/node/iota.ini``!!!
 
@@ -311,14 +305,14 @@ If you don't have ``nbctl`` script you can to run a ``curl`` command, e.g. to ad
 .. code:: bash
 
    curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"addNeighbors",
-     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port", "udp://[2a01:a0a0:c0c0:1234::1]:14600"]}' http://localhost:14265
+     "uris":["tcp://neighbor-ip:port", "tcp://neighbor-ip:port", "tcp://[2a01:a0a0:c0c0:1234::1]:15600"]}' http://localhost:14265
 
 to remove:
 
 .. code:: bash
 
    curl -H 'X-IOTA-API-VERSION: 1.4' -d '{"command":"removeNeighbors",
-     "uris":["udp://neighbor-ip:port", "udp://neighbor-ip:port"]}' http://localhost:14265
+     "uris":["tcp://neighbor-ip:port", "tcp://neighbor-ip:port"]}' http://localhost:14265
 
 
 to list:

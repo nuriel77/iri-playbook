@@ -28,3 +28,19 @@ LOCAL_SNAPSHOTS_PRUNING_DELAY = {{ iri_local_shapshots_pruning_delay | default('
 LOCAL_SNAPSHOTS_INTERVAL_SYNCED = {{ iri_local_shapshots_interval_synced | default('10') }}
 LOCAL_SNAPSHOTS_INTERVAL_UNSYNCED = {{ iri_local_shapshots_interval_unsynced | default('1000') }}
 TIP_SOLIDIFIER_ENABLED = {{ iri_tip_solidifier_enabled | default('false') }}
+
+; *Network rewrite options*
+# Defines the interval at which to try to reconnect/disconnect wanted neighbors.
+#RECONNECT_ATTEMPT_INTERVAL_SECONDS = 60
+
+# Controls auto-tethering, this was previously controlled via TESTNET true,
+# default is false (also in testnet mode).
+#AUTO_TETHERING_ENABLED = false
+
+# Rename of MAX_PEERS, defines the max number of connected neighbors.
+#MAX_NEIGHBORS = 3
+
+# These two values are configured elsewhere in the iri-playbook's installtion:
+# Debian/Ubuntu: /etc/default/iri. Centos: /etc/sysconfig/iri
+#NEIGHBORING_SOCKET_ADDRESS
+#NEIGHBORING_SOCKET_PORT

@@ -26,8 +26,9 @@ iri_api_port: "14265"
 # i.e. when iri_net_name is defined and enabled
 iri_mgmt_api_port: "14266"
 
-# The UDP neighbor peering port
-iri_udp_port: "14600"
+# The address to bind on (interface on your node)
+# 0.0.0.0 means all interfaces
+iri_tcp_port_bind_address: "0.0.0.0"
 
 # The TCP neighbor peering port
 iri_tcp_port: "15600"

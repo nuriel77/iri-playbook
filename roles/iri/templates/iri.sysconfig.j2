@@ -22,11 +22,12 @@ DOCKER_IRI_MONITORING_API_PORT_ENABLE={% if iri_net_name is defined %}1{% else %
 # To enable PoW on your node, remove attachToTangle and interruptAttachingToTangle
 DOCKER_IRI_REMOTE_LIMIT_API="{{ iri_remote_limit_api }}"
 
-# TCP peering port
-TCP_RECEIVER_PORT={{ iri_tcp_port }}
+# TCP neighboring port listens on this address on the node.
+# The value 0.0.0.0 means "all interfaces".
+NEIGHBORING_SOCKET_ADDRESS={{ iri_tcp_port_bind_address }}
 
-# UDP peering port
-UDP_RECEIVER_PORT={{ iri_udp_port }}
+# TCP peering port
+NEIGHBORING_SOCKET_PORT={{ iri_tcp_port }}
 
 # IRI API Port. Note that this is the port that will be
 # configured for IRI, however, while running as a Docker
@@ -42,13 +43,13 @@ ZMQ_PORT={{ iri_zmq_port }}
 ZMQ_BIND={{ iri_zmq_bind }}
 
 # Fill in neighbor addresses separated by space, e.g.
-# IRI_NEIGHBORS="udp://cfb.is.ai:14600 tcp://iota.rules.io:15600"
+# IRI_NEIGHBORS="tcp://cfb.is.ai:14600 tcp://iota.rules.io:15600"
 IRI_NEIGHBORS=""
 
 # Optional OPTIONS can contain multiple values e.g.
-#OPTIONS="--rescan --revalidate"
+#OPTIONS="--rescan true --revalidate true"
 # or
-#OPTIONS="--milestone-start 0 --milestone-keys 16 --max-depth 1000 --testnet"
+#OPTIONS="--milestone-start 0 --milestone-keys 16 --max-depth 1000 --testnet true"
 OPTIONS=""
 
 # Optional options for Docker
