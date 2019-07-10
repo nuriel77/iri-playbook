@@ -8,7 +8,9 @@
     systemd_dir: /usr/lib/systemd/system
     config_dir: /etc/sysconfig
   when: ansible_distribution == 'CentOS'
-  tags: always
+  tags:
+    - always
+    - iri_service_file
 
 - name: set variables ubuntu
   set_fact:
@@ -16,6 +18,7 @@
     config_dir: /etc/default
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags:
+    - iri_service_file
     - nbctl_config
     - scripts
 
