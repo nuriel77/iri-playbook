@@ -16,11 +16,11 @@ clear
 OS=unknown
 VER=unknown
 EDITOR="${EDITOR:-nano}"
-VERSION_TEMP=0.8.0
+VERSION_TEMP=0.8.1
 __VERSION__=$VERSION_TEMP
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
-WIDTH=78
+WIDTH=80
 export NEWT_COLORS='
 window=,
 '
@@ -688,7 +688,7 @@ function remove_neighbors() {
     local IRI_CONFIG
 
     echo "Getting neighbors list..."
-    NEIGHBORS=$(list_neighbors get)
+    NEIGHBORS=$(list_neighbors get | awk '{$1=$1}{print}' | tr -d ' ')
     RC=$?
     clear
     if [[ $RC -ne 0 ]]; then
@@ -705,21 +705,24 @@ function remove_neighbors() {
     fi
     HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 5)
     NEIGHBORS_ARRAY=($(echo "$NEIGHBORS"))
-    NEIGHBORS_ARRAY_INDEXED=($(echo "$NEIGHBORS"| awk '!/^ / && NF { print NR")"; print $1}'))
-    NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 $WIDTH 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
+    local NEIGHBORS_ARRAY_INDEXED=($(echo "$NEIGHBORS" | awk '!/^ / && NF { print NR")"; print $1$2$3}'))
+    local NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 $WIDTH 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
     if [ $? -eq 1 ]; then
         return
     fi
 
-    NEIGHBOR_INX=$(echo "$NEIGHBOR_INDEX" | cut -d')' -f1)
-    NEIGHBOR_INX=$(expr $NEIGHBOR_INX - 1)
-    TO_REMOVE="${NEIGHBORS_ARRAY[$NEIGHBOR_INX]}"
-    SCHEME=$(echo "$TO_REMOVE"|cut -d'/' -f2)
-    ADDRESS=$(echo "$TO_REMOVE"|cut -d'/' -f1)
+    local NEIGHBOR_INX=$(echo "$NEIGHBOR_INDEX" | cut -d')' -f1)
+    local NEIGHBOR_INX=$(expr $NEIGHBOR_INX - 1)
+    local TO_REMOVE="${NEIGHBORS_ARRAY[$NEIGHBOR_INX]}"
+    local SCHEME=$(echo "$TO_REMOVE"|cut -d'/' -f2|cut -d '|' -f1)
+    local ADDRESS=$(echo "$TO_REMOVE"|cut -d'/' -f1)
+    local DOMAIN="($(echo "$TO_REMOVE" | cut -d '|' -f2))"
+    [[ "$DOMAIN" == "(null)" ]] && DOMAIN=""
+
     if (whiptail --title "Confirm removal" \
-                 --yesno "Are you sure you want to remove: ${SCHEME}://${ADDRESS}" \
+                 --yesno "Are you sure you want to remove:\n\n${SCHEME}://${ADDRESS} ${DOMAIN}" \
                  --defaultno \
-                 8 $WIDTH)
+                 12 $WIDTH)
     then
         IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
         [ -n "$IRI_CONFIG" ] && IRI_CONFIG="-f $IRI_CONFIG"
@@ -745,7 +748,7 @@ function list_neighbors() {
     NEIGHBORS_QUERY=$(nbctl -l 2>&1)
     RC=$?
     if [[ $RC -ne 0 ]]; then
-        if echo "$NEIGHBORS_QUERY" | egrep -q "urllib2.URLError|timeout|refused" ; then
+        if echo "$NEIGHBORS_QUERY" | egrep -q "urllib..URLError|timeout|refused" ; then
             NEIGHBORS_QUERY="Failed to communicate with IRI API port. Check if IRI is active and if $HOME/.nbctl is configured correctly."
         else
             NEIGHBORS_QUERY="Unknown error"
@@ -760,7 +763,7 @@ function list_neighbors() {
                  $HEIGHT $WIDTH
         return 1
     else
-        NEIGHBORS=$( echo "$NEIGHBORS_QUERY" | jq -r '.neighbors[] | "\(.address)/\(.connectionType)"' )
+        NEIGHBORS=$(echo "$NEIGHBORS_QUERY" | jq -r '.neighbors[] | "\(.address)/\(.connectionType) | \(.domain)"' | column -c 80 -t)
         if [ -n "$RETURN_RES" ]; then
             echo "$NEIGHBORS"
             return 0
