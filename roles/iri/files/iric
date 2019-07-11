@@ -20,7 +20,7 @@ VERSION_TEMP=0.8.1
 __VERSION__=$VERSION_TEMP
 CUR_DIR=$(pwd)
 PID_FILE=/var/run/iric.pid
-WIDTH=80
+WIDTH=78
 export NEWT_COLORS='
 window=,
 '
