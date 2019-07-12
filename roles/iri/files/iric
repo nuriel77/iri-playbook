@@ -241,7 +241,6 @@ function network_rewrite_update() {
 
     # Set config file and firewall
     if [[ "$OS" =~ ^(CentOS|Red) ]]; then
-        export SYSCONFIG_FILE=/etc/sysconfig/iri
         if [ -x /bin/firewall-cmd ]; then
             if ! /bin/firewall-cmd --list-ports --permanent | grep -q '15600/tcp'; then
                 # Try to open the port but don't fail the script if it fails.
@@ -251,7 +250,6 @@ function network_rewrite_update() {
             fi
         fi
     elif [[ "$OS" =~ ^(Ubuntu|Debian) ]]; then
-        export SYSCONFIG_FILE=/etc/default/iri
         if [ -x /usr/sbin/ufw ]; then
             # Try to open the port but don't fail the script if it fails.
             echo "Open peering port 15600/tcp"
