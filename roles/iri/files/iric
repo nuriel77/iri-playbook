@@ -14,14 +14,14 @@ clear
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
-OS=unknown
-VER=unknown
-EDITOR="${EDITOR:-nano}"
-VERSION_TEMP=0.9.3
-__VERSION__=$VERSION_TEMP
-IRI_BRANCH="feat/docker"
-CUR_DIR=$(pwd)
-PID_FILE=/var/run/iric.pid
+: "${EDITOR:=nano}"
+VERSION_TEMP="0.9.3"
+__VERSION__="$VERSION_TEMP"
+
+: "${IRI_BRANCH:=feat/docker}"
+CUR_DIR="$(pwd)"
+
+PID_FILE="/var/run/iric.pid"
 WIDTH=78
 export NEWT_COLORS='
 window=,
@@ -42,7 +42,7 @@ fi
 function cleanup() {
     rm -f "$PID_FILE"
     cd "$CUR_DIR"
-    trap "" EXIT
+    trap - EXIT
     clear
 }
 
