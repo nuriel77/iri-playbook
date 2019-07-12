@@ -934,6 +934,7 @@ function run_custom_updates(){
             return 1
         else
             touch "custom_updates/${__VERSION__}_updates.sh.completed"
+            clear
         fi
     fi
 }
