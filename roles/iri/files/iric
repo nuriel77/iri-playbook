@@ -914,7 +914,7 @@ function update_iric() {
 
     # Run playbook script upgrades
     cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
-    [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully!"
+    [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully! Additional updates may apply upon restart of iric."
     pause "$MSG Press ENTER to return to menu."
     clear
 
