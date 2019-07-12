@@ -3,3 +3,4 @@ _site/
 .*.swp
 group_vars/all/z-*.yml
 inventory-multi
+custom_updates/*.completed
