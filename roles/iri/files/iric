@@ -15,10 +15,12 @@ clear
 
 OS=unknown
 VER=unknown
-EDITOR="${EDITOR:-nano}"
-VERSION_TEMP=0.8.1
+: "${EDITOR:=nano}"
+VERSION_TEMP=0.8.2
 __VERSION__=$VERSION_TEMP
-CUR_DIR=$(pwd)
+
+: "${IRI_BRANCH:=master}"
+CUR_DIR="$(pwd)"
 PID_FILE=/var/run/iric.pid
 WIDTH=78
 export NEWT_COLORS='
@@ -40,7 +42,7 @@ fi
 function cleanup() {
     rm -f "$PID_FILE"
     cd "$CUR_DIR"
-    trap "" EXIT
+    trap - EXIT
     clear
 }
 
@@ -60,21 +62,21 @@ function set_dist() {
     if [ -f /etc/os-release ]; then
         # freedesktop.org and systemd
         . /etc/os-release
-        OS=$NAME
-        VER=$VERSION_ID
+        export OS=$NAME
+        export VER=$VERSION_ID
     elif type lsb_release >/dev/null 2>&1; then
         # linuxbase.org
-        OS=$(lsb_release -si)
-        VER=$(lsb_release -sr)
+        export OS=$(lsb_release -si)
+        export VER=$(lsb_release -sr)
     elif [ -f /etc/lsb-release ]; then
         # For some versions of Debian/Ubuntu without lsb_release command
         . /etc/lsb-release
-        OS=$DISTRIB_ID
-        VER=$DISTRIB_RELEASE
+        export OS=$DISTRIB_ID
+        export VER=$DISTRIB_RELEASE
     elif [ -f /etc/debian_version ]; then
         # Older Debian/Ubuntu/etc.
-        OS=Debian
-        VER=$(cat /etc/debian_version)
+        export OS=Debian
+        export VER=$(cat /etc/debian_version)
     elif [ -f /etc/SuSe-release ]; then
         # Older SuSE/etc.
         echo "Unsupported OS."
@@ -85,8 +87,15 @@ function set_dist() {
         exit 1
     else
         # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-        OS=$(uname -s)
-        VER=$(uname -r)
+        export OS=$(uname -s)
+        export VER=$(uname -r)
+    fi
+
+    # Set path to iri's configuration file
+    if [[ "$OS" =~ ^(CentOS|Red) ]]; then
+        export SYSCONFIG_FILE=/etc/sysconfig/iri
+    elif [[ "$OS" =~ ^(Ubuntu|Debian) ]]; then
+        export SYSCONFIG_FILE=/etc/default/iri
     fi
 }
 
@@ -161,12 +170,10 @@ function verify_playbook() {
     local HEIGHT
     local RC
     if [ ! -d /opt/iri-playbook ]; then
-        whiptail --title "Missing Playbook!" \
-                 --msgbox "ERROR: Cannot find the iri-playbook in /opt/iri-playbook!" \
-                 8 $WIDTH
-        return 1
+        cd /opt && git clone -b "$IRI_BRANCH" https://github.com/nuriel77/iri-playbook.git
     fi
     cd /opt/iri-playbook
+
     OUTPUT=$(git pull 2>&1)
     RC=$?
     HEIGHT=$(expr $(echo "$OUTPUT"|wc -l) + 10)
@@ -246,7 +253,6 @@ function network_rewrite_update() {
 
     # Set config file and firewall
     if [[ "$OS" =~ ^(CentOS|Red) ]]; then
-        SYSCONFIG_FILE=/etc/sysconfig/iri
         if [ -x /bin/firewall-cmd ]; then
             if ! /bin/firewall-cmd --list-ports --permanent | grep -q '15600/tcp'; then
                 # Try to open the port but don't fail the script if it fails.
@@ -256,7 +262,6 @@ function network_rewrite_update() {
             fi
         fi
     elif [[ "$OS" =~ ^(Ubuntu|Debian) ]]; then
-        SYSCONFIG_FILE=/etc/default/iri
         if [ -x /usr/sbin/ufw ]; then
             # Try to open the port but don't fail the script if it fails.
             echo "Open peering port 15600/tcp"
@@ -376,6 +381,7 @@ function upgrade_iri() {
         fi
     fi
 
+    # Verifies and pull latest changes
     verify_playbook
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
@@ -384,7 +390,6 @@ function upgrade_iri() {
         return 1
     fi
     echo "Downloading new version..."
-
 
     TFILE=$(mktemp /tmp/iri-${IRI_LATEST_CLEAN}.XXXXXXXXX)
     # TODO: remove RELEASE in next versions
@@ -853,7 +858,7 @@ function get_db() {
 ## IRIC
 function get_latest_iric_version() {
     local RAND=$(echo -n $(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 7 | head -n 1))
-    curl -s -f -m 5 -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/nuriel77/iri-playbook/master/roles/iri/files/iric?nocache=$RAND"|grep ^VERSION|cut -d= -f2
+    curl -s -f -m 5 -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/nuriel77/iri-playbook/${IRI_BRANCH}/roles/iri/files/iric?nocache=$RAND"|grep ^VERSION|cut -d= -f2
 }
 
 function check_new_iric() {
@@ -887,7 +892,10 @@ function update_iric() {
                      10 $WIDTH) then
             return
         else
+            # Don't need another confirmation question
             local NO_CONFIRM=1
+            # Delete any 'completed' files for this version
+            rm -f "custom_updates/${CURR_VERSION}_updates.sh.completed"
         fi
     fi
 
@@ -899,6 +907,7 @@ function update_iric() {
         fi
     fi
 
+    # Verifies and pull latest changes
     verify_playbook
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
@@ -906,14 +915,32 @@ function update_iric() {
                   8 $WIDTH
          return 1
     fi
+
+    # Run playbook script upgrades
     cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
-    [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully!"
+    [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully! Additional updates may apply upon restart of iric."
     pause "$MSG Press ENTER to return to menu."
     clear
 
     # Remove current pid file and restart
-    rm -f $PID_FILE
+    rm -f "$PID_FILE"
     exec "$0"
+}
+
+function run_custom_updates(){
+    # Run custom updates from the new version
+    if [ -f "custom_updates/${__VERSION__}_updates.sh" ] && [ ! -f "custom_updates/${__VERSION__}_updates.sh.completed" ]; then
+        echo "Updates detected: running custom updates..."
+        if ! bash "custom_updates/${__VERSION__}_updates.sh"; then
+            whiptail --title "Error!" \
+                     --msgbox "ERROR: custom updates task failed." \
+                     8 $WIDTH
+            return 1
+        else
+            touch "custom_updates/${__VERSION__}_updates.sh.completed"
+            clear
+        fi
+    fi
 }
 
 ### Configs ###
@@ -1524,7 +1551,7 @@ function run_main_menu() {
         "o)")
             enable_https
             run_main_menu
-	    ;;
+            ;;
 
         "p)")
             update_iric
@@ -1539,6 +1566,9 @@ function run_main_menu() {
 
 # Get OS and version
 set_dist
+
+# Run custom updates
+run_custom_updates
 
 # Run main menu
 run_main_menu

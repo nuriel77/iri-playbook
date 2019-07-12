@@ -2,3 +2,4 @@ site.retry
 _site/
 .*.swp
 group_vars/all/z-*.yml
+custom_updates/*.completed
