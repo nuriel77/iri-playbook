@@ -17,7 +17,7 @@ clear
 OS=unknown
 VER=unknown
 EDITOR="${EDITOR:-nano}"
-VERSION_TEMP=0.9.2
+VERSION_TEMP=0.9.3
 __VERSION__=$VERSION_TEMP
 IRI_BRANCH="feat/docker"
 CUR_DIR=$(pwd)
@@ -62,21 +62,21 @@ function set_dist() {
     if [ -f /etc/os-release ]; then
         # freedesktop.org and systemd
         . /etc/os-release
-        OS=$NAME
-        VER=$VERSION_ID
+        export OS=$NAME
+        export VER=$VERSION_ID
     elif type lsb_release >/dev/null 2>&1; then
         # linuxbase.org
-        OS=$(lsb_release -si)
-        VER=$(lsb_release -sr)
+        export OS=$(lsb_release -si)
+        export VER=$(lsb_release -sr)
     elif [ -f /etc/lsb-release ]; then
         # For some versions of Debian/Ubuntu without lsb_release command
         . /etc/lsb-release
-        OS=$DISTRIB_ID
-        VER=$DISTRIB_RELEASE
+        export OS=$DISTRIB_ID
+        export VER=$DISTRIB_RELEASE
     elif [ -f /etc/debian_version ]; then
         # Older Debian/Ubuntu/etc.
-        OS=Debian
-        VER=$(cat /etc/debian_version)
+        export OS=Debian
+        export VER=$(cat /etc/debian_version)
     elif [ -f /etc/SuSe-release ]; then
         # Older SuSE/etc.
         echo "Unsupported OS."
@@ -87,8 +87,15 @@ function set_dist() {
         exit 1
     else
         # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-        OS=$(uname -s)
-        VER=$(uname -r)
+        export OS=$(uname -s)
+        export VER=$(uname -r)
+    fi
+
+    # Set path to iri's configuration file
+    if [[ "$OS" =~ ^(CentOS|Red) ]]; then
+        export SYSCONFIG_FILE=/etc/sysconfig/iri
+    elif [[ "$OS" =~ ^(Ubuntu|Debian) ]]; then
+        export SYSCONFIG_FILE=/etc/default/iri
     fi
 }
 
@@ -234,7 +241,7 @@ function network_rewrite_update() {
 
     # Set config file and firewall
     if [[ "$OS" =~ ^(CentOS|Red) ]]; then
-        SYSCONFIG_FILE=/etc/sysconfig/iri
+        export SYSCONFIG_FILE=/etc/sysconfig/iri
         if [ -x /bin/firewall-cmd ]; then
             if ! /bin/firewall-cmd --list-ports --permanent | grep -q '15600/tcp'; then
                 # Try to open the port but don't fail the script if it fails.
@@ -244,7 +251,7 @@ function network_rewrite_update() {
             fi
         fi
     elif [[ "$OS" =~ ^(Ubuntu|Debian) ]]; then
-        SYSCONFIG_FILE=/etc/default/iri
+        export SYSCONFIG_FILE=/etc/default/iri
         if [ -x /usr/sbin/ufw ]; then
             # Try to open the port but don't fail the script if it fails.
             echo "Open peering port 15600/tcp"
@@ -893,6 +900,7 @@ function update_iric() {
         fi
     fi
 
+    # Verifies and pull latest changes
     verify_playbook
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
@@ -900,14 +908,29 @@ function update_iric() {
                   8 $WIDTH
          return 1
     fi
+
+    # Run playbook script upgrades
     cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
     [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully!"
     pause "$MSG Press ENTER to return to menu."
     clear
 
     # Remove current pid file and restart
-    rm -f $PID_FILE
+    rm -f "$PID_FILE"
     exec "$0"
+}
+
+function run_custom_updates(){
+    # Run custom updates from the new version
+    if [ -f "custom_updates/${__VERSION__}_updates.sh" ]; then
+        echo "Updates detected: running custom updates..."
+        if ! bash "custom_updates/${__VERSION__}_updates.sh"; then
+            whiptail --title "Error!" \
+                     --msgbox "ERROR: custom updates task failed." \
+                     8 $WIDTH
+            return 1
+        fi
+    fi
 }
 
 ### Configs ###
@@ -1524,7 +1547,7 @@ function run_main_menu() {
         "o)")
             enable_https
             run_main_menu
-	    ;;
+            ;;
 
         "p)")
             update_iric
@@ -1539,6 +1562,9 @@ function run_main_menu() {
 
 # Get OS and version
 set_dist
+
+# Run custom updates
+run_custom_updates
 
 # Run main menu
 run_main_menu
