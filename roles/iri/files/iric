@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.9.3
+VERSION_TEMP=0.9.4
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -888,7 +888,10 @@ function update_iric() {
                      10 $WIDTH) then
             return
         else
+            # Don't need another confirmation question
             local NO_CONFIRM=1
+            # Delete any 'completed' files for this version
+            rm -f "custom_updates/${CURR_VERSION}_updates.sh.completed"
         fi
     fi
 
@@ -922,13 +925,15 @@ function update_iric() {
 
 function run_custom_updates(){
     # Run custom updates from the new version
-    if [ -f "custom_updates/${__VERSION__}_updates.sh" ]; then
+    if [ -f "custom_updates/${__VERSION__}_updates.sh" ] && [ ! -f "custom_updates/${__VERSION__}_updates.sh.completed" ]; then
         echo "Updates detected: running custom updates..."
         if ! bash "custom_updates/${__VERSION__}_updates.sh"; then
             whiptail --title "Error!" \
                      --msgbox "ERROR: custom updates task failed." \
                      8 $WIDTH
             return 1
+        else
+            touch "custom_updates/${__VERSION__}_updates.sh.completed"
         fi
     fi
 }
