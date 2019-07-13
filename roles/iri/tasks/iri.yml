@@ -143,6 +143,7 @@
         - nbctl
         - reattach
         - iric
+        - data_collector
 
     - name: download ps_mem
       get_url:

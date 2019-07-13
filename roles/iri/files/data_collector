@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as user root"
+    echo "Please change to root using: 'sudo su -' and re-run the script"
+    exit 1
+fi
+
+UTC_DATE=$(TZ=":UTC" date +%Y%m%d%H%M)
+#declare -gr COLLECTOR_FILE="/var/log/$(hostname -f)_${UTC_DATE}.log"
+COLLECTOR_FILE=/tmp/test.log
+declare -gr JOURNALCTL="/bin/journalctl"
+declare -gr SYSTEMCTL="/bin/systemctl"
+declare -gr DB_PATH="/var/lib/iri/target/mainnetdb"
+: ${MAX_LOG_LINES:=2000}
+
+function log() {
+    echo -ne "$@" | tee -a "$COLLECTOR_FILE"
+}
+
+function collect_000_df_h() {
+    log "$(df -h)"
+}
+
+function collect_001_df_i() {
+    log "$(df -i)"
+}
+
+function collect_002_free_m() {
+    log "$(free -m)"
+}
+
+function collect_003_cpus() {
+    log "CPU count: $(grep -c ^processor /proc/cpuinfo)"
+}
+
+function collect_004_uptime() {
+    log "$(uptime)"
+}
+
+function collect_005_interfaces() {
+    log "$(/sbin/ip a)"
+}
+
+function collect_006_routes() {
+    log "$(/sbin/ip r)"
+}
+
+function collect_007_iptables() {
+    log "$(/sbin/iptables-save)"
+}
+
+function collect_008_listen_ports() {
+    log "$(lsof -Pni)"
+}
+
+function collect_009_db_size() {
+    log "$(du -sh $DB_PATH)"
+}
+
+function collect_010_iri_node_info() {
+    log "$(curl -s http://localhost:14265 -X POST \
+         -H 'X-IOTA-API-Version: 1' \
+         -H 'Content-Type: application/json' \
+         -d '{"command": "getNodeInfo"}')"
+}
+
+function collect_011_iri_haproxy_cfg() {
+    if [ ! -f "/etc/haproxy/haproxy.cfg" ]
+    then
+        log "WARNING: /etc/haproxy/haproxy.cfg not found"
+    else
+        log "$(cat /etc/haproxy/haproxy.cfg | sed 's/password.*/_______redacted_______/g')"
+    fi
+}
+
+function collect_012_letsencrypt_certs() {
+    if [ ! -e "/etc/letsencrypt/live" ] || [ ! -d "/etc/letsencrypt/live" ]
+    then
+        log "WARNING: Cannot find /etc/letsencrypt/live"
+    else
+        log "$(ls -ltr /etc/letsencrypt/live/*)"
+    fi
+}
+
+function collect_013_iri_sysconfig() {
+    if [ -f "/etc/default/iri" ]
+    then
+        log "\nFound /etc/default/iri\n"
+        log "$(cat /etc/default/iri)"
+    fi
+
+    if [ -f "/etc/sysconfig/iri" ]
+    then
+        log "\nFound /etc/sysconfig/iri\n"
+        log "$(cat /etc/sysconfig/iri)"
+    fi
+}
+
+function collect_014_iri_ini() {
+    if [ -f "/var/lib/iri/iri.ini" ]
+    then
+        log "$(grep -v -i auth /var/lib/iri/iri.ini)"
+    else
+        log "WARNING: Did not find /var/lib/iri/iri.ini"
+    fi
+}
+
+function collect_015_iri_playbook_vars() {
+    for FILE in "$(find /opt/iri-playbook/group_vars/all -name 'z-*' -type f)"
+    do
+        log "\n\n------ Playbook variables from $FILE ------\n\n"
+        log "$(grep -v password $FILE)"
+    done
+}
+
+function collect_016_playbook_nbctl() {
+    if [ -f "/root/.nbctl" ]
+    then
+        log "$(cat /root/.nbctl)"
+    else
+        log "WARNING: Did not find /root/.nbctl"
+    fi
+}
+
+function collect_017_iri_logs() {
+    log "$($JOURNALCTL -n $MAX_LOG_LINES -u iri --no-pager)"
+}
+
+function collect_018_system_logs() {
+    # TODO: detect using OS/VER
+    if [ -f "/var/log/messages" ]
+    then
+        SYSTEM_LOG="/var/log/messages"
+    elif [ -f "/var/log/syslog" ]
+    then
+        SYSTEM_LOG="/var/log/syslog"
+    else
+        return 1
+    fi
+    log "$(tail -${MAX_LOG_LINES} $SYSTEM_LOG)"
+}
+
+function collect_019_ps_mem(){
+    if [ -f "/usr/bin/ps_mem" ]
+    then
+        log "$(python /usr/bin/ps_mem)"
+    else
+        log "WARNING: Did not find /usr/bin/ps_mem"
+    fi
+}
+
+function collect_020_ps_aux() {
+    log "$(ps aux)"
+}
+
+function collect_021_iri_playbook_git_data() {
+    cd /opt/iri-playbook
+    log "$(git branch)"
+    log "\n------------\n"
+    log "$(git log | head -1)"
+    cd - >/dev/null
+}
+
+function collect_022_iric_version() {
+    if [ -f "/usr/bin/iric" ]
+    then
+        log "$(grep ^VERSION /usr/bin/iric)"
+    else
+        log "WARNING: Did not find /usr/bin/iric"
+    fi
+}
+
+function collect_023_iri_playbook_logs() {
+    for FILE in $(find /var/log -name 'iri-playbook*' -type f)
+    do
+        log "\n\n------ Playbook installation logs from $FILE ------\n\n"
+        log "$(cat $FILE)"
+    done
+}
+
+function collect_024_iota_prom_exporter_logs() {
+    log "$($JOURNALCTL -n $MAX_LOG_LINES -u iota-prom-exporter --no-pager)"
+}
+
+function collect_025_iota_peer_manager_logs() {
+    log "$($JOURNALCTL -n $MAX_LOG_LINES -u iota-pm --no-pager)"
+}
+
+function collect_026_prometheus_logs() {
+    log "$($JOURNALCTL -n $MAX_LOG_LINES -u prometheus --no-pager)"
+}
+
+function collect_027_node_exporter_logs() {
+    log "$($JOURNALCTL -n $MAX_LOG_LINES -u node-exporter --no-pager)"
+}
+
+function collect_028_grafana_logs() {
+    log "$($JOURNALCTL -n $MAX_LOG_LINES -u grafana-server --no-pager)"
+}
+
+function collect_029_haproxy_logs() {
+    if [ -f "/var/log/haproxy.log" ]
+    then
+        log "$(tail -n${MAX_LOG_LINES} /var/log/haproxy.log)"
+    else
+        log "WARNING: Did not find /var/log/haproxy.log)"
+    fi
+}
+
+function collect_030_haproxy_journal() {
+    log "$($JOURNALCTL -n $MAX_LOG_LINES -u haproxy --no-pager)"
+}
+
+log "######################## Collection data with MAX_LOG_LINES=${MAX_LOG_LINES} ########################\n\n"
+
+FUNCTIONS=($(typeset -f | grep "^collect" | sed 's/ ()//g'))
+for FUNCTION in "${FUNCTIONS[@]}"
+do
+    log "\n\n######################## ${FUNCTION} ########################\n\n"
+    $FUNCTION
+done
+
+echo -en "\n\n----------------------------------------------\n\n"
+gzip -f "$COLLECTOR_FILE"
+echo "Done collecting data to file: $COLLECTOR_FILE.gz"
