@@ -7,8 +7,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 UTC_DATE=$(TZ=":UTC" date +%Y%m%d%H%M)
-#declare -gr COLLECTOR_FILE="/var/log/$(hostname -f)_${UTC_DATE}.log"
-COLLECTOR_FILE=/tmp/test.log
+declare -gr COLLECTOR_FILE="/var/log/$(hostname -f)_${UTC_DATE}.log"
 declare -gr JOURNALCTL="/bin/journalctl"
 declare -gr SYSTEMCTL="/bin/systemctl"
 declare -gr DB_PATH="/var/lib/iri/target/mainnetdb"
