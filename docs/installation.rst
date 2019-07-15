@@ -3,7 +3,7 @@
 Installation
 ************
 
-The **recommended** way to install the node is using the :ref:`getting_started_quickly`.
+**WARNING**: The **recommended** way to install the node is using the :ref:`getting_started_quickly`!!!
 
 The following documentation is provided as reference for those with good experience with Linux and Ansible, or for those who would like to **install multiple nodes at once**.
 
@@ -32,7 +32,7 @@ This will search for any packages to update on the system and require you to con
 
 Centos Selinux
 --------------
-For CentOS the playbook requires (for security enhancement) that Selinux is enabled. Please edit the file ``/etc/sysconfig/selinux`` and make sure the line with ``SELINXU=`` is set to ``enforcing``:
+For CentOS the playbook requires (for security enhancement) that Selinux is enabled. Please edit the file ``/etc/selinux/config`` and make sure the line with ``SELINUX=`` is set to ``enforcing``:
 
 .. code:: bash
 
