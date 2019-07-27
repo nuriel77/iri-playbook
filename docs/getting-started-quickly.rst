@@ -4,6 +4,8 @@
 Getting Started Quickly
 #######################
 
+**NOTE** This is the original playbook. It will be deprecated on September 30, 2019. Only available version will be the dockerized version.
+
 You can skip most of the information in this tutorial should you wish to do so and go straight ahead to install the full node.
 
 If you haven't already, just make sure your server matches the :ref:`requirements`.

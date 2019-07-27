@@ -16,7 +16,7 @@ clear
 OS=unknown
 VER=unknown
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.8.2
+VERSION_TEMP=0.8.3
 __VERSION__=$VERSION_TEMP
 
 : "${IRI_BRANCH:=master}"
@@ -1435,7 +1435,7 @@ function neighbors(){
 }
 
 function main_menu() {
-    local MENU="Choose an option"
+    local MENU="This is the original playbook. It will be deprecated on September 30, 2019. Only available version will be the dockerized version.\n"
     if check_new_iric; then
         MENU="${MENU}\n(*IRIC update available)"
     fi
