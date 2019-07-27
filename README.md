@@ -18,7 +18,7 @@ For a "click-'n-go" installation see: [Getting Started Quickly](http://iri-playb
 
 For the full tutorial use the [Wiki](http://iri-playbook.readthedocs.io/en/master/index.html)
 
-**Deprecation Notice** This is the original playbook. It will be deprecated on September 30, 2019. Only available version will be the dockerized version.
+**Deprecation Notice** The original playbook will be deprecated on September 30, 2019. Only available version will be the dockerized version.
 
 ## Screenshots Monitoring
 ![graph_a](https://raw.githubusercontent.com/crholliday/iota-prom-exporter/master/images/top_new.png)
