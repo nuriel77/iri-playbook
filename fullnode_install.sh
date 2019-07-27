@@ -100,6 +100,7 @@ Welcome to IOTA FullNode Installer!
 3. You read and agree to http://iri-playbook.readthedocs.io/en/master/disclaimer.html
 4. This installation ensures firewall is enabled.
 5. If you already have a configured server, re-running this script might overwrite previous configuration.
+6. This is the original playbook. It will be deprecated on September 30, 2018. Only available version will be the dockerized version.
 
 EOF
 
