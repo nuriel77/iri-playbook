@@ -9,9 +9,3 @@
 - import_tasks: vhosts.yml
   tags:
     - vhosts_config
-
-- import_tasks: uninstall.yml
-  tags:
-    - uninstall
-    - uninstall_nginx
-  when: uninstall_playbook is defined and uninstall_playbook|bool == True
