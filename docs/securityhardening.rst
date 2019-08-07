@@ -198,7 +198,7 @@ Disable SSH password authentication:
 
 .. code:: bash
 
-  sed -i 's/^PasswordAuthentication.*/PasswordAuthentication no/g' /etc/ssh/sshd_config
+  grep -q "^PasswordAuthentication" t && sed -i 's/^PasswordAuthentication.*/PasswordAuthentication no/g' /etc/ssh/sshd_config || echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
 
 Restart SSH daemon:
 
@@ -217,7 +217,7 @@ If you wish to re-enable the password authentication, run:
 
 .. code:: bash
 
-  grep -q "^PasswordAuthentication" t && sed -i 's/^PasswordAuthentication.*/PasswordAuthentication no/g' /etc/ssh/sshd_config || echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
+  sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 
 And restart sshd daemon:
 
