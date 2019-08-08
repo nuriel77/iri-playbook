@@ -8,7 +8,7 @@ TimeoutStartSec=0
 Restart=always
 EnvironmentFile=-{{ config_dir }}/nelson-gui
 SuccessExitStatus={{ service_success_exit_status | default('143') }}
-ExecStartPre=-/usr/bin/docker rm %p
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm %p || /bin/true"
 ExecStart=/usr/bin/docker run \
   --name %p \
   --user {{ nelson_uid.stdout }} \

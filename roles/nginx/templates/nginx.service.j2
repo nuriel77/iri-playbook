@@ -7,7 +7,7 @@ Restart=on-failure
 EnvironmentFile=-{{ config_dir }}/nginx
 SuccessExitStatus={{ service_success_exit_status | default('143') }}
 ExecStartPre=/bin/bash -c "/bin/systemctl set-environment SSL_CERTS_DIR=$(readlink -f /etc/ssl/certs)"
-ExecStartPre=-/usr/bin/docker rm %p
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm %p || /bin/true"
 ExecStart=/usr/bin/docker run \
   --name %p \
   --hostname %p \
