@@ -7,6 +7,7 @@ Requires=docker.service
 TimeoutStartSec=0
 Restart=always
 EnvironmentFile=-{{ config_dir }}/nelson
+SuccessExitStatus={{ service_success_exit_status | default('143') }}
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStart=/usr/bin/docker run \
   --name %p \
