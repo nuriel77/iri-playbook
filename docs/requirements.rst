@@ -35,7 +35,8 @@ The installer was tested on Ubuntu (LTS only), CentOS and Debian versions:
 * `Ubuntu 18.04 (amd64) Server Cloud Image (Bionic) <https://cloud-images.ubuntu.com/bionic/current/>`_
 * `Ubuntu 16.04, 17.10 and 18.04 (amd64) Server image ISO <https://www.ubuntu.com/download/server>`_
 * `Debian 9.5 x86_64 image for OpenStack <http://cdimage.debian.org/cdimage/openstack/current-9>`_
-* `CentOS 7.4 x86_64 Generic Cloud Image <http://cloud.centos.org/centos/7/images/>`_ or `CentOS Minimal ISO <http://isoredirect.centos.org/centos/7/isos/x86_64/>`_
+* `Debian 10. x86_64 image for OpenStack <http://cdimage.debian.org/cdimage/openstack/current-10>`_
+* `CentOS 7.x x86_64 Generic Cloud Image <http://cloud.centos.org/centos/7/images/>`_ or `CentOS Minimal ISO <http://isoredirect.centos.org/centos/7/isos/x86_64/>`_
 
 As mentioned above only LTS versions of Ubuntu are supported (e.g. 18.04 and not 18.10)
 
