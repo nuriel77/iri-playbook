@@ -771,7 +771,8 @@ function list_neighbors() {
         if [ "$NEIGHBORS" == "" ]; then
             LENGTH=0
         else
-            LENGTH=$(echo "$NEIGHBORS"|wc -l)
+            #LENGTH=$(echo "$NEIGHBORS"|wc -l)
+            LENGTH=$(($(echo "$NEIGHBORS"|wc -l)*2))
         fi
         local HEIGHT=$(expr $LENGTH + 8)
         whiptail --title "List Neighbors" \
