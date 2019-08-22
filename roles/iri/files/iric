@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.9.6
+VERSION_TEMP=0.9.7
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -745,6 +745,50 @@ function list_neighbors() {
     local HEIGHT
     local RETURN_RES=$1
     NEIGHBORS_QUERY=$(nbctl -l 2>&1)
+    NEIGHBORS_QUERY='{
+    "duration": 0,
+    "neighbors": [
+        {
+            "address": "2001:16b8:62bd:1000:1a03:73ff:fed3:765a:15600",
+            "connected": true,
+            "connectionType": "tcp",
+            "domain": "wolfdomain-6.spdns.de",
+            "numberOfAllTransactions": 22649,
+            "numberOfDroppedSentPackets": 0,
+            "numberOfInvalidTransactions": 0,
+            "numberOfNewTransactions": 765,
+            "numberOfRandomTransactionRequests": 846,
+            "numberOfSentTransactions": 18556,
+            "numberOfStaleTransactions": 0
+        },
+        {
+            "address": "2001:569:7c4c:300:20c:29ff:fe9c:a2e1:15600",
+            "connected": true,
+            "connectionType": "tcp",
+            "domain": "node-1w7jr9qtftvyxuhct80t5ciqp.ipv6.telus.net",
+            "numberOfAllTransactions": 19383,
+            "numberOfDroppedSentPackets": 0,
+            "numberOfInvalidTransactions": 0,
+            "numberOfNewTransactions": 712,
+            "numberOfRandomTransactionRequests": 1007,
+            "numberOfSentTransactions": 18556,
+            "numberOfStaleTransactions": 0
+        },
+        {
+            "address": "2a02:c207:2024:3656:0:0:0:1:15600",
+            "connected": true,
+            "connectionType": "tcp",
+            "domain": "nordor2.spdns.eu",
+            "numberOfAllTransactions": 17172,
+            "numberOfDroppedSentPackets": 0,
+            "numberOfInvalidTransactions": 0,
+            "numberOfNewTransactions": 8681,
+            "numberOfRandomTransactionRequests": 0,
+            "numberOfSentTransactions": 3896,
+            "numberOfStaleTransactions": 0
+        }
+    ]
+}'
     RC=$?
     if [[ $RC -ne 0 ]]; then
         if echo "$NEIGHBORS_QUERY" | egrep -q "urllib..URLError|timeout|refused" ; then
@@ -771,10 +815,10 @@ function list_neighbors() {
         if [ "$NEIGHBORS" == "" ]; then
             LENGTH=0
         else
-            #LENGTH=$(echo "$NEIGHBORS"|wc -l)
-            LENGTH=$(($(echo "$NEIGHBORS"|wc -l)*2))
+            LENGTH=$(echo "$NEIGHBORS"|wc -l)
+            FOR_WINDOW_LENGTH=$(($(echo "$NEIGHBORS"|wc -l)*2))
         fi
-        local HEIGHT=$(expr $LENGTH + 8)
+        local HEIGHT=$(expr $FOR_WINDOW_LENGTH + 8)
         whiptail --title "List Neighbors" \
                  --msgbox "Total: ${LENGTH} neighbor(s)\n\n${NEIGHBORS}" \
                  $HEIGHT $WIDTH
