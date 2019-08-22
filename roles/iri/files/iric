@@ -16,7 +16,7 @@ clear
 OS=unknown
 VER=unknown
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.8.3
+VERSION_TEMP=0.8.4
 __VERSION__=$VERSION_TEMP
 
 : "${IRI_BRANCH:=master}"
