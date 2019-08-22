@@ -125,7 +125,7 @@ function compare_versions() {
     local EVAL_STR=$2
     local SECOND_VERSION=$3
 
-    local GET_BOOL=$(python -c "from distutils.version import StrictVersion; print StrictVersion('$FIRST_VERSION') $EVAL_STR StrictVersion('$SECOND_VERSION')")
+    local GET_BOOL=$(python -c "from distutils.version import StrictVersion; print(StrictVersion('$FIRST_VERSION') $EVAL_STR StrictVersion('$SECOND_VERSION'))")
     if [[ "$GET_BOOL" == "True" ]]
     then
         return 0
