@@ -7,7 +7,14 @@
 /usr/bin/docker pull grafana/grafana:6.3.4
 
 # Set version in the config file
-sed -i 's/^TAG=.*$/TAG=6.3.4/' "$SYSCONFIG_FILE/grafana-server"
+if [ -f "/etc/sysconfig/grafana-server" ]
+then
+    CONFIG_FILE="/etc/sysconfig/grafana-server"
+else
+    CONFIG_FILE="/etc/default/grafana-server"
+fi
+
+sed -i 's/^TAG=.*$/TAG=6.3.4/' "$CONFIG_FILE"
 
 # Restart grafana only if it is already active
 systemctl status grafana-server >/dev/null 2>&1 && /bin/systemctl restart grafana-server
