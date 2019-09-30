@@ -16,7 +16,7 @@ clear
 OS=unknown
 VER=unknown
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.8.4
+VERSION_TEMP=0.8.5
 __VERSION__=$VERSION_TEMP
 
 : "${IRI_BRANCH:=master}"
@@ -1435,7 +1435,7 @@ function neighbors(){
 }
 
 function main_menu() {
-    local MENU="This is the original playbook. It will be deprecated on September 30, 2019. Only available version will be the dockerized version.\n"
+    local MENU="This playbook version is deprecated. Only the dockerized version is supported. You should reinstall your node's OS and then install the playbook via https://iri-playbook.readthedocs.io/en/feat-docker/getting-started-quickly.html\n"
     if check_new_iric; then
         MENU="${MENU}\n(*IRIC update available)"
     fi
@@ -1443,7 +1443,7 @@ function main_menu() {
     whiptail --title "IRIC v${__VERSION__} - IRI Configuration Menu" \
              --menu "$MENU" \
              --cancel-button "Exit" \
-              32 $WIDTH 22 \
+              36 $WIDTH 22 \
     "a)" "Enable Nelson" \
     "b)" "Update Nelson" \
     "c)" "Update IRI software" \
