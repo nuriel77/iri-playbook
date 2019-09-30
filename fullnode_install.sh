@@ -217,7 +217,7 @@ function inform_reboot() {
 
 To proceed with the installation, please re-run:
 
-GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
+bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
 
 (make sure to run it as user root)
 
@@ -235,7 +235,7 @@ and allow the node installer to proceed with the installation.
 
 
 >>> To reboot run: 'reboot', and when the server is back online:
-GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
+bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
 
 !! Remember to run this command as user 'root' !!
 

@@ -40,7 +40,7 @@ First become ``root`` user by typing ``sudo su``.
 
 .. code:: bash
 
-  GIT_OPTIONS="-b feat/docker" bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
+  bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
 
 .. note::
 
