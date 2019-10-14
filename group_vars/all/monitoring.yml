@@ -1,6 +1,6 @@
 # Prometheus
 prom_image: prom/prometheus
-prom_tag: v2.3.2
+prom_tag: v2.13.0
 prom_username: prometheus
 prom_basedir: /opt/prometheus
 prom_datadir: /var/lib/prometheus
@@ -30,7 +30,7 @@ iota_prom_exporter_db_days_retention: 14
 # Alertmanager
 alertmanager_basedir: /opt/prometheus/alertmanager
 alertmanager_image: prom/alertmanager
-alertmanager_tag: v0.15.1
+alertmanager_tag: v0.19.0
 alertmanager_port: "9093"
 alertmanager_proxy_port: "9993"
 alertmanager_bind: 127.0.0.1
@@ -42,6 +42,6 @@ smtp_port: "25"
 
 # cAdvisor
 cadvisor_image: google/cadvisor
-cadvisor_tag: latest
+cadvisor_tag: v0.33.0
 cadvisor_bind_address: 127.0.0.1
 cadvisor_port: "8181"

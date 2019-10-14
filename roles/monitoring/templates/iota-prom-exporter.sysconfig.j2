@@ -1,4 +1,4 @@
 TAG={{ iota_prom_exporter_tag }}
 BIND_ADDRESS={{ iota_prom_exporter_bind }}
 BIND_PORT={{ iota_prom_exporter_port }}
-DOCKER_OPTS=""
+DOCKER_OPTS="--cpus={{ prom_docker_cpu_shares | default('.5') }}"

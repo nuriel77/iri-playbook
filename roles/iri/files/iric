@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.9.10
+VERSION_TEMP=0.10.0
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -425,9 +425,9 @@ function upgrade_iri() {
 ### Monitoring ###
 function upgrade_monitoring() {
     if (whiptail --title "Upgrade Monitoring" \
-                 --yesno "Are you sure you want to upgrade monitoring services?" \
+                 --yesno "If new versions are made available by the playbook those will be upgraded.\n\nDo you want to proceed?" \
                  --defaultno \
-                 8 $WIDTH) then
+                 12 $WIDTH) then
         verify_playbook
         if [[ $? -ne 0 ]]; then
              whiptail --title "Error!" \
@@ -441,7 +441,7 @@ function upgrade_monitoring() {
             ansible-playbook \
               -i inventory \
               -v site.yml \
-              --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config \
+              --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config,cadvisor_config,node_exporter_config,alertmanager_config \
               -e monitoring_enabled=yes \
               -e overwrite=yes \
               -e wait_for_alertmanager=false \
@@ -1076,6 +1076,18 @@ function view_ps_mem() {
     ps_mem 2>/dev/null|less
 }
 
+### Cleanup Docker Images ###
+function cleanup_docker_images() {
+    if (whiptail --title "Cleanup Docker Images" \
+                 --yesno "To free up some diskspace you can delete old docker images.\n\nWould you like proceed?" \
+                 --defaultno \
+                 12 $WIDTH) then
+        echo -e "Removing unused images, this can take a moment...\n\n"
+        /usr/bin/docker image prune -a -f
+        pause "Press ENTER to return to menu."
+    fi
+}
+
 ### Collect data ###
 function node_data() {
     local TO_UPLOAD
@@ -1507,8 +1519,9 @@ function main_menu() {
     "m)" "View Per Processes Memory Usage" \
     "n)" "View IRITop" \
     "o)" "Enable HTTPS / Certificate" \
-    "p)" "Update IRIC and node scripts" \
-    "q)" "Collect data and send for support" \
+    "p)" "Cleanup Old Docker Images" \
+    "q)" "Update IRIC and node scripts" \
+    "r)" "Collect data and send for support" \
     "Z)" "Configure this Script" \
     3>&1 1>&2 2>&3
 }
@@ -1603,11 +1616,16 @@ function run_main_menu() {
             ;;
 
         "p)")
-            update_iric
+            cleanup_docker_images
             run_main_menu
             ;;
 
         "q)")
+            update_iric
+            run_main_menu
+            ;;
+
+        "r)")
             node_data
             run_main_menu
             ;;
