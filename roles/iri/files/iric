@@ -1079,9 +1079,9 @@ function view_ps_mem() {
 ### Cleanup Docker Images ###
 function cleanup_docker_images() {
     if (whiptail --title "Cleanup Docker Images" \
-                 --yesno "To free up some diskspace you can delete old docker images.\n\nWould you like proceed?" \
+                 --yesno "To free up some diskspace you can delete old docker images. For services that are temporarily off this isn't a problem: the image will be pulled again once you start the service up.\n\nWould you like proceed?" \
                  --defaultno \
-                 12 $WIDTH) then
+                 14 $WIDTH) then
         echo -e "Removing unused images, this can take a moment...\n\n"
         /usr/bin/docker image prune -a -f
         pause "Press ENTER to return to menu."
