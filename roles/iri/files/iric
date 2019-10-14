@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.10.0
+VERSION_TEMP=0.10.1
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -1076,15 +1076,33 @@ function view_ps_mem() {
     ps_mem 2>/dev/null|less
 }
 
+### Clean Dangling Images ###
+function remove_dangling_images() {
+    local DANGLING_IMAGES
+    DANGLING_IMAGES=($(/usr/bin/docker images -f "dangling=true" -q))
+    if [[ ${#DANGLING_IMAGES[@]} -gt 0 ]]; then
+        /usr/bin/docker rmi -f $(/usr/bin/docker images -f "dangling=true" -q)
+        return $?
+    fi
+}
+
 ### Cleanup Docker Images ###
 function cleanup_docker_images() {
     if (whiptail --title "Cleanup Docker Images" \
-                 --yesno "To free up some diskspace you can delete old docker images. For services that are temporarily off this isn't a problem: the image will be pulled again once you start the service up.\n\nWould you like proceed?" \
+                 --yesno "To free up some diskspace you can delete unused docker images and volumes. For services that are temporarily off this isn't a problem: the image will be pulled again once you start up the service.\n\nWould you like proceed?" \
                  --defaultno \
                  14 $WIDTH) then
-        echo -e "Removing unused images, this can take a moment...\n\n"
+        echo "Removing unused volumes, please wait..."
+        /usr/bin/docker volume prune -f
+
+        echo "Removing unused images and volumes, please wait..."
         /usr/bin/docker image prune -a -f
-        pause "Press ENTER to return to menu."
+
+        echo "Removing dangling images, please wait..."
+        remove_dangling_images
+        [[ $? -ne 0 ]] && MSG="Failed to cleanup unused images! Check output above for errors. " || MSG="Cleanup finished successfully! "
+        pause "${MSG}Press ENTER to return to menu."
+        clear
     fi
 }
 
