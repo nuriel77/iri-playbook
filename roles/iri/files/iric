@@ -1095,7 +1095,7 @@ function cleanup_docker_images() {
         echo "Removing unused volumes, please wait..."
         /usr/bin/docker volume prune -f
 
-        echo "Removing unused images and volumes, please wait..."
+        echo "Removing unused images, please wait..."
         /usr/bin/docker image prune -a -f
 
         echo "Removing dangling images, please wait..."
