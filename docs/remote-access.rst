@@ -5,16 +5,17 @@ Full Node Remote Access
 
 **Update**: the recommended way to enable remote access to IRI API port (e.g. for wallets) is via HAProxy. Please refer to :ref:`haproxyEnable`.
 
-The topics described below are for advanced users.
+The topics described below are for advanced users or users who want to expose IRI's API directly to the internet (testing API being one example). Only do so if you know what you are doing!
+
 
 1. Exposing IRI Port Externally
 ===============================
-IRI has a command-line argument ("option") ``--remote``. Here's an explanation on what it does:
+IRI has a command-line argument ("option") ``--remote true``. Here's an explanation on what it does:
 
 By default, IRI's API port will listen on the local interface (127.0.0.1). This prevents any external connections to it.
 
 
-By using the ``--remote`` option, IRI will "listen" on the external interface/IP.
+By using the ``--remote true`` option, IRI will "listen" on the external interface/IP.
 
 We are going to have to edit the configuration file to enable this option and restart IRI. Follow the next steps.
 
@@ -23,7 +24,7 @@ We are going to have to edit the configuration file to enable this option and re
   To edit files you can use ``nano`` which is a simple editor. See :ref:`usingNano` for instructions.
 
 
-The ``--remote`` option can be specified in the configuration file:
+The ``--remote true`` option can be specified in the configuration file:
 
 * on **CentOS** ``/etc/sysconfig/iri``
 * on **Ubuntu** ``/etc/default/iri``
@@ -39,7 +40,7 @@ and add ``--remote`` to it:
 
 .. code:: bash
 
-   OPTIONS="--remote"
+   OPTIONS="--remote true"
 
 Save the file and exit, then restart iri: ``systemctl restart iri``
 
@@ -58,7 +59,7 @@ Expose IRI API Port in Firewall
 
 Allowing the port via the playbook
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If you followed the steps above (enabling the ``--remote`` option in the configuration file) you will need to allow the port in the firewall.
+If you followed the steps above (enabling the ``--remote true`` option in the configuration file) you will need to allow the port in the firewall.
 
 You can do this using the playbook which as a bonus also adds rate limiting.
 
@@ -120,7 +121,7 @@ Another option for accessing IRI and/or the iota-pm GUI is to use a SSH tunnel.
 
 SSH tunnel is created within a SSH connection from your computer (desktop/laptop) towards the server.
 
-The benefit here is that you don't have to expose any of the ports or use the ``--remote`` flag. You use SSH to help you tunnel through its connection to the server in order to bind to the ports you need.
+The benefit here is that you don't have to expose any of the ports or use the ``--remote true`` flag. You use SSH to help you tunnel through its connection to the server in order to bind to the ports you need.
 
 .. note::
 
@@ -214,7 +215,9 @@ The IOTA Peer Manager can be accessed if you point your browser to: ``http://you
 Limiting Remote Commands
 ========================
 
-There's an option in the configuration file which works in conjunction with the ``--remote`` option:
+I will take a moment to remind the reader: the preferred method to connect to the API is via using the HAProxy (use the ``iric`` tool to make sure it is enabled).
+
+There's an option in the configuration file which works in conjunction with the ``--remote true`` option:
 
 .. code:: bash
 

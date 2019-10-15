@@ -3,10 +3,7 @@
 Overview
 ********
 
-Using the documentation you will be able to setup a full node on a Linux system (Ubuntu, Debian or CentOS).
-
-The recommended way to install a full node is by using the fully automated installation :ref:`getting_started_quickly`. Please consider using this method rather than the manual method, as it is less error-prone.
-
+For the fully automated installation visit :ref:`getting_started_quickly`.
 
 The `git repository <https://github.com/nuriel77/iri-playbook>`_ includes all the code of the automated installation using Ansibe Playbook.
 

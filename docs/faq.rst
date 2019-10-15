@@ -145,42 +145,6 @@ You'll see that in this example nothing is being used.
 If a large "used" value appears for Swap, it might be a good idea to lower the value and restart IRI.
 
 
-.. _revalidateExplain:
-
-What are the revalidate and rescan options for
-==============================================
-
-
-NOTE: This information is probably no longer valid since IRI version 1.6.0 and above.
-
-Here's a brief explanation what each does, courtesy of Alon Elmaliah:
-
-| **Revalidate** "drops" the stored solid milestone "table". So all the milestones are revalidated once the node starts (checks signatures, balances etc). This is used it you take a DB from someone else, or have an issue with solid milestones acting out.
-
-| **Rescan** drops all the tables, except for the raw transaction trits, and re stores the transactions (refilling the metadata, address indexes etc) - this is used when a migration is needed when the DB schema changes mostly.
-
-
-
-It is possible to add these options to the IRI configuration file (or startup command):
-
-``--revalidate`` or ``--rescan``.
-
-If you have used this installation's tutorial / automation, you will find the configuration file in the following location::
-
-  On Ubuntu/Debian: /etc/default/iri
-  On CentOS: /etc/sysconfig/iri
-
-You will see the OPTIONS variable, so you can tweak it like so::
-
-  OPTIONS="--rescan"
-
-and restart IRI to take effect: ``systemctl restart iri``
-
-.. note::
-
-  Once you've restarted the service with the ``--rescan`` or ``--revalidate`` options you can remove the option from the configuration file.
-  If it stays in the configuration file, subsequent restarts will use that option again, perhaps when you do not explicitly choose to enable it.
-
 
 .. _getFullySyncedDB:
 
@@ -202,15 +166,4 @@ You can use the ``iric`` tool to download and install the database :ref:`iric`, 
   <iframe width="700" height="100" src="https://x-vps.com" frameborder="0" allowfullscreen></iframe>
 
 **NOTE** If there has been a corruption in the ``spent-addresses-db`` directory, you might also like to first run the command ``rm -rf /var/lib/iri/target/spent-addresses-*`` before running the above command.
-
-
-.. _lightWalletConnectionRefused:
-
-I try to connect the light wallet to my node but get connection refused
-=======================================================================
-There are commonly two reasons for this to happen:
-
-If your full node is on a different machine from where the light wallet is running from, there might be a firewall between, or, your full node is not configured to accept external connections.
-
-See :ref:`remote_access`
 

@@ -126,6 +126,8 @@ Now you should be able to point your browser to ``http://grafana.my-fqdn.com``.
 Configuring my server with HTTPS
 ================================
 
+Note that you can configure your node with HTTPS via ``iric``. This document is kept here for reference and for advanced users.
+
 There are amazing tutorials out there explaining how to achieve this. What is important to realize is that you can either create your own "self-signed" certificates (you become the Certificate Authority which isn't recognized by anyone else), or use valid certificate authorities.
 
 Since a while the IRI Playbook uses own generated self-signed certificate by default. You can replace the certificate and key with your own certificate+key. This can be done here ``/etc/nginx/conf.d/ssl.cfg`` (this file is included in most configurations).

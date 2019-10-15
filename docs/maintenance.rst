@@ -15,9 +15,11 @@ Maintenance
 Upgrade IRI
 ===========
 
-I strongly recommend to use ``iric`` in order to upgrade IRI's version when a new release is out.
+Please use the tool ``iric`` in order to upgrade IRI's version when a new release is out.
 
 Latest IRI release is available `here <https://github.com/iotaledger/iri/releases/latest>`_.
+
+Sometimes it might take a while until the image is pushed to dockerhub, in which case you will see a release is already on Github but not yet available to upgrade your node. It normally takes a few minutes to get built and available on dockerhub.
 
 If a new version has been announced, a new docker image for IRI should be made available and can be pulled via ``iric`` (upgrade IRI).
 
