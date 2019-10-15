@@ -3,16 +3,16 @@
 Full Node Remote Access
 ***********************
 
-Update: the recommended way to enable remote access to IRI API port (e.g. for wallets) is via HAProxy. Please refer to :ref:`haproxyEnable`.
+**Update**: the recommended way to enable remote access to IRI API port (e.g. for wallets) is via HAProxy. Please refer to :ref:`haproxyEnable`.
 
 1. Exposing IRI Port Externally
 ===============================
-IRI has a command-line argument ("option") ``--remote``. Here's an explanation on what it does:
+IRI has a command-line argument ("option") ``--remote true``. Here's an explanation on what it does:
 
 By default, IRI's API port will listen on the local interface (127.0.0.1). This prevents any external connections to it.
 
 
-By using the ``--remote`` option, IRI will "listen" on the external interface/IP.
+Using the ``--remote`` option, IRI will "listen" on the external interface/IP.
 
 We are going to have to edit the configuration file to enable this option and restart IRI. Follow the next steps.
 
@@ -32,11 +32,11 @@ Edit the file and find the line:
 
    OPTIONS=""
 
-and add ``--remote`` to it:
+and add ``--remote true`` to it:
 
 .. code:: bash
 
-   OPTIONS="--remote"
+   OPTIONS="--remote true"
 
 Save the file and exit, then restart iri: ``systemctl restart iri``
 
@@ -55,7 +55,7 @@ Expose IRI API Port in Firewall
 
 Allowing the port via the playbook
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-If you followed the steps above (enabling the ``--remote`` option in the configuration file) you will need to allow the port in the firewall.
+If you followed the steps above (enabling the ``--remote true`` option in the configuration file) you will need to allow the port in the firewall.
 
 You can do this using the playbook which as a bonus also adds rate limiting.
 
@@ -117,7 +117,7 @@ Another option for accessing IRI and/or the iota-pm GUI is to use a SSH tunnel.
 
 SSH tunnel is created within a SSH connection from your computer (desktop/laptop) towards the server.
 
-The benefit here is that you don't have to expose any of the ports or use the ``--remote`` flag. You use SSH to help you tunnel through its connection to the server in order to bind to the ports you need.
+The benefit here is that you don't have to expose any of the ports or use the ``--remote true`` flag. You use SSH to help you tunnel through its connection to the server in order to bind to the ports you need.
 
 .. note::
 
@@ -200,7 +200,7 @@ Peer Manager Behind WebServer with Password
 This installation also configured a webserver (nginx) to help access IOTA Peer Manager.
 It also locks the page using a password, one which you probably configured earlier during the installation steps.
 
-The IOTA Peer Manager can be accessed if you point your browser to: ``http://your-server-ip:8811``.
+The IOTA Peer Manager can be accessed if you point your browser to: ``https://your-server-ip:8811``.
 
 .. note::
 
@@ -211,7 +211,7 @@ The IOTA Peer Manager can be accessed if you point your browser to: ``http://you
 Limiting Remote Commands
 ========================
 
-There's an option in the configuration file which works in conjunction with the ``--remote`` option:
+There's an option in the configuration file which works in conjunction with the ``--remote true`` option:
 
 .. code:: bash
 

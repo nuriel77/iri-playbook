@@ -144,42 +144,6 @@ You'll see that in this example nothing is being used.
 If a large "used" value appears for Swap, it might be a good idea to lower the value and restart IRI.
 
 
-.. _revalidateExplain:
-
-What are the revalidate and rescan options for
-==============================================
-
-NOTE: This information is probably no loner valid for IRI version 1.6.0 and above.
-
-Here's a brief explanation what each does, courtesy of Alon Elmaliah:
-
-| **Revalidate** "drops" the stored solid milestone "table". So all the milestones are revalidated once the node starts (checks signatures, balances etc). This is used it you take a DB from someone else, or have an issue with solid milestones acting out.
-
-| **Rescan** drops all the tables, except for the raw transaction trits, and re stores the transactions (refilling the metadata, address indexes etc) - this is used when a migration is needed when the DB schema changes mostly.
-
-
-
-It is possible to add these options to the IRI configuration file (or startup command):
-
-``--revalidate`` or ``--rescan``.
-
-If you have used this installation's tutorial / automation, you will find the configuration file in the following location::
-
-  On Ubuntu: /etc/default/iri
-  On CentOS: /etc/sysconfig/iri
-
-You will see the OPTIONS variable, so you can tweak it like so::
-
-  OPTIONS="--rescan"
-
-and restart IRI to take effect: ``systemctl restart iri``
-
-.. note::
-
-  Once you've restarted the service with the ``--rescan`` or ``--revalidate`` options you can remove the option from the configuration file.
-  If it stays in the configuration file, subsequent restarts will use that option again, perhaps when you do not explicitly choose to enable it.
-
-
 .. _getFullySyncedDB:
 
 Where can I get a fully synced database to help kick start my node
@@ -206,6 +170,11 @@ You can use the ``iric`` tool to download and install the database :ref:`iric`, 
 
 I try to connect the light wallet to my node but get connection refused
 =======================================================================
+
+.. note::
+
+  Please use Trinity to connect to nodes. Usage of the light wallet is discouraged.
+
 There are commonly two reasons for this to happen:
 
 If your full node is on a different machine from where the light wallet is running from, there might be a firewall between, or, your full node is not configured to accept external connections.

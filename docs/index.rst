@@ -17,7 +17,7 @@ IOTA Full Node Installation wiki
    :target: http://iri-playbook.readthedocs.io/en/master/?badge=master
    :alt: Documentation Status
 
-For a "click-'n-go" installation (recommended) see :ref:`getting_started_quickly`.
+Quick installation via :ref:`getting_started_quickly`.
 
 Watch `this video <https://youtu.be/oT0uuYK7lH8>`_ on how simple it is to install a node using the IRI playbook! (credits to discord user TangleAid)
 
@@ -27,6 +27,7 @@ In this installation
 * Automate the installation
 * Take care of firewalls
 * Automatically configure the java memory limit based on your system's RAM
+* Configuration tools
 * Explain how to connect a wallet to your full node
 * Install IOTA Peer Manager
 * Serve IOTA PM and Graphs password protected via HTTPS
