@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.10.1
+VERSION_TEMP=0.10.2
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -1088,6 +1088,7 @@ function remove_dangling_images() {
 
 ### Cleanup Docker Images ###
 function cleanup_docker_images() {
+    local TAG
     if (whiptail --title "Cleanup Docker Images" \
                  --yesno "To free up some diskspace you can delete unused docker images and volumes. For services that are temporarily off this isn't a problem: the image will be pulled again once you start up the service.\n\nWould you like proceed?" \
                  --defaultno \
@@ -1097,6 +1098,17 @@ function cleanup_docker_images() {
 
         echo "Removing unused images, please wait..."
         /usr/bin/docker image prune -a -f
+
+        if ! /usr/bin/docker images | grep ^iotaledger/iri
+        then
+            if (whiptail --title "IRI Image" \
+                         --yesno "It looks like IRI was turned off during the cleanup. This means that docker has also purged its image.\n\nSelect Yes to re-download and tag it.\n" \
+                         14 $WIDTH) then
+                TAG=$(grep ^TAG "$SYSCONFIG_FILE" | cut -d'=' -f2)
+                /usr/bin/docker pull "iotaledger/iri:${TAG}-RELEASE"
+                /usr/bin/docker tag "iotaledger/iri:${TAG}-RELEASE" "iotaledger/iri:${TAG}"
+            fi
+        fi
 
         echo "Removing dangling images, please wait..."
         remove_dangling_images
