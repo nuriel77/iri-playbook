@@ -172,13 +172,13 @@ function init_centos_7(){
 
 function init_centos_8(){
     echo "Updating system packages..."
-    dnf update -y
+    dnf update -y --nobest
 
     echo "Install epel-release..."
     dnf install epel-release -y
 
     echo "Update epel packages..."
-    dnf update -y
+    dnf update -y --nobest
 
     echo "Install yum utils..."
     dnf install -y yum-utils
