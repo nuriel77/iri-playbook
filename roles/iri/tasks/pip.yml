@@ -1,3 +1,8 @@
-- name: install python deps via pip
+- name: "install python deps via pip"
   pip:
-    name: docker-py
+    name: docker
+
+- name: "install python deps via pip, centos 8"
+  pip:
+    name: passlib
+  when: "ansible_distribution_major_version == '8'"

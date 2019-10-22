@@ -1,0 +1,28 @@
+centos_packages:
+  all:
+    - git
+    - firewalld
+    - curl
+    - wget
+    - lsof
+    - jq
+    - pv
+    - rsync
+    - nano
+    - sysstat
+    - atop
+    - htop
+    - openssl
+    - util-linux
+    - httpd-tools
+  ver7:
+    - ansible
+    - policycoreutils-python
+    - fpaste
+    - python-pip
+    - libappindicator
+    - python-passlib
+  ver8:
+    - python3-policycoreutils
+    - python3-pip
+    #- libappindicator  # Missing, only libappindicator-gtk3 available

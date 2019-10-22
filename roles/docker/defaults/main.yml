@@ -1,0 +1,17 @@
+centos_packages:
+  all:
+    - firewalld
+    - curl
+    - wget
+    - screen
+    - lsof
+    - jq
+    - pv
+    - device-mapper-persistent-data
+    - lvm2
+  ver7:
+    - policycoreutils-python
+    - python-pip
+  ver8:
+    - python3-policycoreutils
+    - python3-pip
