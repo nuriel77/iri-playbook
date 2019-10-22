@@ -145,7 +145,7 @@ function set_dist() {
     fi
 }
 
-function init_centos(){
+function init_centos_7(){
     echo "Updating system packages..."
     yum update -y
 
@@ -168,6 +168,29 @@ function init_centos(){
 
     echo "Installing Ansible and git..."
     yum install ansible git expect-devel cracklib newt -y
+}
+
+function init_centos_8(){
+    echo "Updating system packages..."
+    dnf update -y
+
+    echo "Install epel-release..."
+    dnf install epel-release -y
+
+    echo "Update epel packages..."
+    dnf update -y
+
+    echo "Install yum utils..."
+    dnf install -y yum-utils
+
+    local OUTPUT=$(needs-restarting)
+    if [[ "$OUTPUT" != "" ]]; then
+        [ -z "$SKIP_REBOOT" ] && { inform_reboot; exit 0; }
+    fi
+
+    echo "Installing Ansible, git and other requirements..."
+    dnf install git expect newt python3-pip cracklib newt -y
+    pip3 --disable-pip-version-check install ansible
 }
 
 function init_ubuntu(){
@@ -559,13 +582,13 @@ set_dist
 
 # Check OS version compatibility
 if [[ "$OS" =~ ^(CentOS|Red) ]]; then
-    if [ "$VER" != "7" ]; then
+    if [[ ! "$VER" =~ ^(7|8) ]]; then
         echo "ERROR: $OS version $VER not supported"
         display_requirements_url
         exit 1
     fi
     check_arch
-    init_centos
+    init_centos_$VER
 elif [[ "$OS" =~ ^Ubuntu ]]; then
     if [[ ! "$VER" =~ ^(16|17|18) ]]; then
         echo "ERROR: $OS version $VER not supported"
