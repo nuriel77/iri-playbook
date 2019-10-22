@@ -5,19 +5,10 @@
     name: epel-release
 
 - name: Install some packages
-  yum:
+  package:
     name: "{{ packages }}"
   vars:
-    packages:
-      - policycoreutils-python
-      - firewalld
-      - curl
-      - wget
-      - screen
-      - lsof
-      - jq
-      - pv
-      - python-pip
+    packages: "{{ centos_packages['all'] + centos_packages['ver' + ansible_distribution_major_version] }}"
 
 - name: Add Docker GPG key
   rpm_key:
