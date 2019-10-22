@@ -37,6 +37,7 @@ The installer was tested on Ubuntu (LTS only), CentOS and Debian versions:
 * `Debian 9.5 x86_64 image for OpenStack <http://cdimage.debian.org/cdimage/openstack/current-9>`_
 * `Debian 10. x86_64 image for OpenStack <http://cdimage.debian.org/cdimage/openstack/current-10>`_
 * `CentOS 7.x x86_64 Generic Cloud Image <http://cloud.centos.org/centos/7/images/>`_ or `CentOS Minimal ISO <http://isoredirect.centos.org/centos/7/isos/x86_64/>`_
+* `CentOS 8.x x86_64 Minimal ISO <http://isoredirect.centos.org/centos/8/isos/x86_64/>`_
 
 As mentioned above only LTS versions of Ubuntu are supported (e.g. 18.04 and not 18.10)
 
