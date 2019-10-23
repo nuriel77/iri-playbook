@@ -172,6 +172,14 @@
         requirements: /tmp/iritop-requirements.txt
       ignore_errors: yes
 
+    - name: link python3 to python
+      file:
+        src: /usr/bin/python3
+        dest: /usr/bin/python
+        force: no
+        state: link
+      when: "ansible_distribution_major_version == '8'"
+
   tags:
     - scripts
 

@@ -43,6 +43,7 @@
 
 - name: flush handlers
   meta: flush_handlers
+  warn: false
 
 - name: exit and notify reboot required if selinux got enabled
   block:
