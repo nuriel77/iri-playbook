@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.10.4
+VERSION_TEMP=0.10.5
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
