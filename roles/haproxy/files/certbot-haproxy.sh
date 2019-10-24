@@ -99,8 +99,8 @@ function newCert {
     /usr/bin/docker run \
       --rm \
       --name certbot \
+      --net=host \
       -v /etc/letsencrypt:/etc/letsencrypt:Z \
-      -p 80:80 \
       "$DOCKER_IMAGE" certonly \
       --standalone -n \
       --preferred-challenges http \
@@ -119,8 +119,8 @@ function issueCert {
     /usr/bin/docker run \
       --rm \
       --name certbot \
+      --net=host \
       -v /etc/letsencrypt:/etc/letsencrypt:Z \
-      -p 80:80 \
       "$DOCKER_IMAGE" certonly \
       --standalone \
       --renew-by-default \
