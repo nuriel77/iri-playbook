@@ -191,49 +191,97 @@ function remove_nginx_redirect {
 
 function check_firewall {
     local IP_BIN=$1
-    /sbin/$IP_BIN -L -nv|egrep -q "ACCEPT.*tcp dpt:80$|ACCEPT.*tcp dpt:80 "
+    if [[ "$IP_BIN" == "/usr/bin/firewall-cmd" ]]
+    then
+        /usr/bin/firewall-cmd --list-services | grep -q -w "http" || /usr/bin/firewall-cmd --list-ports | grep -q -w "80/tcp"
+    else
+        /sbin/$IP_BIN -L -nv|egrep -q "ACCEPT.*tcp dpt:80$|ACCEPT.*tcp dpt:80 "
+    fi
 }
 
 function enable_firewall {
     local IP_BIN=$1
+    local COMMAND
+
+    logger_info "Port 80 not open in firewall. Opening..."
     echo "Enabling $IP_BIN firewall allowed port 80"
+
+    if [[ "$IP_BIN" == "/usr/bin/firewall-cmd" ]]
+    then
+        COMMAND="test -x /usr/bin/firewall-cmd && /usr/bin/firewall-cmd -q --add-service=http --permanent && /usr/bin/firewall-cmd -q --reload"
+    else
+        COMMAND="test -x /sbin/$IP_BIN && /sbin/$IP_BIN -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT"
+    fi
+
     if [ -f /opt/iri-playbook/inventory-multi ]; then
         ansible -i /opt/iri-playbook/inventory-multi all \
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "test -x /sbin/$IP_BIN && /sbin/$IP_BIN -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT"
+            -a "eval $COMMAND"
     else
-        /sbin/$IP_BIN -I INPUT 1 -p tcp -m tcp --dport 80 -j ACCEPT
+        eval "$COMMAND"
     fi
 }
 
 function disable_firewall {
     local IP_BIN=$1
+    local COMMAND
+
     echo "Disabling $IP_BIN firewall port 80"
+
+    if [[ "$IP_BIN" == "/usr/bin/firewall-cmd" ]]
+    then
+        COMMAND="test -x /usr/bin/firewall-cmd && /usr/bin/firewall-cmd -q --remove-service=http --permanent && /usr/bin/firewall-cmd -q --reload"
+    else
+        COMMAND="test -x /sbin/$IP_BIN && /sbin/$IP_BIN -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT"
+    fi
+
     if [ -f /opt/iri-playbook/inventory-multi ]; then
         ansible -i /opt/iri-playbook/inventory-multi all \
             --key-file=/home/deployer/.ssh/id_rsa \
             --become -u deployer \
             -m shell \
-            -a "test -x /sbin/$IP_BIN && /sbin/$IP_BIN -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT"
+            -a "eval $COMMAND"
     else
-        /sbin/$IP_BIN -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+        eval "$COMMAND"
+    fi
+}
+
+function firewall_sequence() {
+    local IP_BIN=$1
+    check_firewall "$IP_BIN"
+    if [ $? -ne 0 ]
+    then
+        CLOSE_HTTP_AFTER=true
+        enable_firewall "$IP_BIN"
+        if [ $? -ne 0 ]
+        then
+            logger_error "Error opening port 80 in iptables"
+            exit 1
+        fi
+    else
+        logger_info "Port 80 available in $ip_bin firewall."
     fi
 }
 
 function cleanup {
-    if [ "$CLOSE_HTTP_AFTER" == "1" ]
+    if [ "$CLOSE_HTTP_AFTER" = true ]
     then
         logger_info "Disable HTTP in firewall"
-        for ip_bin in iptables ip6tables; do
-            if [ -x "/sbin/$ip_bin" ]; then
-                disable_firewall "$ip_bin"
-            fi
-        done
+        if [ -x /usr/bin/firewall-cmd ] && /usr/bin/systemctl status firewalld >/dev/null
+        then
+            disable_firewall "/usr/bin/firewall-cmd"
+        else
+            for ip_bin in iptables ip6tables; do
+                if [ -x "/sbin/$ip_bin" ]; then
+                    disable_firewall "$ip_bin"
+                fi
+            done
+        fi
     fi
 
-    if [ "$REMOVE_NGINX_REDIRECT" == "1" ]
+    if [ "$REMOVE_NGINX_REDIRECT" = true ]
     then
         logger_info "Remove nginx redirect"
         remove_nginx_redirect
@@ -262,28 +310,22 @@ then
 fi
 
 # Check firewall open for 80/tcp
-for ip_bin in iptables ip6tables; do
-    if [ -x "/sbin/$ip_bin" ]; then
-        check_firewall "$ip_bin"
-        if [ $? -ne 0 ]
-        then
-            logger_info "Port 80 not open in firewall. Opening..."
-            CLOSE_HTTP_AFTER=1
-            enable_firewall "$ip_bin"
-            if [ $? -ne 0 ]
-            then
-                logger_error "Error opening port 80 in iptables"
-                exit 1
-            fi
-        else
-            logger_info "Port 80 available in $ip_bin firewall."
+if [ -x /usr/bin/firewall-cmd ] && /usr/bin/systemctl status firewalld >/dev/null
+then
+    echo "Using firewalld ..."
+    firewall_sequence "/usr/bin/firewall-cmd"
+else
+    echo "Using iptales ..."
+    for ip_bin in iptables ip6tables; do
+        if [ -x "/sbin/$ip_bin" ]; then
+            firewall_sequence "$ip_bin"
         fi
-    fi
-done
+    done
+fi
 
 if [ -f /opt/iri-playbook/inventory-multi ]; then
     logger_info "Setting nginx redirect for other nodes"
-    REMOVE_NGINX_REDIRECT=1
+    REMOVE_NGINX_REDIRECT=true
     set_nginx_redirect
     if [ $? -ne 0 ]
     then
