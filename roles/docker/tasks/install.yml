@@ -1,3 +1,9 @@
+- name: "Install Docker Debian/Ubuntu ..."
+  package:
+    name: "{{ docker_package }}"
+    state: "{{ docker_package_state }}"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 - name: "Install Docker Centos 7 ..."
   yum:
     name: "{{ docker_package }}"
