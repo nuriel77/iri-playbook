@@ -84,7 +84,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - node_boot_time{instance=~\"$server:.*\"}",
+          "expr": "time() - node_boot_time_seconds{instance=~\"$server:.*\"}",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "",
@@ -1899,7 +1899,7 @@
         "multi": true,
         "name": "server",
         "options": [],
-        "query": "label_values(node_boot_time, instance)",
+        "query": "label_values(node_boot_time_seconds, instance)",
         "refresh": 1,
         "regex": "/([^:]+):.*/",
         "sort": 0,
