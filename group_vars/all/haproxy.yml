@@ -2,7 +2,7 @@
 haproxy_image: haproxy
 
 # Haproxy image tag
-haproxy_tag: 2.0.1
+haproxy_tag: 2.0.8
 
 # Haproxy nameservers for dns resolution
 haproxy_nameservers:

@@ -929,7 +929,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "100 - (avg(irate(node_cpu{mode=\"idle\"}[5m])) * 100)",
+          "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -938,7 +938,7 @@
           "refId": "A"
         },
         {
-          "expr": "100 - (avg by (cpu) (irate(node_cpu{mode=\"idle\", instance=~\"$server\"}[5m])) * 100)",
+          "expr": "100 - (avg by (cpu) (irate(node_cpu_seconds_total{mode=\"idle\", instance=~\"$server\"}[5m])) * 100)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 10,
@@ -1028,7 +1028,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_memory_MemTotal - node_memory_MemFree - node_memory_Cached - node_memory_Buffers - node_memory_Slab ",
+          "expr": "node_memory_MemTotal_bytes - node_memory_MemFree_bytes - node_memory_Cached_bytes - node_memory_Buffers_bytes - node_memory_Slab_bytes",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1037,14 +1037,14 @@
           "refId": "A"
         },
         {
-          "expr": "node_memory_Buffers{instance=~\"$server\"}",
+          "expr": "node_memory_Buffers_bytes{instance=~\"$server\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "Buffers",
           "refId": "B"
         },
         {
-          "expr": "node_memory_Cached{instance=~\"$server\"} + node_memory_Slab{instance=~\"$server\"}",
+          "expr": "node_memory_Cached_bytes{instance=~\"$server\"} + node_memory_Slab_bytes{instance=~\"$server\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1052,7 +1052,7 @@
           "refId": "C"
         },
         {
-          "expr": "node_memory_MemFree{instance=~\"$server\"}",
+          "expr": "node_memory_MemFree_bytes{instance=~\"$server\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -1263,7 +1263,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "( (node_memory_MemFree{instance=~\"$server\"} + node_memory_Cached{instance=~\"$server\"} + node_memory_Slab{instance=~\"$server\"} + node_memory_Buffers{instance=~\"$server\"} ) / node_memory_MemTotal{instance=~\"$server\"}) * 100 ",
+          "expr": "( (node_memory_MemFree_bytes{instance=~\"$server\"} + node_memory_Cached_bytes{instance=~\"$server\"} + node_memory_Slab_bytes{instance=~\"$server\"} + node_memory_Buffers_bytes{instance=~\"$server\"} ) / node_memory_MemTotal_bytes{instance=~\"$server\"}) * 100 ",
           "format": "time_series",
           "intervalFactor": 2,
           "refId": "A"
@@ -1343,7 +1343,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "min(node_filesystem_free{fstype=~\"xfs|ext4\",instance=~\"$server\"} / node_filesystem_size{fstype=~\"xfs|ext4\",instance=~\"$server\"})",
+          "expr": "min(node_filesystem_free_bytes{fstype=~\"xfs|ext4\",instance=~\"$server\"} / node_filesystem_size_bytes{fstype=~\"xfs|ext4\",instance=~\"$server\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -3651,7 +3651,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(node_filesystem_free{fstype=~\"xfs|ext4\"} / node_filesystem_size{fstype=~\"xfs|ext4\"})",
+              "expr": "(node_filesystem_free_bytes{fstype=~\"xfs|ext4\"} / node_filesystem_size_bytes{fstype=~\"xfs|ext4\"})",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 2,
@@ -3757,7 +3757,7 @@
         "multi": false,
         "name": "server",
         "options": [],
-        "query": "label_values(node_boot_time, instance)",
+        "query": "label_values(node_boot_time_seconds, instance)",
         "refresh": 1,
         "regex": "",
         "sort": 0,
