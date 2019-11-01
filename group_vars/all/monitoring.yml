@@ -1,6 +1,6 @@
 # Prometheus
 prom_image: prom/prometheus
-prom_tag: v2.13.0
+prom_tag: v2.13.1
 prom_username: prometheus
 prom_basedir: /opt/prometheus
 prom_datadir: /var/lib/prometheus
@@ -12,7 +12,7 @@ prom_proxy_port: "8999"
 
 # Node exporter
 exporter_image: prom/node-exporter
-exporter_tag: v0.15.2
+exporter_tag: v0.18.1
 exporter_basedir: /opt/prometheus/node_exporter
 exporter_port: "9100"
 exporter_bind_address: 127.0.0.1
