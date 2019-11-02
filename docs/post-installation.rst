@@ -213,7 +213,7 @@ For IOTA Peer Manager, this installation has already configured it to be accessi
 
 Adding or Removing Neighbors
 ============================
-I strongly recommend to use ``iric`` in order to add or remove neighbors. It has the advantage that it works seamlessly with Nelson and also makes sure the neighbors you've added or removed persist even after IRI restarts.
+I strongly recommend to use ``iric`` in order to add or remove neighbors. It has the advantage that it makes sure the neighbors you've added or removed persist even after IRI restarts.
 
 In order to add neighbors you can either use the iota Peer Manager or the command-line.
 

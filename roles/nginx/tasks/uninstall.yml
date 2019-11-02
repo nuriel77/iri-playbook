@@ -42,5 +42,4 @@
     - /etc/nginx/conf.d/alertmanager.conf
     - /etc/nginx/conf.d/prometheus.conf
     - /etc/nginx/conf.d/iotapm.conf
-    - /etc/nginx/conf.d/nelson-gui.conf
     - /usr/local/bin/validate_nginx_config.sh

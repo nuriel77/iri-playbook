@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.10.6
+VERSION_TEMP=0.11.0
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -203,38 +203,6 @@ function verify_playbook() {
                  $HEIGHT $WIDTH
         return 1
     fi
-}
-
-### Nelson ###
-function enable_nelson() {
-    if (whiptail --title "Enable Nelson" \
-                 --yesno "Are you sure you want to enable Nelson automatic peering?" \
-                 --defaultno \
-                 8 $WIDTH) then
-        verify_playbook
-        if [[ $? -ne 0 ]]; then
-             whiptail --title "Error!" \
-                      --msgbox "ERROR: Cannot enable Nelson." \
-                      8 $WIDTH
-             return 1
-        fi
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_role -e "nelson_enabled=true"
-        [[ $? -ne 0 ]] && MSG="Enabling Nelson failed!!! Check output above for errors." || MSG="Installation finished successfully!"
-        pause "$MSG Press ENTER to return to menu."
-    fi
-}
-
-function upgrade_nelson() {
-    verify_playbook
-    if [[ $? -ne 0 ]]; then
-         whiptail --title "Error!" \
-                  --msgbox "ERROR: Cannot update Nelson." \
-                  8 $WIDTH
-         return 1
-    fi
-    cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=nelson_docker_images -e "nelson_enabled=true" -e "force_pull_image=true"
-    [[ $? -ne 0 ]] && MSG="Updating Nelson failed!!! Check output above for errors." || MSG="Update finished successfully!"
-    pause "$MSG Press ENTER to return to menu."
 }
 
 function network_rewrite_update() {
@@ -648,14 +616,6 @@ function add_neighbors() {
         IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
         [ -n "$IRI_CONFIG" ] && IRI_CONFIG="-f $IRI_CONFIG"
 
-        # Stop nelson (will return 0 if it exists)
-        local STARTUP_NELSON=0
-        systemctl status nelson >/dev/null 2>&1
-        if [[ $? -eq 0 ]]; then
-            systemctl stop nelson
-            STARTUP_NELSON=1
-        fi
-
         # Run nbctl command
         NBCTL_OUTPUT=$(nbctl -a $ADD_LIST $IRI_CONFIG 2>&1)
         RC=$?
@@ -672,9 +632,6 @@ function add_neighbors() {
             whiptail --title "Adding Neighbors Failed" \
                      --msgbox "Failure: $NBCTL_OUTPUT" \
                      $HEIGHT $WIDTH
-        fi
-        if [[ $STARTUP_NELSON -eq 1 ]]; then
-            systemctl start nelson
         fi
     fi
 }
@@ -1316,10 +1273,8 @@ function services_menu() {
     "f)" "IOTA Prometheus Exporter" \
     "g)" "Nginx" \
     "h)" "HAProxy" \
-    "i)" "Nelson" \
-    "j)" "Nelson GUI" \
-    "k)" "Node Exporter" \
-    "l)" "CAdvisor" \
+    "i)" "Node Exporter" \
+    "j)" "CAdvisor" \
     3>&1 1>&2 2>&3
 }
 
@@ -1373,21 +1328,11 @@ function services() {
             ;;
 
         "i)")
-           service nelson
-           services
-           ;;
-
-        "j)")
-           service nelson-gui
-           services
-           ;;
-
-        "k)")
            service node-exporter
            services
            ;;
 
-        "l)")
+        "j)")
            service cadvisor
            services
            ;;
@@ -1410,8 +1355,7 @@ function configure_files_menu() {
     "d)" "AlertManager Config" \
     "e)" "Prometheus Config" \
     "f)" "Prometheus Alerts" \
-    "g)" "Nelson Config" \
-    "h)" "HAProxy Config" \
+    "g)" "HAProxy Config" \
     "Z)" "Choose Editor" \
     3>&1 1>&2 2>&3
 }
@@ -1463,11 +1407,6 @@ function configure_files() {
             ;;
 
         "g)")
-            edit_config "/etc/nelson/config.ini" "nelson"
-            configure_files
-            ;;
-
-        "h)")
             edit_config "/etc/haproxy/haproxy.cfg" "haproxy" "reload"
             configure_files
             ;;
@@ -1536,24 +1475,22 @@ function main_menu() {
              --menu "$MENU" \
              --cancel-button "Exit" \
               32 $WIDTH 22 \
-    "a)" "Enable Nelson" \
-    "b)" "Update Nelson" \
-    "c)" "Update IRI software" \
-    "d)" "Update Monitoring" \
-    "e)" "Enable HAProxy" \
-    "f)" "Update HAProxy" \
-    "g)" "Neighbors" \
-    "h)" "Show LatestMilestoneIndex" \
-    "i)" "Get Node Info" \
-    "j)" "Manage Services" \
-    "k)" "Get Fully Synced DB" \
-    "l)" "Configure Files" \
-    "m)" "View Per Processes Memory Usage" \
-    "n)" "View IRITop" \
-    "o)" "Enable HTTPS / Certificate" \
-    "p)" "Cleanup Old Docker Images" \
-    "q)" "Update IRIC and node scripts" \
-    "r)" "Collect data and send for support" \
+    "a)" "Update IRI software" \
+    "b)" "Update Monitoring" \
+    "c)" "Enable HAProxy" \
+    "d)" "Update HAProxy" \
+    "e)" "Neighbors" \
+    "f)" "Show LatestMilestoneIndex" \
+    "g)" "Get Node Info" \
+    "h)" "Manage Services" \
+    "i)" "Get Fully Synced DB" \
+    "j)" "Configure Files" \
+    "k)" "View Per Processes Memory Usage" \
+    "l)" "View IRITop" \
+    "m)" "Enable HTTPS / Certificate" \
+    "n)" "Cleanup Old Docker Images" \
+    "o)" "Update IRIC and node scripts" \
+    "p)" "Collect data and send for support" \
     "Z)" "Configure this Script" \
     3>&1 1>&2 2>&3
 }
@@ -1573,91 +1510,81 @@ function run_main_menu() {
             ;;
 
         "a)")
-            enable_nelson
-            run_main_menu
-            ;;
-
-        "b)")
-            upgrade_nelson
-            run_main_menu
-            ;;
-
-        "c)")
             upgrade_iri
             run_main_menu
             ;;
 
-        "d)")
+        "b)")
             upgrade_monitoring
             run_main_menu
             ;;
 
-        "e)")
+        "c)")
             enable_haproxy
             run_main_menu
             ;;
 
-        "f)")
+        "d)")
             enable_haproxy "This will update haproxy and the haproxy.cfg file to the latest version. Continue?"
             run_main_menu
             ;;
 
-        "g)")
+        "e)")
             neighbors
             run_main_menu
             ;;
 
-        "h)")
+        "f)")
             show_lmsi
             run_main_menu
             ;;
 
-        "i)")
+        "g)")
             get_node_info
             run_main_menu
             ;;
 
-        "j)")
+        "h)")
             services
             run_main_menu
             ;;
 
-        "k)")
+        "i)")
             get_db
             run_main_menu
             ;;
 
-        "l)")
+        "j)")
             configure_files
             run_main_menu
             ;;
 
-        "m)")
+        "k)")
             view_ps_mem
             run_main_menu
             ;;
 
-        "n)")
+        "l)")
             view_iritop
             run_main_menu
             ;;
 
-        "o)")
+        "m)")
             enable_https
             run_main_menu
             ;;
 
-        "p)")
+        "n)")
             cleanup_docker_images
             run_main_menu
             ;;
 
-        "q)")
+        "o)")
             update_iric
             run_main_menu
             ;;
 
-        "r)")
+        "p)")
             node_data
             run_main_menu
             ;;

@@ -33,7 +33,6 @@ This Installer Includes
 * IOTA Peer Manager to manage neighbors
 * ``iric``, a menu-driven utility to help manage the node
 * Serve IOTA Peer Manager and Graphs password protected via HTTPS (secure)
-* Optionally install `Nelson <https://gitlab.com/semkodev/nelson.cli>`_ for automatic peering.
 * IRI metrics and graphs, created by Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
 
 Please star the playbook's repository on github: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_

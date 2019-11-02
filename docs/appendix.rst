@@ -558,14 +558,6 @@ Firewall
 --------
 The installation takes care of the firewalls: it ensures the firewall is running and configures the required ports. You can choose not to let the installer configure the firewall should you wish to do this manually.
 
-Nelson
-------
-Nelson is a software which enabled auto-peering for IRI (finding neighbors automatically).
-
-If Nelson is not used, neighbors have to be manually maintained (default).
-
-You can read more about it `here <https://github.com/SemkoDev/nelson.cli>`_.
-
 HAproxy
 -------
 HAProxy is a proxy/load-balancer. In the context of this installation it can be enabled to serve the IRI API port.
