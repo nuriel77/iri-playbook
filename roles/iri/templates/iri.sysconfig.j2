@@ -11,10 +11,9 @@ JAVA_MIN_MEMORY={{ iri_init_java_mem }}
 JAVA_MAX_MEMORY={{ iri_java_mem }}
 
 # Enables port iri management port for other containers to interact with
-# IRI bypassing command limitations (for instance Nelson
-# requires access to manage neighbors)
+# IRI bypassing command limitations 
 # This port will also bind to localhost on the host.
-# !! Only set this option when running IRI in a bridged
+# !!! Only set this option when running IRI in a bridged !!!
 # network mode (i.e. `iri_net_name` is defined and enabled)
 DOCKER_IRI_MONITORING_API_PORT_ENABLE={% if iri_net_name is defined %}1{% else %}0{% endif %}
 

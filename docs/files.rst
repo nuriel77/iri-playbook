@@ -48,7 +48,3 @@ HAProxy configuration file::
 
   /etc/haproxy/haproxy.cfg
 
-Nelson configuration file::
-
-  /etc/nelson/config.ini
-

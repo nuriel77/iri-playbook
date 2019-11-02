@@ -369,7 +369,6 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
         "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
         "USE_BRIDGED_NETWORK"      "Use Docker bridged network (less performance)" OFF \
         "SKIP_FIREWALL_CONFIG"     "Skip configuring firewall" OFF \
-        "ENABLE_NELSON"            "Enable Nelson auto-peering" OFF \
         "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
         "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
         "DISABLE_ZMQ_METRICS"      "Disable ZMQ metrics"        OFF \
@@ -403,9 +402,6 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
                 ;;
             '"DISABLE_ZMQ_METRICS"')
                 echo "iri_zmq_enabled: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
-                ;;
-            '"ENABLE_NELSON"')
-                echo "nelson_enabled: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
                 ;;
             '"ENABLE_HAPROXY"')
                 echo "lb_bind_addresses: ['0.0.0.0']" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml

@@ -215,34 +215,6 @@ This solution also works if you haven't installed Grafana via this tutorial and 
 Now you should be able to login to grafana.
 
 
-Error Starting up Nelson After Upgrade
-======================================
-
-Checking nelson logs can reveal startup errors (e.g. ``journalctl -u nelson --no-pager -n40``)
-
-If you get an error that looks like this when starting up nelson::
-
-  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]: 20:57:40.241        16600::NODE  terminating...
-  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]: Unhandled Rejection at: Promise Promise {
-  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:   <rejected> Error: "toString()" failed
-  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:     at stringSlice (buffer.js:560:43)
-  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:     at Buffer.toString (buffer.js:633:10)
-  Jan 29 20:57:40 vmi111112.shintaboserver.net nelson[3178]:     at FSReqWrap.readFileAfterClose [as oncomplete] (fs.js:506:23) } reason: Error: "toString()" failed
-  Jan 29 20:57:40 vmi1111112.contaboserver.net nelson[3178]:     at stringSlice (buffer.js:560:43)
-
-The nelson database might have become corrupt. You can remove it and it will re-create::
-
-  rm -rf /var/lib/nelson/data/neighbors.db
-
-Start up nelson, and check the status again::
-
-  systemctl start nelson
-
-Status::
-
-  systemctl status nelson
-
-
 Error Starting or Restarting IRI
 ================================
 
