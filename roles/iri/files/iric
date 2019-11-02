@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.11.0
+VERSION_TEMP=0.11.1
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -1081,6 +1081,7 @@ function cleanup_docker_images() {
 function node_data() {
     local TO_UPLOAD
     local UPLOAD_ADDRESS
+    local RC
 
     if [ ! -f /usr/bin/data_collector ]
     then
@@ -1108,8 +1109,10 @@ function node_data() {
         return
     fi
 
-    curl -f -XPOST -F "upfile=@${TO_UPLOAD}" "$UPLOAD_ADDRESS"
-    if [ $? -ne 0 ]; then
+    curl -f -XPOST -F "upfile=@${TO_UPLOAD}" "$UPLOAD_ADDRESS" -o /dev/null
+    RC=$?
+    clear
+    if [ $RC -ne 0 ]; then
         whiptail --title "Upload failed" \
          --msgbox "Error: Upload failed for an unknown reason." \
          8 $WIDTH
@@ -1120,7 +1123,6 @@ function node_data() {
          8 $WIDTH
          return
     fi
-    clear
 }
 
 ### IRITop ###
@@ -1262,9 +1264,9 @@ function service() {
 
 function services_menu() {
     whiptail --title "IRIC v${__VERSION__} - Node Services" \
-             --menu "Choose an option" \
+             --menu "Choose an option\n" \
              --cancel-button "Back" \
-             25 $WIDTH 16 \
+             19 $WIDTH 10 \
     "a)" "IRI" \
     "b)" "IOTA Peer Manager" \
     "c)" "Prometheus" \
@@ -1468,13 +1470,13 @@ function neighbors(){
 function main_menu() {
     local MENU="Choose an option"
     if check_new_iric; then
-        MENU="${MENU}\n(*IRIC update available)"
+        MENU="${MENU}\n(*IRIC update available)\n"
     fi
 
     whiptail --title "IRIC v${__VERSION__} - IRI Configuration Menu" \
              --menu "$MENU" \
              --cancel-button "Exit" \
-              32 $WIDTH 22 \
+              27 $WIDTH 18 \
     "a)" "Update IRI software" \
     "b)" "Update Monitoring" \
     "c)" "Enable HAProxy" \
