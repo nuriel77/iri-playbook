@@ -364,7 +364,7 @@ function set_selections()
         "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
 For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/feat-docker/appendix.html#options\n\n\
-Select/unselect options using space and click Enter to proceed.\n" 28 78 8 \
+Select/unselect options using space and click Enter to proceed.\n" 28 78 7 \
         "INSTALL_DOCKER"           "Install Docker runtime (recommended)" ON \
         "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
         "USE_BRIDGED_NETWORK"      "Use Docker bridged network (less performance)" OFF \
