@@ -20,6 +20,16 @@
     group: "{{ iotacaddy_username }}"
   with_items:
     - "{{ iotacaddy_config_dir }}"
+    - "{{ iotacaddy_log_dir }}"
+
+- name: create an empty caddy iota log file
+  copy:
+    content: ""
+    dest: "{{ iotacaddy_log_dir }}/iota.log"
+    force: no
+    owner: "{{ iotacaddy_username }}"
+    group: "{{ iotacaddy_username }}"
+    mode: 0600
 
 - import_tasks: image-iotacaddy.yml
   tags:
@@ -38,6 +48,11 @@
     - {"src": "templates/iotacaddy.service.j2", "dest": "/etc/systemd/system/iotacaddy.service", "username": "root", "groupname": "root"}
     - {"src": "files/entrypoint.sh", "dest": "{{ iotacaddy_config_dir }}/entrypoint.sh", "mode": "0755"}
   notify: restart iotacaddy
+
+- name: copy iota caddy logrotate config
+  template:
+    src: templates/iotacaddy.logrotate.conf.j2
+    dest: /etc/logrotate.d/iotacaddy
 
 - name: flush handlers
   meta: flush_handlers

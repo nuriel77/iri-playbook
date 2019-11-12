@@ -16,11 +16,12 @@ ExecStart=/usr/bin/docker run \
   --net=host \
   --pid=host \
   --cap-drop=all \
-  -v {{ iotacaddy_config_dir }}:/iotacaddy:Z \
+  -v {{ iotacaddy_config_dir }}:/iotacaddy/config:Z \
+  -v {{ iotacaddy_log_dir }}/iota.log:/iotacaddy/logs/iota.log:Z \
   -v /etc/localtime:/etc/localtime:ro,Z \
-  --entrypoint /iotacaddy/entrypoint.sh \
+  --entrypoint /iotacaddy/config/entrypoint.sh \
   $DOCKER_OPTS \
-  {{ iotacaddy_image }}:${TAG} -conf /iotacaddy/iotacaddy.conf
+  {{ iotacaddy_image }}:${TAG} -conf /iotacaddy/config/iotacaddy.conf
 
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
