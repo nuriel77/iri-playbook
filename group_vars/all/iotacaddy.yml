@@ -1,0 +1,7 @@
+# iotacaddy
+iotacaddy_enabled: true
+iotacaddy_image: iotacaddy
+iotacaddy_tag: 0.0.1
+iotacaddy_username: iotacaddy
+iotacaddy_config_dir: /etc/iotacaddy
+iotacaddy_git_repo: https://github.com/luca-moser/iotacaddy.git

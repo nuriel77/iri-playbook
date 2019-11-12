@@ -1,0 +1,13 @@
+FROM golang:1.12 AS build
+
+ADD . /app
+
+WORKDIR /app
+
+RUN cd /app/caddy && go build -v -tags="pow_avx"
+
+FROM busybox:glibc
+
+COPY --from=build /app/caddy/caddy /caddy
+
+ENTRYPOINT ["/caddy", "$@"]

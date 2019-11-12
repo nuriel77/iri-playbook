@@ -1,0 +1,148 @@
+- name: remove iotacaddy image
+  block:
+
+    - name: "stopping iotacaddy service, this might take a moment..."
+      systemd:
+        name: iotacaddy.service
+        state: stopped
+      ignore_errors: yes
+
+    - name: delete iotacaddy image
+      docker_image:
+        name: "{{ iotacaddy_image }}"
+        tag: "{{ iotacaddy_tag }}"
+        state: absent
+        force_absent: yes
+
+  when: remove_iotacaddy_image | default(False) | bool
+
+- name: check iotacaddy image exists
+  shell: "/usr/bin/docker images {{ iotacaddy_image }}:{{ iotacaddy_tag }} | grep -q ^iotacaddy"
+  changed_when: False
+  register: iotacaddy_image_stat
+  failed_when: "iotacaddy_image_stat.rc > 1"
+
+- name: docker build iotacaddy image (on master)
+  block:
+
+    - name: create temporary build directory
+      tempfile:
+        state: directory
+      register: tempdir
+
+    - name: clone iotacaddy
+      git:
+        repo: "{{ iotacaddy_git_repo }}"
+        dest: "{{ tempdir.path }}"
+
+    - name: build iotacaddy image
+      docker_image:
+        build:
+          dockerfile: "{{ tempdir.path }}/Dockerfile.iota.pow_avx"
+          path: "{{ tempdir.path }}"
+          pull: yes
+        name: "{{ iotacaddy_image }}"
+        tag: "{{ iotacaddy_tag }}"
+        source: build
+      notify:
+        - restart iotacaddy
+
+    - name: remove temporary build dir
+      file:
+        state: absent
+        path: "{{ tempdir.path }}"
+
+  run_once: yes
+  delegate_to: "{{ groups['fullnode']|first }}"
+  when:
+    - iotacaddy_image_stat.rc == 1
+    - images_from_master | default(True) | bool
+
+- name: docker build iotacaddy image
+  block:
+
+    - name: create temporary build directory
+      tempfile:
+        state: directory
+      changed_when: False
+      register: tempdir
+
+    - name: clone iotacaddy
+      git:
+        repo: "{{ iotacaddy_git_repo }}"
+        dest: "{{ tempdir.path }}"
+
+    - name: build iotacaddy image
+      docker_image:
+        build:
+          dockerfile: "{{ tempdir.path }}/Dockerfile.iota.pow_avx"
+          path: "{{ tempdir.path }}"
+          pull: yes
+        name: "{{ iotacaddy_image }}"
+        tag: "{{ iotacaddy_tag }}"
+        source: build
+      notify:
+        - restart iotacaddy
+
+    - name: remove temporary build dir
+      file:
+        state: absent
+        path: "{{ tempdir.path }}"
+      changed_when: False
+
+  when:
+    - iotacaddy_image_stat.rc == 1
+    - not images_from_master | default(False) | bool
+
+- name: set image name and tag
+  set_fact:
+    this_tag: "{{ iotacaddy_tag }}"
+    this_image: "{{ iotacaddy_image }}"
+
+- name: set temporary image file name
+  set_fact:
+    this_file: "/tmp/image-iotacaddy-{{ this_tag }}.tar"
+
+- name: image export and load block
+  block:
+
+    - name: check image exists
+      shell: "/usr/bin/docker images {{ this_image }}:{{ this_tag }} | grep -q '^{{ this_image }}'"
+      changed_when: False
+      register: image_stat
+      failed_when: "image_stat.rc > 1"
+
+    - name: export the image to a file
+      delegate_to: "{{ groups['fullnode']|first }}"
+      docker_image:
+        name: "{{ this_image }}"
+        tag: "{{ this_tag }}"
+        archive_path: "{{ this_file }}"
+      when: "image_stat.rc == 1"
+
+    - name: copy the docker image from the first node
+      synchronize:
+        src: "{{ this_file }}"
+        dest: "{{ this_file }}"
+      when: image_stat.rc == 1
+      register: image_copied
+
+    - name: load the image into docker
+      docker_image:
+        name: "{{ this_image }}"
+        tag: "{{ this_tag }}"
+        load_path: "{{ this_file }}"
+        source: load
+      when:
+        - image_copied.changed
+      notify:
+        - restart iotacaddy
+
+  when:
+    - groups['fullnode'] | length > 1
+    - inventory_hostname != groups['fullnode']|first
+
+- name: remove image from temporary location
+  file:
+    path: "{{ this_file }}"
+    state: absent

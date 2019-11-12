@@ -1,0 +1,28 @@
+log stdout
+
+127.0.0.1:14268 {
+
+        gzip
+
+        # log requests to the proxy with rotation
+        log requests.log {
+                rotate_size 100
+                rotate_age  90
+                rotate_keep 20
+                rotate_compress
+        }
+
+        # tls termination already handled by haproxy on iri-playbook nodes
+        #tls /etc/letsencrypt/live/iota-tangle.io/fullchain.pem /etc/letsencrypt/live/iota-tangle.io/privkey.pem
+
+        # limit request body to 10 megabytes
+        limits 10mb
+
+        # intercept attachToTangle calls with a max MWM of 14 and 20 txs per call
+        iota 14 20
+
+        proxy / http://127.0.0.1:15265 {
+                header_upstream X-IOTA-API-VERSION 1.8
+                header_upstream Access-Control-Allow-Origin *
+        }
+}

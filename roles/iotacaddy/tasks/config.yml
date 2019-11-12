@@ -1,0 +1,49 @@
+- name: Create user iotacaddy
+  user:
+    name: "{{ iotacaddy_username }}"
+    shell: /sbin/nologin
+    createhome: no
+  tags:
+    - iotacaddy_user
+
+- name: get iotacaddy user uid
+  shell: "echo -n $(id -u {{ iotacaddy_username }})"
+  changed_when: false
+  register: iotacaddy_uid
+
+- name: Ensure iotacaddy directories exist
+  file:
+    state: directory
+    mode: 0700
+    dest: "{{ item }}"
+    owner: "{{ iotacaddy_username }}"
+    group: "{{ iotacaddy_username }}"
+  with_items:
+    - "{{ iotacaddy_config_dir }}"
+
+- import_tasks: image-iotacaddy.yml
+  tags:
+    - iotacaddy_docker_image
+
+- name: copy iotacaddy configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.username | default(iotacaddy_username) }}"
+    group: "{{ item.groupname | default(iotacaddy_username) }}"
+    mode: "{{ item.mode | default('0644') }}"
+  with_items:
+    - {"src": "templates/iotacaddy.Caddyfile.j2", "dest": "{{ iotacaddy_config_dir }}/iotacaddy.conf", "mode": "0644"}
+    - {"src": "templates/iotacaddy.sysconfig.j2", "dest": "{{ config_dir }}/iotacaddy", "mode": "0600"}
+    - {"src": "templates/iotacaddy.service.j2", "dest": "/etc/systemd/system/iotacaddy.service", "username": "root", "groupname": "root"}
+    - {"src": "files/entrypoint.sh", "dest": "{{ iotacaddy_config_dir }}/entrypoint.sh", "mode": "0755"}
+  notify: restart iotacaddy
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure iotacaddy started and enabled
+  systemd:
+    name: iotacaddy.service
+    state: started
+    enabled: true
