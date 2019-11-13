@@ -56,7 +56,7 @@
   delegate_to: "{{ groups['fullnode']|first }}"
   when:
     - iotacaddy_image_stat.rc == 1
-    - images_from_master | default(True) | bool
+    - images_from_master | default(False) | bool
 
 - name: docker build iotacaddy image
   block:
