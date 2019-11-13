@@ -1,19 +1,22 @@
 {{ iotacaddy_listen_address }}:{{ iotacaddy_listen_port }} {
 
-        gzip
-        log stdout
+    gzip
+    log stdout {
+        except /health
+    }
+    errors stderr
 
-        # tls termination already handled by haproxy on iri-playbook nodes
-        #tls /etc/letsencrypt/live/iota-tangle.io/fullchain.pem /etc/letsencrypt/live/iota-tangle.io/privkey.pem
+    # tls termination already handled by haproxy on iri-playbook nodes
+    #tls /etc/letsencrypt/live/iota-tangle.io/fullchain.pem /etc/letsencrypt/live/iota-tangle.io/privkey.pem
 
-        # limit request body to 10mb by default
-        limits {{ iotacaddy_limit_request_body | default('10mb') }}
+    # limit request body to 10mb by default
+    limits {{ iotacaddy_limit_request_body | default('10mb') }}
 
-        # intercept attachToTangle calls with a max MWM of 14 and 20 txs per call by default
-        iota {{ iotacaddy_max_mwm | default('14') }} {{ iotacaddy_max_txs_per_call | default('20') }}
+    # intercept attachToTangle calls with a max MWM of 14 and 20 txs per call by default
+    iota {{ iotacaddy_max_mwm | default('14') }} {{ iotacaddy_max_txs_per_call | default('20') }}
 
-        proxy / http://127.0.0.1:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }} {
-                header_upstream X-IOTA-API-VERSION {{ iri_version }}
-                header_upstream Access-Control-Allow-Origin *
-        }
+    proxy / http://127.0.0.1:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }} {
+        header_upstream X-IOTA-API-VERSION {{ iri_version }}
+        header_upstream Access-Control-Allow-Origin *
+    }
 }

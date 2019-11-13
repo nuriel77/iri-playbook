@@ -202,7 +202,7 @@ backend iri_back
     http-request set-header Host {{ iotacaddy_listen_address }}
 
     option log-health-checks
-    option httpchk POST / HTTP/1.1\r\nHost:\ {{ iotacaddy_listen_address }}\r\nX-IOTA-API-VERSION:\ 1\r\nContent-Type:\ application/json\r\n\r\n{\"command\":\"attachToTangle\"}
+    option httpchk POST /health HTTP/1.1\r\nHost:\ {{ iotacaddy_listen_address }}\r\nX-IOTA-API-VERSION:\ 1\r\nContent-Type:\ application/json\r\n\r\n{\"command\":\"attachToTangle\"}
     retry-on all-retryable-errors
     http-request disable-l7-retry if METH_POST
     http-check expect status 400
