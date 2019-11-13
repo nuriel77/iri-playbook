@@ -105,7 +105,7 @@ frontend iri_front
     http-request deny if !command_exists !options_method
     http-request deny if invalid_command !whitelist
 
-    {% if iotacaddy_enabled is not defined or iotacaddy_enabled|bool == False %}#{{% endif %}acl wants_pow req.body -m reg attachToTangle
+    {% if iotacaddy_enabled is not defined or iotacaddy_enabled|bool == False %}#{% endif %}acl wants_pow req.body -m reg attachToTangle
 
     # Enable these two lines for SSL to IRI
     {% if haproxy_https is not defined or haproxy_https|bool == False %}#{% endif %}http-request add-header X-Forwarded-Proto https
@@ -116,7 +116,7 @@ frontend iri_front
 {% for lb_bind_address in lb_bind_addresses %}
     {% if haproxy_https is defined and haproxy_https|bool == True %}#{% endif %}bind {{ lb_bind_address }}:{{ iri_api_port_remote }} tfo alpn h2,http/1.1
 {% endfor %}
-    use_backend iri_pow_back if wants_pow
+    {% if iotacaddy_enabled is not defined or iotacaddy_enabled|bool == False %}#{% endif %}use_backend iri_pow_back if wants_pow
     use_backend iri_back
 
 backend iri_back
@@ -164,7 +164,7 @@ backend iri_back
     server iri 127.0.0.1:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }} maxconn {{ iri_api_max_connections }} check tfo alpn h2,http/1.1
 
 {% if iotacaddy_enabled is defined and iotacaddy_enabled|bool == True %}
-backend iri_back
+backend iri_pow_back
     mode http
     fullconn {{ iri_api_max_connections }}
     option redispatch
@@ -207,7 +207,7 @@ backend iri_back
     http-request disable-l7-retry if METH_POST
     http-check expect status 400
     default-server inter 2s fall 2 rise 2
-    server iotacaddy 127.0.0.1:{{ iotacaddy_listen_port }} maxconn {{ max_concurrent_pow_requests | default('3') }} check tfo alpn h2,http/1.1
+    server iotacaddy 127.0.0.1:{{ iotacaddy_listen_port }} maxconn {{ max_concurrent_pow_requests }} check tfo alpn h2,http/1.1
     # If iotacaddy is down, send to IRI as backup
     server iri 127.0.0.1:{{ iri_mgmt_api_port if iri_net_name is defined else iri_api_port }} maxconn {{ max_concurrent_pow_requests }} check backup tfo alpn h2,http/1.1
 {% endif %}

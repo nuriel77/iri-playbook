@@ -8,3 +8,4 @@ iotacaddy_log_dir: /var/log/iotacaddy
 iotacaddy_git_repo: https://github.com/luca-moser/iotacaddy.git
 iotacaddy_listen_address: 127.0.0.1
 iotacaddy_listen_port: "14268"
+max_concurrent_pow_requests: 3
