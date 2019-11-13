@@ -1,0 +1,6 @@
+- name: restart iotacaddy
+  systemd:
+    name: iotacaddy.service
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

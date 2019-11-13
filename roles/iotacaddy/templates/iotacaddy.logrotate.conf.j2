@@ -1,0 +1,12 @@
+{{ iotacaddy_log_dir }}/iota.log {
+    weekly
+    rotate 10
+    copytruncate
+    delaycompress
+    compress
+    notifempty
+    missingok
+    postrotate
+        chown {{ iotacaddy_username }}.{{ iotacaddy_username }} {{ iotacaddy_log_dir }}/iota.log || true
+    endscript
+}

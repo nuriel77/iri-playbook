@@ -564,6 +564,13 @@ HAProxy is a proxy/load-balancer. In the context of this installation it can be 
 
 You can read more about it here: :ref:`haproxyEnable`.
 
+IOTA Caddy
+----------
+The IOTA Caddy is a feature to perform more efficient PoW. All ``attachToTangle`` requests are proxied from HAProxy to the IOTA Caddy middleware.
+
+Thanks to `Luca Moser <https://github.com/luca-moser/iotacaddy/blob/master/IOTA.md>`_
+
+
 Monitoring
 ----------
 The monitoring refers to installation of:

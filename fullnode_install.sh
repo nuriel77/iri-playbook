@@ -23,7 +23,7 @@ window=,
 if grep -q 'IRI PLAYBOOK' /etc/motd; then
     :>/etc/motd
 else
-    if [ -f "/opt/iri-playbook/group_vars/all/z-installer-override.yml" ] && [ "$1" != "rerun" ]
+    if [ -f "$INSTALLER_OVERRIDE_FILE" ] && [ "$1" != "rerun" ]
     then
         if ! (whiptail --title "Confirmation" \
                  --yesno "It looks like a previous installation already exists.\n\nRunning the installaer on an already working node is not recommended.\n\nIf you want to re-run only the playbook check the documentation or ask for assistance on Discord #fullnodes channel.\n\nPlease confirm you want to proceed with the installation?" \
@@ -35,6 +35,8 @@ else
 fi
 
 declare -g INSTALL_OPTIONS
+declare -g IRI_PLAYBOOK_DIR="/opt/iri-playbook"
+declare -g INSTALLER_OVERRIDE_FILE="${IRI_PLAYBOOK_DIR}/group_vars/all/z-installer-override.yml"
 
 clear
 cat <<'EOF'
@@ -328,8 +330,8 @@ function get_admin_password() {
     # Ensure we escape single quotes (using single quotes) because we need to
     # encapsulate the password with single quotes for the Ansible variable file
     PASSWORD_A=$(echo "${PASSWORD_A}" | sed "s/'/''/g")
-    echo "fullnode_user_password: '${PASSWORD_A}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
-    chmod 600 /opt/iri-playbook/group_vars/all/z-installer-override.yml
+    echo "fullnode_user_password: '${PASSWORD_A}'" >> "$INSTALLER_OVERRIDE_FILE"
+    chmod 600 "$INSTALLER_OVERRIDE_FILE"
 }
 
 function set_admin_username() {
@@ -349,7 +351,7 @@ function set_admin_username() {
             ;;
     esac
 
-    echo "fullnode_user: '${ADMIN_USER}'" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
+    echo "fullnode_user: '${ADMIN_USER}'" >> "$INSTALLER_OVERRIDE_FILE"
 
 }
 
@@ -369,6 +371,7 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 7 \
         "INSTALL_NGINX"            "Install nginx webserver (recommended)" ON \
         "USE_BRIDGED_NETWORK"      "Use Docker bridged network (less performance)" OFF \
         "SKIP_FIREWALL_CONFIG"     "Skip configuring firewall" OFF \
+        "DISABLE_IOTACADDY"        "Disable IOTA Caddy PoW support" OFF \
         "ENABLE_HAPROXY"           "Enable HAProxy (recommended)" ON \
         "DISABLE_MONITORING"       "Disable node monitoring"    OFF \
         "DISABLE_ZMQ_METRICS"      "Disable ZMQ metrics"        OFF \
@@ -385,26 +388,29 @@ Select/unselect options using space and click Enter to proceed.\n" 28 78 7 \
     do
         case $CHOICE in
             '"INSTALL_DOCKER"')
-                echo "install_docker: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "install_docker: true" >>"$INSTALLER_OVERRIDE_FILE"
                 ;;
             '"INSTALL_NGINX"')
-                echo "install_nginx: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "install_nginx: true" >>"$INSTALLER_OVERRIDE_FILE"
                 ;;
             '"USE_BRIDGED_NETWORK"')
-                echo "iri_net_name: iri_net" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "iri_net_name: iri_net" >>"$INSTALLER_OVERRIDE_FILE"
                 ;;
             '"SKIP_FIREWALL_CONFIG"')
-                echo "configure_firewall: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "configure_firewall: false" >>"$INSTALLER_OVERRIDE_FILE"
                 ;;
             '"DISABLE_MONITORING"')
                 SKIP_TAGS+=",monitoring_role"
-                echo "disable_monitoring: true" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "disable_monitoring: true" >>"$INSTALLER_OVERRIDE_FILE"
                 ;;
             '"DISABLE_ZMQ_METRICS"')
-                echo "iri_zmq_enabled: false" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "iri_zmq_enabled: false" >>"$INSTALLER_OVERRIDE_FILE"
+                ;;
+            '"DISABLE_IOTACADDY"')
+                echo "iotacaddy_enabled: false" >>"$INSTALLER_OVERRIDE_FILE"
                 ;;
             '"ENABLE_HAPROXY"')
-                echo "lb_bind_addresses: ['0.0.0.0']" >>/opt/iri-playbook/group_vars/all/z-installer-override.yml
+                echo "lb_bind_addresses: ['0.0.0.0']" >>"$INSTALLER_OVERRIDE_FILE"
                 ;;
             *)
                 ;;
@@ -500,7 +506,7 @@ function run_playbook(){
 It seems you have rebooted the node. You can proceed with
 the installation by running the command:
 
-/opt/iri-playbook/rerun.sh
+${IRI_PLAYBOOK_DIR}/rerun.sh
 
 (make sure you are user root!)
 
@@ -518,7 +524,7 @@ You can reboot the server using the command 'reboot'.
 Once the server is back online you can use the following command
 to proceed with the installation (become user root first):
 
-/opt/iri-playbook/rerun.sh
+${IRI_PLAYBOOK_DIR}/rerun.sh
 
 -------------------- NOTE --------------------
 
@@ -535,7 +541,7 @@ EOF
     # This could happen on script re-run
     # due to reboot, therefore the variable is empty
     if [ -z "$ADMIN_USER" ]; then
-        ADMIN_USER=$(grep "^fullnode_user:" /opt/iri-playbook/group_vars/all/z-installer-override.yml | awk {'print $2'})
+        ADMIN_USER=$(grep "^fullnode_user:" $INSTALLER_OVERRIDE_FILE | awk {'print $2'})
     fi
 
     OUTPUT=$(cat <<EOF
@@ -625,12 +631,12 @@ cd /opt
 if [ -d iri-playbook ]; then
     echo "Backing up older iri-playbook directory..."
     rm -rf iri-playbook.backup
-    mv iri-playbook iri-playbook.backup
+    mv -- iri-playbook "iri-playbook.backup.$(date +%s)"
 fi
 
 # Clone the repository (optional branch)
 git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
-cd iri-playbook
+cd "${IRI_PLAYBOOK_DIR}"
 
 # Let user choose installation add-ons
 set_selections

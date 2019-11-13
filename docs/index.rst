@@ -34,6 +34,7 @@ This Installer Includes
 * ``iric``, a menu-driven utility to help manage the node
 * Serve IOTA Peer Manager and Graphs password protected via HTTPS (secure)
 * IRI metrics and graphs, created by Chris Holliday's `IOTA Exporter <https://github.com/crholliday/iota-prom-exporter>`_.
+* IOTA Caddy PoW middleware, thanks to Luca Moser `<https://github.com/luca-moser/iotacaddy/blob/master/IOTA.md>`_.
 
 Please star the playbook's repository on github: `iri-playbook <https://github.com/nuriel77/iri-playbook>`_
 

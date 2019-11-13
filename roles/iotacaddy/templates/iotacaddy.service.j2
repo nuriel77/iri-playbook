@@ -1,0 +1,30 @@
+[Unit]
+Description=IOTA Caddy
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+EnvironmentFile=-{{ config_dir }}/iotacaddy
+SuccessExitStatus={{ service_success_exit_status | default('143') }}
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm %p || /bin/true"
+ExecStart=/usr/bin/docker run \
+  --name %p \
+  --user {{ iotacaddy_uid.stdout }} \
+  --hostname %p \
+  --net=host \
+  --pid=host \
+  --cap-drop=all \
+  -v {{ iotacaddy_config_dir }}:/iotacaddy/config:Z \
+  -v {{ iotacaddy_log_dir }}/iota.log:/iotacaddy/logs/iota.log:Z \
+  -v /etc/localtime:/etc/localtime:ro,Z \
+  --entrypoint /iotacaddy/config/entrypoint.sh \
+  $DOCKER_OPTS \
+  {{ iotacaddy_image }}:${TAG} -conf /iotacaddy/config/iotacaddy.conf
+
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

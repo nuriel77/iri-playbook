@@ -28,6 +28,7 @@
   roles:
     - docker
     - iri
+    - iotacaddy
     - nginx
     - iotapm
     - monitoring
