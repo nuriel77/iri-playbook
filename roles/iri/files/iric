@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.11.1
+VERSION_TEMP=0.12.0
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -924,18 +924,18 @@ function edit_config_file() {
     local SERVICE=$2
     local RELOAD=$3
 
-    BEFORE_EDIT=$(md5sum $CONFIG | awk {'print $1'})
-    $EDITOR ${CONFIG}
-    AFTER_EDIT=$(md5sum $CONFIG | awk {'print $1'})
+    BEFORE_EDIT=$(md5sum "$CONFIG" | awk {'print $1'})
+    $EDITOR "${CONFIG}"
+    AFTER_EDIT=$(md5sum "$CONFIG" | awk {'print $1'})
 
     if [[ "$AFTER_EDIT" != "$BEFORE_EDIT" ]]; then
         if (whiptail --title "File Modified" \
                      --yesno "${CONFIG} file was modified.\n${SERVICE} requires a restart to pick up the new changes.\nDo you want to restart it now?" \
                      8 $WIDTH) then
-            if [[ -z ${RELOAD} ]]; then
-                service_cmd $SERVICE restart
+            if [[ -z "${RELOAD}" ]]; then
+                service_cmd "$SERVICE" restart
             else
-                service_cmd $SERVICE reload
+                service_cmd "$SERVICE" reload
             fi
         fi
     fi
@@ -945,7 +945,7 @@ function edit_config() {
     local CONFIG_FILE=$1
     local SERVICE=$2
     local RELOAD=$3
-    if [ ! -f $CONFIG_FILE ]; then
+    if [ ! -f "$CONFIG_FILE" ]; then
         whiptail --title "Missing File" \
                  --msgbox "Error: cannot find '$CONFIG_FILE'" \
                  8 $WIDTH
@@ -953,11 +953,11 @@ function edit_config() {
     fi
 
     # Make backup for restores
-    if [ ! -f ${CONFIG_FILE}.original ]; then
-        cp ${CONFIG_FILE} ${CONFIG_FILE}.original
+    if [ ! -f "${CONFIG_FILE}.original" ]; then
+        cp -- "${CONFIG_FILE}" "${CONFIG_FILE}.original"
     fi
 
-    if edit_config_file ${CONFIG_FILE} ${SERVICE} ${RELOAD}; then
+    if edit_config_file "${CONFIG_FILE}" "${SERVICE}" "${RELOAD}"; then
         return 0
     else
         return 1
@@ -966,7 +966,7 @@ function edit_config() {
 
 ### Node info ###
 function show_lmsi() {
-    if [ ! -f $HOME/.nbctl ]; then
+    if [ ! -f "$HOME/.nbctl" ]; then
         whiptail --title "Missing .nbctl" \
                  --msgbox "Error: cannot find $HOME/.nbctl" \
                  8 $WIDTH
@@ -1266,7 +1266,7 @@ function services_menu() {
     whiptail --title "IRIC v${__VERSION__} - Node Services" \
              --menu "Choose an option\n" \
              --cancel-button "Back" \
-             19 $WIDTH 10 \
+             19 $WIDTH 11 \
     "a)" "IRI" \
     "b)" "IOTA Peer Manager" \
     "c)" "Prometheus" \
@@ -1277,6 +1277,7 @@ function services_menu() {
     "h)" "HAProxy" \
     "i)" "Node Exporter" \
     "j)" "CAdvisor" \
+    "k)" "IOTA Caddy" \
     3>&1 1>&2 2>&3
 }
 
@@ -1339,6 +1340,10 @@ function services() {
            services
            ;;
 
+        "k)")
+           service iotacaddy
+           services
+           ;;
         *)
            services
            ;;
@@ -1358,6 +1363,7 @@ function configure_files_menu() {
     "e)" "Prometheus Config" \
     "f)" "Prometheus Alerts" \
     "g)" "HAProxy Config" \
+    "h)" "IOTA Caddy Config" \
     "Z)" "Choose Editor" \
     3>&1 1>&2 2>&3
 }
@@ -1410,6 +1416,11 @@ function configure_files() {
 
         "g)")
             edit_config "/etc/haproxy/haproxy.cfg" "haproxy" "reload"
+            configure_files
+            ;;
+
+        "h)")
+            edit_config "/etc/iotacaddy/iotacaddy.conf" "iotacaddy"
             configure_files
             ;;
 
