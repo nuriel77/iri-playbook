@@ -15,6 +15,8 @@
   when: "ansible_distribution_major_version == '8'"
   register: docker_install_output
   changed_when: "'Nothing to do.' not in docker_install_output.stdout"
+  args:
+    warn: no
 
 - name: Ensure Docker is started and enabled
   service:

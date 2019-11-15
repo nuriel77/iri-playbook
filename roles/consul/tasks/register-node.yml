@@ -7,6 +7,8 @@
 - name: load service into consul
   shell: 'curl -H "X-Consul-Token: {{ consul_master_token.stdout }}" -X PUT -d@{{ consul_config_dir }}/service_this_node.json http://localhost:{{ consul_comm_port }}/v1/agent/service/register'
   no_log: true
+  args:
+    warn: no
 
 - name: install lbreg script
   copy:
