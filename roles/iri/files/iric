@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.12.1
+VERSION_TEMP=0.12.2
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -935,38 +935,31 @@ function sort_func() {
 
 function run_custom_updates(){
     # Find pending update files
-    readarray -t CUSTOM_UPDATES < <(find custom_updates/ -maxdepth 1 -type f -name '*_updates.sh')
-    declare -a TO_RUN_UPDATES
-
-    # Check if any pending updates
-    for UPDATE_FILE in "${CUSTOM_UPDATES[@]}"
-    do
-        if [ -e "${UPDATE_FILE}.completed" ]
-        then
-            echo "$(basename ${UPDATE_FILE}) already updated."
-        else
-            TO_RUN_UPDATES+=("${UPDATE_FILE}")
-        fi
-    done
+    readarray -t TO_RUN_UPDATES < <(find custom_updates/ -maxdepth 1 -type f -name '*_updates.sh')
 
     # Return if nothing to update
     ((${#TO_RUN_UPDATES[@]} == 0)) && { clear; return; }
 
+    echo "Checking if any pending updates ..."
     # Sort updates by version from small to great
     sort_func version_sort "${TO_RUN_UPDATES[@]}"
 
-    # Run updates
     for _UPDATE in "${UPDATES_SORTED[@]}"
     do
-        echo "Executing update $(basename ${_UPDATE}) ..."
-        if ! /bin/bash "$_UPDATE"
+        if [ ! -e "${UPDATE_FILE}.completed" ]
         then
-            whiptail --title "Error!" \
-                     --msgbox "ERROR: custom updates task failed at '$_UPDATE'." \
-                     8 $WIDTH
-            return 1
+            echo "Executing update $(basename ${_UPDATE}) ..."
+            if ! /bin/bash "$_UPDATE"
+            then
+                whiptail --title "Error!" \
+                         --msgbox "ERROR: custom updates task failed at '$_UPDATE'." \
+                         8 $WIDTH
+                return 1
+            else
+                touch "${_UPDATE}.completed"
+            fi
         else
-            touch "${_UPDATE}.completed"
+            echo "$(basename ${UPDATE_FILE}) already updated."
         fi
     done
 
