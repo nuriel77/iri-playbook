@@ -848,6 +848,8 @@ function update_iric() {
             # Don't need another confirmation question
             local NO_CONFIRM=1
             # Delete any 'completed' files for this version
+            # This forces to re-run updates specific for
+            # this version if any.
             rm -f "custom_updates/${CURR_VERSION}_updates.sh.completed"
         fi
     fi
