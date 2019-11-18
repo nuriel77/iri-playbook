@@ -948,7 +948,7 @@ function run_custom_updates(){
 
     for _UPDATE in "${UPDATES_SORTED[@]}"
     do
-        if [ ! -e "${UPDATE_FILE}.completed" ]
+        if [ ! -e "${_UPDATE}.completed" ]
         then
             echo "Executing update $(basename ${_UPDATE}) ..."
             if ! /bin/bash "$_UPDATE"
@@ -961,7 +961,7 @@ function run_custom_updates(){
                 touch "${_UPDATE}.completed"
             fi
         else
-            echo "$(basename ${UPDATE_FILE}) already updated."
+            echo "$(basename ${_UPDATE}) already updated."
         fi
     done
 
