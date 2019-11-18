@@ -961,7 +961,7 @@ function run_custom_updates(){
                 touch "${_UPDATE}.completed"
             fi
         else
-            echo "$(basename ${_UPDATE}) already updated."
+            echo "$(basename ${_UPDATE}) already updated. To force rerun this update remove the file '$(pwd)/${_UPDATE}' and rerun iric."
         fi
     done
 
