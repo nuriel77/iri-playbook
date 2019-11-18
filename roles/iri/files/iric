@@ -15,7 +15,7 @@ clear
 [ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.12.0
+VERSION_TEMP=0.12.1
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -880,20 +880,97 @@ function update_iric() {
     exec "$0"
 }
 
+# Used by sort_func to sort an array
+# based on versions.
+function version_sort() {
+    local FIRST_VERSION=$(basename "$1" | cut -d_ -f1)
+    local SECOND_VERSION=$(basename "$2" | cut -d_ -f1)
+    local EVAL_STR='<'
+
+    local GET_BOOL=$(python -c "from distutils.version import StrictVersion; print(StrictVersion('$FIRST_VERSION') $EVAL_STR StrictVersion('$SECOND_VERSION'))")
+    if [[ "$GET_BOOL" == "True" ]]
+    then
+        return 0
+    elif [[ "$GET_BOOL" == "False" ]]
+    then
+        return 1
+    fi
+}
+
+# Generic sort version. Will accept a
+# function that is supposed to return
+# 0 or 1 for sorting
+function sort_func() {
+    (($#<=1)) && return 0
+    local compare_func=$1
+    shift
+    local stack=( 0 $(($#-1)) ) beg end i pivot smaller larger
+    UPDATES_SORTED=("$@")
+    while ((${#stack[@]})); do
+        beg=${stack[0]}
+        end=${stack[1]}
+        stack=( "${stack[@]:2}" )
+        smaller=() larger=()
+        pivot=${UPDATES_SORTED[beg]}
+        for ((i=beg+1;i<=end;++i))
+        do
+            if "$compare_func" "${UPDATES_SORTED[i]}" "$pivot"
+            then
+                smaller+=( "${UPDATES_SORTED[i]}" )
+            else
+                larger+=( "${UPDATES_SORTED[i]}" )
+            fi
+        done
+        UPDATES_SORTED=( "${UPDATES_SORTED[@]:0:beg}" "${smaller[@]}" "$pivot" "${larger[@]}" "${UPDATES_SORTED[@]:end+1}" )
+        if ((${#smaller[@]}>=2));
+        then
+            stack+=( "$beg" "$((beg+${#smaller[@]}-1))" )
+        fi
+        if ((${#larger[@]}>=2))
+        then
+            stack+=( "$((end-${#larger[@]}+1))" "$end" )
+        fi
+   done
+}
+
 function run_custom_updates(){
-    # Run custom updates from the new version
-    if [ -f "custom_updates/${__VERSION__}_updates.sh" ] && [ ! -f "custom_updates/${__VERSION__}_updates.sh.completed" ]; then
-        echo "Updates detected: running custom updates..."
-        if ! bash "custom_updates/${__VERSION__}_updates.sh"; then
+    # Find pending update files
+    readarray -t CUSTOM_UPDATES < <(find custom_updates/ -maxdepth 1 -type f -name '*_updates.sh')
+    declare -a TO_RUN_UPDATES
+
+    # Check if any pending updates
+    for UPDATE_FILE in "${CUSTOM_UPDATES[@]}"
+    do
+        if [ -e "${UPDATE_FILE}.completed" ]
+        then
+            echo "$(basename ${UPDATE_FILE}) already updated."
+        else
+            TO_RUN_UPDATES+=("${UPDATE_FILE}")
+        fi
+    done
+
+    # Return if nothing to update
+    ((${#TO_RUN_UPDATES[@]} == 0)) && { clear; return; }
+
+    # Sort updates by version from small to great
+    sort_func version_sort "${TO_RUN_UPDATES[@]}"
+
+    # Run updates
+    for _UPDATE in "${UPDATES_SORTED[@]}"
+    do
+        echo "Executing update $(basename ${_UPDATE}) ..."
+        if ! /bin/bash "$_UPDATE"
+        then
             whiptail --title "Error!" \
-                     --msgbox "ERROR: custom updates task failed." \
+                     --msgbox "ERROR: custom updates task failed at '$_UPDATE'." \
                      8 $WIDTH
             return 1
         else
-            touch "custom_updates/${__VERSION__}_updates.sh.completed"
-            clear
+            touch "${_UPDATE}.completed"
         fi
-    fi
+    done
+
+    clear
 }
 
 ### Configs ###
