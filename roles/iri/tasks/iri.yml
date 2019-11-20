@@ -159,13 +159,21 @@
         force: yes
       ignore_errors: yes
 
-    - name: download iritop
-      get_url:
-        url: https://raw.githubusercontent.com/maeck70/iritop/master/iritop.py
+    # Repository negelcted
+    #- name: download iritop
+    #  get_url:
+    #    url: https://raw.githubusercontent.com/maeck70/iritop/master/iritop.py
+    #    dest: /usr/bin/iritop
+    #    mode: 0755
+    #    force: yes
+    #  ignore_errors: yes
+
+    - name: install iritop
+      copy:
+        src: files/iritop.py
         dest: /usr/bin/iritop
         mode: 0755
         force: yes
-      ignore_errors: yes
 
     - name: install iritop requirements
       pip:
