@@ -363,7 +363,7 @@ function set_selections()
 
     RESULTS=$(whiptail --title "Installation Options" --checklist \
         --cancel-button "Exit" \
-        "\nPlease choose additional installation options.\n(Its perfectly okay to leave this as is).\n\
+        "\nPlease choose additional installation options.\n(It is perfectly okay to leave this as is).\n\
 For more information about these options visit this link:\n
 http://iri-playbook.readthedocs.io/en/feat-docker/appendix.html#options\n\n\
 Select/unselect options using space and click Enter to proceed.\n" 28 78 7 \
