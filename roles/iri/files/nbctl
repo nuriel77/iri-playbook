@@ -3,13 +3,15 @@ import argparse
 import tempfile
 import logging
 import hashlib
+import random
+import string
 import socket
 import yaml
 import json
 import sys
 import re
 import os
-from shutil import copyfile
+from shutil import (copyfile, move)
 from os.path import expanduser
 from ipaddress import ip_address
 from argparse import RawTextHelpFormatter
@@ -24,10 +26,10 @@ except ImportError:
     sys.exit(1)
 
 
-__VERSION__ = '0.2.1'
+__VERSION__ = '0.2.2'
 
 LOG = logging.getLogger(__name__)
-DEFAULT_API_VERSION = '1.6'
+DEFAULT_API_VERSION = '1.8'
 DEFAULT_HOST = 'http://127.0.0.1:14265'
 
 """Script to list, add or remove neighbors
@@ -82,6 +84,10 @@ def parse_args():
     parser.add_argument('--timeout', '-t',
                         help='Timeout. Default: %(default)s',
                         type=int, default=5)
+
+    parser.add_argument('--hornet', action='store_true',
+                        default=argparse.SUPPRESS,
+                        help='Set when HORNET and not IRI')
 
     parser.add_argument('--version', '-V', action='version',
                         version='nbctl %s' % __VERSION__)
@@ -150,6 +156,11 @@ def run():
     elif args.host is None:
         args.host = DEFAULT_HOST
 
+    if not hasattr(args, 'hornet') and 'hornet' in local_config:
+        args.hornet = local_config['hornet']
+    elif not hasattr(args, 'hornet'):
+        args.hornet = False
+
     # Prepare headers
     headers = {
         'content-type': 'application/json',
@@ -180,24 +191,37 @@ def run():
         sys.exit()
 
     tmpfile = tempfile.NamedTemporaryFile(delete=False)
-    neighbors_regex = r'^IRI_NEIGHBORS=.*$|^NEIGHBORS =.*$'
 
-    # Update config file
-    try:
-        with open(args.file ,"r") as orig:
-            lines = orig.readlines()
-            for line in lines:
-                if re.match(neighbors_regex, line) is None:
-                    tmpfile.write(line.encode())
-                else:
-                    line_to_write = process_neighbors_line(command,
-                                                           line.rstrip(),
-                                                           args.neighbors) + '\n'
-                    tmpfile.write(line_to_write.encode())
+    if args.hornet is True:
+        hornet_config, file_type = load_hornet_config(args.file)
+        if hornet_config is None:
+            LOG.error("Failed to load hornet config! Invalid JSON or YAML?")
+            sys.exit(1)
+        processed_config = process_hornet_config(command,
+                                                 hornet_config,
+                                                 args.neighbors)
+        tmp_char_file = '/tmp/' + random_string_generator(7)
+        with open(tmp_char_file, 'wb') as f:
+            json.dump(processed_config, f, indent=2, sort_keys=True, ensure_ascii=False)
+        move(tmp_char_file, tmpfile.name)
+    else:
+        neighbors_regex = r'^IRI_NEIGHBORS=.*$|^NEIGHBORS =.*$'
+        try:
+            with open(args.file, "r") as orig:
+                lines = orig.readlines()
+                for line in lines:
+                    if re.match(neighbors_regex, line) is None:
+                        tmpfile.write(line.encode())
+                    else:
+                        line_to_write = \
+                            process_neighbors_line(command,
+                                                   line.rstrip(),
+                                                   args.neighbors) + '\n'
+                        tmpfile.write(line_to_write.encode())
 
-    except IOError as e:
-        LOG.error('Operation failed: %s' % e.strerror)
-        sys.exit(1)
+        except IOError as e:
+            LOG.error('Operation failed: %s' % e.strerror)
+            sys.exit(1)
 
     tmpfile.close()
 
@@ -212,6 +236,78 @@ def run():
     else:
         LOG.debug("No changes in configuration file")
 
+
+def process_hornet_config(command, hornet_config, neighbors):
+    no_prefix_neighbors = [n.replace('tcp://', '') for n in neighbors]
+
+    if command == 'removeNeighbors':
+        if ('network' not in hornet_config or
+            'neighbors' not in hornet_config['network']):
+            return hornet_config
+
+        existing_neighbors = hornet_config['network']['neighbors']
+        for neighbor in no_prefix_neighbors:
+            for i in range(len(existing_neighbors)):
+                if existing_neighbors[i]['identity'] == neighbor:
+                    del existing_neighbors[i]
+                    break
+    elif command == 'addNeighbors':
+        if 'network' not in hornet_config:
+            hornet_config['network'] = {"neighbors": []}
+        elif 'neighbors' not in hornet_config['network']:
+            hornet_config['network']['neighbors'] = []
+
+        for neighbor in no_prefix_neighbors:
+            to_add = True
+            for existing_neighbor in hornet_config['network']['neighbors']:
+                if existing_neighbor['identity'] == neighbor:
+                    to_add = False
+            if to_add is True:
+                hornet_config['network']['neighbors'].append({
+                    "identity": neighbor,
+                    "preferIPv6": True
+                })
+
+    return hornet_config
+
+
+def random_string_generator(str_size):
+    chars = string.ascii_letters + string.punctuation
+    return ''.join(random.choice(chars) for x in range(str_size))
+
+
+def load_hornet_config(config_file):
+    with open(config_file, "r") as in_fh:
+        config = in_fh.read()
+
+    config_dict = dict()
+
+    try:
+        config_dict = json.loads(config)
+    except:
+        LOG.debug("Failed to load the config file in JSON format")
+    else:
+        return config_dict, 'json'
+
+    try:
+        config_dict = yaml.safe_load(config)
+    except:
+        LOG.debug("Failed to load the config file in YAML format")
+    else:
+        return config_dict, 'yaml'
+
+
+def process_json_config(json_file, tmpfile):
+    try:
+        with open(json_file, 'r') as fh:
+            json_data = json.load(fh)
+    except ValueError:
+        LOG.error("File is not a valid JSON file")
+        sys.exit(1)
+
+    xxx
+    #try:
+    #except:
 
 def set_logger(debug=False):
     if debug is True:
