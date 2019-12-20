@@ -14,7 +14,7 @@ from os import (path, environ, getloadavg, getenv)
 from curses import wrapper
 
 
-__VERSION__ = '0.5.6'
+__VERSION__ = '0.5.7'
 
 """\
 Simple Iota IRI Node Monitor
@@ -519,22 +519,23 @@ class IriTop:
                 self.show(1, 0, "App Name", node, "appName")
                 self.show(2, 0, "App Version", node, "appVersion")
 
-                s = self.term.cyan("Free: ") + \
-                    str(node["jreFreeMemory"]//MB) + \
-                    " Mb  " + \
-                    self.term.cyan("Max: ") + \
-                    str(node["jreMaxMemory"]//MB) + \
-                    " Mb " + \
-                    self.term.cyan("Total: ") + \
-                    str(node["jreTotalMemory"]//MB) + " Mb   "
-                self.show_string(1, 1, "JRE Memory", s)
+                if "jreFreeMemory" in node:
+                    s = self.term.cyan("Free: ") + \
+                        str(node["jreFreeMemory"]//MB) + \
+                        " Mb  " + \
+                        self.term.cyan("Max: ") + \
+                        str(node["jreMaxMemory"]//MB) + \
+                        " Mb " + \
+                        self.term.cyan("Total: ") + \
+                        str(node["jreTotalMemory"]//MB) + " Mb   "
+                    self.show_string(1, 1, "JRE Memory", s)
 
-                self.show_histogram(2, 1, "JRE Memory",
-                                    node["jreTotalMemory"] -
-                                    node["jreFreeMemory"],
-                                    node["jreMaxMemory"],
-                                    0.8,
-                                    span=2)
+                    self.show_histogram(2, 1, "JRE Memory",
+                                        node["jreTotalMemory"] -
+                                        node["jreFreeMemory"],
+                                        node["jreMaxMemory"],
+                                        0.8,
+                                        span=2)
 
                 ms_start = node["milestoneStartIndex"]
                 delta_ms_start = self.prev_ms_start - ms_start
@@ -551,7 +552,8 @@ class IriTop:
                 self.show(5, 2, "Milestone Solid", node,
                           "latestSolidSubtangleMilestoneIndex")
 
-                self.show(3, 0, "JRE Version", node, "jreVersion")
+                if "jreVersion" in node:
+                    self.show(3, 0, "JRE Version", node, "jreVersion")
                 self.show(4, 1, "Tips", node, "tips")
                 self.show(3, 1, "Tx To Request", node,
                           "transactionsToRequest")
