@@ -230,7 +230,7 @@ def url(url):
 def read_config(config_file):
     with open(config_file) as fh:
         try:
-            data = yaml.load(fh)
+            data = yaml.safe_load(fh)
         except yaml.parser.ParserError as e:
             raise Exception("Error parsing yaml configuration file '%s': %s" %
                             (config_file, e))
