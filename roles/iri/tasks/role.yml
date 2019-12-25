@@ -52,6 +52,8 @@
     - name: remount /proc with hidepid=2
       shell: "/bin/mount -o remount,rw,hidepid=2 /proc"
       when: "'hidepid=2' not in mounted_hidepid.stdout"
+      args:
+        warn: false
 
     - name: remount /proc with hidepid=2 and configure fstab
       lineinfile:

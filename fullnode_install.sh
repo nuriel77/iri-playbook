@@ -469,6 +469,18 @@ function set_ssh_port() {
     fi
 }
 
+function skip_all_updates() {
+    readarray -t TO_RUN_UPDATES < <(find "${IRI_PLAYBOOK_DIR}/custom_updates/" -maxdepth 1 -type f -name '*_updates.sh')
+
+    # Return if nothing to update
+    ((${#TO_RUN_UPDATES[@]} == 0)) && { clear; return; }
+
+    for FILE in "${TO_RUN_UPDATES[@]}"
+    do
+        touch "${FILE}.completed"
+    done
+}
+
 function run_playbook(){
     # Get default SSH port
     set +o pipefail
@@ -637,6 +649,9 @@ fi
 # Clone the repository (optional branch)
 git clone $GIT_OPTIONS https://github.com/nuriel77/iri-playbook.git
 cd "${IRI_PLAYBOOK_DIR}"
+
+# first installation? Skip all upgrades
+skip_all_updates
 
 # Let user choose installation add-ons
 set_selections
