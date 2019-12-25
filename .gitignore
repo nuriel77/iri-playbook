@@ -4,3 +4,8 @@ _site/
 group_vars/all/z-*.yml
 inventory-multi
 custom_updates/*.completed
+gilt.dev.yml
+roles/docker
+roles/haproxy
+roles/nginx
+roles/monitoring
