@@ -1,6 +1,5 @@
-nginx_image: nginx
-nginx_tag: latest
-nginx_username: www-data
-nginx_shared_mem_rate_limit: 2m
-nginx_req_per_sec: 10
-vhost_nginx_burst_limit: 25
+nginx_vhost_files:
+  - src: '../shared-files/iotapm.conf.j2'
+  - src: '../shared-files/grafana.conf.j2'
+  - src: '../shared-files/prometheus.conf.j2'
+  - src: '../shared-files/alertmanager.conf.j2'

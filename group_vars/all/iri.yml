@@ -7,6 +7,9 @@ iri_basedir: /var/lib/iri
 # IRI configuration dir
 iri_configdir: /etc/iri
 
+# iri database dir
+iri_dbdir: "{{ iri_basedir }}/target/mainnetdb"
+
 # IRI docker image
 iri_image: iotaledger/iri
 
@@ -89,3 +92,11 @@ max_connections_backend: 180
 # Enable remote auth with password.
 # This will only allow connections using basic auth.
 haproxy_remote_auth: false
+
+# Aliases used in generic roles (e.g. ansible-monitoring)
+playbook_basename: iri
+node_db_path: "{{ iri_dbdir }}"
+node_zmq_port: "{{ iri_zmq_port }}"
+node_enable_plugins: "{{ iri_enable_plugins | default([]) }}"
+node_api_port: "{{ iri_api_port }}"
+node_api_port_remote: "14267"

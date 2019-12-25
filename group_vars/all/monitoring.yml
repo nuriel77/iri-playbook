@@ -1,47 +1,7 @@
-# Prometheus
-prom_image: prom/prometheus
-prom_tag: v2.14.0
-prom_username: prometheus
-prom_basedir: /opt/prometheus
-prom_datadir: /var/lib/prometheus
-prom_configdir: /etc/prometheus
-prom_config: prometheus.yaml
+grafana_port: "3000"
 prom_port: "9090"
-prom_bind_address: 127.0.0.1
 prom_proxy_port: "8999"
-
-# Node exporter
-exporter_image: prom/node-exporter
-exporter_tag: v0.18.1
-exporter_basedir: /opt/prometheus/node_exporter
-exporter_port: "9100"
-exporter_bind_address: 127.0.0.1
-collector_textfiles_dir: /var/run/prometheus
-
-# IOTA Prometheus Exporter
-iota_prom_exporter_image: bambash/iota-prom-exporter
-iota_prom_exporter_tag: latest
-iota_prom_exporter_basedir: /var/lib/iota-prom-exporter
-iota_prom_exporter_port: "9311"
-iota_prom_exporter_bind: 127.0.0.1
-iota_prom_exporter_market_data: true
-iota_prom_exporter_db_days_retention: 14
-
-# Alertmanager
-alertmanager_basedir: /opt/prometheus/alertmanager
-alertmanager_image: prom/alertmanager
-alertmanager_tag: v0.19.0
+grafana_proxy_port: "5555"
 alertmanager_port: "9093"
 alertmanager_proxy_port: "9993"
-alertmanager_bind: 127.0.0.1
-alertmanager_email_from: alertmanager
-alertmanager_email_to: root@localhost
-alertmanager_loglevel: info
-smtp_host: localhost
-smtp_port: "25"
-
-# cAdvisor
-cadvisor_image: google/cadvisor
-cadvisor_tag: v0.33.0
-cadvisor_bind_address: 127.0.0.1
-cadvisor_port: "8181"
+haproxy_stats_port: "9292"

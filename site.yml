@@ -1,7 +1,8 @@
 ---
 - hosts: localhost
-  gather_facts: false
+  gather_facts: true
   tasks:
+
     - name: "Check ansible version >=2.8.0"
       assert:
         msg: "Ansible version 2.8.0 or above is required to run this playbook"
@@ -12,8 +13,44 @@
         - check_version
       run_once: yes
       ignore_errors: "{{ ignore_assert_errors }}"
+    - name: install local dependencies
+      tags: local_deps
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages: "{{ deb_packages }}"
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: install local dependencies
+      tags: local_deps
+      package:
+        name: "{{ packages }}"
+      vars:
+        packages: "{{ centos_packages['ver' + ansible_distribution_major_version] }}"
+      when: ansible_distribution == 'CentOS'
+
+    - name: install gilt
+      pip:
+        name: python-gilt
+        state: present
+
+    - name: run gilt overlay
+      command: "gilt --config {{ gilt_config | default('gilt.yml') }} overlay"
+      changed_when: false
+      run_once: yes
+      tags: always
+
   vars:
     ansible_connection: local
+    centos_packages:
+      ver7:
+        - python-pip
+      ver8:
+        - python3-pip
+    deb_packages:
+      - python-pip
 
 - hosts: all
   gather_facts: true
@@ -25,13 +62,22 @@
   become: true
   become_method: sudo
   any_errors_fatal: true
-  roles:
-    - docker
-    - iri
-    - iotacaddy
-    - nginx
-    - iotapm
-    - monitoring
-    - consul
-    - haproxy
-    - cleanup
+  tasks:
+    - name: include playbook roles
+      tags: always
+      include_role:
+        name: "{{ roleinputvar }}"
+      loop: "{{ fullnode_roles }}"
+      loop_control:
+        loop_var: roleinputvar
+  vars:
+    fullnode_roles:
+      - docker
+      - iri
+      - iotacaddy
+      - nginx
+      - iotapm
+      - monitoring
+      - consul
+      - haproxy
+      - cleanup

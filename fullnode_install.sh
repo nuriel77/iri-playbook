@@ -20,6 +20,10 @@ export NEWT_COLORS='
 window=,
 '
 
+declare -g INSTALL_OPTIONS
+declare -g IRI_PLAYBOOK_DIR="/opt/iri-playbook"
+declare -g INSTALLER_OVERRIDE_FILE="${IRI_PLAYBOOK_DIR}/group_vars/all/z-installer-override.yml"
+
 if grep -q 'IRI PLAYBOOK' /etc/motd; then
     :>/etc/motd
 else
@@ -33,10 +37,6 @@ else
         fi
     fi
 fi
-
-declare -g INSTALL_OPTIONS
-declare -g IRI_PLAYBOOK_DIR="/opt/iri-playbook"
-declare -g INSTALLER_OVERRIDE_FILE="${IRI_PLAYBOOK_DIR}/group_vars/all/z-installer-override.yml"
 
 clear
 cat <<'EOF'
