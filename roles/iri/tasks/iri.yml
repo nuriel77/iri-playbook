@@ -278,12 +278,10 @@
   tags:
     - iri_docker_image
 
-- name: flush handlers
-  meta: flush_handlers
-
 - name: ensure iri started and enabled
   systemd:
     daemon_reload: true
     name: iri.service
     state: started
     enabled: true
+  register: iri_started
