@@ -11,15 +11,20 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 clear
+
+declare -g IRI_PLAYBOOK_DIR="/opt/iri-playbook"
+declare -g INSTALLER_OVERRIDE="$IRI_PLAYBOOK_DIR/group_vars/all/z-installer-override.yml"
+
 [ -f "$HOME/.iric" ] && . "$HOME/.iric"
-[ -f "/opt/iri-playbook/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
+[ -f "${IRI_PLAYBOOK_DIR}/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.12.3
+VERSION_TEMP=0.12.4
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
 CUR_DIR="$(pwd)"
+
 
 PID_FILE="/var/run/iric.pid"
 WIDTH=78
@@ -169,10 +174,10 @@ function verify_playbook() {
     local OUTPUT
     local HEIGHT
     local RC
-    if [ ! -d /opt/iri-playbook ]; then
+    if [ ! -d "$IRI_PLAYBOOK_DIR" ]; then
         cd /opt && git clone -b "$IRI_BRANCH" https://github.com/nuriel77/iri-playbook.git
     fi
-    cd /opt/iri-playbook
+    cd "$IRI_PLAYBOOK_DIR"
 
     # Check if bridged network is enabled for iri.
     # If it was enabled before we perform a pull,
@@ -289,25 +294,41 @@ EOF
 
 ### IRI ###
 function get_latest_iri_release {
-    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest  | awk '/tag_name/{print $2}' | tr -d '"v,'
+    curl -H 'Cache-Control: no-cache' -s -m 5 -f https://api.github.com/repos/iotaledger/iri/releases/latest  | jq -r .tag_name | tr -d '"v,'
+}
+
+function check_new_iri() {
+    local IRI_LATEST
+    local IRI_VERSION
+    IRI_LATEST=$(get_latest_iri_release)
+    [[ $? -ne 0 ]] && return 1
+    IRI_LATEST=$(echo "$IRI_LATEST" | tr -d '\-RELEASE')
+    IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
+    [[ $? -ne 0 ]] && return 1
+    if compare_versions $IRI_VERSION '<' $IRI_LATEST; then
+        return 0
+    fi
+    return 1
 }
 
 function upgrade_iri() {
+    local IRI_LATEST
+    local IRI_VERSION
+
     echo "Checking for updates..."
-    local IRI_LATEST=$(get_latest_iri_release)
-
-    # Remove that weird -RELEASE tag
-    IRI_LATEST="$(echo $IRI_LATEST | tr -d '\-RELEASE')"
-
+    IRI_LATEST=$(get_latest_iri_release)
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
                  --msgbox "ERROR: Failed to get IRI latest version\n${IRI_LATEST}" \
                  8 $WIDTH
         return 1
     fi
+
+    # Remove that weird -RELEASE tag
+    IRI_LATEST=$(echo "$IRI_LATEST" | tr -d '\-RELEASE')
     clear
 
-    local IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
+    IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
                  --msgbox "ERROR: Cannot find $HOME/.nbctl" \
@@ -344,7 +365,7 @@ function upgrade_iri() {
     fi
 
     # Verify the image version is already available in dockerhub
-    local IRI_IMAGE=$(grep iotaledger/iri /opt/iri-playbook/group_vars/all/iri.yml | awk {'print $2'})
+    local IRI_IMAGE=$(grep iotaledger/iri "$IRI_PLAYBOOK_DIR/group_vars/all/iri.yml" | awk {'print $2'})
     curl -s "https://hub.docker.com/v2/repositories/$IRI_IMAGE/tags/" | jq -r '.results|.[]|.name' | grep -q "v${IRI_LATEST}"
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
@@ -373,11 +394,13 @@ function upgrade_iri() {
     fi
 
     echo "Upgrading IRI Docker image.... (IRI will automatically restart if image gets updated)"
-    cd /opt/iri-playbook && ansible-playbook -i inventory \
-                                -v site.yml \
-                                --tags=iri_docker_image,iri_service_file,get_iri_uid \
-                                -e "iri_tag=v$IRI_LATEST" \
-                                -e "force_pull_image=yes"
+    cd "$IRI_PLAYBOOK_DIR" \
+      && ansible-playbook -i inventory \
+         -v site.yml \
+         --tags=iri_docker_image,iri_service_file,get_iri_uid \
+         -e "iri_tag=v$IRI_LATEST" \
+         -e "force_pull_image=yes"
+
     if [[ $? -ne 0 ]]; then
          whiptail --title "Error!" \
                   --msgbox "ERROR: Failed upgrading IRI." \
@@ -405,15 +428,16 @@ function upgrade_monitoring() {
         fi
 
         # Upgrade iota-prom-exporter and dashboards
-        cd /opt/iri-playbook && \
-            ansible-playbook \
-              -i inventory \
-              -v site.yml \
-              --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config,cadvisor_config,node_exporter_config,alertmanager_config \
-              -e monitoring_enabled=yes \
-              -e overwrite=yes \
-              -e wait_for_alertmanager=false \
-              -e wait_for_grafana=false
+        cd "$IRI_PLAYBOOK_DIR" \
+          && ansible-playbook \
+             -i inventory \
+             -v site.yml \
+             --tags=iri_ssl,monitoring_preinstall,prometheus_config,grafana_config,download_iota_prom_exporter_image,iota_prom_exporter_config,cadvisor_config,node_exporter_config,alertmanager_config \
+             -e monitoring_enabled=yes \
+             -e overwrite=yes \
+             -e wait_for_alertmanager=false \
+             -e wait_for_grafana=false
+
         [[ $? -ne 0 ]] && MSG="Updating monitoring failed!!! Check output above for errors." || MSG="Update finished successfully!"
         pause "$MSG Press ENTER to return to menu."
         clear
@@ -423,8 +447,8 @@ function upgrade_monitoring() {
 function haproxy_listen_all() {
     # Expect to find 0.0.0.0 on same line or max 2 after var declaration.
     # If not found, add bind to all interfaces to override file.
-    if ! grep ^lb_bind_addresses /opt/iri-playbook/group_vars/all/z-installer-override.yml -A2 | grep -q '0.0.0.0'; then
-        echo "lb_bind_addresses: ['0.0.0.0']" >> /opt/iri-playbook/group_vars/all/z-installer-override.yml
+    if ! grep ^lb_bind_addresses "$INSTALLER_OVERRIDE" -A2 | grep -q '0.0.0.0'; then
+        echo "lb_bind_addresses: ['0.0.0.0']" >> "$INSTALLER_OVERRIDE"
     fi
 }
 
@@ -446,9 +470,9 @@ function enable_https() {
                  --yesno "Do you want to enable PoW (attachToTangle) on your node?" \
                  --defaultno \
                  12 $WIDTH) then
-            POW=enabled
+        POW=enabled
     else
-            POW=disabled
+        POW=disabled
     fi
 
     verify_playbook
@@ -461,18 +485,25 @@ function enable_https() {
 
     # Enable or disable PoW on this node via variable override file
     if [[ "$POW" == "enabled" ]]; then
-        echo "haproxy_deny_regex: '(get|remove|add)Neighbors'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
+        echo "haproxy_deny_regex: '(get|remove|add)Neighbors'" > "$IRI_PLAYBOOK_DIR/group_vars/all/z-haproxy-regex-override.yml"
     else
-        echo "haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'" > /opt/iri-playbook/group_vars/all/z-haproxy-regex-override.yml
+        echo "haproxy_deny_regex: '(get|remove|add)Neighbors|attachToTangle|interruptAttachingToTangle'" > "$IRI_PLAYBOOK_DIR/group_vars/all/z-haproxy-regex-override.yml"
     fi
 
     # Make sure we configure haproxy to listen on all interfaces, thereby enabling it.
     haproxy_listen_all
 
     # Enable haproxy https via variable override file
-    echo "haproxy_https: True" > /opt/iri-playbook/group_vars/all/z-haproxy-enable-https.yml
+    echo "haproxy_https: True" > "$IRI_PLAYBOOK_DIR/group_vars/all/z-haproxy-enable-https.yml"
 
-    cd /opt/iri-playbook && git pull && ansible-playbook -i "$INVENTORY_FILE" site.yml -v --tags=py_docker,iri_ssl,consul_role,loadbalancer_role,certbot --skip-tags=consul_register_node -e overwrite=yes
+    cd "$IRI_PLAYBOOK_DIR" \
+      && git pull \
+      && ansible-playbook -i "$INVENTORY_FILE" \
+         site.yml -v \
+         --tags=py_docker,iri_ssl,consul_role,loadbalancer_role,certbot \
+         --skip-tags=consul_register_node \
+         -e overwrite=yes
+
     if [[ $? -ne 0 ]]; then
         pause "Enabling HTTPS failed!!! Check output above for errors."
         clear
@@ -528,13 +559,13 @@ function enable_https() {
 
     # Will ensure subsequent playbook runs will use haproxy.pem
     if [ -f "${FULL_PATH}/haproxy.pem" ]; then
-        echo "ssl_certkey_file: ${FULL_PATH}/haproxy.pem" > /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+        echo "ssl_certkey_file: ${FULL_PATH}/haproxy.pem" > "$IRI_PLAYBOOK_DIR/group_vars/all/z-ssl-override.yml"
     fi
 
     # Will configure nginx to use the let's encrypt certificates
     if [[ "$ENABLE_NGINX_CERT" == "yes" ]] && [ -f "${FULL_PATH}/cert.pem" ]; then
-        if ! grep -q "^ssl_cert_file: ${FULL_PATH}/fullchain.pem" /opt/iri-playbook/group_vars/all/z-ssl-override.yml; then
-            cat <<EOF >> /opt/iri-playbook/group_vars/all/z-ssl-override.yml
+        if ! grep -q "^ssl_cert_file: ${FULL_PATH}/fullchain.pem" "$IRI_PLAYBOOK_DIR/group_vars/all/z-ssl-override.yml"; then
+            cat <<EOF >> "$IRI_PLAYBOOK_DIR/group_vars/all/z-ssl-override.yml"
 ssl_cert_file: ${FULL_PATH}/cert.pem
 ssl_key_file: ${FULL_PATH}/privkey.pem
 ssl_bundle_cert: ${FULL_PATH}/fullchain.pem
@@ -543,7 +574,10 @@ letsencrypt: True
 EOF
         fi
         # We don't enable nginx with this common certificate in multi node setup!
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=configure_nginx_ssl
+        cd "$IRI_PLAYBOOK_DIR" \
+          && ansible-playbook -i inventory \
+             -v site.yml \
+             --tags=configure_nginx_ssl
     fi
 
     pause "Done. Check above output to see the status of the request."
@@ -568,7 +602,12 @@ function enable_haproxy() {
         # Make sure we configure haproxy to listen on all interfaces, thereby enabling it.
         haproxy_listen_all
 
-        cd /opt/iri-playbook && ansible-playbook -i inventory -v site.yml --tags=iri_ssl,loadbalancer_role -e overwrite=yes
+        cd "$IRI_PLAYBOOK_DIR" \
+          && ansible-playbook -i inventory \
+             -v site.yml \
+             --tags=iri_ssl,loadbalancer_role \
+             -e overwrite=yes
+
         [[ $? -ne 0 ]] && MSG="Enabling HAProxy failed!!! Check output above for errors." || MSG="Installation finished successfully!"
         pause "$MSG Press ENTER to return to menu."
     fi
@@ -792,7 +831,13 @@ function get_db() {
         # This command will stop iri, remove older database directories,
         # extract the database (on the fly) set correct user ownership and start IRI up again.
         echo "Stopping iri first, removing old database files and commencing download/extract of database files ..."
-        systemctl stop iri && rm -rf /var/lib/iri/target/{testnet*,mainnetdb*,mainnet.snapshot*,spent-addresses-*} && mkdir -p /var/lib/iri/target && cd /var/lib/iri/target/ && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -RL && systemctl start iri
+        systemctl stop iri \
+          && rm -rf /var/lib/iri/target/{testnet*,mainnetdb*,mainnet.snapshot*,spent-addresses-*} \
+          && mkdir -p /var/lib/iri/target \
+          && cd /var/lib/iri/target/ \
+          && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -RL \
+          && systemctl start iri
+
         if [[ $? -ne 0 ]]; then
             whiptail --title "New DB Failed!" \
                      --msgbox "Well this is embarrassing. Downloading the new DB failed..." \
@@ -872,7 +917,10 @@ function update_iric() {
     fi
 
     # Run playbook script upgrades
-    cd /opt/iri-playbook && ansible-playbook -i inventory site.yml -v --tags=scripts,nbctl_config
+    cd "$IRI_PLAYBOOK_DIR" \
+      && ansible-playbook -i inventory \
+         site.yml -v \
+         --tags=scripts,nbctl_config
     [[ $? -ne 0 ]] && MSG="Updating IRIC failed!!! Check output above for errors." || MSG="Update finished successfully! Additional updates may apply upon restart of iric."
     pause "$MSG Press ENTER to return to menu."
     clear
@@ -1553,13 +1601,16 @@ function neighbors(){
 function main_menu() {
     local MENU="Choose an option"
     if check_new_iric; then
-        MENU="${MENU}\n(*IRIC update available)\n"
+        MENU="${MENU}\n(*IRIC update available)"
+    fi
+    if check_new_iri; then
+        MENU="${MENU}\n(*IRI update available)"
     fi
 
     whiptail --title "IRIC v${__VERSION__} - IRI Configuration Menu" \
-             --menu "$MENU" \
+             --menu "${MENU}\n\n" \
              --cancel-button "Exit" \
-              27 $WIDTH 18 \
+              30 $WIDTH 18 \
     "a)" "Update IRI software" \
     "b)" "Update Monitoring" \
     "c)" "Enable HAProxy" \
