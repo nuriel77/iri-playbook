@@ -13,3 +13,5 @@ supported_distributions:
 
 # UFW logging: on, off, low, medium, high or full.
 ufw_logging: off
+
+install_docker: false

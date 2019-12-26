@@ -4,3 +4,4 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
+  when: not iotacaddy_started.changed

@@ -4,6 +4,7 @@
     state: restarted
     daemon_reload: yes
     enabled: yes
+  when: not iotapm_started.changed
 
 - name: reload systemd
   command: systemctl daemon-reload

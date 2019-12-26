@@ -1,8 +1,0 @@
-apiVersion: 1
-datasources:
-  - name: Prometheus
-    type: prometheus
-    url: http://{{ 'prometheus' if iri_net_name is defined else '127.0.0.1' }}:{{ prom_port }}
-    access: proxy
-    isDefault: true
-    editable: false

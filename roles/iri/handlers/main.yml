@@ -4,6 +4,7 @@
     state: restarted
     daemon_reload: yes
     enabled: yes
+  when: not iri_started.changed
 
 - name: restart rsyslog
   systemd:

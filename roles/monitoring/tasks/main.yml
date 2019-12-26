@@ -1,8 +1,0 @@
-- import_tasks: role.yml
-  tags:
-    - monitoring_role
-  when: >
-        (disable_monitoring is not defined or
-         disable_monitoring|bool != True) or
-        (uninstall_playbook is defined and
-         uninstall_playbook|bool == True) 

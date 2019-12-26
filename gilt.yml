@@ -1,0 +1,15 @@
+- git: https://github.com/nuriel77/ansible-docker.git
+  version: master
+  dst: roles/docker/
+
+- git: https://github.com/nuriel77/ansible-haproxy-iota.git
+  version: master
+  dst: roles/haproxy/
+
+- git: https://github.com/nuriel77/ansible-nginx.git
+  version: master
+  dst: roles/nginx/
+
+- git: https://github.com/nuriel77/ansible-monitoring.git
+  version: master
+  dst: roles/monitoring/

@@ -1,3 +1,0 @@
-- name: install latest passlib with pip
-  pip:
-    name: passlib

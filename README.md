@@ -29,6 +29,11 @@ Documentation at [Wiki](http://iri-playbook.readthedocs.io/en/feat-docker/index.
 
 Requirements can be found [here](https://iri-playbook.readthedocs.io/en/feat-docker/requirements.html)
 
+## Installation for Development
 
+Enter the branch you are testing on and run the installer:
+```sh
+BRANCH="dev-branch"; GIT_OPTIONS="-b $BRANCH" bash <(curl -s "https://raw.githubusercontent.com/nuriel77/iri-playbook/$BRANCH/fullnode_install.sh")
+```
 
 Please feel free to contribute.

@@ -54,11 +54,10 @@
     src: templates/iotacaddy.logrotate.conf.j2
     dest: /etc/logrotate.d/iotacaddy
 
-- name: flush handlers
-  meta: flush_handlers
-
 - name: ensure iotacaddy started and enabled
   systemd:
     name: iotacaddy.service
     state: started
     enabled: true
+    daemon_reload: true
+  register: iotacaddy_started
