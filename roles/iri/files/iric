@@ -895,7 +895,7 @@ function update_iric() {
             # Delete any 'completed' files for this version
             # This forces to re-run updates specific for
             # this version if any.
-            rm -f "custom_updates/${CURR_VERSION}_updates.sh.completed"
+            rm -f "${IRI_PLAYBOOK_DIR}/custom_updates/${CURR_VERSION}_updates.sh.completed"
         fi
     fi
 
@@ -985,7 +985,7 @@ function sort_func() {
 
 function run_custom_updates(){
     # Find pending update files
-    readarray -t TO_RUN_UPDATES < <(find custom_updates/ -maxdepth 1 -type f -name '*_updates.sh')
+    readarray -t TO_RUN_UPDATES < <(find "${IRI_PLAYBOOK_DIR}/custom_updates/" -maxdepth 1 -type f -name '*_updates.sh')
 
     # Return if nothing to update
     ((${#TO_RUN_UPDATES[@]} == 0)) && { clear; return; }
