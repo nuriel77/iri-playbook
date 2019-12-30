@@ -1,6 +1,13 @@
+- name: "remove older docker-py"
+  pip:
+    name: docker-py
+    state: absent
+  tags: always
+
 - name: "install python deps via pip"
   pip:
     name: docker
+  tags: always
 
 - name: "install python deps via pip, centos 8"
   pip:
