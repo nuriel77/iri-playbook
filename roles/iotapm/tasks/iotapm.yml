@@ -46,7 +46,6 @@
     src: templates/iota-pm.service.j2
     dest: "{{ systemd_dir }}/iota-pm.service"
   notify:
-    - start iota-pm
     - restart iota-pm
 
 - name: copy iota-pm environment file
@@ -56,9 +55,16 @@
     force: "{{ overwrite | default('no') }}"
     backup: yes
   notify:
-    - start iota-pm
     - restart iota-pm
 
 - import_tasks: image-iotapm.yml
   tags:
     - iotapm_docker_image
+
+- name: start iota-pm
+  systemd:
+    name: iota-pm.service
+    state: started
+    enabled: true
+    daemon_reload: true
+  register: iotapm_started

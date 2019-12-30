@@ -1,15 +1,7 @@
-- name: start iotacaddy
-  systemd:
-    name: iotacaddy.service
-    state: started
-    enabled: true
-    daemon_reload: true
-  register: iotacaddy_started
-
 - name: restart iotacaddy
   systemd:
     name: iotacaddy.service
     state: restarted
     enabled: yes
     daemon_reload: yes
-  when: not iotacaddy_started.changed
+  when: iotacaddy_started is not defined or not iotacaddy_started.changed

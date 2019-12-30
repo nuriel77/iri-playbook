@@ -13,7 +13,6 @@
     force_source: "{{ force_pull_image | default('no') }}"
     source: pull
   notify:
-    - start iri
     - restart iri
   register: download_image_status
   until: download_image_status is succeeded
@@ -32,7 +31,6 @@
     force_source: "{{ force_pull_image | default('no') }}"
     source: pull
   notify:
-    - start iri
     - restart iri
   register: download_image_status
   until: download_image_status is succeeded
@@ -89,7 +87,6 @@
       when:
         - image_copied.changed
       notify:
-        - start iri
         - restart iri
 
   when:

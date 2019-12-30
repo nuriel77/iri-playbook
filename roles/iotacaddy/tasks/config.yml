@@ -48,10 +48,17 @@
     - {"src": "templates/iotacaddy.service.j2", "dest": "/etc/systemd/system/iotacaddy.service", "username": "root", "groupname": "root"}
     - {"src": "files/entrypoint.sh", "dest": "{{ iotacaddy_config_dir }}/entrypoint.sh", "mode": "0755"}
   notify:
-    - start iotacaddy
     - restart iotacaddy
 
 - name: copy iota caddy logrotate config
   template:
     src: templates/iotacaddy.logrotate.conf.j2
     dest: /etc/logrotate.d/iotacaddy
+
+- name: start iotacaddy
+  systemd:
+    name: iotacaddy.service
+    state: started
+    enabled: true
+    daemon_reload: true
+  register: iotacaddy_started

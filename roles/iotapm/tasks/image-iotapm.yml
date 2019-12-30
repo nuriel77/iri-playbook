@@ -5,7 +5,6 @@
     force_source: "{{ force_pull_image | default('no') }}"
     source: pull
   notify:
-    - start iota-pm
     - restart iota-pm
   register: download_image_status
   until: download_image_status is succeeded
@@ -24,7 +23,6 @@
     force_source: "{{ force_pull_image | default('no') }}"
     source: pull
   notify:
-    - start iota-pm
     - restart iota-pm
   register: download_image_status
   until: download_image_status is succeeded
@@ -76,7 +74,6 @@
       when:
         - image_copied.changed
       notify:
-        - start iota-pm
         - restart iota-pm
 
   when:
