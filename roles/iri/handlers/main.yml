@@ -1,3 +1,11 @@
+- name: start iri
+  systemd:
+    daemon_reload: true
+    name: iri.service
+    state: started
+    enabled: true
+  register: iri_started
+
 - name: restart iri
   systemd:
     name: iri.service

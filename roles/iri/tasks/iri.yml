@@ -218,6 +218,7 @@
     force: "{{ overwrite | default('no') }}"
     backup: yes
   notify:
+    - start iri
     - restart iri
 
 - name: copy iri systemd file
@@ -227,6 +228,7 @@
   tags:
     - iri_service_file
   notify:
+    - start iri
     - restart iri
 
 - name: copy iri.ini config file
@@ -238,6 +240,7 @@
     force: "{{ overwrite | default('no') }}"
     backup: yes
   notify:
+    - start iri
     - restart iri
 
 - name: create a link for iri ini configuration file
@@ -277,11 +280,3 @@
 - import_tasks: image-iri.yml
   tags:
     - iri_docker_image
-
-- name: ensure iri started and enabled
-  systemd:
-    daemon_reload: true
-    name: iri.service
-    state: started
-    enabled: true
-  register: iri_started
