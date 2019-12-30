@@ -45,6 +45,7 @@
         tag: "{{ iotacaddy_tag }}"
         source: build
       notify:
+        - start iotacaddy
         - restart iotacaddy
 
     - name: remove temporary build dir
@@ -82,6 +83,7 @@
         tag: "{{ iotacaddy_tag }}"
         source: build
       notify:
+        - start iotacaddy
         - restart iotacaddy
 
     - name: remove temporary build dir
@@ -136,6 +138,7 @@
       when:
         - image_copied.changed
       notify:
+        - start iotacaddy
         - restart iotacaddy
 
   when:
