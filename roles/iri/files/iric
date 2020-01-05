@@ -19,7 +19,7 @@ declare -g INSTALLER_OVERRIDE="$IRI_PLAYBOOK_DIR/group_vars/all/z-installer-over
 [ -f "${IRI_PLAYBOOK_DIR}/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.12.4
+VERSION_TEMP=0.12.5
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
