@@ -26,7 +26,7 @@ except ImportError:
     sys.exit(1)
 
 
-__VERSION__ = '0.2.4'
+__VERSION__ = '0.2.5'
 
 LOG = logging.getLogger(__name__)
 DEFAULT_API_VERSION = '1.8'
@@ -125,7 +125,8 @@ def run():
         sys.stderr.write("Error: Argument --neighbors/-n is required.\n")
         sys.exit(1)
 
-    args.neighbors = ['tcp://' + n if 'tcp://' not in n else n for n in args.neighbors]
+    if args.neighbors:
+        args.neighbors = ['tcp://' + n if 'tcp://' not in n else n for n in args.neighbors]
 
     # Append a reverse DNS if IPv4 as IRI tends to register
     # an IPv4's reverse address as an additional neighbor
