@@ -26,7 +26,7 @@ except ImportError:
     sys.exit(1)
 
 
-__VERSION__ = '0.2.2'
+__VERSION__ = '0.2.3'
 
 LOG = logging.getLogger(__name__)
 DEFAULT_API_VERSION = '1.8'
@@ -241,29 +241,26 @@ def process_hornet_config(command, hornet_config, neighbors):
     no_prefix_neighbors = [n.replace('tcp://', '') for n in neighbors]
 
     if command == 'removeNeighbors':
-        if ('network' not in hornet_config or
-            'neighbors' not in hornet_config['network']):
+        if ('neighbors' not in hornet_config):
             return hornet_config
 
-        existing_neighbors = hornet_config['network']['neighbors']
+        existing_neighbors = hornet_config['neighbors']
         for neighbor in no_prefix_neighbors:
             for i in range(len(existing_neighbors)):
                 if existing_neighbors[i]['identity'] == neighbor:
                     del existing_neighbors[i]
                     break
     elif command == 'addNeighbors':
-        if 'network' not in hornet_config:
-            hornet_config['network'] = {"neighbors": []}
-        elif 'neighbors' not in hornet_config['network']:
-            hornet_config['network']['neighbors'] = []
+        if 'neighbors' not in hornet_config:
+            hornet_config['neighbors'] = []
 
         for neighbor in no_prefix_neighbors:
             to_add = True
-            for existing_neighbor in hornet_config['network']['neighbors']:
+            for existing_neighbor in hornet_config['neighbors']:
                 if existing_neighbor['identity'] == neighbor:
                     to_add = False
             if to_add is True:
-                hornet_config['network']['neighbors'].append({
+                hornet_config['neighbors'].append({
                     "identity": neighbor,
                     "preferIPv6": True
                 })
