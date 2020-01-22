@@ -24,7 +24,7 @@ declare -g INSTALL_OPTIONS
 declare -g IRI_PLAYBOOK_DIR="/opt/iri-playbook"
 declare -g INSTALLER_OVERRIDE_FILE="${IRI_PLAYBOOK_DIR}/group_vars/all/z-installer-override.yml"
 
-if grep -q 'IRI PLAYBOOK' /etc/motd; then
+if grep -q 'IRI PLAYBOOK' /etc/motd > /dev/null 2>&1; then
     :>/etc/motd
 else
     if [ -f "$INSTALLER_OVERRIDE_FILE" ] && [ "$1" != "rerun" ]
