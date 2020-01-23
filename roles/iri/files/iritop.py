@@ -14,7 +14,7 @@ from os import (path, environ, getloadavg, getenv)
 from curses import wrapper
 
 
-__VERSION__ = '0.5.7'
+__VERSION__ = '0.5.8'
 
 """\
 Simple Iota IRI Node Monitor
@@ -29,20 +29,19 @@ More information:
 https://github.com/maeck70/iritop
 """
 
-
 try:
     import urllib3
 except ImportError:
     sys.stderr.write("Missing python urllib3? " +
-                     "Install via 'pip install urllib3'"
-                     "\n")
+                     "Install via 'pip%d install urllib3'"
+                     "\n" % sys.version_info.major)
     sys.exit(1)
 
 try:
     from blessed import Terminal
 except ImportError:
-    sys.stderr.write("Missing python blessed package? Install via 'pip install"
-                     " blessed'\n")
+    sys.stderr.write("Missing python blessed package? Install via 'pip%d install"
+                     " blessed'\n" % sys.version_info.major)
     sys.exit(1)
 
 try:
