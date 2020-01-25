@@ -187,7 +187,13 @@ function init_centos_7(){
     set -e
 
     echo "Installing Ansible and git..."
-    yum install ansible git expect-devel cracklib newt -y
+    yum install -y \
+        ansible \
+        git \
+        expect-devel \
+        cracklib \
+        newt \
+        redhat-lsb-core
 }
 
 function init_centos_8(){
