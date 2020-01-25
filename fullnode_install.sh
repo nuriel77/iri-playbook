@@ -104,10 +104,13 @@ Welcome to IOTA FullNode Installer!
 
 EOF
 
-read -p "Do you wish to proceed? [y/N] " yn
-if echo "$yn" | grep -v -iq "^y"; then
-    echo Cancelled
-    exit 1
+if [[ "$NO_CONFIRM" != "true" ]]
+then
+    read -p "Do you wish to proceed? [y/N] " yn
+    if echo "$yn" | grep -v -iq "^y"; then
+        echo Cancelled
+        exit
+    fi
 fi
 
 #################
