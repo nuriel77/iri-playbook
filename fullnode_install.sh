@@ -215,7 +215,14 @@ function init_centos_8(){
     fi
 
     echo "Installing Ansible, git and other requirements..."
-    dnf install git expect newt python3-pip cracklib newt -y
+    dnf install -y \
+        git \
+        expect \
+        newt \
+        python3-pip \
+        cracklib \
+        newt \
+        redhat-lsb-core
     pip3 --disable-pip-version-check install ansible
 }
 
