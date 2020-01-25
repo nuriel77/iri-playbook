@@ -224,6 +224,8 @@ function init_centos_8(){
         newt \
         redhat-lsb-core
     pip3 --disable-pip-version-check install ansible
+    echo "$PATH" | grep -q '/usr/local/bin' || export PATH=$PATH:/usr/local/bin
+    grep PATH /root/.bashrc | grep -q '/usr/local/bin' || echo 'export PATH=$PATH:/usr/local/bin' >> /root/.bashrc
 }
 
 function init_ubuntu(){
