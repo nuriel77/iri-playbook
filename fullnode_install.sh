@@ -35,6 +35,7 @@ else
                  16 78); then
             exit 1
         fi
+        SKIP_CONFIRM="true"
     fi
 fi
 
@@ -104,7 +105,7 @@ Welcome to IOTA FullNode Installer!
 
 EOF
 
-if [[ "$NO_CONFIRM" != "true" ]]
+if [[ "$SKIP_CONFIRM" != "true" ]]
 then
     read -p "Do you wish to proceed? [y/N] " yn
     if echo "$yn" | grep -v -iq "^y"; then
