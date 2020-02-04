@@ -14,7 +14,7 @@ CONSUL_API_VERSION = 'v1'
 """Script to add or remove backends
    from Consul used to populate HAProxy
    source: https://github.com/nuriel77/iri-playbook
-   Copyright (c) 2018 Nuriel Shem-Tov
+   Copyright (c) 2020 Nuriel Shem-Tov
 """
 
 def parse_args():

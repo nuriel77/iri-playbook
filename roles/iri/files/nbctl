@@ -35,7 +35,7 @@ DEFAULT_HOST = 'http://127.0.0.1:14265'
 """Script to list, add or remove neighbors
    from IRI API and the configuration file
    source: https://github.com/nuriel77/iri-playbook
-   Copyright (c) 2019 Nuriel Shem-Tov
+   Copyright (c) 2020 Nuriel Shem-Tov
 """
 
 def parse_args():

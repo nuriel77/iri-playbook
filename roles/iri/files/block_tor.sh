@@ -1,6 +1,6 @@
 #!/bin/bash
 # Block ToR network exit node IPs using ipset
-# By Nuriel Shem-Tov @nuriel77 Jan 2018
+# By Nuriel Shem-Tov @nuriel77 Jan 2020
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root"
