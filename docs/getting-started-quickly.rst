@@ -34,13 +34,11 @@ Enter into a "screen" session by typing: ``screen -S iota``. If connection to th
 Step 3
 ------
 
-First become ``root`` user by typing ``sudo su``.
-
 **The following command will pull the installer script and kick off the installation. Make sure you read the warning above!**
 
 .. code:: bash
 
-  bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)
+  sudo bash -c "bash <(curl -s https://raw.githubusercontent.com/nuriel77/iri-playbook/feat/docker/fullnode_install.sh)"
 
 .. note::
 
