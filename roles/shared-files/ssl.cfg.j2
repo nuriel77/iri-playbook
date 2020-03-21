@@ -1,8 +1,8 @@
 ssl_certificate {{ ssl_cert_file }};
 ssl_certificate_key {{ ssl_key_file }};
 
+ssl_protocols TLSv1.2;
 {% if ansible_distribution == 'CentOS' %} 
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
 ssl_prefer_server_ciphers on;
 {% endif %}
 # If you choose to add dhparam, run this command and
