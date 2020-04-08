@@ -15,11 +15,11 @@ clear
 declare -g IRI_PLAYBOOK_DIR="/opt/iri-playbook"
 declare -g INSTALLER_OVERRIDE="$IRI_PLAYBOOK_DIR/group_vars/all/z-installer-override.yml"
 
-[ -f "$HOME/.iric" ] && . "$HOME/.iric"
+[ -f "/root/.iric" ] && . "/root/.iric"
 [ -f "${IRI_PLAYBOOK_DIR}/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.12.6
+VERSION_TEMP=0.12.7
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -303,7 +303,7 @@ function check_new_iri() {
     IRI_LATEST=$(get_latest_iri_release)
     [[ $? -ne 0 ]] && return 1
     IRI_LATEST=$(echo "$IRI_LATEST" | tr -d '\-RELEASE')
-    IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
+    IRI_VERSION=$(grep ^api_version /root/.nbctl | cut -d: -f2- | sed 's/ *//g')
     [[ $? -ne 0 ]] && return 1
     if compare_versions $IRI_VERSION '<' $IRI_LATEST; then
         return 0
@@ -328,10 +328,10 @@ function upgrade_iri() {
     IRI_LATEST=$(echo "$IRI_LATEST" | tr -d '\-RELEASE')
     clear
 
-    IRI_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2- | sed 's/ *//g')
+    IRI_VERSION=$(grep ^api_version /root/.nbctl | cut -d: -f2- | sed 's/ *//g')
     if [[ $? -ne 0 ]]; then
         whiptail --title "Error!" \
-                 --msgbox "ERROR: Cannot find $HOME/.nbctl" \
+                 --msgbox "ERROR: Cannot find /root/.nbctl" \
                  8 $WIDTH
         return 1
     fi
@@ -377,7 +377,7 @@ function upgrade_iri() {
     echo "Updating IRI configuration files..."
     IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
     sed -i "s/^TAG=.*$/TAG=v${IRI_LATEST}/" $IRI_CONFIG
-    sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" $HOME/.nbctl
+    sed -i "s/^api_version.*$/api_version: $IRI_LATEST/" /root/.nbctl
 
     #
     # Network rewrite, update old nodes.
@@ -665,7 +665,7 @@ function add_neighbors() {
                     $HEIGHT $WIDTH
         else
             if echo "$NBCTL_OUTPUT" | grep -q "urllib2.URLError" ; then
-               NBCTL_OUTPUT="Failed to communicate with IRI API port. Check if IRI is active and if $HOME/.nbctl is configured correctly."
+               NBCTL_OUTPUT="Failed to communicate with IRI API port. Check if IRI is active and if /root/.nbctl is configured correctly."
             fi
             HEIGHT=$(expr $(echo "$NBCTL_OUTPUT"|wc -l) + 10)
             whiptail --title "Adding Neighbors Failed" \
@@ -745,7 +745,7 @@ function list_neighbors() {
     RC=$?
     if [[ $RC -ne 0 ]]; then
         if echo "$NEIGHBORS_QUERY" | egrep -q "urllib..URLError|timeout|refused" ; then
-            NEIGHBORS_QUERY="Failed to communicate with IRI API port. Check if IRI is active and if $HOME/.nbctl is configured correctly."
+            NEIGHBORS_QUERY="Failed to communicate with IRI API port. Check if IRI is active and if /root/.nbctl is configured correctly."
         else
             NEIGHBORS_QUERY="Unknown error"
         fi
@@ -1032,10 +1032,10 @@ function choose_editor() {
     fi
 
     EDITOR=$USER_CHOICE
-    if ! grep -q "^export EDITOR" $HOME/.iric; then
-        echo "export EDITOR=${EDITOR}" >> $HOME/.iric
+    if ! grep -q "^export EDITOR" /root/.iric; then
+        echo "export EDITOR=${EDITOR}" >> /root/.iric
     else
-        sed -i "s/^export EDITOR=.*/export EDITOR=${EDITOR}/g" $HOME/.iric
+        sed -i "s/^export EDITOR=.*/export EDITOR=${EDITOR}/g" /root/.iric
     fi
 }
 
@@ -1086,18 +1086,18 @@ function edit_config() {
 
 ### Node info ###
 function show_lmsi() {
-    if [ ! -f "$HOME/.nbctl" ]; then
+    if [ ! -f "/root/.nbctl" ]; then
         whiptail --title "Missing .nbctl" \
-                 --msgbox "Error: cannot find $HOME/.nbctl" \
+                 --msgbox "Error: cannot find /root/.nbctl" \
                  8 $WIDTH
         return
     fi
-    IRI_HOST=$(grep ^host $HOME/.nbctl | cut -d: -f2-)
-    local IRI_API_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2-)
+    IRI_HOST=$(grep ^host /root/.nbctl | cut -d: -f2-)
+    local IRI_API_VERSION=$(grep ^api_version /root/.nbctl | cut -d: -f2-)
     local LSMI_LOCAL=$(curl -f -m 5 -s $IRI_HOST -X POST -H "X-IOTA-API-Version: $IRI_API_VERSION" -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'| python -m json.tool|egrep "latestSolidSubtangleMilestoneIndex|latestMilestoneIndex"| sed 's/,//'|sed -e 's/^[ \t]*//'|sed 's/"//g')
     if [ $? -ne 0 ]; then
         whiptail --title "Query failed" \
-                 --msgbox "Error: failed query ${LSMI_LOCAL}. Check if IRI is active and if $HOME/.nbctl is configured properly." \
+                 --msgbox "Error: failed query ${LSMI_LOCAL}. Check if IRI is active and if /root/.nbctl is configured properly." \
                  12 $WIDTH
         return
     fi
@@ -1115,18 +1115,18 @@ function show_lmsi() {
 }
 
 function get_node_info() {
-    if [ ! -f $HOME/.nbctl ]; then
+    if [ ! -f /root/.nbctl ]; then
         whiptail --title "Missing .nbctl" \
-                 --msgbox "Error: cannot find $HOME/.nbctl" \
+                 --msgbox "Error: cannot find /root/.nbctl" \
                  8 $WIDTH
         return
     fi
-    local IRI_HOST=$(grep ^host $HOME/.nbctl | cut -d: -f2-)
-    local IRI_API_VERSION=$(grep ^api_version $HOME/.nbctl | cut -d: -f2-)
+    local IRI_HOST=$(grep ^host /root/.nbctl | cut -d: -f2-)
+    local IRI_API_VERSION=$(grep ^api_version /root/.nbctl | cut -d: -f2-)
     NODE_INFO=$(curl -f -m 5 -s $IRI_HOST -X POST -H "X-IOTA-API-Version: $IRI_API_VERSION" -H 'Content-Type: application/json' -d '{"command": "getNodeInfo"}'| jq -r 'to_entries[] | "\(.key): \(.value )"' | column -t | sort)
     if [ $? -ne 0 ]; then
         whiptail --title "Query failed" \
-                 --msgbox "Error: failed query ${NODE_INFO}. Check if IRI is active and if $HOME/.nbctl is configured properly." \
+                 --msgbox "Error: failed query ${NODE_INFO}. Check if IRI is active and if /root/.nbctl is configured properly." \
                  12 $WIDTH
         return
     fi
@@ -1501,7 +1501,7 @@ function configure_files() {
             local IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2 | sed 's/ //g')
             if [[ $? -ne 0 ]] || [ -z "$IRI_CONFIG" ]; then
                 whiptail --title "Missing .nbctl data" \
-                         --msgbox "Error: cannot find file value in $HOME/.nbctl" \
+                         --msgbox "Error: cannot find file value in /root/.nbctl" \
                          8 $WIDTH
                 return 1
             fi
