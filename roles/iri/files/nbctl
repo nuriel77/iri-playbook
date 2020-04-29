@@ -305,9 +305,6 @@ def process_json_config(json_file, tmpfile):
         LOG.error("File is not a valid JSON file")
         sys.exit(1)
 
-    xxx
-    #try:
-    #except:
 
 def set_logger(debug=False):
     if debug is True:
