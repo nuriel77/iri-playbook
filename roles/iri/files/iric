@@ -19,7 +19,7 @@ declare -g INSTALLER_OVERRIDE="$IRI_PLAYBOOK_DIR/group_vars/all/z-installer-over
 [ -f "${IRI_PLAYBOOK_DIR}/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.12.7
+VERSION_TEMP=0.12.8
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -700,8 +700,8 @@ function remove_neighbors() {
     fi
     HEIGHT=$(expr $(echo "$NEIGHBORS"|wc -l) + 5)
     NEIGHBORS_ARRAY=($(echo "$NEIGHBORS"))
-    local NEIGHBORS_ARRAY_INDEXED=($(echo "$NEIGHBORS" | awk '!/^ / && NF { print NR")"; print $1$2$3}'))
-    local NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 $WIDTH 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
+    NEIGHBORS_ARRAY_INDEXED=($(echo "$NEIGHBORS" | awk '!/^ / && NF { print NR")"; print $1$2$3}'))
+    NEIGHBOR_INDEX=$(whiptail --title "Remove neighbors" --menu "Choose a neighbor" 25 $WIDTH 16  "${NEIGHBORS_ARRAY_INDEXED[@]}" 3>&1 1>&2 2>&3)
     if [ $? -eq 1 ]; then
         return
     fi
@@ -721,7 +721,9 @@ function remove_neighbors() {
     then
         IRI_CONFIG=$(grep ^file /root/.nbctl | cut -d: -f2)
         [ -n "$IRI_CONFIG" ] && IRI_CONFIG="-f $IRI_CONFIG"
-        REMOVAL_OUTPUT=$(nbctl -r -n "${SCHEME}://${ADDRESS}" $IRI_CONFIG 2>&1)
+        PORT=$(echo "${ADDRESS}" | awk -F':' '{print $NF}')
+        DOMAIN="$(echo "$TO_REMOVE" | cut -d '|' -f2)"
+        REMOVAL_OUTPUT=$(nbctl -r -n "${SCHEME}://${DOMAIN}:${PORT}" $IRI_CONFIG 2>&1)
         if [ $? -eq 0 ];then
             whiptail --title "Removed successfully" \
                      --msgbox "$REMOVAL_OUTPUT" \
