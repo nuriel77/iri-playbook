@@ -19,7 +19,7 @@ declare -g INSTALLER_OVERRIDE="$IRI_PLAYBOOK_DIR/group_vars/all/z-installer-over
 [ -f "${IRI_PLAYBOOK_DIR}/inventory-multi" ] && INVENTORY_FILE=inventory-multi || INVENTORY_FILE=inventory
 
 : "${EDITOR:=nano}"
-VERSION_TEMP=0.12.7
+VERSION_TEMP=0.12.8
 __VERSION__=${VERSION_TEMP}
 
 : "${IRI_BRANCH:=feat/docker}"
@@ -832,7 +832,7 @@ function get_db() {
         # extract the database (on the fly) set correct user ownership and start IRI up again.
         echo "Stopping iri first, removing old database files and commencing download/extract of database files ..."
         systemctl stop iri \
-          && rm -rf /var/lib/iri/target/{testnet*,mainnetdb*,mainnet.snapshot*,spent-addresses-*} \
+          && rm -rf /var/lib/iri/target/{testnet*,mainnetdb*,mainnet.snapshot*,spent-addresses-*,localsnapshots-db*} \
           && mkdir -p /var/lib/iri/target \
           && cd /var/lib/iri/target/ \
           && wget -O - "$DB_SOURCE" | tar zxv && chown iri.iri /var/lib/iri -RL \
