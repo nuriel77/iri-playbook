@@ -1,3 +1,9 @@
+- name: Add Docker GPG key
+  rpm_key:
+    key: https://download.docker.com/linux/centos/gpg
+    state: present
+  tags: testing
+
 - name: stop if no systemd support
   assert:
     that: ansible_service_mgr == "systemd"
