@@ -6,6 +6,7 @@
 
 - name: "install python deps via pip"
   pip:
+    executable: pip3
     name: docker
   tags: always
 

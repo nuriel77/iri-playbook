@@ -19,6 +19,8 @@
   retries: 2
   delay: 5
   run_once: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   delegate_to: "{{ groups['fullnode']|first }}"
   when:
     - images_from_master is defined
@@ -30,6 +32,8 @@
     tag: "{{ iri_download_tag_version }}"
     force_source: "{{ force_pull_image | default('no') }}"
     source: pull
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   notify:
     - restart iri
   register: download_image_status
@@ -69,6 +73,8 @@
         name: "{{ this_image }}"
         tag: "{{ this_tag }}"
         archive_path: "{{ this_file }}"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
       when: "image_stat.rc == 1"
 
     - name: copy the docker image from the first node
@@ -84,6 +90,8 @@
         tag: "{{ this_tag }}"
         load_path: "{{ this_file }}"
         source: load
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
       when:
         - image_copied.changed
       notify:

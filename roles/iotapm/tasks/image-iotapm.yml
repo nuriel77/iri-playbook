@@ -8,6 +8,8 @@
     - restart iota-pm
   register: download_image_status
   until: download_image_status is succeeded
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   retries: 2
   delay: 5
   run_once: yes
@@ -22,6 +24,8 @@
     tag: "{{ iotapm_tag }}"
     force_source: "{{ force_pull_image | default('no') }}"
     source: pull
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   notify:
     - restart iota-pm
   register: download_image_status
@@ -71,6 +75,8 @@
         tag: "{{ this_tag }}"
         load_path: "{{ this_file }}"
         source: load
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
       when:
         - image_copied.changed
       notify:

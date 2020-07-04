@@ -197,6 +197,9 @@ function init_centos_7(){
         expect-devel \
         cracklib \
         newt \
+        python3\
+        python3-pip\
+        python-pip\
         redhat-lsb-core
 }
 

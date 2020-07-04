@@ -13,6 +13,8 @@
         tag: "{{ consul_tag }}"
         state: absent
         force_absent: yes
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
 
   when:
     - remove_consul_image is defined
@@ -45,6 +47,8 @@
         source: build
       notify:
         - restart consul
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
 
     - name: remove temporary build dir
       file:
@@ -77,6 +81,8 @@
         name: "{{ consul_image }}"
         tag: "{{ consul_tag }}"
         source: build
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
       notify:
         - restart consul
 
@@ -115,6 +121,8 @@
         tag: "{{ this_tag }}"
         archive_path: "{{ this_file }}"
       when: "image_stat.rc == 1"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
 
     - name: copy the docker image from the first node
       synchronize:
@@ -129,6 +137,8 @@
         tag: "{{ this_tag }}"
         load_path: "{{ this_file }}"
         source: load
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
       when:
         - image_copied.changed
       notify:

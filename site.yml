@@ -38,6 +38,7 @@
 
     - name: install gilt
       pip:
+        executable: pip3
         name: python-gilt
         state: present
       tags:
@@ -55,6 +56,7 @@
     centos_packages:
       ver7:
         - python-pip
+        - python3-pip
       ver8:
         - python3-pip
     deb_packages:
