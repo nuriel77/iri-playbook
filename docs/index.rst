@@ -19,6 +19,8 @@ The IOTA Full Node Installer (IRI)
 
 Welcome to IRI-playbook full node installer!
 
+NOTE: **Please consider switching to Hornet-playbook <https://github.com/nuriel77/hornet-playbook>**
+
 To install your node go to :ref:`getting_started_quickly`.
 
 Watch `this video <https://youtu.be/oT0uuYK7lH8>`_ on how simple it is to install a node using the IRI playbook! (credits to discord user TangleAid)

@@ -20,6 +20,8 @@ If you haven't already, just make sure your server matches the :ref:`requirement
 Run the Installer!
 ==================
 
+**Please consider switching to Hornet-playbook <https://github.com/nuriel77/hornet-playbook>**
+
 Step 1
 ------
 For **CentOS** users: you may need to install ``curl`` and ``screen``. You can do that by running: ``sudo yum install curl screen -y``.

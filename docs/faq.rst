@@ -151,6 +151,8 @@ If a large "used" value appears for Swap, it might be a good idea to lower the v
 Where can I get a fully synced database to help kick start my node
 ==================================================================
 
+**This service is no longer provided, please consider switching to Hornet**
+
 For the sake of the community, I regularly create a copy of a the database snapshot files. I no longer share the fully sycned db since IRI version 1.6.0.
 
 You can use the ``iric`` tool to download and install the database :ref:`iric`, or update manually using the following instructions:
